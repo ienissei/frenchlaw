@@ -19,7 +19,7 @@ Copyright Flora VERN -- ienissei (at) gmail (dot) com
 
 This work has the LPPL status "author-maintained"
 
-The work `frenchkaw` comprises the following files:
+The work `frenchlaw` comprises the following files:
 
 - `frenchlaw.cls`
 - `frenchlaw-dev.sty`
@@ -30,14 +30,14 @@ The work `frenchkaw` comprises the following files:
 
 Please note that this is a work in progress and that it may (does) lack some of its core functionalities. All requests and suggestions will, however, be studied, and any help is appreciated. A documentation (in French) will be written and uploaded as soon as possible.
 
-Also note that this class can be run with LaTeX (standard distribution) or XeLaTeX -- in which case, please make sure to install the follwoing fonts, distributed with TeXLive: `Junicode`, `Latin Modern Mono`, `Latin Modern Sans`.
+Also note that this class can be run with LaTeX (standard distribution) or XeLaTeX -- in which case, please make sure to install the following fonts, distributed with TeXLive: `Junicode`, `Latin Modern Mono`, `Latin Modern Sans`.
 
 
 ### ii. Français ###
 
-`Fenchlaw` est un projet dont le but est a création d'un package pour l'écriture juridique (universitaire ou praticienne) sous LaTeX. Les objectifs principaux sont de mettre en œuvre un certain nombre de bonnes pratiques typographiques, d'automatiser les processus d'écriture (divisions juridiques des documents, création des index et bibliographies juridiques, etc.), et de facilier la relecture ou la collaboration sur les documents grâce à des outils appropriés.
+`Frenchlaw` est un projet dont le but est a création d'un package pour l'écriture juridique (universitaire ou praticienne) sous LaTeX. Les objectifs principaux sont de mettre en œuvre un certain nombre de bonnes pratiques typographiques, d'automatiser les processus d'écriture (divisions juridiques des documents, création des index et bibliographies juridiques, etc.), et de faciliter la relecture ou la collaboration sur les documents grâce à des outils appropriés.
 
-Ce logiciel est, en totalité, soumis à la LaTeX Project Public Licence (LPPL), et ne saurait être distribué ou modifié que suivant les termes stipulés dans la licence, version 1.3 ou ultérieure (celle-ci est incluse dans le dossier, pour information). La dernière version de la LPPL peut être obtenur à l'adresse suivante : http://www.latex-project.org/lppl.txt
+Ce logiciel est, en totalité, soumis à la LaTeX Project Public Licence (LPPL), et ne saurait être distribué ou modifié que suivant les termes stipulés dans la licence, version 1.3 ou ultérieure (celle-ci est incluse dans le dossier, pour information). La dernière version de la LPPL peut être obtenue à l'adresse suivante : http://www.latex-project.org/lppl.txt
 
 Copyright Flora VERN -- ienissei (at) gmail (dot) com
 
