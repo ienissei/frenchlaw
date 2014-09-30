@@ -1,0 +1,155 @@
+%%
+%%   This is file "frenchlaw-dev.sty", which is part of the "frenchlaw" package
+%%   Copyright 2009--2014: Fora VERN -- ienissei (at) gmail (dot) com
+%% 
+%%   This work may be distributed and/or modified under the conditions of the
+%%   LaTeX Project Public License, either version 1.3 of this license or, at your
+%%   option, any later version.
+%%
+%%   The latest version of the license can be found at:
+%%      http://www.latex-project.org/lppl.txt
+%%   and version 1.3 or later is part of all distributions of LaTeX, 2005/12/01 or later.
+%% 
+%%   This work has the LPPL maintenance status "author-maintained".
+%%   This work consists of the files listed in the README file.
+%%
+
+%	WARNING: Please note that this file is an extension to "frenchlaw.cls"
+%	         Its purpose is to write documentations while using the overall class
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{frenchlaw-dev}%
+	[2011/03/20 v1.0 Developer macros for the Frenchlaw class]
+
+%	Print a grid
+% \usepackage{tikz}
+% \usepackage{calc} % Try to remove it and calculate with dimexpr
+% \usepackage{eso-pic}
+
+% \definecolor{grid}{gray}{0.8}
+% \newlength{\topline}
+% \setlength{\topline}{\paperheight}
+% \addtolength{\topline}{-1in}
+% \addtolength{\topline}{-\voffset-\topmargin-\headheight-\headsep-\topskip}
+% \newcounter{nlines}
+% \setcounter{nlines}{\textheight / \baselineskip + 1}
+% \AtBeginDocument{
+% \AddToShipoutPicture{%
+%     \color{grid}
+%     \multiput(0,\strip@pt\topline)%
+%     (0,-\strip@pt\baselineskip){\value{nlines}}%
+%         {\line(1,0){\strip@pt\paperwidth}}%
+% }}
+
+%	Require the needed packages
+\RequirePackage{etoolbox,xstring,xcolor,listings,verbatim,docmute,makeidx,needspace}
+
+%	Set the default colours for code
+\newcommand{\numbercolor}{\color[HTML]{655643}}% Ash (contrast: white)
+\newcommand{\macrocolor}{\color[HTML]{78948D}}% Teal (contrast: both)
+\newcommand{\commentcolor}{\color[HTML]{BF4D28}}% Saffron (contrast: white)
+\newcommand{\mathcolor}{\color[HTML]{CF872E}}% Ochre (contrast: both)
+\newcommand{\identifiercolor}{\color{black}}
+\newcommand{\emphcolor}{\color{black}}
+\newcommand{\bracketcolor}{\color{black}}
+
+%	Set the default margin signs
+\newcommand{\examplesign}{\Large$\star$}
+\newcommand{\resultsign}{$\rightarrow$}
+\newcommand{\macrosign}{\P}
+\newcommand{\optionsign}{\#}
+
+%	Define different styles for listings
+\lstset{
+	language=[LaTeX]TeX,
+	breaklines=true,
+	columns=spaceflexible,
+	emptylines=*0,
+	showstringspaces=false,
+	aboveskip=0pt,
+	belowskip=0pt,
+	breakindent=1em,
+	tabsize=2,
+	basicstyle=\ttfamily,
+	texcsstyle=*\macrocolor,
+	commentstyle=\commentcolor\itshape,
+	identifierstyle=\identifiercolor,
+	stringstyle=\mathcolor,
+}
+
+\lstdefinestyle{blockcode}{
+	frame=leftline,
+	framerule=.2ex,
+	rulecolor=\numbercolor,
+	numbers=left,
+	numberstyle=\footnotesize\numbercolor,
+	firstnumber=auto,
+}
+
+\lstdefinestyle{samplecode}{
+	numbers=left,
+	numberfirstline=true,
+	stepnumber=10000,
+	firstnumber=1,
+	numberstyle=\numbercolor\makebox[1em][c]{\examplesign}\@gobble,
+}
+
+\lstdefinestyle{macrocode}{
+	numbers=left,
+	numberfirstline=true,
+	stepnumber=10000,
+	firstnumber=1,
+	numberstyle=\numbercolor\makebox[1em][c]{\macrosign}\@gobble,
+	identifierstyle=\identifiercolor\small\itshape,
+	emphstyle=\emphcolor,
+	literate=	%{\{}{{\bracketcolor\{}{\identifiercolor}}{2}
+	% 			{\}}{{\identifiercolor}{\bracketcolor\}}}{2}
+	% 			{\{\{}{{\bracketcolor\{}}{1}
+	% 			{\}\}}{{\bracketcolor\}}}{1}
+	% 			{[}{{\bracketcolor[}{\identifiercolor}}{2}
+	% 			{]}{{\identifiercolor}{\bracketcolor]}}{2}
+	% 			{[[}{{\bracketcolor[}}{1}
+	% 			{]]}{{\bracketcolor]}}{1}
+				{<}{{\identifiercolor\small$\langle$}}{1}
+				{>}{{\identifiercolor\small$\,\rangle$}}{1},
+}
+
+\lstdefinestyle{inlinecode}{
+	literate=	{\{}{{\bracketcolor\{}}{1}
+				{\}}{{\bracketcolor\}}}{1}
+				{[}{{\bracketcolor[}}{1}
+				{]}{{\bracketcolor]}}{1}
+				{<}{{\identifiercolor\small$\langle$}}{1}
+				{>}{{\identifiercolor\small$\rangle$}}{1},
+}
+
+%	Create a command for globally adding commands (CSV list)
+\newcommand{\addcs}[1]{\lstset{moretexcs={#1},}}
+\newcommand{\addemph}[1]{\lstset{emph={#1},}}
+
+
+%%%%%%%%%%   Code Printing Commands & Environments   %%%%%%%%%%
+
+%	New environment for macro documentation
+\lstnewenvironment{macro}[1][]
+	{\lstset{style=macrocode,emph={#1}}%
+	  \addvspace{\baselineskip}}
+	{\addvspace{\baselineskip}}
+
+%	Short verbatim for inline code
+\lstMakeShortInline[style=inlinecode]{|}
+
+%	Environment for printing option information
+\newenvironment{option}[1]
+	{\par\addvspace{\baselineskip}%
+	 \setlength{\parindent}{0pt}%
+	 \if@twoside\else\hspace{-.5\marginparwidth}\fi%
+	 \lstinline{#1}\@option}
+	{\par\addvspace{\baselineskip}}
+
+\newcommand{\@option}[2][]{%
+	  \ifstrempty{#1}{}{\lstinline[{style=macrocode}]{=<#1>}}%
+	  \hfill\ifstrempty{#2}{}{par d{\'e}faut~: \lstinline{#2}}\\}
+
+
+\newcommand{\todo}[1]{\marginpar{\mathcolor{#1}}}

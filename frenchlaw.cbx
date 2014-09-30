@@ -1,0 +1,302 @@
+%%
+%%   This is file "frenchlaw.cbx", which is part of the "frenchlaw" package
+%%   Copyright 2009--2014: Fora VERN -- ienissei (at) gmail (dot) com
+%% 
+%%   This work may be distributed and/or modified under the conditions of the
+%%   LaTeX Project Public License, either version 1.3 of this license or, at your
+%%   option, any later version.
+%%
+%%   The latest version of the license can be found at:
+%%      http://www.latex-project.org/lppl.txt
+%%   and version 1.3 or later is part of all distributions of LaTeX, 2005/12/01 or later.
+%% 
+%%   This work has the LPPL maintenance status "author-maintained".
+%%   This work consists of the files listed in the README file.
+%%
+
+%	WARNING: Please note that this file is BibLaTeX style file for "frenchlaw.cls"
+
+\ProvidesFile{frenchlaw.cbx}[2013.01.05. Bibliography style for French legal documents.]
+
+%	Charger les options
+\ExecuteBibliographyOptions{uniquename,uniquelist,citetracker=true,ibidtracker=constrict,opcittracker=context,loccittracker=context,pagetracker,language=auto,useeditor=false}
+
+%	Créer des switches
+\newbool{cbx:parens}
+\newbool{cbx:multiciteparens}
+\newbool{cbx:loccit}
+\newbool{cbx:distinction}
+
+\providecommand*{\mkibid}[1]{\emph{#1}}
+
+\DeclareNameFormat{labelname}{%
+	% Imprimer la distinction lorsqu'on utilise \citeauthor, s'il y a un seul auteur
+	\ifbool{cbx:distinction}%
+		{\ifthenelse{\value{listtotal}>1}{}{\iffieldundef{nameaddon}{}{\printfield{nameaddon}\addspace}}}%
+		{}%
+	% Imprimer le nom de l'auteur, avec le prénom en initiales sauf si ambiguïté
+	\ifcase\value{uniquename}%
+		\usebibmacro{name:first-last}{#1}{#4}{#5}{#7}%
+	\or%
+		\usebibmacro{name:first-last}{#1}{#4}{#5}{#7}%
+	\or%
+		\usebibmacro{name:first-last}{#1}{#3}{#5}{#7}%
+	\fi%
+	\usebibmacro{name:andothers}}%
+
+\renewcommand{\bibinitdelim}{\addnbthinspace}% Thin space between initials
+\renewcommand{\bibnamedelimd}{\addnbspace}% Non-breaking space between initials and name
+\renewcommand{\bibnamedelimi}{\addnbspace}% Non-breaking space between initials and name
+
+% Redéfinir les acronymes (la première lettre est toujours majuscule).
+\renewcommand*{\mkbibacro}[1]{%
+	\ifcsundef{\f@encoding/\f@family/\f@series/sc}
+	{#1}
+	{\textsc{\MakeLowercase{\MakeCapital{#1}}}}}
+
+
+\DeclareFieldFormat{citetitle}{\mkbibemph{#1}}%
+\DeclareFieldFormat[book,inbook,collection,proceedings,thesis]{citetitle}{\mkbibemph{#1}}%
+\DeclareFieldFormat[article,incollection,inproceedings,patent,unpublished]{citetitle}{\mkbibquote{#1\isdot}}%
+\DeclareFieldFormat[suppbook,suppcollection,suppperiodical]{citetitle}{#1}%
+% Format des abréviations: citetitle = forme longue, citeshorthand = dans le texte (point ajouté dynamiquement), shorthandlist = dans la liste des abréviations (ajouter un point).
+\DeclareFieldFormat[customa]{citetitle}{\mkbibemph{#1}}
+\DeclareFieldFormat[customa]{citeshorthand}{\mkbibemph{#1}}
+\DeclareFieldFormat[customb]{citetitle}{#1}
+\DeclareFieldFormat[customb]{citeshorthand}{#1}%
+\DeclareFieldFormat[customc]{citetitle}{#1}%
+\DeclareFieldFormat{editortype}{\mkbibparens{#1}}%
+
+
+\newbibmacro*{cite}{%
+	\global\boolfalse{cbx:loccit}%
+	\iffieldundef{shorthand}%
+		{\ifthenelse{\ifciteibid\AND\NOT\iffirstonpage}
+			{\usebibmacro{cite:ibid}}
+			{\ifnameundef{labelname}%
+				{\ifnameundef{editor}
+					{}
+					{\printnames{editor}\addspace%
+					 \usebibmacro{editorstrg}\addcomma\addspace}%
+					 \setunit{\nametitledelim}}
+				{\printnames{labelname}%
+				 \setunit{\nametitledelim}}%
+				 \ifopcit
+					{\usebibmacro{cite:opcit}}
+					{\usebibmacro{cite:title}}}}%
+		{\usebibmacro{cite:shorthand}}}
+
+\newbibmacro*{citetitle}{%
+	\global\boolfalse{cbx:loccit}%
+	\iffieldundef{shorthand}%
+		{\ifthenelse{\ifciteibid\AND\NOT\iffirstonpage}
+			{\usebibmacro{cite:ibid}}
+			{\ifopcit
+				{\usebibmacro{cite:opcit}}
+				{\usebibmacro{cite:title}}}}%
+		{\usebibmacro{cite:shorthand}}}
+
+\newbibmacro*{textcite}{%
+	\global\boolfalse{cbx:loccit}%
+	\ifnameundef{labelname}%
+		{\ifnameundef{editor}
+			{}
+			{\printnames{editor}\addspace
+			 \usebibmacro{editorstrg}\addcomma\addspace}}%
+		{\printnames{labelname}}%
+	\global\booltrue{cbx:parens}%
+	\addnbspace\bibopenparen%
+	\iffieldundef{shorthand}%
+		{\ifopcit
+			{\usebibmacro{cite:opcit}}
+			{\usebibmacro{cite:title}}}%
+		{\usebibmacro{cite:shorthand}}}%
+
+\newbibmacro*{cite:ibid}{%
+	\ifloccit
+		{\printtext[bibhyperref]{\bibstring[\mkibid]{loccit}}%
+		 \global\booltrue{cbx:loccit}}
+		{\printtext[bibhyperref]{\bibstring[\mkibid]{ibidem}}}}
+
+\newbibmacro*{cite:opcit}{%
+	\ifloccit
+		{\printtext[bibhyperref]{\bibstring[\mkibid]{loccit}}%
+		 \global\booltrue{cbx:loccit}}
+		{\printtext[bibhyperref]{\bibstring[\mkibid]{opcit}}}}
+
+\newbibmacro*{cite:title}{%
+	\ifciteseen
+		{\iffieldundef{shorttitle}
+			{\printtext[bibhyperref]{\printfield[citetitle]{title}}}
+			{\printtext[bibhyperref]{\printfield[citetitle]{shorttitle}}}}%
+		{\printtext[bibhyperref]{\printfield[citetitle]{title}}%
+		  \ifentrytype{article}{%
+		  	\addcomma\addspace\usebibmacro{journal+issuetitle}%
+			\iffieldundef{postnote}{\addcomma\addspace\printfield{pages}}{}}{}%
+		  \ifentrytype{book}{%
+		  	\newunit\usebibmacro{publisher+location+date}}{}%
+		  \ifentrytype{collection}{%
+		  	\newunit\usebibmacro{publisher+location+date}}{}%
+		  \ifentrytype{proceedings}{%
+		  	\newunit\usebibmacro{publisher+location+date}}{}%
+		  \ifentrytype{inbook}{%
+		  	\newunit\usebibmacro{publisher+location+date}}{}%
+		  \ifentrytype{incollection}{%
+			\addcomma\addspace\usebibmacro{in:}%
+			\ifnameundef{editor}
+				{}
+				{\addspace\printnames[byeditor]{editor}\addspace\usebibmacro{editorstrg}
+				  \addcolon}%
+			\addspace\printtext[bibhyperref]{\printfield{booktitle}}%
+			\newunit\usebibmacro{publisher+location+date}%
+			\iffieldundef{postnote}{\addcomma\addspace\printfield{pages}}}{}{}%
+		  \ifentrytype{inproceedings}{%
+			\addcomma\addspace\usebibmacro{in:}%
+			\ifnameundef{editor}
+				{}
+				{\addspace\printnames[byeditor]{editor}\addspace\usebibmacro{editorstrg}
+				  \addcolon}%
+			\addspace\printtext[bibhyperref]{\printfield{booktitle}}%
+			\newunit\usebibmacro{publisher+location+date}%
+			\iffieldundef{postnote}{\addcomma\addspace\printfield{pages}}}{}{}%
+		  \ifentrytype{thesis}{%
+		  	\addcomma\addspace{\bibstring{phdthesis}}
+		  	\newunit\usebibmacro{institution+location+date}}{}%
+		  }}
+
+\renewbibmacro*{prenote}{%
+	\iffieldundef{prenote}
+		{}
+		{\printfield{prenote}\unspace%
+		 \setunit{\prenotedelim}}}
+
+\newbibmacro*{cite:postnote}{%
+	\ifbool{cbx:loccit}
+		{}
+		{\usebibmacro{postnote}}}
+
+\newbibmacro*{textcite:postnote}{%
+	\iffieldundef{postnote}
+		{\ifbool{cbx:parens}
+			{\bibcloseparen}
+			{}}%
+		{\ifbool{cbx:parens}
+			{}
+			{\addnbspace\bibopenparen}%
+		 \ifbool{cbx:loccit}
+		 	{}
+		 	{\usebibmacro{postnote}}%
+		 \bibcloseparen}%
+	% Switch back to the main language due to different spacing in French punctuation
+	\expandafter\selectlanguage\expandafter{\bbl@main@language}%
+	\global\boolfalse{cbx:parens}}
+
+\newbibmacro*{cite:shorthand}{%
+	\printtext[bibhyperref]{\printfield[citeshorthand]{shorthand}}}
+
+% Citation commands
+
+\DeclareCiteCommand{\cite}
+	{\bibsentence\usebibmacro{prenote}}
+	{\usebibmacro{citeindex}%
+	 \usebibmacro{cite}}
+	{\multicitedelim}
+	{\usebibmacro{cite:postnote}}
+
+\DeclareCiteCommand*{\cite}
+	{\bibsentence\usebibmacro{prenote}}
+	{\usebibmacro{citeindex}%
+	 \usebibmacro{citetitle}}
+	{\multicitedelim}
+	{\usebibmacro{cite:postnote}}
+
+\DeclareCiteCommand{\parencite}[\mkbibparens]
+	{\usebibmacro{prenote}}
+	{\usebibmacro{citeindex}%
+	 \usebibmacro{cite}}
+	{\multicitedelim}
+	{\usebibmacro{cite:postnote}}
+
+\DeclareCiteCommand*{\parencite}[\mkbibparens]
+	{\usebibmacro{prenote}}
+	{\usebibmacro{citeindex}%
+	 \usebibmacro{citetitle}}
+	{\multicitedelim}
+	{\usebibmacro{cite:postnote}}
+
+\DeclareCiteCommand{\footcite}[\mkbibfootnote]
+	{\bibsentence\usebibmacro{prenote}}
+	{\usebibmacro{citeindex}%
+	 \usebibmacro{cite}}
+	{\multicitedelim}
+	{\usebibmacro{cite:postnote}}
+
+\DeclareCiteCommand{\smartcite}[\iffootnote\mkbibparens\mkbibfootnote]
+	{\bibsentence\usebibmacro{prenote}}
+	{\usebibmacro{citeindex}%
+	 \usebibmacro{cite}}
+	{\multicitedelim}
+	{\usebibmacro{cite:postnote}}
+
+\DeclareCiteCommand{\textcite}
+	{\usebibmacro{prenote}}
+	{\usebibmacro{citeindex}%
+	 \usebibmacro{textcite}}
+	{}
+	{\usebibmacro{textcite:postnote}}
+
+\DeclareCiteCommand{\citeauthor}[\boolfalse{citetracker}\boolfalse{pagetracker}]
+	{\usebibmacro{prenote}}
+	{\ifciteindex%
+		{\indexnames{labelname}}%
+		{}%
+	\booltrue{cbx:distinction}\printnames{labelname}}%
+	{\multicitedelim}%
+	{\usebibmacro{postnote}}%
+
+\DeclareCiteCommand{\citetitle}[\boolfalse{citetracker}\boolfalse{pagetracker}]
+	{\usebibmacro{prenote}}
+	{\ifciteindex
+		{\indexnames{labelname}}
+		{}%
+	\printfield[citetitle]{title}}
+	{\multicitedelim}
+	{\usebibmacro{postnote}}
+
+\DeclareCiteCommand{\fullcite}
+	{\usebibmacro{prenote}}
+	{\usedriver
+		{\DeclareNameAlias{sortname}{default}}
+		{\thefield{entrytype}}}
+	{\multicitedelim}
+	{\usebibmacro{postnote}}
+
+
+%	TODO » Multiple citations // Chantier
+
+\renewbibmacro*{multiprenote}{%
+	\ifbool{cbx:multiciteparens}%
+		{\bibopenparen}%
+		{}%
+	\iffieldundef{multiprenote}%
+		{}%
+		{\printfield{multiprenote}%
+		\prenotedelim}}%
+
+\renewbibmacro*{multipostnote}{%
+	\iffieldundef{multipostnote}%
+		{}%
+		{\addsemicolon\addspace%
+		\printfield{multipostnote}}%
+	\ifbool{cbx:multiciteparens}%
+		{\bibcloseparen\boolfalse{cbx:multiciteparens}}%
+		{}}%
+
+\DeclareMultiCiteCommand{\cites}{\cite}{\multicitedelim}%
+\DeclareMultiCiteCommand{\parencites}[\booltrue{cbx:multiciteparens}]{\cite}{\multicitedelim}
+\DeclareMultiCiteCommand{\footcites}{\footcite}{\multicitedelim}%
+\DeclareMultiCiteCommand{\smartcites}{\smartcite}{\multicitedelim}%
+\DeclareMultiCiteCommand{\textcites}{\textcite}{\multicitedelim}%
+\DeclareMultiCiteCommand{\citeauthors}{\citeauthor}{\addcomma\addspace}%
+
+\endinput

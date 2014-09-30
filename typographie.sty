@@ -1,0 +1,218 @@
+%%
+%%   This is file "typographie.sty", which is part of the "frenchlaw" package
+%%   Copyright 2009--2014: Fora VERN -- ienissei (at) gmail (dot) com
+%% 
+%%   This work may be distributed and/or modified under the conditions of the
+%%   LaTeX Project Public License, either version 1.3 of this license or, at your
+%%   option, any later version.
+%%
+%%   The latest version of the license can be found at:
+%%      http://www.latex-project.org/lppl.txt
+%%   and version 1.3 or later is part of all distributions of LaTeX, 2005/12/01 or later.
+%% 
+%%   This work has the LPPL maintenance status "author-maintained".
+%%   This work consists of the files listed in the README file.
+%%
+
+%	WARNING: Please note that this file is a temporary annex to "frenchlaw.cls"
+%	         It will be renamed and/or merged with the later at some point
+
+%	Configurer <babel> en français
+\frenchbsetup{
+	ReduceListSpacing=false,% Alignement des listes est géré par {frenchlaw}, à vérifier
+	StandardItemizeEnv=true,
+	FrenchFootnotes=false,% Les notes de bas de page sont gérées par {frenchlaw}
+%	SuppressWarning=true%
+}
+
+%	Configurer les noms des différents éléments en français
+\addto\captionsfrench{%%
+	\def\abstractname{R{\'e}sum{\'e}}%
+	\def\keywordsname{Mots clefs}%
+	\def\contentsname{Table des mati{\`e}res}%
+	\def\listfigurename{Figures}%
+	\def\listtablename{Tableaux}%
+	\def\prefacename{Pr{\'e}face}%
+	\def\bookname{Livre}%
+	\def\cftbookname{Livre}%
+	\def\bookrefname{Livre~}%
+	\def\partname{\Ordinalstring{part}[f]\space partie\def\thepart{}}%
+	\def\cftpartname{Partie~}%
+	\def\partrefname{Partie~}%
+	\def\headingname{Titre}%
+	\def\cftheadingname{Titre~}%
+	\def\headingrefname{Titre~}%
+	\def\subheadingname{Sous-titre}%
+	\def\cftsubheadingname{Sous-titre~}%
+	\def\subheadingrefname{Sous-titre~}%
+	\def\chaptername{Chapitre}%
+	\def\cftchaptername{Chapitre}%
+	\def\chapterrefname{Chapter~}%
+	\if@article%
+		\def\sectionname{}%
+		\def\cftsectionname{}%
+		\def\sectionrefname{}%
+		\def\subsectionname{}%
+		\def\cftsubsectionname{}%
+		\def\subsectionrefname{}%
+	\else%
+		\def\sectionname{Section}%
+		\def\cftsectionname{Section~}%
+		\def\sectionrefname{Section~}%
+		\def\subsectionname{\S}%
+		\def\cftsubsectionname{\S~}%
+		\def\subsectionrefname{\S~}%
+	\fi%
+	\def\appendixname{Annexe}%
+	\def\cftappendixname{Annexe}%
+	\def\appendixrefname{Annexe~}%
+	\def\bibname{Bibliographie}%
+	\def\refname{R{\'e}f{\'e}rences}%
+	\def\indexname{Index}%
+	\def\glossaryname{Glossaire}%
+	\def\figurename{{\scshape Figure}}%
+	\def\figurerefname{Figure}%
+	\def\tablename{{\scshape Tableau}}%
+	\def\tablerefname{Tableau}%
+	\def\proofname{{\scshape D{\'e}monstration}}%
+	\def\pagename{page}%
+	\def\pagerefname{page}%
+	\def\seename{voir}%
+	\def\alsoname{voir aussi}%
+	\def\headtoname{{\`A}}%
+	\def\ccname{Copie à}%
+	\def\enclname{P.\thinspace J.}%
+}
+
+%	Configurer les noms des différents éléments en anglais
+%	TODO » Vérifier l'exhaustivité + Idem pour USenglish
+\addto\captionsbritish{
+	\def\keywordsname{Keywords}
+}
+
+%	Créer des commandes rapides pour le grec et le latin
+%	TODO » Utiliser \emph au lieu de \textit (?)
+\newcommand{\latin}[1]{\foreignlanguage{latin}{\textit{#1}}}
+\newcommand{\greek}[1]{\foreignlanguage{greek}{#1}}
+
+% 	Définir une commande pour souligner une partie du texte proprement
+%\newcommand{\textul}[1]{\uline{#1}}
+
+%	Charger des symboles et les utiliser en fonction de la langue
+\usepackage{textcomp}
+\if@french
+	\renewcommand{\euro}{\unskip~\texteuro\xspace}
+\else
+	\renewcommand{\euro}{\unskip\texteuro\xspace}
+\fi
+
+%	Définir les commandes pour les abréviations (charger après babel)
+%	Créer des commandes pour ajuster les espaces après les abréviations
+\usepackage{xspace}
+\xspaceaddexceptions{])\marginpar}
+
+%	Définir une commande pour ajouter automatiquement un point et une espace
+\newcommand{\xdot}{%
+	\@ifnextchar{.}%
+		{\get@sf}%
+		{\@\xspace}%
+}
+\def\get@sf#1{\spacefactor\the\sfcode`#1\relax}% Thanks @egreg
+
+%	Créer les commandes pour afficher les siècles
+% Usage: \siecle{1}, \siecles[et]{1}{2}
+%	TODO » Rajouter les messages d'erreur prévus + Utiliser \century + Internationaliser
+\newcounter{siecle}
+\newcommand{\siecle}[1]{%
+	\ifboolexpr{test {\ifnumcomp{#1}{=}{0}}}
+		{ERREUR}
+		{\unskip~%
+		\ifnum#1>0\setcounter{siecle}{#1}\else\setcounter{siecle}{-#1}\fi%
+		\textsc{\roman{siecle}}%
+		\ifnum\value{siecle}=1			\er\else\e\fi\unskip~siècle%
+		\ifboolexpr{	test {\ifnumcomp{#1}{>}{0}}}{}{\space\avJC}}}
+\newcommand{\siecles}[3][\@empty]{%
+	\ifboolexpr{	test {\ifnumcomp{#2}{=}{0}} or test {\ifnumcomp{#3}{=}{0}}%
+			or (test {\ifnumcomp{#2}{<}{0}} and test {\ifnumcomp{#3}{>}{0}})%
+			or (test {\ifnumcomp{#2}{>}{0}} and test {\ifnumcomp{#3}{<}{0}})%
+			or test {\ifnumcomp{#2}{>}{#3}}}
+		{ERREUR}
+		{\unskip~%
+		\ifnum#2>0\setcounter{siecle}{#2}\else\setcounter{siecle}{-#2}\fi%
+		\textsc{\roman{siecle}}%
+		\ifnum\value{siecle}=1			\er\else\e\fi%
+		\unskip\ifx#1\@empty--\else~#1~\fi%
+		\ifnum#3>0\setcounter{siecle}{#3}\else\setcounter{siecle}{-#3}\fi%
+		\textsc{\roman{siecle}}%
+		\ifnum\value{siecle}=1			\er\else\e\fi%
+		\ifboolexpr{	test{\ifnumcomp{#2+1}{=}{#3}}%
+				or test {\ifnumcomp{#2}{=}{#3+1}}}
+			{\unskip~siècles}
+			{\unskip~siècle}%
+		\ifboolexpr{	test {\ifnumcomp{#2}{>}{0}}}{}{\space\avJC}}}
+
+%	Créer une commande pour afficher les heures
+% Usage: \heure{12}{15} conforme à la norme typographique (dans un texte), \heure*{12}{15} pour afficher l'heure en chiffres uniquement
+%	TODO » Utiliser \hour + Internationaliser
+\newcommand{\heure}{\@ifstar{\s@heure}{\@heure}}
+\newcommand{\@heure}[2]{%
+	\ifnum#1=0						minuit%
+		\ifnum#2=0					%
+		\else\ifnum#2=15				\space et quart%
+		\else\ifnum#2=30				\space et demi%
+		\else						\space\numberstringnum{#2}%
+		\fi\fi\fi%
+	\else\ifnum#1=12					midi%
+		\ifnum#2=0					%
+		\else\ifnum#2=15				\space et quart%
+		\else\ifnum#2=30				\space et demi%
+		\else						\space\numberstringnum{#2}%
+		\fi\fi\fi%
+	\else#1\,h\ifnum#2=0\else\,#2\fi%
+	\fi\fi%
+}
+\newcommand{\s@heure}[2]{\unskip~#1\,h\,#2}
+
+%	Définir les abréviations générales
+%	TODO » Internationaliser + Rajouter les autre abréviations courantes
+\newcommand{\St}{S\textsuperscript{t}~}
+\newcommand{\Ste}{S\textsuperscript{te}~}
+\newcommand{\Mme}{M\textsuperscript{me}~}
+\newcommand{\Mmes}{M\textsuperscript{mes}~}
+\newcommand{\Mlle}{M\textsuperscript{lle}~}
+\newcommand{\Mlles}{M\textsuperscript{lles}~}
+\newcommand{\Mr}{M.~}
+\newcommand{\Mrs}{M\textsuperscript{rs}~}
+\newcommand{\Me}{M\textsuperscript{e}~}
+\newcommand{\Mes}{M\textsuperscript{es}~}
+\newcommand{\Dr}{D\textsuperscript{r}~}
+\newcommand{\Vve}{V\textsuperscript{ve}~}
+%
+\newcommand{\Cie}{C\textsuperscript{ie}\xspace}
+%
+\newcommand{\e}{\textsuperscript{e}\xspace}
+\newcommand{\es}{\textsuperscript{es}\xspace}
+\newcommand{\er}{\textsuperscript{er}\xspace}
+\newcommand{\ers}{\textsuperscript{ers}\xspace}
+\newcommand{\re}{\textsuperscript{re}\xspace}
+\newcommand{\res}{\textsuperscript{res}\xspace}
+\renewcommand{\o}{\textsuperscript{o}\xspace}
+%
+\newcommand{\NB}{\emph{N.\thinpace B.}\xspace}
+\newcommand{\PS}{P.--S.~—\space}
+\newcommand{\ie}{\emph{i.\thinspace e.}~}
+\newcommand{\eg}{\emph{e.\thinspace g.}~}
+\newcommand{\passim}{\latin{passim}}
+%
+\newcommand{\contra}{\emph{contra\nocorr}\xspace}
+\newcommand{\Contra}{\emph{Contra\nocorr}\xspace}
+\renewcommand{\v}{voir\xspace}
+\newcommand{\V}{Voir\xspace}
+\newcommand{\comp}{comp.~}
+\newcommand{\Comp}{Comp.~}
+%
+\newcommand{\n}{\emph{n.}\xdot}
+\newcommand{\obs}{\emph{obs.}\xdot}
+%
+\newcommand{\avJC}{av.~J.-C.\xdot}
+\newcommand{\apJC}{apr.~J.-C.\xdot}

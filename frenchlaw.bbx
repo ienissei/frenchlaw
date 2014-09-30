@@ -1,0 +1,996 @@
+%%
+%%   This is file "frenchlaw.bbx", which is part of the "frenchlaw" package
+%%   Copyright 2009--2014: Fora VERN -- ienissei (at) gmail (dot) com
+%% 
+%%   This work may be distributed and/or modified under the conditions of the
+%%   LaTeX Project Public License, either version 1.3 of this license or, at your
+%%   option, any later version.
+%%
+%%   The latest version of the license can be found at:
+%%      http://www.latex-project.org/lppl.txt
+%%   and version 1.3 or later is part of all distributions of LaTeX, 2005/12/01 or later.
+%% 
+%%   This work has the LPPL maintenance status "author-maintained".
+%%   This work consists of the files listed in the README file.
+%%
+
+%	WARNING: Please note that this file is BibLaTeX style file for "frenchlaw.cls"
+
+\ProvidesFile{frenchlaw.bbx}[2013.01.05. Bibliography style for French legal documents.]
+
+%	Créer des switches
+\newtoggle{bbx:isbn}
+\newtoggle{bbx:url}
+\newtoggle{bbx:doi}
+\newtoggle{bbx:eprint}
+\newtoggle{bbx:related}
+
+%	Déclarer des options qui utilisent les switches
+\DeclareBibliographyOption{isbn}[true]{%
+	\settoggle{bbx:isbn}{#1}}
+\DeclareBibliographyOption{url}[true]{%
+	\settoggle{bbx:url}{#1}}
+\DeclareBibliographyOption{doi}[true]{%
+	\settoggle{bbx:doi}{#1}}
+\DeclareBibliographyOption{eprint}[true]{%
+	\settoggle{bbx:eprint}{#1}}
+\DeclareBibliographyOption{related}[true]{%
+  \settoggle{bbx:related}{#1}}
+
+%	Charger les options
+\ExecuteBibliographyOptions{isbn,url,doi,eprint,pagetracker}
+%	TODO » "Related" ne peut pzs être utilisé sans copier sa \bibmacro
+%	TODO » pagetracker needed only for "\iffirstonpage" (dash command)
+
+%	Créer des macros pour le début et la fin des entrées
+\newbibmacro*{begentry}{}
+\newbibmacro*{finentry}{\finentry}
+
+%	TODO » New
+%	Créer un système de cross-references
+\DeclareNameFormat{crossref}{\usebibmacro{name:last}{#1}{#3}{#5}{#7}}
+\DeclareCiteCommand{\bbx@crossref}
+	{}
+	{\setunit{\addspace}
+	 \printnames[crossref]{labelname}%
+	 \setunit*{\addcomma\addspace}
+	 \printfield[title]{labeltitle}}
+	{}
+	{}
+
+%	TODO » New
+%	Redéfinir le tiret ajouté s'il y a plusieurs ouvrages du même auteur
+\renewcommand*{\bibnamedash}{%
+	\ifthenelse{\ifuseauthor\AND\NOT\ifnameundef{author}}
+		{\textemdash\adddot\addspace}
+		{\textemdash\addspace}%
+}
+
+%	TODO » New
+%	Préciser le format des signes de ponctuation
+\renewcommand{\subtitlepunct}{:\addspace}
+
+%	TODO » New
+%	Préciser les formats des champs
+\DeclareFieldFormat[article]{title}{\mkbibquote{#1\adddot}}%
+\DeclareFieldFormat[article]{volume}{\bibstring{jourvol}#1}% volume of a journal
+\DeclareFieldFormat{number}{\bibstring{number}~#1}%
+\DeclareFieldFormat[article,incollection,inproceedings,periodical]{number}{\bibstring{number}~#1}
+\DeclareFieldFormat[inbook]{title}{\mkbibemph{#1\adddot}}%
+\DeclareFieldFormat[incollection]{title}{\mkbibquote{#1\adddot}}%
+\DeclareFieldFormat[thesis]{title}{\mkbibemph{#1\adddot}}%
+\DeclareFieldFormat[customa]{title}{\mkbibemph{#1}}%
+\DeclareFieldFormat[customb]{title}{{#1}}%
+\DeclareFieldFormat[customc]{title}{{#1}}%
+\DeclareFieldFormat{plain}{{#1}}
+
+%	Définir le formatage des <article>
+\DeclareBibliographyDriver{article}{%
+	\usebibmacro{bibindex}%
+	\usebibmacro{begentry}%
+	\usebibmacro{author/translator+others}%
+	\setunit{\labelnamepunct}\newblock
+	\usebibmacro{title}%
+	\newunit\newblock
+	\usebibmacro{byauthor}%
+	\newunit\newblock
+	\usebibmacro{bytranslator+others}%
+	\newunit\newblock
+	\usebibmacro{journal+issuetitle}%
+	\newunit
+	\usebibmacro{byeditor+others}%
+	\newunit\newblock
+	\printfield{note}%
+	\newunit
+	\usebibmacro{pages}%
+	\newunit\newblock
+	\iftoggle{bbx:isbn}
+		{\printfield{issn}}
+		{}%
+	\newunit\newblock
+	\usebibmacro{doi+eprint+url}%
+	\newunit\newblock
+	\usebibmacro{addendum+pubstate}%
+	\setunit{\bibpagerefpunct}\newblock
+	\usebibmacro{pageref}%
+	%	TODO » Implement
+	% \newunit\newblock
+	% \iftoggle{bbx:related}
+	% 	{\usebibmacro{related:init}%
+	% 	 \usebibmacro{related}}
+	% 	{}%
+	\usebibmacro{finentry}}
+
+%	Définir le formatage des <book>
+\DeclareBibliographyDriver{book}{%
+	\usebibmacro{bibindex}%
+	\usebibmacro{begentry}%
+	\usebibmacro{author/editor+others/translator+others}%
+	\setunit{\labelnamepunct}\newblock
+	\usebibmacro{maintitle+title}%
+	\newunit\newblock
+	\usebibmacro{byauthor}%
+	\newunit\newblock
+	\usebibmacro{byeditor+others}%
+	\newunit\newblock
+	\printfield{edition}%
+	\newunit\newblock
+	\printfield{volumes}%
+	\newunit\newblock
+	\printfield{note}%
+	\newunit\newblock
+	\usebibmacro{publisher+location+date}%
+	\newunit
+	\usebibmacro{series+number}%
+	\newunit
+	\printfield{pagetotal}%
+	\setunit{\addcomma\addspace}
+	\iffieldundef{maintitle}
+		{\printfield{volume}%
+		 \printfield{part}}
+		{}%
+	\newunit
+	\usebibmacro{chapter+pages}%
+	\newunit\newblock
+	\iftoggle{bbx:isbn}
+		{\printfield{isbn}}
+		{}%
+	\newunit\newblock
+	\usebibmacro{doi+eprint+url}%
+	\newunit\newblock
+	\usebibmacro{addendum+pubstate}%
+	\setunit{\bibpagerefpunct}\newblock
+	\usebibmacro{pageref}%
+	%	TODO » Implement
+	% \newunit\newblock
+	% \iftoggle{bbx:related}
+	% 	{\usebibmacro{related:init}%
+	% 	 \usebibmacro{related}}
+	% 	{}%
+	\usebibmacro{finentry}}
+
+%	Définir le formatage des <collection>
+\DeclareBibliographyDriver{collection}{%
+	\usebibmacro{bibindex}%
+	\usebibmacro{begentry}%
+	\usebibmacro{author/editor+others}%
+	\setunit{\labelnamepunct}\newblock
+	\usebibmacro{maintitle+title}%
+	\newunit\newblock
+	\usebibmacro{byeditor+others}%
+	\newunit\newblock
+	\printfield{edition}%
+	\newunit\newblock
+	\printfield{volumes}%
+	\newunit\newblock
+	\printfield{note}%
+	\newunit\newblock
+	\usebibmacro{publisher+location+date}%
+	\newunit
+	\usebibmacro{series+number}%
+	\newunit
+	\printfield{pagetotal}%
+	\setunit{\addcomma\addspace}
+	\iffieldundef{maintitle}
+		{\printfield{volume}%
+		 \printfield{part}}
+		{}%
+	\newunit
+	\usebibmacro{chapter+pages}%
+	\newunit\newblock
+	\iftoggle{bbx:isbn}
+		{\printfield{isbn}}
+		{}%
+	\newunit\newblock
+	\usebibmacro{doi+eprint+url}%
+	\newunit\newblock
+	\usebibmacro{addendum+pubstate}%
+	\setunit{\bibpagerefpunct}\newblock
+	\usebibmacro{pageref}%
+	%	TODO » Implement
+	% \newunit\newblock
+	% \iftoggle{bbx:related}
+	% 	{\usebibmacro{related:init}%
+	% 	 \usebibmacro{related}}
+	% 	{}%
+	\usebibmacro{finentry}}
+
+%	Définir le formatage des <proceedings>
+\DeclareBibliographyDriver{proceedings}{%
+	\usebibmacro{bibindex}%
+	\usebibmacro{begentry}%
+	\usebibmacro{editor+others}%
+	\setunit{\labelnamepunct}\newblock
+	\usebibmacro{maintitle+title}%
+	\newunit\newblock
+	\usebibmacro{event+venue+date}%
+	\newunit\newblock
+	\usebibmacro{byeditor+others}%
+	\newunit\newblock
+	\printfield{edition}%
+	\newunit\newblock
+	\printfield{volumes}%
+	\newunit\newblock
+	\printfield{note}%
+	\newunit\newblock
+	\printlist{organization}%
+	\newunit
+	\usebibmacro{publisher+location+date}%
+	\newunit
+	\usebibmacro{series+number}%
+	\newunit
+	\printfield{pagetotal}%
+	\setunit{\addcomma\addspace}
+	\iffieldundef{maintitle}
+		{\printfield{volume}%
+		 \printfield{part}}
+		{}%
+	\newunit
+	\usebibmacro{chapter+pages}%
+	\newunit\newblock
+	\iftoggle{bbx:isbn}
+		{\printfield{isbn}}
+		{}%
+	\newunit\newblock
+	\usebibmacro{doi+eprint+url}%
+	\newunit\newblock
+	\usebibmacro{addendum+pubstate}%
+	\setunit{\bibpagerefpunct}\newblock
+	\usebibmacro{pageref}%
+	%	TODO » Implement
+	% \newunit\newblock
+	% \iftoggle{bbx:related}
+	% 	{\usebibmacro{related:init}%
+	% 	 \usebibmacro{related}}
+	% 	{}%
+	\usebibmacro{finentry}}
+
+%	Définir le formatage des <inbook>
+\DeclareBibliographyDriver{inbook}{%
+	\usebibmacro{bibindex}%
+	\usebibmacro{begentry}%
+	\usebibmacro{author/translator+others}%
+	\setunit{\labelnamepunct}\newblock
+	\usebibmacro{title}%
+	\newunit\newblock
+	\usebibmacro{byauthor}%
+	\iffieldundef{crossref}
+		{\newunit\newblock
+		 \usebibmacro{in:}%
+		 \setunit*{\addspace}
+		 \ifnameundef{bookauthor}
+			{}
+			{\ifnamesequal{author}{bookauthor}
+				{}
+				{\printnames{bookauthor}%
+				 \setunit{\addcomma\addspace}}}%
+		 \usebibmacro{maintitle+booktitle}%
+		 \newunit\newblock
+		 \usebibmacro{byeditor+others}%
+		 \newunit\newblock
+		 \printfield{edition}%
+		 \newunit\newblock
+		 \printfield{volumes}%
+		 \newunit\newblock
+		 \printfield{note}%
+		 \newunit\newblock
+		 \usebibmacro{publisher+location+date}%
+		 \newunit
+		 \usebibmacro{series+number}%
+		 \setunit{\addcomma\addspace}
+		 \iffieldundef{maintitle}
+			{\printfield{volume}%
+			 \printfield{part}}
+			{}%
+		 \newunit
+		 \usebibmacro{chapter+pages}%
+		 \newunit\newblock
+		 \iftoggle{bbx:isbn}
+			{\printfield{isbn}}
+			{}%
+		 \newunit\newblock
+		 \usebibmacro{doi+eprint+url}%
+		 \newunit\newblock
+		 \usebibmacro{addendum+pubstate}%
+		 \setunit{\bibpagerefpunct}\newblock
+		 \usebibmacro{pageref}%
+		%	TODO » Implement
+		% \newunit\newblock
+		% \iftoggle{bbx:related}
+		% 	{\usebibmacro{related:init}%
+		% 	 \usebibmacro{related}}
+		% 	{}%
+		}%
+		{\newunit\newblock
+		 \usebibmacro{see:}%
+		 \bbx@crossref{\thefield{crossref}}%
+		 \setunit{\addcomma\addspace}
+		 \iffieldundef{maintitle}
+			{\printfield{volume}%
+			 \printfield{part}}
+			{}%
+		 \newunit
+		 \usebibmacro{chapter+pages}}%
+	\usebibmacro{finentry}}
+
+%	Définir le formatage des <incollection>
+\DeclareBibliographyDriver{incollection}{%
+	\usebibmacro{bibindex}%
+	\usebibmacro{begentry}%
+	\usebibmacro{author/translator+others}%
+	\setunit{\labelnamepunct}\newblock
+	\usebibmacro{title}%
+	% \newunit
+	% \printlist{language}%
+	\newunit\newblock
+	\usebibmacro{byauthor}%
+	\iffieldundef{crossref}%
+		{\newunit\newblock
+		 \usebibmacro{in:}%
+		 \setunit{\addspace}
+		 \usebibmacro{maintitle+booktitle}%
+		 \newunit\newblock
+		 \usebibmacro{byeditor+others}%
+		 \newunit\newblock
+		 \printfield{edition}%
+		 \newunit\newblock
+		 \printfield{volumes}%
+		 \newunit\newblock
+		 \printfield{note}%
+		 \newunit\newblock
+		 \usebibmacro{publisher+location+date}%
+		 \newunit
+		 \usebibmacro{series+number}%
+		 \setunit{\addcomma\addspace}
+		 \iffieldundef{maintitle}
+			{\printfield{volume}%
+			 \printfield{part}}
+			{}%
+		 \newunit
+		 \usebibmacro{chapter+pages}%
+		 \newunit\newblock
+		 \iftoggle{bbx:isbn}
+			{\printfield{isbn}}
+			{}%
+		 \newunit\newblock
+		 \usebibmacro{doi+eprint+url}%
+		 \newunit\newblock
+		 \usebibmacro{addendum+pubstate}%
+		 \setunit{\bibpagerefpunct}\newblock
+		 \usebibmacro{pageref}%
+		%	TODO » Implement
+		% \newunit\newblock
+		% \iftoggle{bbx:related}
+		% 	{\usebibmacro{related:init}%
+		% 	 \usebibmacro{related}}
+		% 	{}%
+		}%
+		{\newunit\newblock
+		 \usebibmacro{see:}%
+		 \bbx@crossref{\thefield{crossref}}%
+		 \setunit{\addcomma\addspace}
+		 \iffieldundef{maintitle}
+			{\printfield{volume}%
+			 \printfield{part}}
+			{}%
+		 \newunit
+		 \usebibmacro{chapter+pages}}%
+	\usebibmacro{finentry}}
+
+%	Définir le formatage des <inproceedings>
+\DeclareBibliographyDriver{inproceedings}{%
+	\usebibmacro{bibindex}%
+	\usebibmacro{begentry}%
+	\usebibmacro{author/translator+others}%
+	\setunit{\labelnamepunct}\newblock
+	\usebibmacro{title}%
+	% \newunit
+	% \printlist{language}%
+	\newunit\newblock
+	\usebibmacro{byauthor}%
+	\iffieldundef{crossref}%
+		{\newunit\newblock
+		 \usebibmacro{in:}%
+		 \setunit{\addspace}
+		 \usebibmacro{maintitle+booktitle}%
+		 \newunit\newblock
+		 \usebibmacro{event+venue+date}%
+		 \newunit\newblock
+		 \usebibmacro{byeditor+others}%
+		 \newunit\newblock
+		 \printfield{edition}%
+		 \newunit\newblock
+		 \printfield{volumes}%
+		 \newunit\newblock
+		 \printfield{note}%
+		 \newunit\newblock
+		 \printlist{organization}%
+		 \newunit
+		 \usebibmacro{publisher+location+date}%
+		 \newunit
+		 \usebibmacro{series+number}%
+		 \setunit{\addcomma\addspace}
+		 \iffieldundef{maintitle}
+			{\printfield{volume}%
+			 \printfield{part}}
+			{}%
+		 \newunit
+		 \usebibmacro{chapter+pages}%
+		 \newunit\newblock
+		 \iftoggle{bbx:isbn}
+			{\printfield{isbn}}
+			{}%
+		 \newunit\newblock
+		 \usebibmacro{doi+eprint+url}%
+		 \newunit\newblock
+		 \usebibmacro{addendum+pubstate}%
+		 \setunit{\bibpagerefpunct}\newblock
+		 \usebibmacro{pageref}%
+		%	TODO » Implement
+		% \newunit\newblock
+		% \iftoggle{bbx:related}
+		% 	{\usebibmacro{related:init}%
+		% 	 \usebibmacro{related}}
+		% 	{}%
+		}%
+		{\newunit\newblock
+		 \usebibmacro{see:}%
+		 \bbx@crossref{\thefield{crossref}}%
+		 \setunit{\addcomma\addspace}
+		 \iffieldundef{maintitle}
+			{\printfield{volume}%
+			 \printfield{part}}
+			{}%
+		 \newunit
+		 \usebibmacro{chapter+pages}}%
+	\usebibmacro{finentry}}
+
+%	Définir le formatage des <patent>
+\DeclareBibliographyDriver{patent}{%
+	\usebibmacro{bibindex}%
+	\usebibmacro{begentry}%
+	\usebibmacro{author}%
+	\setunit{\labelnamepunct}\newblock
+	\usebibmacro{title}%
+	% \newunit
+	% \printlist{language}%
+	\newunit\newblock
+	\usebibmacro{byauthor}%
+	\newunit\newblock
+	\printfield{type}%
+	\setunit*{\addspace}%
+	\printfield{number}%
+	\iflistundef{location}
+		{}
+		{\setunit*{\addspace}%
+			\printtext[parens]{%
+			\printlist[][-\value{listtotal}]{location}}}%
+	\newunit\newblock
+	\usebibmacro{byholder}%
+	\newunit
+	\printfield{note}%
+	\newunit\newblock
+	\usebibmacro{date}%
+	\newunit\newblock
+	\usebibmacro{doi+eprint+url}%
+	\newunit\newblock
+	\usebibmacro{addendum+pubstate}%
+	\setunit{\bibpagerefpunct}\newblock
+	\usebibmacro{pageref}%
+	%	TODO » Implement
+	% \newunit\newblock
+	% \iftoggle{bbx:related}
+	% 	{\usebibmacro{related:init}%
+	% 	 \usebibmacro{related}}
+	% 	{}%
+	\usebibmacro{finentry}}
+
+%	Définir le formatage des <periodical>
+\DeclareBibliographyDriver{periodical}{%
+	\usebibmacro{bibindex}%
+	\usebibmacro{begentry}%
+	\usebibmacro{editor}%
+	\setunit{\labelnamepunct}\newblock
+	\usebibmacro{title+issuetitle}%
+	\newunit\newblock
+	\usebibmacro{byeditor}%
+	\newunit\newblock
+	\printfield{note}%
+	\newunit\newblock
+	\iftoggle{bbx:isbn}
+		{\printfield{issn}}
+		{}%
+	\newunit\newblock
+	\usebibmacro{doi+eprint+url}%
+	\newunit\newblock
+	\usebibmacro{addendum+pubstate}%
+	\setunit{\bibpagerefpunct}\newblock
+	\usebibmacro{pageref}%
+	%	TODO » Implement
+	% \newunit\newblock
+	% \iftoggle{bbx:related}
+	% 	{\usebibmacro{related:init}%
+	% 	 \usebibmacro{related}}
+	% 	{}%
+	\usebibmacro{finentry}}
+
+%	Définir le formatage des <report>
+\DeclareBibliographyDriver{report}{%
+	\usebibmacro{bibindex}%
+	\usebibmacro{begentry}%
+	\usebibmacro{author}%
+	\setunit{\labelnamepunct}\newblock
+	\usebibmacro{title}%
+	\newunit\newblock
+	\usebibmacro{byauthor}%
+	\newunit\newblock
+	\printfield{type}%
+	\setunit*{\addspace}%
+	\printfield{number}%
+	\newunit\newblock
+	\printfield{version}%
+	\newunit\newblock
+	\printfield{note}%
+	\newunit\newblock
+	\usebibmacro{institution+location+date}%
+	\newunit
+	\printfield{pagetotal}%
+	\setunit{\addcomma\addspace}
+	\usebibmacro{chapter+pages}%
+	\newunit\newblock
+	\iftoggle{bbx:isbn}
+		{\printfield{isrn}}
+		{}%
+	\newunit\newblock
+	\usebibmacro{doi+eprint+url}%
+	\newunit\newblock
+	\usebibmacro{addendum+pubstate}%
+	\setunit{\bibpagerefpunct}\newblock
+	\usebibmacro{pageref}%
+	%	TODO » Implement
+	% \newunit\newblock
+	% \iftoggle{bbx:related}
+	% 	{\usebibmacro{related:init}%
+	% 	 \usebibmacro{related}}
+	% 	{}%
+	\usebibmacro{finentry}}
+
+%	Définir le formatage des <thesis>
+\DeclareBibliographyDriver{thesis}{%
+	\usebibmacro{bibindex}%
+	\usebibmacro{begentry}%
+	\usebibmacro{author}%
+	\setunit{\labelnamepunct}\newblock
+	\usebibmacro{title}%
+	\newunit\newblock
+	\usebibmacro{byauthor}%
+	\newunit\newblock
+	\printfield{note}%
+	\newunit\newblock
+	\printfield{type}%
+	\newunit
+	\usebibmacro{institution+location+date}%
+	\newunit
+	\printfield{pagetotal}%
+	\setunit{\addcomma\addspace}
+	\usebibmacro{chapter+pages}%
+	\newunit\newblock
+	\iftoggle{bbx:isbn}
+		{\printfield{isbn}}
+		{}%
+	\newunit\newblock
+	\usebibmacro{doi+eprint+url}%
+	\newunit\newblock
+	\usebibmacro{addendum+pubstate}%
+	\setunit{\bibpagerefpunct}\newblock
+	\usebibmacro{pageref}%
+	%	TODO » Implement
+	% \newunit\newblock
+	% \iftoggle{bbx:related}
+	% 	{\usebibmacro{related:init}%
+	% 	 \usebibmacro{related}}
+	% 	{}%
+	\usebibmacro{finentry}}
+
+%	Définir le formatage des <misc>
+\DeclareBibliographyDriver{misc}{%
+	\usebibmacro{bibindex}%
+	\usebibmacro{begentry}%
+	\usebibmacro{author/editor+others/translator+others}%
+	\setunit{\labelnamepunct}\newblock
+	\usebibmacro{title}%
+	\newunit\newblock
+	\usebibmacro{byauthor}%
+	\newunit\newblock
+	\usebibmacro{byeditor+others}%
+	\newunit\newblock
+	\printfield{type}%
+	\newunit
+	\printfield{version}%
+	\newunit\newblock
+	\printfield{note}%
+	\newunit\newblock
+	\printfield{howpublished}%
+	\newunit\newblock
+	\usebibmacro{organization+location+date}%
+	\newunit\newblock
+	\usebibmacro{doi+eprint+url}%
+	\newunit\newblock
+	\usebibmacro{addendum+pubstate}%
+	\setunit{\bibpagerefpunct}\newblock
+	\usebibmacro{pageref}%
+	%	TODO » Implement
+	% \newunit\newblock
+	% \iftoggle{bbx:related}
+	% 	{\usebibmacro{related:init}%
+	% 	 \usebibmacro{related}}
+	% 	{}%
+	\usebibmacro{finentry}}
+
+%	Définir le formatage des <shorthands>
+\DeclareBibliographyDriver{shorthands}{%
+	\usedriver
+		{\DeclareNameAlias{sortname}{default}}%
+		{\thefield{entrytype}}%
+	\finentry}
+
+%	Définir le formatage des <sets>
+\DeclareBibliographyDriver{set}{%
+	\entryset{}{}%
+	\newunit\newblock
+	\usebibmacro{setpageref}%
+	\finentry}
+
+%	TODO » Custom settings for shorthands
+\DeclareBibliographyDriver{customa}{%
+	\printfield{title}%
+	\nopunct}
+\DeclareBibliographyDriver{customb}{%
+	\printfield[plain]{title}%
+	\nopunct}
+\DeclareBibliographyDriver{customc}{%
+	\printfield[plain]{title}%
+	\nopunct}
+
+
+\DeclareBibliographyAlias{reference}{book}
+\DeclareBibliographyAlias{inreference}{inbook}
+\DeclareBibliographyAlias{review}{article}
+\DeclareBibliographyAlias{*}{misc}
+
+\renewbibmacro*{in:}{%
+	\bibstring{in}}
+
+\newbibmacro*{see:}{%
+	\bibstring{see}}
+
+\newbibmacro*{maintitle+title}{%
+	\iffieldsequal{maintitle}{title}
+		{\clearfield{maintitle}%
+		  \clearfield{mainsubtitle}%
+		  \clearfield{maintitleaddon}}
+		{\iffieldundef{maintitle}%
+			{}
+			{\usebibmacro{maintitle}%
+			 \newunit
+			 \iffieldundef{volume}
+				{}
+				{\printfield{volume}%
+				 \printfield{part}%
+				 \setunit{\addcolon\space}}}}%
+	\usebibmacro{title}%
+	\newunit}
+
+\newbibmacro*{maintitle+booktitle}{%
+	\iffieldundef{maintitle}
+		{}
+		{\usebibmacro{maintitle}%
+		  \newunit
+		  \iffieldundef{volume}
+			{}
+			{\printfield{volume}%
+			  \printfield{part}%
+			  \setunit{\addcolon\space}}}%
+	\usebibmacro{booktitle}%
+	\newunit}
+
+\newbibmacro*{journal+issuetitle}{%
+	\iffieldundef{shortjournal}
+		{\usebibmacro{journal}}
+		{\printtext[journaltitle]{\printfield[titlecase]{shortjournal}}}%
+	\setunit*{\addcomma\addspace}
+	\iffieldundef{series}
+		{}%
+		{\setunit*{\addcomma\addspace}
+		 \printfield{series}%
+		 \newunit}%
+	\midsentence
+	\iffieldequalstr{langid}{french}%
+		{\printfield{number}%
+		 \setunit{\addslash}
+		 \printfield{volume}%
+		 \setunit{\addcomma\addspace}
+		 \usebibmacro{date}%
+		 \setunit{\addspace}
+		 \iffieldundef{issue}
+			{}
+			{\printtext[parens]{\printfield{issue}}}%
+		 \newunit
+		 \printfield{eid}}%
+		{\printfield{volume}%
+		 \setunit{\addcomma\addspace}
+		 \printfield{number}%
+		 \setunit{\addspace}
+		 \printtext[parens]{%
+			\iffieldundef{issue}
+				{\usebibmacro{date}}
+				{\printfield{issue}%
+				 \newunit
+				 \usebibmacro{date}}}}%
+	\setunit{\addcolon\addspace}
+	\usebibmacro{issue}%
+	\newunit}
+
+\newbibmacro*{title+issuetitle}{%
+	\usebibmacro{periodical}%
+	\setunit*{\addspace}
+	\iffieldundef{series}
+		{}%
+		{\newunit
+		 \printfield{series}%
+		 \setunit{\addspace}}%
+	\printfield{volume}%
+	\setunit*{\adddot}
+	\printfield{number}%
+	\setunit{\addcomma\space}
+	\printfield{eid}%
+	\setunit{\addspace}
+	\usebibmacro{issue+date}%
+	\setunit{\addcolon\space}%
+	\usebibmacro{issue}%
+	\newunit}
+
+\newbibmacro*{issue+date}{%
+	\printtext[parens]{%
+		\iffieldundef{issue}
+			{\usebibmacro{date}}
+			{\printfield{issue}%
+			 \setunit*{\addspace}%
+			 \usebibmacro{date}}}%
+	\newunit}
+
+\newbibmacro*{event+venue+date}{%
+	\printfield{eventtitle}%
+	\newunit
+	\printfield{eventtitleaddon}%
+	\ifboolexpr{
+		test {\iffieldundef{venue}}
+		and
+		test {\iffieldundef{eventyear}}
+	}
+	{}
+    {\setunit*{\addspace}
+	 \printtext[parens]{%
+		\printfield{venue}%
+		\setunit*{\addcomma\space}
+		\printeventdate}}%
+	\newunit}
+
+\newbibmacro*{series+number}{%
+	\iffieldundef{series}
+		{}
+		{\nopunct%
+		 \printtext[parens]{%
+			\printfield{series}%
+			\setunit*{\addcomma\addspace}%
+			\printfield{number}}%
+		\newunit}}
+
+\newbibmacro*{publisher+location+date}{%
+	\printlist{location}%
+	\iflistundef{publisher}
+		{\setunit*{\addcomma\space}}
+		{\setunit*{\addcolon\space}}%
+	\printlist{publisher}%
+	\setunit*{\addcomma\space}%
+	\usebibmacro{date}%
+	\newunit}
+
+\newbibmacro*{institution+location+date}{%
+	\printlist{location}%
+	\iflistundef{institution}
+		{\setunit{\addcomma\space}}
+		{\setunit{\addcolon\space}}%
+	\printlist{institution}%
+	\setunit*{\addcomma\space}%
+	\usebibmacro{date}%
+	\newunit}
+
+\newbibmacro*{organization+location+date}{%
+	\printlist{location}%
+	\iflistundef{organization}
+		{\setunit*{\addcomma\space}}
+		{\setunit*{\addcolon\space}}%
+	\printlist{organization}%
+	\setunit*{\addcomma\space}%
+	\usebibmacro{date}%
+	\newunit}
+
+\newbibmacro*{location+date}{%
+	\printlist{location}%
+	\setunit*{\addcomma\space}%
+	\usebibmacro{date}%
+	\newunit}
+
+\newbibmacro*{chapter+pages}{%
+	\printfield{chapter}%
+	\setunit{\bibpagespunct}%
+	\printfield{pages}%
+	\iffieldint{pages}{\addnbspace\bibstring{sequentes}}{}%
+	\newunit}
+
+\newbibmacro*{pages}{%
+	\setunit{\bibpagespunct}
+	\printfield{pages}%
+	\iffieldint{pages}{\addnbspace\bibstring{sequentes}}{}%
+	\newunit}
+
+\newbibmacro*{doi+eprint+url}{%
+	\iftoggle{bbx:doi}
+		{\printfield{doi}}
+		{}%
+	\newunit\newblock
+	\iftoggle{bbx:eprint}
+		{\usebibmacro{eprint}}
+		{}%
+	\newunit\newblock
+	\iftoggle{bbx:url}
+		{\usebibmacro{url+urldate}}
+		{}}
+
+\newbibmacro*{addendum+pubstate}{%
+	\printfield{addendum}%
+	\newunit\newblock
+	\printfield{pubstate}}
+
+
+%	TODO » En chantier
+
+\DeclareBibliographyOption{dashed}[true]{%
+  \ifstrequal{#1}{true}
+    {\ExecuteBibliographyOptions{pagetracker}%
+	 \renewbibmacro*{bbx:savehash}{\savefield{fullhash}{\bbx@lasthash}}}
+    {\renewbibmacro*{bbx:savehash}{}}}
+
+\DeclareFieldFormat{shorthandwidth}{#1}
+\setlength{\bibitemsep}{0pt}
+
+\DeclareNameAlias{author}{sortname}
+\DeclareNameAlias{editor}{sortname}
+\DeclareNameAlias{translator}{sortname}
+
+\defbibenvironment{bibliography}
+  {\list
+     {}
+     {\setlength{\leftmargin}{\bibhang}%
+      \setlength{\itemindent}{-\leftmargin}%
+      \setlength{\itemsep}{\bibitemsep}%
+      \setlength{\parsep}{\bibparsep}}}
+  {\endlist}
+  {\item}
+
+\defbibenvironment{shorthands}
+  {\list
+     {\printfield[shorthandwidth]{shorthand}}
+     {\setlength{\labelwidth}{\shorthandwidth}%
+      \setlength{\leftmargin}{\labelwidth}%
+      \setlength{\labelsep}{\biblabelsep}%
+      \addtolength{\leftmargin}{\labelsep}%
+      \setlength{\itemsep}{\bibitemsep}%
+      \setlength{\parsep}{\bibparsep}%
+      \renewcommand*{\makelabel}[1]{##1\hss}}}
+  {\endlist}
+  {\item}
+
+\InitializeBibliographyStyle{%
+  \global\undef\bbx@lasthash}
+
+\newbibmacro*{bbx:savehash}{%
+  \savefield{fullhash}{\bbx@lasthash}}
+
+\newbool{bbx@inset}
+\DeclareBibliographyDriver{set}{%
+  \booltrue{bbx@inset}%
+  \entryset{}{}%
+  \newunit\newblock
+  \usebibmacro{setpageref}%
+  \finentry}
+
+\renewbibmacro*{author}{%
+  \ifboolexpr{
+    test \ifuseauthor
+    and
+    not test {\ifnameundef{author}}
+  }
+    {\usebibmacro{bbx:dashcheck}
+       {\bibnamedash}
+       {\printnames{author}%
+	\setunit{\addcomma\space}%
+	\usebibmacro{bbx:savehash}}%
+     \usebibmacro{authorstrg}}
+    {\global\undef\bbx@lasthash}}
+
+\renewbibmacro*{editor}{%
+  \usebibmacro{bbx:editor}{editorstrg}}
+\renewbibmacro*{editor+others}{%
+  \usebibmacro{bbx:editor}{editor+othersstrg}}
+\newbibmacro*{bbx:editor}[1]{%
+  \ifboolexpr{
+    test \ifuseeditor
+    and
+    not test {\ifnameundef{editor}}
+  }
+    {\usebibmacro{bbx:dashcheck}
+       {\bibnamedash}
+       {\printnames{editor}%
+	\setunit{\addcomma\space}%
+	\usebibmacro{bbx:savehash}}%
+     \usebibmacro{#1}%
+     \clearname{editor}}
+    {\global\undef\bbx@lasthash}}
+
+\renewbibmacro*{translator}{%
+  \usebibmacro{bbx:translator}{translatorstrg}}
+\renewbibmacro*{translator+others}{%
+  \usebibmacro{bbx:translator}{translator+othersstrg}}
+\newbibmacro*{bbx:translator}[1]{%
+  \ifboolexpr{
+    test \ifusetranslator
+    and
+    not test {\ifnameundef{translator}}
+  }
+    {\usebibmacro{bbx:dashcheck}
+       {\bibnamedash}
+       {\printnames{translator}%
+	\setunit{\addcomma\space}%
+        \usebibmacro{bbx:savehash}}%
+     \usebibmacro{#1}%
+     \clearname{translator}}
+    {\global\undef\bbx@lasthash}}
+
+\newbibmacro*{bbx:dashcheck}[2]{%
+  \ifboolexpr{
+    test {\iffieldequals{fullhash}{\bbx@lasthash}}
+    and
+    not test \iffirstonpage
+    and
+    (
+       not bool {bbx@inset}
+       or
+       test {\iffieldequalstr{entrysetcount}{1}}
+    )
+  }
+    {#1}
+    {#2}}
+
+\endinput
