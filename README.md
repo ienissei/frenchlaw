@@ -15,7 +15,7 @@ Frenchlaw
 
 As such, this project is subject to the LaTeX Project Public Licence (LPPL), and can only be distributed or modified according to the terms of versions 1.3 or later of that licence (which is included in the repository, for reference). The latest version of this license can be found at http://www.latex-project.org/lppl.txt
 
-Copyright 2009–2014 Flora VERN (ienissei (at) gmail (dot) com)
+Copyright 2009–2014 Flora VERN – ienissei (at) gmail (dot) com
 
 This work has the LPPL status "author-maintained"
 
@@ -39,7 +39,7 @@ Also note that this class can be run with LaTeX (standard distribution) or XeLaT
 
 Ce logiciel est, en totalité, soumis à la LaTeX Project Public Licence (LPPL), et ne saurait être distribué ou modifié que suivant les termes stipulés dans la licence, version 1.3 ou ultérieure (celle-ci est incluse dans le dossier, pour information). La dernière version de la LPPL peut être obtenue à l'adresse suivante : http://www.latex-project.org/lppl.txt
 
-Copyright 2009–2014 Flora VERN (ienissei (at) gmail (dot) com)
+Copyright 2009–2014 Flora VERN – ienissei (at) gmail (dot) com
 
 Le logiciel `frenchlaw` a le statut "author-maintained" au sens de la LPPL
 
