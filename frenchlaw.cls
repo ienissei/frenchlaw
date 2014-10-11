@@ -44,6 +44,8 @@
 	\@didacticfalse
 \newif\if@marginal
 	\@marginalfalse
+
+%	TODO » Nécessité de ces options? Utilisées une fois pour la typographie...
 \newif\if@british
 	\@britishfalse
 \newif\if@english
@@ -108,26 +110,33 @@
 	\PassOptionsToClass{10pt,article,twocolumn,oneside}{memoir}
 }
 
-%	Définir les options permettant de changer de langue de document
-%	TODO » english est une option "legavy", mais plus pratique...
+%	Définir les options permettant de changer la langue principale du document
+%	TODO » english est une option "legacy", mais plus pratique...
 \DeclareOptionX{british}{%
 	\@britishtrue
 	\@englishfalse
 	\@frenchfalse
+	\PassOptionsToPackage{british}{babel}
 	\AtBeginDocument{\main@language{british}}
 }
 \DeclareOptionX{english}{%
 	\@englishtrue
 	\@frenchfalse
 	\@britishfalse
+	\PassOptionsToPackage{english}{babel}
 	\AtBeginDocument{\main@language{english}}
 }
 \DeclareOptionX{french}{%
 	\@frenchtrue
 	\@englishfalse
 	\@britishfalse
+	\PassOptionsToPackage{french}{babel}
 	\AtBeginDocument{\main@language{french}}
 }
+%	Définir les options pour d'autres langues (secondaires)
+\DeclareOptionX{italian}{\PassOptionsToPackage{italian}{babel}}
+\DeclareOptionX{german}{\PassOptionsToPackage{german}{babel}}
+\DeclareOptionX{spanish}{\PassOptionsToPackage{spanish}{babel}}
 
 %	Définir une option pour modifier l'interligne
 \DeclareOptionX{linespacing}[1.1]{\def\custom@baselinestretch{#1}}
@@ -136,7 +145,7 @@
 \DeclareOptionX*{\PassOptionsToClass{\CurrentOption}{memoir}}
 
 %	Exécuter les options
-\ExecuteOptionsX{a4paper,12pt,french,linespacing=1.1}
+\ExecuteOptionsX{a4paper,12pt,linespacing=1.1}
 \ProcessOptionsX\relax
 
 %	Charger les dépendances générales: <memoir>, <fixltx2e>
@@ -146,7 +155,7 @@
 %	Charger les packages de langue et de manipulation des nombres
 %	TODO » Implémenter {csquotes} et le documenter
 \RequirePackage{csquotes}
-%	TODO » english est une option "legavy", mais plus pratique...
+%	TODO » english est une option "legacy", mais plus pratique...
 \RequirePackage[greek,latin,english,british,french]{babel}
 \RequirePackage{fixltxhyph}
 %	TODO » Ou autre package ? Ou reprendre le code utile...

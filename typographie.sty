@@ -100,11 +100,12 @@
 
 %	Charger des symboles et les utiliser en fonction de la langue
 \usepackage{textcomp}
-\if@french
+%	TODO » Remplacer par un € actif sous babel french (ou supprimer)
+%\if@french
 	\renewcommand{\euro}{\unskip~\texteuro\xspace}
-\else
-	\renewcommand{\euro}{\unskip\texteuro\xspace}
-\fi
+%\else
+%	\renewcommand{\euro}{\unskip\texteuro\xspace}
+%\fi
 
 %	Définir les commandes pour les abréviations (charger après babel)
 %	Créer des commandes pour ajuster les espaces après les abréviations
