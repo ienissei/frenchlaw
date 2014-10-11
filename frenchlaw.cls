@@ -141,13 +141,14 @@
 
 %	Charger les dépendances générales: <memoir>, <fixltx2e>
 \LoadClass{memoir}
-\RequirePackage{fixltx2e,fixltxhyph}
+\RequirePackage{fixltx2e}
 
 %	Charger les packages de langue et de manipulation des nombres
 %	TODO » Implémenter {csquotes} et le documenter
 \RequirePackage{csquotes}
 %	TODO » english est une option "legavy", mais plus pratique...
 \RequirePackage[greek,latin,english,british,french]{babel}
+\RequirePackage{fixltxhyph}
 %	TODO » Ou autre package ? Ou reprendre le code utile...
 \RequirePackage{fmtcount}
 
