@@ -15,8 +15,8 @@
 %%
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{frenchlaw}%
-	[2011/12/22 v1.0 Versatile document class for French law, based on memoir]
+\ProvidesClass{frenchlaw}
+	[2014.09.30. v.0.9. Versatile document class for French law, based on memoir]
 
 %	#####	OPTIONS DE LA CLASSE	#####
 
