@@ -1432,6 +1432,7 @@
 
 
 %	TODO » Exception en mode article: imprimer Résumé et le texte dans une minipage inspirée de quotation
+%	TODO » Pour les thèses, imprimer en bas le nom et l'adresse du laboratoire / école
 %	TODO » Même principe pour générer une liste de vitæ pour un ouvrage collectif + pour le copyright (mais \vfill)
 %	Reprendre l'environnement pour les résumés
 % L'environnement est automatiquement renvoyé en page suivante s'il est trop long
