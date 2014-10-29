@@ -81,7 +81,6 @@
 }
 
 %	Définir les options <oneside> et <twoside>
-%	Les options <onecolumn> et <twocolumn> sont transmises directement à <memoir>
 \DeclareOptionX{oneside}{
 	\@onesidetrue\@twosidefalse
 	\PassOptionsToClass{oneside}{memoir}
@@ -90,9 +89,6 @@
 	\@twosidetrue\@onesidefalse
 	\PassOptionsToClass{twoside}{memoir}
 }
-
-%	Définir une option pour modifier l'interligne
-\DeclareOptionX{linespacing}[1.1]{\def\custom@baselinestretch{#1}}
 
 %	Définir les options permettant de changer de style de formattage
 \DeclareOptionX{article}{
@@ -120,14 +116,14 @@
 	\@britishtrue
 	\@englishfalse
 	\@frenchfalse
-	\PassOptionsToPackage{british}{babel}%	TODO » Remplacer par UKenglish
+	\PassOptionsToPackage{british}{babel}
 	\AtBeginDocument{\main@language{british}}
 }
 \DeclareOptionX{english}{%
 	\@englishtrue
 	\@frenchfalse
 	\@britishfalse
-	\PassOptionsToPackage{english}{babel}%	TODO » Remplacer par USenglish
+	\PassOptionsToPackage{english}{babel}
 	\AtBeginDocument{\main@language{english}}
 }
 \DeclareOptionX{french}{%
@@ -141,6 +137,9 @@
 \DeclareOptionX{italian}{\PassOptionsToPackage{italian}{babel}}
 \DeclareOptionX{german}{\PassOptionsToPackage{german}{babel}}
 \DeclareOptionX{spanish}{\PassOptionsToPackage{spanish}{babel}}
+
+%	Définir une option pour modifier l'interligne
+\DeclareOptionX{linespacing}[1.1]{\def\custom@baselinestretch{#1}}
 
 %	Passer toutes les options inconnues à la classe <memoir>
 \DeclareOptionX*{\PassOptionsToClass{\CurrentOption}{memoir}}
@@ -163,13 +162,14 @@
 \RequirePackage{fmtcount}
 
 %	Désactiver les options incompatibles
-% L'option <twocolumn> l'emporte sur <marginal>
 \if@marginal\if@twocolumn\@marginalfalse\fi\fi
 
 %	Redéfinir la valeur de l'interligne selon l'option chargée avec la classe
 \def\baselinestretch{\custom@baselinestretch}\selectfont
 
 %	#####	FORMATAGE DES ÉLÉMENTS DE LA PAGE	#####
+
+%	TODO » Non documenté
 
 %	Définir la taille du bloc de texte en fonction de la taille du papier
 % Le bloc est aux proportions du nombre d'or, selon le canon médiéval
@@ -184,7 +184,6 @@
 \fi
 
 %	Définir les proportions des marges selon le mode choisi
-% Les marges sont moins généreuses que dans la tradition typographique
 \setulmargins{*}{*}{1}
 \if@marginal
 	\if@twoside
@@ -208,8 +207,6 @@
 %	TODO » Utilité du \setheaderspaces (?)
 %\setheaderspaces{*}{\baselineskip}{*}
 \setlength{\headsep}{\baselineskip}
-\setlength{\headheight}{2\baselineskip}
-\setlength{\footskip}{\baselineskip}
 
 %	Corriger la taille des headers & footers en <a5> & <a6> si le texte est en 12pt
 %	TODO » Vérifier la mise en page en a5 et a6
@@ -256,13 +253,12 @@
 					ItalicFont		= *-oblique,
 					BoldFont		= *-bold,
 					BoldItalicFont	= *-boldoblique,
-					Scale			= MatchLowercase ]
+					Scale=MatchLowercase ]
 					{lmsans10}
 	\setmonofont[	Extension		= .otf,
 					UprightFont		= *-regular,
 					ItalicFont		= *-italic,
-					Numbers			= Lining,
-					Scale			= MatchLowercase ]
+					Scale=MatchLowercase ]
 					{lmmono10}
 	\RequirePackage{microtype}
 \else
@@ -272,6 +268,9 @@
 	\RequirePackage[T1]{fontenc}
 	\RequirePackage[tracking,letterspace=30]{microtype}
 \fi
+
+%	TODO » A supprimer après l'avoir purgée partout
+\newcommand{\letterspace}{}
 
 %	#####	TAILLE DES POLICES ET LEADING	#####
 %	TODO » Non documenté
@@ -378,19 +377,22 @@
 %\@itempenalty=-50% Penalty for page-breaking after items in lists
 
 %	#####	TYPOGRAPHIE DES ÉLÉMENTS DE PAGE	#####
+%	TODO » Non documenté
 
 %	Formater les paragraphes
+
 % Forcer l'alignement vertical
 \setlength{\parskip}{0pt}
 % Définir la longueur de l'alinéa
 \setlength{\parindent}{1.5em}
 % Interdire les lignes trop courtes ou trop longues en fin de paragraphe
 \setlength{\parfillskip}{2ex plus \dimexpr\linewidth-2\parindent}
-% Ne pas utiliser de doubles espaces, même en anglais
+%	Ne pas utiliser de doubles espaces, même en anglais
 \frenchspacing
 
-%	Définir un style pour les footnotes
-% Mettre le numéro de note en retrait
+%	Définir un style pour les footnotes (\footnote)
+
+% Mettre le numéro de note en retrait (hang)
 \setlength{\footmarkwidth}{2em}
 \setlength{\footmarksep}{0em}
 % Utiliser la numérotation classique (pas en \textsuperscript)
@@ -399,30 +401,18 @@
 \setlength{\footparindent}{1em}
 
 %	Définir le placement vertical et l'espacement des footnotes
+
 % Placer les notes tout en bas de page
 \setfootnoterule[\vfill]{0pt}{0pt}{0pt}
 % Les notes ont la hauteur d'un \strut (.7\baselineskip), pour les aligner verticalement
 \setlength{\footnotesep}{.7\baselineskip}
 
-%	Définir une commande pour faire une footnote purement symbolique (ex: thanks)
-% On peut ajouter \par à la fin de la note pour sauter une ligne
-\newcommand{\symbolfootnote}[2][2]{
-	\begingroup
-	\def\thefootnote{\fnsymbol{footnote}}\footnotetext[#1]{#2}
-	\endgroup
-}
-
-%	Créer une commande pour spéciale pour réinitialiser les footnotes à chaque page
-% Par défaut, le compteur est remis à zéro à chaque chapitre
-\newcommand{\resetfootnotes}{
-	\usepackage{perpage}
-	\MakePerPage{footnote}}
-
 %	Définir le style des notes marginales (\marginpar)
 % On utilise des \strut en première et dernière ligne pour l'alignement vertical
 \let\old@marginpar=\marginpar
-\renewcommand{\marginpar}[1]{%
-	\old@marginpar[\raggedleft\footnotesize\strut#1\strut]{\raggedright\footnotesize\strut#1\strut}}
+\renewcommand{\marginpar}[1]{
+	\old@marginpar[\raggedleft\footnotesize\strut#1\strut]{\raggedright\footnotesize\strut#1\strut}
+}
 
 %	Définir la dimension des notes marginales par rapport à la taille de la marge
 \newlength{\marginwidth}
@@ -447,14 +437,15 @@
 	\sidebarmargin{left}
 \fi\fi
 
-%	Créer une commande pour forcer l'alignement vertical des \footnote et \sidebar
+%	Créer une commande for forcer l'alignement vertical des \footnote et \sidebar
 \newcommand{\notespacing}{\edef\m@m@footnote@spacing{\custom@baselinestretch}}
 
 %	#####	CRÉATION DES PAGES DE TITRE	#####
 %	TODO » À documenter
 
-%	TODO » For email addresses... plus everything else that's not implemented
-%\RequirePackage{hyperref} % Mais crée des bugs avec les références type \supra
+%	TODO » Load after babel & others
+% For email addresses... plus everything else that's not implemented
+%\RequirePackage{hyperref} % Crée des bugs avec les références type \supra
 
 %	Définir de nouveaux champs d'informations sur le document
 % Les champs \title et \subtitle peuvent être donnés en plusieurs langues
@@ -1090,6 +1081,19 @@
 
 %	Créer une commande pour indiquer que le sujet est traité en note
 \newcommand{\note}[1]{#1~(\emph{n.})}% dans les index, utiliser: |note
+
+%	Définir une commande pour faire une footnote purement symbolique (ex: thanks)
+% On peut ajouter \par à la fin de la note pour sauter une ligne
+\newcommand{\symbolfootnote}[2][2]{
+	\begingroup
+	\def\thefootnote{\fnsymbol{footnote}}\footnotetext[#1]{#2}
+	\endgroup
+}
+
+%	Créer une commande pour numéroter les footnotes par page
+\newcommand{\resetfootnotes}{
+	\usepackage{perpage}
+	\MakePerPage{footnote}}
 
 %	TODO » A déplacer
 %	S'assurer que la table des matières termine bien le dernier paragraphe
