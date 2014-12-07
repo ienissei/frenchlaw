@@ -174,8 +174,11 @@
 }
 \newcommand{\s@heure}[2]{\unskip~#1\,h\,#2}
 
+%	TODO » Internationaliser + Rajouter les autres abréviations courantes
+%	TODO » Créer une commande type \abbrv, et fournir la command, l'abréviation et la définition en trois arguments (pour les abréviations spéciales uniquement)
+
 %	Définir les abréviations générales
-%	TODO » Internationaliser + Rajouter les autre abréviations courantes
+% Civilités
 \newcommand{\St}{S\textsuperscript{t}~}
 \newcommand{\Ste}{S\textsuperscript{te}~}
 \newcommand{\Mme}{M\textsuperscript{me}~}
@@ -183,14 +186,13 @@
 \newcommand{\Mlle}{M\textsuperscript{lle}~}
 \newcommand{\Mlles}{M\textsuperscript{lles}~}
 \newcommand{\Mr}{M.~}
-\newcommand{\Mrs}{M\textsuperscript{rs}~}
+\newcommand{\MM}{MM.~}
 \newcommand{\Me}{M\textsuperscript{e}~}
 \newcommand{\Mes}{M\textsuperscript{es}~}
 \newcommand{\Dr}{D\textsuperscript{r}~}
 \newcommand{\Vve}{V\textsuperscript{ve}~}
 %
-\newcommand{\Cie}{C\textsuperscript{ie}\xspace}
-%
+% Superscripts / numérotation
 \newcommand{\e}{\textsuperscript{e}\xspace}
 \newcommand{\es}{\textsuperscript{es}\xspace}
 \newcommand{\er}{\textsuperscript{er}\xspace}
@@ -199,21 +201,47 @@
 \newcommand{\res}{\textsuperscript{res}\xspace}
 \renewcommand{\o}{\textsuperscript{o}\xspace}
 %
+%	Définir les abréviations spéciales 
+%	TODO » Automatiser les capitalisations ?
+% Abréviations tirées du latin
+%	TODO » Reprendre celles de biblatex et les référencer automatiquement à l'usage
+%	TODO » Ajouter v\textsuperscript{o} / v\textsuperscript{is}, verbo, verbis, aux mots
+\newcommand{\adde}{\latin{adde}}% Ajouter
+\newcommand{\Adde}{\latin{Adde}}
+\newcommand{\cf}{\latin{cf.}}% Se reporter à
+\newcommand{\Cf}{\latin{Cf.}}
+\newcommand{\contra}{\emph{contra\nocorr}\xspace}% en sens contraire
+\newcommand{\Contra}{\emph{Contra\nocorr}\xspace}
+
 \newcommand{\NB}{\emph{N.\thinpace B.}\xspace}
 \newcommand{\PS}{P.--S.~—\space}
 \newcommand{\ie}{\emph{i.\thinspace e.}~}
 \newcommand{\eg}{\emph{e.\thinspace g.}~}
 \newcommand{\passim}{\latin{passim}}
+% supra + infra (dans la classe)
 %
-\newcommand{\contra}{\emph{contra\nocorr}\xspace}
-\newcommand{\Contra}{\emph{Contra\nocorr}\xspace}
+% Abréviations françaises d'usage
+%	TODO » Reprendre celles de biblatex et les référencer automatiquement à l'usage
+%	TODO » Dans Biblatex, prévoir les codes romains Dig. (digeste), etc.
+%	TODO » Ajouter les tribunaux (cf. Abréviations) + les chambres / formations fréquentes (?)
 \renewcommand{\v}{voir\xspace}
 \newcommand{\V}{Voir\xspace}
 \newcommand{\comp}{comp.~}
 \newcommand{\Comp}{Comp.~}
+\renewcommand{\c}{c.~}% contre
+\newcommand{\anc}{anc.}% Ancien
+\newcommand{\Arr}{Arr.\xspace}% Arrêté
+\newcommand{\BO}{B.O.\xspace}% Bulletin officiel
+\newcommand{\Circ}{Circ.}% Circulaire
+\newcommand{\Cne}{C\textsuperscript{ne}}% Commune
+\newcommand{\JO}{J.O.}% Journal officiel
+% article (art.)
 %
-\newcommand{\n}{\emph{n.}\xdot}
+\newcommand{\n}{\emph{n.}\xdot}% Note, en note
 \newcommand{\obs}{\emph{obs.}\xdot}
 %
+\newcommand{\Cie}{C\textsuperscript{ie}\xspace}
+%
+% Divers
 \newcommand{\avJC}{av.~J.-C.\xdot}
 \newcommand{\apJC}{apr.~J.-C.\xdot}
