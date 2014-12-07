@@ -71,7 +71,7 @@
 \newbibmacro*{cite}{%
 	\global\boolfalse{cbx:loccit}%
 	\iffieldundef{shorthand}%
-		{\ifthenelse{\ifentrytype{jurisdiction}\OR\ifentrytype{commentary}}
+		{\ifentrytype{jurisdiction}
 			{\usebibmacro{cite:legal}}
 			{\ifthenelse{\ifciteibid\AND\NOT\iffirstonpage}
 				{\usebibmacro{cite:ibid}}
@@ -85,7 +85,9 @@
 					 \setunit{\nametitledelim}}%
 					 \ifopcit
 						{\usebibmacro{cite:opcit}}
-						{\usebibmacro{cite:title}}}}}%
+						{\ifentrytype{commentary}
+							{\usedriver{\clearname{author}}{commentary}}
+							{\usebibmacro{cite:title}}}}}}%
 		{\usebibmacro{cite:shorthand}}}
 
 % Initiales des auteurs (utiliser un labelname en .bbx ?) + Abréger en cas de seconde citation du même arrêt. + Voir pour une référence type D. 1858 I 52 (> avec l'arrêt ou en commentaire ?) + Auto \nocite des commentaires ?
@@ -97,9 +99,6 @@
 			{\settoggle{bbx:related}{false}
 			 \usebibmacro{related}}
 			{}}
-		{}%
-	\ifentrytype{commentary}
-		{\usedriver{}{commentary}}
 		{}%
 }
 
@@ -140,6 +139,12 @@
 		{\printtext[bibhyperref]{\bibstring[\mkibid]{loccit}}%
 		 \global\booltrue{cbx:loccit}}
 		{\printtext[bibhyperref]{\bibstring[\mkibid]{opcit}}}}
+
+\newbibmacro*{cite:casecited}{%
+	\ifloccit
+		{\printtext[bibhyperref]{\bibstring[\mkibid]{loccit}}%
+		 \global\booltrue{cbx:loccit}}
+		{\printtext[bibhyperref]{\bibstring{casecited}}}}
 
 \newbibmacro*{cite:title}{%
 	\ifciteseen
