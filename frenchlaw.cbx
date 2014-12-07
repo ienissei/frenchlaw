@@ -68,24 +68,40 @@
 \DeclareFieldFormat[customc]{citetitle}{#1}%
 \DeclareFieldFormat{editortype}{\mkbibparens{#1}}%
 
-
 \newbibmacro*{cite}{%
 	\global\boolfalse{cbx:loccit}%
 	\iffieldundef{shorthand}%
-		{\ifthenelse{\ifciteibid\AND\NOT\iffirstonpage}
-			{\usebibmacro{cite:ibid}}
-			{\ifnameundef{labelname}%
-				{\ifnameundef{editor}
-					{}
-					{\printnames{editor}\addspace%
-					 \usebibmacro{editorstrg}\addcomma\addspace}%
-					 \setunit{\nametitledelim}}
-				{\printnames{labelname}%
-				 \setunit{\nametitledelim}}%
-				 \ifopcit
-					{\usebibmacro{cite:opcit}}
-					{\usebibmacro{cite:title}}}}%
+		{\ifthenelse{\ifentrytype{jurisdiction}\OR\ifentrytype{commentary}}
+			{\usebibmacro{cite:legal}}
+			{\ifthenelse{\ifciteibid\AND\NOT\iffirstonpage}
+				{\usebibmacro{cite:ibid}}
+				{\ifnameundef{labelname}%
+					{\ifnameundef{editor}
+						{}
+						{\printnames{editor}\addspace%
+						 \usebibmacro{editorstrg}\addcomma\addspace}%
+						 \setunit{\nametitledelim}}
+					{\printnames{labelname}%
+					 \setunit{\nametitledelim}}%
+					 \ifopcit
+						{\usebibmacro{cite:opcit}}
+						{\usebibmacro{cite:title}}}}}%
 		{\usebibmacro{cite:shorthand}}}
+
+% Initiales des auteurs (utiliser un labelname en .bbx ?) + Abréger en cas de seconde citation du même arrêt. + Voir pour une référence type D. 1858 I 52 (> avec l'arrêt ou en commentaire ?) + Auto \nocite des commentaires ?
+\newbibmacro*{cite:legal}{%
+	\ifentrytype{jurisdiction}
+		{\usedriver{}{jurisdiction}
+		 \setunit{\addsemicolon\addspace}%
+		 \iftoggle{bbx:related}
+			{\settoggle{bbx:related}{false}
+			 \usebibmacro{related}}
+			{}}
+		{}%
+	\ifentrytype{commentary}
+		{\usedriver{}{commentary}}
+		{}%
+}
 
 \newbibmacro*{citetitle}{%
 	\global\boolfalse{cbx:loccit}%
