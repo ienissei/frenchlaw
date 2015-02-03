@@ -59,6 +59,11 @@
 	{}
 	{}
 
+%	TODO » Sort / Combine in one place with elements from the .cbx
+% Utiliser des petites capitales pour tous les noms d'auteurs, dans toutes les langues
+\protected\def\mkbibnamelast#1{%
+	\textsc{\textnohyphenation{#1}}}
+
 %	TODO » New
 %	Redéfinir le tiret ajouté s'il y a plusieurs ouvrages du même auteur
 \renewcommand*{\bibnamedash}{%
