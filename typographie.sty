@@ -82,12 +82,16 @@
 	\def\headtoname{{\`A}}%
 	\def\ccname{Copie à}%
 	\def\enclname{P.\thinspace J.}%
+	\def\centuryname{siècle}%
+	\def\centuriesname{siècles}%
 }
 
 %	Configurer les noms des différents éléments en anglais
 %	TODO » Vérifier l'exhaustivité + Idem pour USenglish
 \addto\captionsbritish{
 	\def\keywordsname{Keywords}
+	\def\centuryname{century}%
+	\def\centuriesname{centuries}%
 }
 
 %	Créer des commandes rapides pour le grec et le latin
@@ -122,35 +126,37 @@
 
 %	Créer les commandes pour afficher les siècles
 % Usage: \siecle{1}, \siecles[et]{1}{2}
-%	TODO » Rajouter les messages d'erreur prévus + Utiliser \century + Internationaliser
-\newcounter{siecle}
-\newcommand{\siecle}[1]{%
+%	TODO » Rajouter les messages d'erreur prévus
+\newcounter{century}
+\newcommand{\century}[1]{%
 	\ifboolexpr{test {\ifnumcomp{#1}{=}{0}}}
 		{ERREUR}
 		{\unskip~%
-		\ifnum#1>0\setcounter{siecle}{#1}\else\setcounter{siecle}{-#1}\fi%
-		\textsc{\roman{siecle}}%
-		\ifnum\value{siecle}=1			\er\else\e\fi\unskip~siècle%
-		\ifboolexpr{	test {\ifnumcomp{#1}{>}{0}}}{}{\space\avJC}}}
-\newcommand{\siecles}[3][\@empty]{%
+		\ifnum#1>0\setcounter{century}{#1}\else\setcounter{century}{-#1}\fi%
+		\textsc{\roman{century}}%
+		\ifnum\value{century}=1			\er\else\e\fi\unskip~\centuryname%
+		\ifboolexpr{	test {\ifnumcomp{#1}{>}{0}}}{}{\space\BC}}}
+\newcommand{\centuries}[3][\@empty]{%
 	\ifboolexpr{	test {\ifnumcomp{#2}{=}{0}} or test {\ifnumcomp{#3}{=}{0}}%
 			or (test {\ifnumcomp{#2}{<}{0}} and test {\ifnumcomp{#3}{>}{0}})%
 			or (test {\ifnumcomp{#2}{>}{0}} and test {\ifnumcomp{#3}{<}{0}})%
 			or test {\ifnumcomp{#2}{>}{#3}}}
 		{ERREUR}
 		{\unskip~%
-		\ifnum#2>0\setcounter{siecle}{#2}\else\setcounter{siecle}{-#2}\fi%
-		\textsc{\roman{siecle}}%
-		\ifnum\value{siecle}=1			\er\else\e\fi%
+		\ifnum#2>0\setcounter{century}{#2}\else\setcounter{century}{-#2}\fi%
+		\textsc{\roman{century}}%
+		\ifnum\value{century}=1			\er\else\e\fi%
 		\unskip\ifx#1\@empty--\else~#1~\fi%
-		\ifnum#3>0\setcounter{siecle}{#3}\else\setcounter{siecle}{-#3}\fi%
-		\textsc{\roman{siecle}}%
-		\ifnum\value{siecle}=1			\er\else\e\fi%
+		\ifnum#3>0\setcounter{century}{#3}\else\setcounter{century}{-#3}\fi%
+		\textsc{\roman{century}}%
+		\ifnum\value{century}=1			\er\else\e\fi%
 		\ifboolexpr{	test{\ifnumcomp{#2+1}{=}{#3}}%
 				or test {\ifnumcomp{#2}{=}{#3+1}}}
-			{\unskip~siècles}
-			{\unskip~siècle}%
-		\ifboolexpr{	test {\ifnumcomp{#2}{>}{0}}}{}{\space\avJC}}}
+			{\unskip~\centuriesname}
+			{\unskip~\centuryname}%
+		\ifboolexpr{	test {\ifnumcomp{#2}{>}{0}}}{}{\space\BC}}}
+\let\siecle=\century
+\let\siecles=\centuries
 
 %	Créer une commande pour afficher les heures
 % Usage: \heure{12}{15} conforme à la norme typographique (dans un texte), \heure*{12}{15} pour afficher l'heure en chiffres uniquement
@@ -243,5 +249,7 @@
 \newcommand{\Cie}{C\textsuperscript{ie}\xspace}
 %
 % Divers
-\newcommand{\avJC}{av.~J.-C.\xdot}
-\newcommand{\apJC}{apr.~J.-C.\xdot}
+\newcommand{\BC}{av.~J.-C.\xdot}
+\newcommand{\AD}{apr.~J.-C.\xdot}
+\let\avJC=\BC
+\let\apJC=\AD
