@@ -957,7 +957,7 @@
 % S'il est défini dans babel, on rajoute le nom donné à la section concernée
 % En anglais, les paragraphes suivant les sections ne sont pas indentés
 \setsecnumformat{%
-	\ifcsname #1name\endcsname\csname #1name\endcsname\space\fi%
+	\ifcsname #1name\endcsname\csname #1name\endcsname\fi%
 	\csname the#1\endcsname.\enskip}
 
 %	Définir le style des sections
@@ -1176,7 +1176,7 @@
 	\setlength{\itemsepi}{\parsepi}
 	\setlength{\itemsepii}{\parsepii}
 	\setlength{\itemsepiii}{\topsepiii}
-	\setlength{\labelsep}{.5em}
+	%\setlength{\labelsep}{.5em}
 	\setlength{\leftmargin}{\z@}
 	\setlength{\rightmargin}{\z@}
 	\setlength{\leftmargini}{\if@twocolumn 1em \else 1.5em \fi}

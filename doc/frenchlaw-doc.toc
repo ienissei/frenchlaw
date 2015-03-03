@@ -1,0 +1,49 @@
+\boolfalse {citerequest}\boolfalse {citetracker}\boolfalse {pagetracker}\boolfalse {backtracker}\relax 
+\defcounter {refsection}{0}\relax 
+\select@language {french}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{Introduction}{3}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{Explication d'un document}{3}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\chapternumberline {\textlatin {I}}Options et dépendances}{4}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {\textlatin {I}}Options générales}{4}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {\textlatin {II}}Options spéciales}{5}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {\textlatin {III}}Options de language}{6}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {\textlatin {IV}}Dépendances}{6}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {\textlatin {V}}Polices d'écriture}{6}
+\defcounter {refsection}{0}\relax 
+\contentsline {part}{\partnumberline {\textlatin {I}}Guide pour le formatage des documents}{8}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\chapternumberline {\textlatin {I}}Divisions logiques des documents}{9}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {\textlatin {I}}Les divisions hiérarchiques}{9}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {\textlatin {II}}Les divisions autonomes}{11}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {\textlatin {III}}Les divisions de volume}{11}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\chapternumberline {\textlatin {II}}Éléments généraux de formatage des documents}{12}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {\textlatin {I}}Commandes génériques}{12}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {\textlatin {II}}Notes de page et de marge}{12}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {\textlatin {III}}Listes et énumérations}{13}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {\textlatin {IV}}Citations et épigraphes}{13}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {\textlatin {V}}Tableaux et figures}{13}
+\defcounter {refsection}{0}\relax 
+\contentsline {chapter}{\chapternumberline {\textlatin {III}}Éléments pour le formatage de documents juridiques}{14}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {\textlatin {I}}Création et utilisation d'un clausier}{14}
+\defcounter {refsection}{0}\relax 
+\contentsline {section}{\numberline {\textlatin {II}}Inclusion de pièces annexes et documents externes}{14}
+\defcounter {refsection}{0}\relax 
+\par 
