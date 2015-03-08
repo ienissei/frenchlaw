@@ -61,6 +61,9 @@
 \DeclareFieldFormat[article,incollection,inproceedings,patent,unpublished]{citetitle}{\mkbibquote{#1\isdot}}%
 \DeclareFieldFormat[suppbook,suppcollection,suppperiodical]{citetitle}{#1}%
 % Format des abréviations: citetitle = forme longue, citeshorthand = dans le texte (point ajouté dynamiquement), shorthandlist = dans la liste des abréviations (ajouter un point).
+\DeclareFieldFormat[legislation]{title}{#1}
+\DeclareFieldFormat[legislation]{shorttitle}{#1}
+\DeclareFieldFormat[legislation]{postnote}{#1\nopunct}
 \DeclareFieldFormat[customa]{citetitle}{\mkbibemph{#1}}
 \DeclareFieldFormat[customa]{citeshorthand}{\mkbibemph{#1}}
 \DeclareFieldFormat[customb]{citetitle}{#1}
@@ -71,8 +74,14 @@
 \newbibmacro*{cite}{%
 	\global\boolfalse{cbx:loccit}%
 	\iffieldundef{shorthand}%
-		{\ifentrytype{jurisdiction}
-			{\usebibmacro{cite:legal}}
+		{\ifthenelse{\ifentrytype{jurisdiction}\OR\ifentrytype{legislation}}
+			{\ifentrytype{jurisdiction}
+				{\usebibmacro{cite:jurisdiction}}
+				{}%
+			 \ifentrytype{legislation}
+				{\usebibmacro{cite:legislation}}
+				{}%
+			}%
 			{\ifthenelse{\ifciteibid\AND\NOT\iffirstonpage}
 				{\usebibmacro{cite:ibid}}
 				{\ifnameundef{labelname}%
@@ -87,20 +96,55 @@
 						{\usebibmacro{cite:opcit}}
 						{\ifentrytype{commentary}
 							{\usedriver{\clearname{author}}{commentary}}
-							{\usebibmacro{cite:title}}}}}}%
+							{\usebibmacro{cite:title}}}}%
+			}
+		}
 		{\usebibmacro{cite:shorthand}}}
 
 % Initiales des auteurs (utiliser un labelname en .bbx ?) + Abréger en cas de seconde citation du même arrêt. + Voir pour une référence type D. 1858 I 52 (> avec l'arrêt ou en commentaire ?) + Auto \nocite des commentaires ?
-\newbibmacro*{cite:legal}{%
-	\ifentrytype{jurisdiction}
-		{\usedriver{}{jurisdiction}
-		 \setunit{\addsemicolon\addspace}%
-		 \iftoggle{bbx:related}
-			{\settoggle{bbx:related}{false}
-			 \usebibmacro{related}}
-			{}}
-		{}%
-}
+\newbibmacro*{cite:jurisdiction}{%
+	\usedriver{}{jurisdiction}
+	\setunit{\addsemicolon\addspace}%
+	\iftoggle{bbx:related}
+		{\settoggle{bbx:related}{false}
+		 \usebibmacro{related}}
+		{}}
+
+%	TODO » Indexer les shorttitle
+\newbibmacro{cite:legislation}{%
+	\ifthenelse{\ifciteseen\AND\iffootnote\AND\NOT\iffieldundef{shorttitle}}
+		{\usebibmacro{cite:legislation:shorthand}}
+		{\usebibmacro{cite:legislation:full}}}
+
+\newbibmacro{cite:legislation:reverse}{%
+	\ifthenelse{\ifciteseen\AND\NOT\iffootnote\AND\NOT\iffieldundef{shorttitle}}
+		{\usebibmacro{cite:legislation:shorthand}}
+		{\usebibmacro{cite:legislation:full}}}
+
+\newbibmacro*{cite:legislation:shorthand}
+	{\printtext[bibhyperref]{\printfield{shorttitle}}}
+
+\newbibmacro*{cite:legislation:full}
+	{\printfield{type}%
+		 \setunit{\addspace}
+		 \printfield{number}%
+		 \setunit{\addspace}
+		 \ifthenelse{\iffieldundef{day}\AND\iffieldundef{month}\AND\iffieldundef{year}}
+		 	{}
+		 	{\bibstring{fromdate}%
+		 	 \setunit{\addspace}
+		 	 \usebibmacro{date}%
+			 \setunit{\addspace}}%
+		 \printtext[bibhyperref]{\printfield{title}}%
+		 \iffieldundef{series}
+		 	{}
+		 	{\setunit{\addcomma\addspace}
+		 	 \printfield{series}}}
+
+% \newbibmacro{cite:legislation:reverse}{%
+% 	{\ifthenelse{\ifciteseen\AND\NOT\iffootnote\AND\NOT\iffieldundef{shorttitle}}
+% 		{\printtext[bibhyperref]{\printfield{shorttitle}}}
+% 		{\printtext[bibhyperref]{\printfield{title}}}}}
 
 \newbibmacro*{citetitle}{%
 	\global\boolfalse{cbx:loccit}%
@@ -186,6 +230,11 @@
 		  	\newunit\usebibmacro{institution+location+date}}{}%
 		  }}
 
+\newbibmacro*{cite:shorthand}{%
+	\iffieldundef{shorthand}
+		{\printtext[bibhyperref]{\printfield[citeshorthand]{shorthand}}}
+		{}}
+
 \renewbibmacro*{prenote}{%
 	\iffieldundef{prenote}
 		{}
@@ -212,9 +261,6 @@
 	% Switch back to the main language due to different spacing in French punctuation
 	\expandafter\selectlanguage\expandafter{\bbl@main@language}%
 	\global\boolfalse{cbx:parens}}
-
-\newbibmacro*{cite:shorthand}{%
-	\printtext[bibhyperref]{\printfield[citeshorthand]{shorthand}}}
 
 % Citation commands
 
@@ -292,6 +338,40 @@
 		{\thefield{entrytype}}}
 	{\multicitedelim}
 	{\usebibmacro{postnote}}
+
+\DeclareCiteCommand{\code}
+	{\iffootnote{\bibsentence\usebibmacro{prenote}}{}%
+	 \iffieldundef{postnote}
+	 	{}
+	 	{\iffootnote
+	 		{\bibstring{article}
+	 		 \setunit{\adddnbspace}}
+	 		{}%
+	 	 \usebibmacro{cite:postnote}%
+		 \setunit{\addspace}
+		 \printfield{note}%
+		 \setunit{\addspace}}}
+	{\usebibmacro{citeindex}%
+	 \usebibmacro{cite:legislation}}
+	{\multicitedelim}
+	{}
+
+\DeclareCiteCommand*{\code}
+	{\iffootnote{}{\usebibmacro{prenote}}%
+	 \iffieldundef{postnote}
+	 	{}
+	 	{\iffootnote
+	 		{}
+	 		{\bibstring{article}
+	 		 \setunit{\adddnbspace}}%
+	 	 \usebibmacro{cite:postnote}%
+		 \setunit{\addspace}
+		 \printfield{note}%
+		 \setunit{\addspace}}}
+	{\usebibmacro{citeindex}%
+	 \usebibmacro{cite:legislation:reverse}}
+	{\multicitedelim}
+	{}
 
 
 %	TODO » Multiple citations // Chantier
