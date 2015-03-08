@@ -110,7 +110,6 @@
 		 \usebibmacro{related}}
 		{}}
 
-%	TODO » Indexer les shorttitle
 \newbibmacro{cite:legislation}{%
 	\ifthenelse{\ifciteseen\AND\iffootnote\AND\NOT\iffieldundef{shorttitle}}
 		{\usebibmacro{cite:legislation:shorthand}}
@@ -140,11 +139,6 @@
 		 	{}
 		 	{\setunit{\addcomma\addspace}
 		 	 \printfield{series}}}
-
-% \newbibmacro{cite:legislation:reverse}{%
-% 	{\ifthenelse{\ifciteseen\AND\NOT\iffootnote\AND\NOT\iffieldundef{shorttitle}}
-% 		{\printtext[bibhyperref]{\printfield{shorttitle}}}
-% 		{\printtext[bibhyperref]{\printfield{title}}}}}
 
 \newbibmacro*{citetitle}{%
 	\global\boolfalse{cbx:loccit}%
