@@ -18,12 +18,12 @@
 \ProvidesClass{frenchlaw}%
 	[2014/09/30 v.0.9. Versatile document class for French law, based on memoir]
 
-%	#####	OPTIONS DE LA CLASSE	#####
+%	#####	CLASS OPTIONS	#####
 
-%	Charger <xkeyval>
+%	Load <xkeyval>
 \RequirePackage{xkeyval}
 
-%	Définir de nouveaux switches pour les options
+%	Define new switches for options
 \newif\if@stockaiv
 	\@stockaivfalse
 \newif\if@stockav
@@ -44,8 +44,6 @@
 	\@didacticfalse
 \newif\if@marginal
 	\@marginalfalse
-
-%	TODO » Nécessité de ces options? Utilisées une fois pour la typographie...
 \newif\if@british
 	\@britishfalse
 \newif\if@english
@@ -53,7 +51,7 @@
 \newif\if@french
 	\@frenchfalse
 
-%	Définir les options de taille de papier <a4paper>, <a5paper> et <a6paper>
+%	Define options for paper size <a4paper>, <a5paper> & <a6paper>
 \DeclareOptionX{a4paper}{
 	\@stockaivtrue
 	\@twelvepointstrue\@tenpointsfalse
@@ -70,7 +68,7 @@
 	\PassOptionsToClass{a6paper,10pt}{memoir}
 }
 
-%	Définir les options de taille de police <10pt> et <12pt>
+%	Define options for font size <10pt> & <12pt>
 \DeclareOptionX{10pt}{
 	\@tenpointstrue\@twelvepointsfalse
 	\PassOptionsToClass{10pt}{memoir}
@@ -80,8 +78,8 @@
 	\PassOptionsToClass{12pt}{memoir}
 }
 
-%	Définir les options <oneside> et <twoside>
-% Les options <onecolumn> et <twocolumn> sont transmises directement à <memoir>
+%	Define options for <oneside> & <twoside>
+% Options <onecolumn> & <twocolumn> are passed to <memoir> without being redefined
 \DeclareOptionX{oneside}{
 	\@onesidetrue\@twosidefalse
 	\PassOptionsToClass{oneside}{memoir}
@@ -91,10 +89,10 @@
 	\PassOptionsToClass{twoside}{memoir}
 }
 
-%	Définir une option pour modifier l'interligne
+%	Define an option to change line spacing
 \DeclareOptionX{linespacing}[1.1]{\def\custom@baselinestretch{#1}}
 
-%	Définir les options permettant de changer de style de formattage
+%	Define options for <article>, <marginal> & <precis> document styles
 \DeclareOptionX{article}{
 	\@articletrue
 	\PassOptionsToClass{article}{memoir}
@@ -106,7 +104,8 @@
 	\@precistrue
 }
 
-%	Définir les options permettant de changer de type de document
+%	Define options for <didactic>, ... document types
+%	TODO » Ajouter les formats de documents juridiques
 \DeclareOptionX{didactic}{
 	\@didactictrue
 	\@articletrue
@@ -114,13 +113,14 @@
 	\PassOptionsToClass{10pt,article,twocolumn,oneside}{memoir}
 }
 
-%	Définir les options permettant de changer la langue principale du document
+%	Define options to change the main language of the document
 %	TODO » english est une option "legacy", mais plus pratique...
 \DeclareOptionX{british}{%
 	\@britishtrue
 	\@englishfalse
 	\@frenchfalse
 	\PassOptionsToPackage{british}{babel}%	TODO » Remplacer par UKenglish
+	\PassOptionsToPackage{british}{fmtcount}%	TODO » Remplacer par UKenglish
 	\AtBeginDocument{\main@language{british}}
 }
 \DeclareOptionX{english}{%
@@ -128,6 +128,7 @@
 	\@frenchfalse
 	\@britishfalse
 	\PassOptionsToPackage{english}{babel}%	TODO » Remplacer par USenglish
+	\PassOptionsToPackage{english}{fmtcount}%	TODO » Remplacer par USenglish
 	\AtBeginDocument{\main@language{english}}
 }
 \DeclareOptionX{french}{%
@@ -135,74 +136,82 @@
 	\@englishfalse
 	\@britishfalse
 	\PassOptionsToPackage{french}{babel}
+	\PassOptionsToPackage{french}{fmtcount}
 	\AtBeginDocument{\main@language{french}}
 }
-%	Définir les options pour d'autres langues (secondaires)
+%	Define options to load secondary languages
 \DeclareOptionX{italian}{\PassOptionsToPackage{italian}{babel}}
 \DeclareOptionX{german}{\PassOptionsToPackage{german}{babel}}
 \DeclareOptionX{spanish}{\PassOptionsToPackage{spanish}{babel}}
 
-%	Passer toutes les options inconnues à la classe <memoir>
+%	Pass all undefined options to <memoir>
 \DeclareOptionX*{\PassOptionsToClass{\CurrentOption}{memoir}}
 
-%	Exécuter les options
-\ExecuteOptionsX{a4paper,12pt,linespacing=1.1}
+%	Execute and process options
+\ExecuteOptionsX{a4paper,12pt,french,linespacing=1.1}
 \ProcessOptionsX\relax
 
-%	Charger les dépendances générales: <memoir>, <fixltx2e>
+%	Load the main dependencies: <memoir>, <fixltx2e>
 \LoadClass{memoir}
 \RequirePackage{fixltx2e}
 
-%	Désactiver les options incompatibles
-% L'option <twocolumn> l'emporte sur <marginal>
+%	Deactivate incompatible options
+% Option <twocolumn> always defeats option <marginal>
 \if@marginal\if@twocolumn\@marginalfalse\fi\fi
 
-%	Redéfinir la valeur de l'interligne selon l'option chargée avec la classe
+%	Set \baselinestretch to the ratio given in the option
 \def\baselinestretch{\custom@baselinestretch}\selectfont
 
-%	#####	FORMATAGE DES ÉLÉMENTS DE LA PAGE	#####
+%	#####	PAGE LAYOUT	#####
 
-%	Définir la taille du bloc de texte en fonction de la taille du papier
-% Le bloc est aux proportions du nombre d'or, selon le canon médiéval
+%	Define the size of the type bloc depending on the paper size
+% The bloc proportions follow the golden number, as in the medieval method
 \if@stockaiv
-	\settypeblocksize{*}{424pt}{1.618}% 43 lignes en 12pt, 52 lignes en 10pt
+	\settypeblocksize{*}{424pt}{1.618}% 43 lines size 12pt, 52 lines size 10pt
 \fi
 \if@stockav
-	\settypeblocksize{*}{300pt}{1.618}% 31 lignes en 12pt, 37 lignes en 10pt
+	\settypeblocksize{*}{300pt}{1.618}% 31 lines size 12pt, 37 lines size 10pt
 \fi
 \if@stockavi
-	\settypeblocksize{*}{212pt}{1.618}% 22 lignes en 12pt, 26 lignes en 10pt
+	\settypeblocksize{*}{212pt}{1.618}% 22 lines size 12pt, 26 lines size 10pt
 \fi
 
-%	Définir les proportions des marges selon le mode choisi
-% Les marges sont moins généreuses que dans la tradition typographique
+%	Define the size and proportion of the margins depending on the layout options
+% Margins are significantly smaller than the typographic tradition requires
 \setulmargins{*}{*}{1}
 \if@marginal
 	\if@twoside
-		% Marges asymétriques, ratio de 2:1 en mode <marginal>
+		% Asymmetrical margins, 2:1 ratio with <marginal>
 		\setlrmargins{*}{*}{2}
 	\else
-		% Marges asymétriques inversées (marge au verso) en mode <marginal> <oneside>
+		% Asymmetrical margins, 2:1 ratio with <marginal>, inverted if <oneside>
 		\setlrmargins{*}{*}{.5}
 	\fi
 \else
 	\if@twoside
-		% Marges asymétriques, ratio de 1.5:1 en mode normal
+		% Asymmetrical margins, 1.5:1 ratio in normal mode
 		\setlrmargins{*}{*}{1.5}
 	\else
-		% Marges symétriques, ratio de 1:1 en mode normal <oneside>
+		% Symmetrical margins, 1:1 ratio in normal mode, with <oneside>
 		\setlrmargins{*}{*}{1}
 	\fi
 \fi
 
-%	Définir la hauteur générique des headers & footers
-%	TODO » Utilité du \setheaderspaces (?)
-%\setheaderspaces{*}{\baselineskip}{*}
+%	Define the size of page headers & footers
 \setlength{\headsep}{\baselineskip}
 \setlength{\headheight}{2\baselineskip}
-\setlength{\footskip}{\baselineskip}
+\setlength{\footskip}{2\baselineskip}
+%	TODO » Utilité du \setheaderspaces. Vérifier la doc de <memoir>
+%\setheaderspaces{*}{\baselineskip}{*}
 
-%	Corriger la taille des headers & footers en <a5> & <a6> si le texte est en 12pt
+%	Use larger headers & footers with <didactic>
+\if@didactic
+	% Rééquilibrer les marges & espacements en conséquence
+	\setlength{\headheight}{3\baselineskip}
+	\setlength{\footskip}{2\baselineskip}
+\fi
+
+%	Use smaller footers in <a5> and <a5> if text is set to <12pt>
 %	TODO » Vérifier la mise en page en a5 et a6
 \if@twelvepoints
 	\if@stockav
@@ -213,29 +222,22 @@
 	\fi
 \fi
 
-%	Utiliser des headers et footers plus hauts en mode <didactic>
-\if@didactic
-	% Rééquilibrer les marges & espacements en conséquence
-	\setlength{\headheight}{3\baselineskip}
-	\setlength{\footskip}{2\baselineskip}
-\fi
-
-%	Appliquer et vérifier les modifications
+%	Check & fix the layout
 %	TODO » Charger un hook pour les modifier avant \checkandfixthelayout
 \checkandfixthelayout
 
-%	#####	TYPOGRAPHIE	#####
+%	#####	TYPOGRAPHY	#####
 
-%	Charger les packages nécessaires pour les polices d'écriture
+%	Load the relevant fonts and packages for LaTeX and XeLaTeX
 \ifxetex
-	%	Charger les polices d'écriture de la distribution (Junicode & Latin Modern)
+	%	Load XeLaTeX fonts (Junicode & Latin Modern)
 	\RequirePackage{fontspec,xltxtra}
 	\RequirePackage{mathpazo}
 	\defaultfontfeatures{
 		Ligatures = {TeX},
 		Numbers = {OldStyle},%	TODO » Rendre les OSF conditionnelles
 		SmallCapsFeatures = {WordSpace = 1.2, LetterSpace=3.0}}
-	%	BUG: Problème des accents qui apparaissent comme deux caractères sous Junicode…
+	%	TODO » Problème des accents qui apparaissent comme deux caractères sous Junicode
 	\setmainfont[	Extension		= .ttf,
 					UprightFont		= *,
 					ItalicFont		= *-Italic,
@@ -257,25 +259,25 @@
 					{lmmono10}
 	\RequirePackage{microtype}
 \else
-	%	Charger les polices d'écriture de la distribution (Libertine & Latin Modern)
+	%	Load LaTeX fonts (Libertine & Latin Modern)
 	\RequirePackage[utf8]{inputenc}
 	\RequirePackage{mathpazo,libertine}
 	\RequirePackage[T1]{fontenc}
 	\RequirePackage[tracking,letterspace=30]{microtype}
 \fi
 
-%	Charger les packages de langue et de manipulation des nombres
+%	Load language and number packages and fixes
 %	TODO » Implémenter {csquotes} et le documenter
 \RequirePackage{csquotes}
 %	TODO » english est une option "legacy", mais plus pratique...
 \RequirePackage[greek,latin,english,british,french]{babel}
-\RequirePackage{fixltxhyph}
-%	TODO » Ou autre package ? Ou reprendre le code utile...
 \RequirePackage{fmtcount}
+\RequirePackage{fixltxhyph}
 
-%	#####	TAILLE DES POLICES ET LEADING	#####
+%	#####	FONT SIZE AND LEADING	#####
 
-%	Créer les dimensions qui serviront à calculer les compensations verticales
+%	Create dimensions that will be used to calculate vertical compensation
+% This provides vertical alignment to pages, as long as headings are one-liners
 \newdimen\addto@miniscule
 \newdimen\addto@tiny
 \newdimen\addto@large
@@ -285,9 +287,9 @@
 \newdimen\addto@Huge
 \newdimen\addto@HUGE
 
-%	Définir les tailles des polices en 10pt et les compensations standard
+%	Define font sizes and compensations for <10pt>
 \if@tenpoints
-	% Définir les tailles des polices en 10pt
+	% Define font sizes for <10pt>
 	\renewcommand*{\scriptsize}{\fontsize{8}{12}\selectfont}
 	\renewcommand*{\footnotesize}{\fontsize{8}{12}\selectfont}
 	\renewcommand*{\small}{\fontsize{9}{12}\selectfont}
@@ -303,7 +305,7 @@
 	\renewcommand*{\Huge}{\fontsize{27}{32}\selectfont}
 	\renewcommand*{\HUGE}{\fontsize{32}{37}\selectfont}
 	
-	% Définir les compensations
+	% Define compensations for <10pt>
 	\addto@miniscule=4pt
 	\addto@tiny=3pt
 	\addto@large=9pt
@@ -313,9 +315,9 @@
 	\addto@Huge=4pt
 	\addto@HUGE=11pt
 \else
-%	Définir les tailles des polices en 12pt et les compensations standard
+%	Define font sizes and compensations for <12pt>
 \if@twelvepoints
-	% Définir les tailles de polices en 12pt
+	% Define font sizes for <12pt>
 	\renewcommand*{\scriptsize}{\fontsize{9}{14.5}\selectfont}
 	\renewcommand*{\footnotesize}{\fontsize{10}{14.5}\selectfont}
 	\renewcommand*{\small}{\fontsize{11}{14.5}\selectfont}
@@ -331,7 +333,7 @@
 	\renewcommand*{\Huge}{\fontsize{30}{37}\selectfont}
 	\renewcommand*{\HUGE}{\fontsize{36}{45}\selectfont}
 	
-	% Définir les compensations
+	% Define compensations for <12pt>
 	\addto@miniscule=6pt
 	\addto@tiny=7pt
 	\addto@large=11pt
@@ -342,74 +344,75 @@
 	\addto@HUGE=13pt
 \fi\fi
 
-%	#####	TYPOGRAPHIE GÉNÉRALE	#####
-%	TODO » Non documenté
+%	#####	TYPOGRAPHY	#####
 
+%	Set penalties and demerits
 %	TODO » Pénalités (à tester et modifier, surtout aux formats non-A4)
-%	Définition des pénalités et démérites
 \if@twocolumn
-	\widowpenalties=3 300 100 -150 % Décourager les lignes veuves [Orig. 150]
-	\clubpenalties=3 300 100 -150 % Décourager les lignes orphelines [Orig. 150]
+	\widowpenalties=3 300 100 -150 % Discourage widows [Orig. 150]
+	\clubpenalties=3 300 100 -150 % Discourage orphans [Orig. 150]
 \else
-	\widowpenalties=3 20000 1000 -150 % Décourager les lignes veuves [Orig. 150]
-	\clubpenalties=3 20000 1000 -150 % Décourager les lignes orphelines [Orig. 150]
+	\widowpenalties=3 20000 1000 -150 % Discourage widows [Orig. 150]
+	\clubpenalties=3 20000 1000 -150 % Discourage orphans [Orig. 150]
 \fi
-\hyphenpenalty=100 % Décourager les césures [Orig. 50]
-\doublehyphendemerits=1000000 % Décourager les césures consécutives [Orig. 10000]
-\finalhyphendemerits=100000000 % Décourager les césures en fin de paragraphe [Orig. 5000]
-\exhyphenpenalty=500 % Décourager les césures de mots composés [Orig. 50]
-\brokenpenalty=10000 % Décourager les césures en fin de page [Orig. 100]
+\hyphenpenalty=100 % Discourage hyphens [Orig. 50]
+\doublehyphendemerits=1000000 % Discourage consecutive hyphens [Orig. 10000]
+\finalhyphendemerits=100000000 % Discourage hyphens at the end of paragraphs [Orig. 5000]
+\exhyphenpenalty=500 % Discourage hyphens in compound nouns [Orig. 50]
+\brokenpenalty=10000 % Discourage hyphens at the end of pages [Orig. 100]
 
-%\linepenalty=10% Décourager la création de nouvelles lignes dans les paragraphes
-%\interlinepenalty=100 % Décourager les coupures de pages dans les paragraphes
+%\linepenalty=10% Discourage the creation of new lines within paragraphs
+%\interlinepenalty=100 % Discourage page breaks within paragraphs
 %\interlinepenalties <number> <numbers 1...n>
 
-%\pretolerance=100% Niveau de \badness acceptable pour une ligne sans césure
-%\tolerance=200% Niveau de \badness acceptable pour une ligne avec césure
+%\pretolerance=100% Set acceptable \badness for a line without hyphens
+%\tolerance=200% Set acceptable \badness for a line with hyphens
 
-%\adjdemerits=10000% Décourager les mauvises lignes successives
+%\adjdemerits=10000% Discourage consecutive lines over \badness level
 
-%\floatingpenalty = 300% décourager les sauts de page au milieu d'un float (dont footnote)
-%\interfootnotelinepenalty=100 % Décourager les coupures de page dans les footnotes [Orig. 100]
+%\floatingpenalty = 300% Discourage page breaks within floats
+%\interfootnotelinepenalty=100 % Discourage page breaks in footnotes
 
-%\@beginparpenalty=-50% Penalty for page-breaking before lists
-%\@endparpenalty=-50% Penalty for page-breaking after lists
-%\@itempenalty=-50% Penalty for page-breaking after items in lists
+%\@beginparpenalty=-50% Penalty for page breaks before lists
+%\@endparpenalty=-50% Penalty for page breaks after lists
+%\@itempenalty=-50% Penalty for page breaks after items in lists
 
-%	#####	TYPOGRAPHIE DES ÉLÉMENTS DE PAGE	#####
-
-%	Formater les paragraphes
-% Forcer l'alignement vertical
+%	Style paragraphs
+% Force vertical alignment
 \setlength{\parskip}{0pt}
-% Définir la longueur de l'alinéa
+% Set indentation length
 \setlength{\parindent}{1.5em}
-% Interdire les lignes trop courtes ou trop longues en fin de paragraphe
+% Prevent overly short or long lines at the end of paragraphs
 \setlength{\parfillskip}{2ex plus \dimexpr\linewidth-2\parindent}
-% Ne pas utiliser de doubles espaces, même en anglais
+% Never use double spaces, even in English
 \frenchspacing
 
-%	Définir un style pour les footnotes
-% Mettre le numéro de note en retrait
+%	Style footnotes
+% Set footnote mark to hang on the left
 \setlength{\footmarkwidth}{2em}
 \setlength{\footmarksep}{0em}
-% Utiliser la numérotation classique (pas en \textsuperscript)
+% Set footnote marks on the baseline (instead of superscript)
 \footmarkstyle{#1.\kern.5em}
-% Définir le \parindent dans les notes
+% Set a shorter \parindent in footnotes
 \setlength{\footparindent}{1em}
-
-%	Définir le placement vertical et l'espacement des footnotes
-% Placer les notes tout en bas de page
+% Set footnotes at the bottom of the page
 \setfootnoterule[\vfill]{0pt}{0pt}{0pt}
-% Les notes ont la hauteur d'un \strut (.7\baselineskip), pour les aligner verticalement
+% Force vertical alignment with a \strut height (.7\baselineskip) for all footnotes
 \setlength{\footnotesep}{.7\baselineskip}
 
-%	Définir une commande pour faire une footnote purement symbolique (ex: thanks)
-% On peut ajouter \par à la fin de la note pour sauter une ligne
-\newcommand{\symbolfootnote}[2][2]{
-	\begingroup
-	\def\thefootnote{\fnsymbol{footnote}}\footnotetext[#1]{#2}
-	\endgroup
+%	Create the \symbolfootnote macro (e.g. thanks)
+% The symbol can be chosen via the regular optional argument
+% A \par at the end of the note will create an additional line before the next footnote
+\newcommand{\symbolfootnote}[2][2]{%
+	\begingroup%
+	\setcounter{footnote}{#1}%
+	\renewcommand{\thefootnote}{\fnsymbol{footnote}}%
+	\footnotetext{#2}%
+	\addtocounter{footnote}{-#1}%
+	\endgroup%
 }
+
+%	» End documentation
 
 %	Créer une commande pour spéciale pour réinitialiser les footnotes à chaque page
 % Par défaut, le compteur est remis à zéro à chaque chapitre
@@ -805,8 +808,10 @@
 \renewcommand*{\booknumfont}{\booktitlefont}
 \renewcommand*{\printbooknum}{%
 	\booknumfont%
-	\ifnum\value{book}=1	\ordinalstring{book}[m]%
-	\else					\Roman{book}%
+	\if@french
+		\ifnum\value{book}=1	\ordinalstring{book}[m]%
+		\else					\Roman{book}\fi
+	\else						\Roman{book}%
 	\fi}
 \renewcommand{\beforebookskip}{\null\vspace{\baselinestretch\addto@LARGE}%
 	\vspace{\if@tenpoints12\baselineskip\fi\if@twelvepoints10\baselineskip\fi}}
@@ -822,6 +827,7 @@
 \setlength{\cftbeforebookskip}{2\baselineskip}
 	
 %	Définir le style des parties dans le texte
+% Babel French gère la numérotation en toutes lettres des parties
 \renewcommand*{\thepart}{\Roman{part}}
 \renewcommand{\parttitlefont}{\Large}
 \renewcommand{\partnamefont}{\parttitlefont}
@@ -847,7 +853,7 @@
 \newcommand{\afterheadingnum}{\par\nobreak\vskip\midchapskip}
 \newcommand{\printheadingname}{\headnamefont\headingname}
 \newcommand{\headingnamenum}{\space}
-\newcommand{\printheadingnum}{\headnumfont\ordinalstring{heading}[m]}
+\newcommand{\printheadingnum}{\headnumfont\if@french\ordinalstring{heading}[m]\else\theheading\fi}
 \newcommand{\printheadingtitle}[1]{\headtitlefont#1}
 
 %	Définir le style des titres dans la table des matières
@@ -882,7 +888,7 @@
 \newcommand{\aftersubheadingnum}{\par\nobreak\vskip\midchapskip}
 \newcommand{\printsubheadingname}{\subheadnamefont\subheadingname}
 \newcommand{\subheadingnamenum}{\space}
-\newcommand{\printsubheadingnum}{\subheadnumfont\ordinalstring{subheading}[m]}
+\newcommand{\printsubheadingnum}{\subheadnumfont\if@french\ordinalstring{subheading}[m]\else\thesubheading\fi}
 \newcommand{\printsubheadingtitle}[1]{\subheadtitlefont#1}
 
 %	Définir le style des sous-titres dans la table des matières
@@ -919,8 +925,10 @@
 \renewcommand{\chapternamenum}{\space}
 \renewcommand{\printchapternum}{%
 	\chapnumfont%
-	\ifnum\value{chapter}=1		\ordinalstring{chapter}[m]%
-	\else						\Roman{chapter}%
+	\if@french%
+		\ifnum\value{chapter}=1		\ordinalstring{chapter}[m]%
+		\else						\Roman{chapter}\fi
+	\else							\Roman{chapter}%
 	\fi}
 \renewcommand{\afterchapternum}{~:\par\nobreak\vskip\midchapskip}
 \setlength{\beforechapskip}{\baselinestretch\addto@Large}
@@ -958,7 +966,7 @@
 % En anglais, les paragraphes suivant les sections ne sont pas indentés
 \setsecnumformat{%
 	\ifcsname #1name\endcsname\csname #1name\endcsname\fi%
-	\csname the#1\endcsname.\enskip}
+	\space\csname the#1\endcsname.\enskip}
 
 %	Définir le style des sections
 \setsecheadstyle{\large\scshape\raggedright}	
