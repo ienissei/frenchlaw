@@ -344,7 +344,7 @@
 	\addto@HUGE=13pt
 \fi\fi
 
-%	#####	TYPOGRAPHY	#####
+%	#####	TYPESETTING RULES	#####
 
 %	Set penalties and demerits
 %	TODO » Pénalités (à tester et modifier, surtout aux formats non-A4)
@@ -405,28 +405,24 @@
 % A \par at the end of the note will create an additional line before the next footnote
 \newcommand{\symbolfootnote}[2][2]{%
 	\begingroup%
-	\setcounter{footnote}{#1}%
 	\renewcommand{\thefootnote}{\fnsymbol{footnote}}%
-	\footnotetext{#2}%
-	\addtocounter{footnote}{-#1}%
+	\footnotetext[#1]{#2}%
 	\endgroup%
 }
 
-%	» End documentation
-
-%	Créer une commande pour spéciale pour réinitialiser les footnotes à chaque page
-% Par défaut, le compteur est remis à zéro à chaque chapitre
+%	Create a counter that resets the footnote counter on each page
+% By default, the counter is reset with every new chapter
 \newcommand{\resetfootnotes}{
 	\usepackage{perpage}
 	\MakePerPage{footnote}}
 
-%	Définir le style des notes marginales (\marginpar)
-% On utilise des \strut en première et dernière ligne pour l'alignement vertical
+%	Style margin notes (\marginpar)
+% Use a ragged-right, smaller sized text
+% Make sure the first and last line of the note are \strut height for vertical alignment
 \let\old@marginpar=\marginpar
 \renewcommand{\marginpar}[1]{%
 	\old@marginpar[\raggedleft\footnotesize\strut#1\strut]{\raggedright\footnotesize\strut#1\strut}}
-
-%	Définir la dimension des notes marginales par rapport à la taille de la marge
+%	Set the width based on the actual margin width
 \newlength{\marginwidth}
 \setlength{\marginwidth}{\dimexpr\stockwidth-\textwidth\relax}
 \if@marginal
@@ -437,10 +433,10 @@
 	\setmarginnotes{.05\marginwidth}{.35\marginwidth}{0pt}
 \fi\fi
 
-%	Définir un style pour les paragraphes marginaux (\sidebar)
+%	Define a style for side paragraphs (\sidebar)
 \setsidebars{\marginparsep}{\marginparwidth}{\baselineskip}{0pt}{\footnotesize}{\textheight}
 
-%	En mode <marginal>, placer les notes dans la grande marge
+%	Margin and side notes are set in the widest margin with option <marginal>
 \if@marginal\if@twoside
 	\marginparmargin{outer}
 	\sidebarmargin{outer}
@@ -449,17 +445,16 @@
 	\sidebarmargin{left}
 \fi\fi
 
-%	Créer une commande pour forcer l'alignement vertical des \footnote et \sidebar
+%	Create a command that forces the same line-spacing in notes as in the main block
+% This allows for better vertical alignment, but is not part of standard styles
 \newcommand{\notespacing}{\edef\m@m@footnote@spacing{\custom@baselinestretch}}
 
-%	#####	CRÉATION DES PAGES DE TITRE	#####
-%	TODO » À documenter
+%	TODO » Ajouter ici les paramètres des listes et floats
 
-%	TODO » For email addresses... plus everything else that's not implemented
-%\RequirePackage{hyperref} % Mais crée des bugs avec les références type \supra
+%	#####	TITLE PAGES	#####
 
-%	Définir de nouveaux champs d'informations sur le document
-% Les champs \title et \subtitle peuvent être donnés en plusieurs langues
+%	Define new meta-data macros
+% The \title and \subtitle fields can be given in several languages, e.g. for abstracts
 \renewcommand{\title}[2][\languagename]{\expandafter\gdef\csname @title@#1\endcsname{#2}}
 	\expandafter\gdef\csname @title@\languagename\endcsname{\@empty}
 \newcommand{\subtitle}[2][\languagename]{\expandafter\gdef\csname @subtitle@#1\endcsname{#2}}
@@ -478,15 +473,22 @@
 	\newcommand{\@publisher}{\@empty}
 \newcommand{\series}[1]{\gdef\@series{#1}}
 	\newcommand{\@series}{\@empty}
-%	TODO » Sécuriser les emails si * et éviter qu'ils débordent du cadre (?)
-\newcommand{\email}[1]{\gdef\@email{#1}}
-	\newcommand{\@email}{\@empty}
 \newcommand{\address}[1]{\gdef\@address{#1}}
 	\newcommand{\@address}{\@empty}
 \newcommand{\phone}[1]{\gdef\@phone{#1}}
 	\newcommand{\@phone}{\@empty}
+%	TODO » Nécessaire? utilisé pour les mémoires (prendre \series pour <didactic>)
+% Non documenté
 \newcommand{\type}[1]{\gdef\@type{#1}}
 	\newcommand{\@type}{\@empty}
+%	TODO » Sécuriser les emails si * et éviter qu'ils débordent du cadre (?)
+\newcommand{\email}[1]{\gdef\@email{#1}}
+	\newcommand{\@email}{\@empty}
+%	TODO » Ajouter \website et \linkedin (2 args, nom + url ?)
+
+%	TODO » Automatiser une macro pour les noms (\textsc) et la documenter
+
+%	End documentation
 
 %	Redéfinir la commande \and, qui crée par défaut un tableau
 \def\and{\unskip\enskip\emph{\&}\enskip\ignorespaces}
@@ -1249,10 +1251,12 @@
 
 %	Définir le style des épigraphes
 \epigraphfontsize{\normalsize}
+\setlength{\epigraphwidth}{.5\textwidth}
 \setlength{\epigraphrule}{0pt}
 \setlength{\beforeepigraphskip}{0pt}
-\setlength{\afterepigraphskip}{0pt}
+\setlength{\afterepigraphskip}{\baselineskip}
 %
+%	TODO » Documenter les minipages, utiliser \footnotemark et \footnotetext pour des notes
 %	Définir le format de la citation de l'épigraphe
 \renewcommand{\@epitext}[1]{%
 	\begin{minipage}{\epigraphwidth}\begin{\textflush}#1\end{\textflush}\end{minipage}
@@ -1549,5 +1553,10 @@
 
 %	TODO » Reprendre les documents pour intégrer le package + Renommer {frenchlaw-typo}
 \RequirePackage{typographie}
+
+%	TODO » Implémenter <hyperref>
+%\RequirePackage{hyperref}% Mais crée des bugs avec les références type \supra
+
+%	TODO » Définir une commande pour les \todo
 
 % Fin
