@@ -35,14 +35,8 @@
 	\ifbool{cbx:distinction}%
 		{\ifthenelse{\value{listtotal}>1}{}{\iffieldundef{nameaddon}{}{\printfield{nameaddon}\addspace}}}%
 		{}%
-	% Imprimer le nom de l'auteur, avec le prénom en initiales sauf si ambiguïté
-	\ifcase\value{uniquename}%
-		\usebibmacro{name:first-last}{#1}{#4}{#5}{#7}%
-	\or%
-		\usebibmacro{name:first-last}{#1}{#4}{#5}{#7}%
-	\or%
-		\usebibmacro{name:first-last}{#1}{#3}{#5}{#7}%
-	\fi%
+	% Imprimer le nom de l'auteur
+	\usebibmacro{name:first-last}{#1}{#3}{#5}{#7}%
 	\usebibmacro{name:andothers}}%
 
 \renewcommand{\bibinitdelim}{\addnbthinspace}% Thin space between initials
@@ -110,35 +104,39 @@
 		 \usebibmacro{related}}
 		{}}
 
-\newbibmacro{cite:legislation}{%
+\newbibmacro*{cite:legislation}{%
 	\ifthenelse{\ifciteseen\AND\iffootnote\AND\NOT\iffieldundef{shorttitle}}
 		{\usebibmacro{cite:legislation:shorthand}}
 		{\usebibmacro{cite:legislation:full}}}
 
-\newbibmacro{cite:legislation:reverse}{%
-	\ifthenelse{\ifciteseen\AND\NOT\iffootnote\AND\NOT\iffieldundef{shorttitle}}
-		{\usebibmacro{cite:legislation:shorthand}}
-		{\usebibmacro{cite:legislation:full}}}
+\newbibmacro*{cite:legislation:reverse}{%
+	\ifthenelse{\ifciteseen\AND\iffootnote\AND\NOT\iffieldundef{shorttitle}}
+		{\usebibmacro{cite:legislation:full}}
+		{\usebibmacro{cite:legislation:shorthand}}}
 
-\newbibmacro*{cite:legislation:shorthand}
-	{\printtext[bibhyperref]{\printfield{shorttitle}}}
+\newbibmacro*{cite:legislation:shorthand}{%
+	\printtext[bibhyperref]{\printfield{shorttitle}}}
 
-\newbibmacro*{cite:legislation:full}
-	{\printfield{type}%
+\newbibmacro*{cite:legislation:full}{%
+	\iffieldundef{type}
+		{}
+		{\printfield{type}
+		 \setunit{\addspace}}%
+	\iffieldundef{number}
+		{}
+		{\printfield{number}
+		 \setunit{\addspace}}%
+	\ifthenelse{\iffieldundef{day}\AND\iffieldundef{month}\AND\iffieldundef{year}}
+		{}
+		{\bibstring{fromdate}%
 		 \setunit{\addspace}
-		 \printfield{number}%
-		 \setunit{\addspace}
-		 \ifthenelse{\iffieldundef{day}\AND\iffieldundef{month}\AND\iffieldundef{year}}
-		 	{}
-		 	{\bibstring{fromdate}%
-		 	 \setunit{\addspace}
-		 	 \usebibmacro{date}%
-			 \setunit{\addspace}}%
-		 \printtext[bibhyperref]{\printfield{title}}%
-		 \iffieldundef{series}
-		 	{}
-		 	{\setunit{\addcomma\addspace}
-		 	 \printfield{series}}}
+		 \usebibmacro{date}%
+		 \setunit{\addspace}}%
+	\printtext[bibhyperref]{\printfield{title}}%
+	\iffieldundef{series}
+		{}
+		{\setunit{\addcomma\addspace}%
+		 \printfield{series}}}
 
 \newbibmacro*{citetitle}{%
 	\global\boolfalse{cbx:loccit}%
@@ -194,13 +192,17 @@
 		  	\addcomma\addspace\usebibmacro{journal+issuetitle}%
 			\iffieldundef{postnote}{\addcomma\addspace\printfield{pages}}{}}{}%
 		  \ifentrytype{book}{%
-		  	\newunit\usebibmacro{publisher+location+date}}{}%
+		  	\adddot\addspace\usebibmacro{publisher+location+date}}{}%
+		  \ifentrytype{reference}{%
+		  	\adddot\addspace\usebibmacro{publisher+location+date}}{}%
 		  \ifentrytype{collection}{%
-		  	\newunit\usebibmacro{publisher+location+date}}{}%
+		  	\adddot\addspace\usebibmacro{publisher+location+date}}{}%
 		  \ifentrytype{proceedings}{%
-		  	\newunit\usebibmacro{publisher+location+date}}{}%
+		  	\adddot\addspace\usebibmacro{publisher+location+date}}{}%
 		  \ifentrytype{inbook}{%
-		  	\newunit\usebibmacro{publisher+location+date}}{}%
+		  	\adddot\addspace\usebibmacro{publisher+location+date}}{}%
+		  \ifentrytype{inreference}{%
+		  	\adddot\addspace\usebibmacro{publisher+location+date}}{}%
 		  \ifentrytype{incollection}{%
 			\addcomma\addspace\usebibmacro{in:}%
 			\ifnameundef{editor}
@@ -208,7 +210,7 @@
 				{\addspace\printnames[byeditor]{editor}\addspace\usebibmacro{editorstrg}
 				  \addcolon}%
 			\addspace\printtext[bibhyperref]{\printfield{booktitle}}%
-			\newunit\usebibmacro{publisher+location+date}%
+			\adddot\addspace\usebibmacro{publisher+location+date}%
 			\iffieldundef{postnote}{\addcomma\addspace\printfield{pages}}}{}{}%
 		  \ifentrytype{inproceedings}{%
 			\addcomma\addspace\usebibmacro{in:}%
@@ -217,11 +219,11 @@
 				{\addspace\printnames[byeditor]{editor}\addspace\usebibmacro{editorstrg}
 				  \addcolon}%
 			\addspace\printtext[bibhyperref]{\printfield{booktitle}}%
-			\newunit\usebibmacro{publisher+location+date}%
+			\adddot\addspace\usebibmacro{publisher+location+date}%
 			\iffieldundef{postnote}{\addcomma\addspace\printfield{pages}}}{}{}%
 		  \ifentrytype{thesis}{%
 		  	\addcomma\addspace{\bibstring{phdthesis}}
-		  	\newunit\usebibmacro{institution+location+date}}{}%
+		  	\adddot\addspace\usebibmacro{institution+location+date}}{}%
 		  }}
 
 \newbibmacro*{cite:shorthand}{%
@@ -338,10 +340,10 @@
 	 \iffieldundef{postnote}
 	 	{}
 	 	{\iffootnote
-	 		{\bibstring{article}
-	 		 \setunit{\adddnbspace}}
+	 		{\bibstring{article}%
+	 		 \setunit{\addnbspace}}
 	 		{}%
-	 	 \usebibmacro{cite:postnote}%
+	 	 \printfield{postnote}%
 		 \setunit{\addspace}
 		 \printfield{note}%
 		 \setunit{\addspace}}}
@@ -356,9 +358,9 @@
 	 	{}
 	 	{\iffootnote
 	 		{}
-	 		{\bibstring{article}
-	 		 \setunit{\adddnbspace}}%
-	 	 \usebibmacro{cite:postnote}%
+	 		{\bibstring{article}%
+	 		 \setunit{\addnbspace}}%
+	 	 \printfield{postnote}%
 		 \setunit{\addspace}
 		 \printfield{note}%
 		 \setunit{\addspace}}}
@@ -366,6 +368,14 @@
 	 \usebibmacro{cite:legislation:reverse}}
 	{\multicitedelim}
 	{}
+\let\legal=\code
+
+\DeclareCiteCommand{\case}
+	{\bibsentence\usebibmacro{prenote}}
+	{\usebibmacro{citeindex}%
+	 \usebibmacro{cite:jurisdiction}}
+	{\multicitedelim}
+	{\usebibmacro{cite:postnote}}
 
 
 %	TODO » Multiple citations // Chantier
