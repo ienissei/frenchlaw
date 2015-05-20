@@ -1373,10 +1373,6 @@
 %	Charger <biblatex> avec les options
 \usepackage[mincrossrefs=2,autolang=other*,style=frenchlaw,backend=biber,indexing=cite]{biblatex}
 
-%	Définir les raccourcis de citation
-\def\citep{\unskip~\parencite}
-\def\citet{\textcite}
-
 %	Indexer automatiquement les noms des auteurs cités
 \DeclareIndexNameFormat{default}{%
 	\usebibmacro{index:name}{\bibindex}{#1@\textsc{#1}}{#3}{#5}{#7}}

@@ -274,14 +274,14 @@
 	{\multicitedelim}
 	{\usebibmacro{cite:postnote}}
 
-\DeclareCiteCommand{\parencite}[\mkbibparens]
+\DeclareCiteCommand{\parencite}[\unskip~\mkbibparens]
 	{\usebibmacro{prenote}}
 	{\usebibmacro{citeindex}%
 	 \usebibmacro{cite}}
 	{\multicitedelim}
 	{\usebibmacro{cite:postnote}}
 
-\DeclareCiteCommand*{\parencite}[\mkbibparens]
+\DeclareCiteCommand*{\parencite}[\unskip~\mkbibparens]
 	{\usebibmacro{prenote}}
 	{\usebibmacro{citeindex}%
 	 \usebibmacro{citetitle}}
@@ -368,7 +368,6 @@
 	 \usebibmacro{cite:legislation:reverse}}
 	{\multicitedelim}
 	{}
-\let\legal=\code
 
 \DeclareCiteCommand{\case}
 	{\bibsentence\usebibmacro{prenote}}
@@ -376,6 +375,12 @@
 	 \usebibmacro{cite:jurisdiction}}
 	{\multicitedelim}
 	{\usebibmacro{cite:postnote}}
+
+
+%	Définir les raccourcis de citation
+\let\citep=\parencite
+\let\citet=\textcite
+\let\legal=\code
 
 
 %	TODO » Multiple citations // Chantier
