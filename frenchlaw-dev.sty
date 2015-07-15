@@ -25,7 +25,7 @@
 % \usepackage{tikz}
 % \usepackage{calc} % Try to remove it and calculate with dimexpr
 % \usepackage{eso-pic}
-
+%
 % \definecolor{grid}{gray}{0.8}
 % \newlength{\topline}
 % \setlength{\topline}{\paperheight}
@@ -42,7 +42,7 @@
 % }}
 
 %	Require the needed packages
-\RequirePackage{etoolbox,xstring,xcolor,listings,verbatim,docmute,makeidx,needspace}
+\RequirePackage{etoolbox,xstring,xcolor,listings,verbatim,docmute,makeidx,needspace,adforn}
 
 %	Set the default colours for code
 \newcommand{\numbercolor}{\color[HTML]{655643}}% Ash (contrast: white)
@@ -54,10 +54,7 @@
 \newcommand{\bracketcolor}{\color{black}}
 
 %	Set the default margin signs
-\newcommand{\examplesign}{\Large$\star$}
-\newcommand{\resultsign}{$\rightarrow$}
-\newcommand{\macrosign}{\P}
-\newcommand{\optionsign}{\#}
+\newcommand{\macrosign}{\adforn{34}}% \P
 
 %	Define different styles for listings
 \lstset{

@@ -114,7 +114,7 @@
 }
 
 %	Define options to change the main language of the document
-%	TODO » english est une option "legacy", mais plus pratique...
+%	TODO » english est une option "legacy", mais plus pratique... + Charger <adforn> pour les symboles (et en ajouter, e.g. dans les CV, etc.)
 \DeclareOptionX{british}{%
 	\@britishtrue
 	\@englishfalse
@@ -453,6 +453,40 @@
 
 %	#####	TITLE PAGES	#####
 
+%	Create a command that changes the style of \maketitle
+% Create a \maketitle<name> command and use \titlepagestyle{<name>}
+\newcommand{\titlepagestyle}[1]{\def\maketitle{\csname maketitle#1\endcsname}}
+
+%	Redefine \and (by default it uses a tabular and breaks vertical alignment)
+\def\and{\par}%\unskip\enskip\emph{\&}\enskip\ignorespaces
+
+%	Create a command for people's first & last names
+\newcommand{\name}[2]{#1~\textsc{#2}}
+\newcommand{\affiliation}[1]{{\normalsize\unskip~(#1)}}
+
+%	Create a command to switch off and on layout elements
+\newcommand{\reset@twocolumns}{%
+	\if@twocolumn\@restonecoltrue\onecolumn\else\@restonecolfalse\fi%
+}
+\newcommand{\restore@twocolumns}{
+	\if@restonecol\twocolumn\fi%
+}
+
+%	Create a command to set all font sizes to a multiple of \baselineskip
+\newcommand{\normalize@fontsize}{%
+	\setlength{\parindent}{0em}
+	\if@tenpoints
+		\renewcommand*{\large}{\fontsize{12}{12}\selectfont}
+		\renewcommand*{\Large}{\fontsize{15}{24}\selectfont}
+		\renewcommand*{\LARGE}{\fontsize{18}{24}\selectfont}
+	\fi
+	\if@twelvepoints
+		\renewcommand*{\large}{\fontsize{14}{14.5}\selectfont}
+		\renewcommand*{\Large}{\fontsize{17}{29}\selectfont}
+		\renewcommand*{\LARGE}{\fontsize{20}{29}\selectfont}
+	\fi
+}
+
 %	Define new meta-data macros
 % The \title and \subtitle fields can be given in several languages, e.g. for abstracts
 \renewcommand{\title}[2][\languagename]{\expandafter\gdef\csname @title@#1\endcsname{#2}}
@@ -465,9 +499,11 @@
 	\newcommand{\@school}{\@empty}
 \newcommand{\subject}[1]{\gdef\@subject{#1}}
 	\newcommand{\@subject}{\@empty}
-\newcommand{\director}[1]{\gdef\@director{\bgroup\def\and{\par}#1\egroup}}
+\newcommand{\thesis}[1]{\gdef\@thesis{#1}}
+	\newcommand{\@thesis}{\@empty}
+\newcommand{\director}[1]{\gdef\@director{\bgroup#1\egroup}}
 	\newcommand{\@director}{\@empty}
-\newcommand{\jury}[1]{\gdef\@jury{\bgroup\def\and{\par}#1\egroup}}
+\newcommand{\jury}[1]{\gdef\@jury{\bgroup#1\egroup}}
 	\newcommand{\@jury}{\@empty}
 \newcommand{\publisher}[1]{\gdef\@publisher{#1}}
 	\newcommand{\@publisher}{\@empty}
@@ -477,151 +513,68 @@
 	\newcommand{\@address}{\@empty}
 \newcommand{\phone}[1]{\gdef\@phone{#1}}
 	\newcommand{\@phone}{\@empty}
-%	TODO » Nécessaire? utilisé pour les mémoires (prendre \series pour <didactic>)
-% Non documenté
-\newcommand{\type}[1]{\gdef\@type{#1}}
-	\newcommand{\@type}{\@empty}
 %	TODO » Sécuriser les emails si * et éviter qu'ils débordent du cadre (?)
+% Non documenté
 \newcommand{\email}[1]{\gdef\@email{#1}}
 	\newcommand{\@email}{\@empty}
+
+%	TODO » Ajouter un mailto: crypté en UTF-8 (\@ifstar ?), mais uniquement si on crypte l'adresse
+\begingroup
+	\catcode`\@=\active
+	\catcode`\.=\active
+	\newcommand{\mailto}{%
+		\begingroup
+		\catcode`\@=\active
+		\catcode`\.=\active
+		\gdef@{$\,\langle\,$at$\,\rangle\,$}%
+		\gdef.{$\,\langle\,$dot$\,\rangle\,$}%
+		\obfuscate
+	}
+	\newcommand{\obfuscate}[1]{%
+		\endgroup
+		{\ttfamily#1}%
+	}
+\endgroup
+
 %	TODO » Ajouter \website et \linkedin (2 args, nom + url ?)
+%	TODO » Ajouter une commande pour le copyright + intégrer aux styles
 
-%	TODO » Automatiser une macro pour les noms (\textsc) et la documenter
-
-%	End documentation
-
-%	Redéfinir la commande \and, qui crée par défaut un tableau
-\def\and{\unskip\enskip\emph{\&}\enskip\ignorespaces}
-
-%	Créer une commande pour changer le style
-\newcommand{\titlepagestyle}[1]{\def\maketitle{\csname maketitle#1\endcsname}}
-
-%	TODO » Corriger toutes les tailles des polices (si 10 pt et si 12 pt)
-%	TODO » Revoir le \@restonecoltrue (switch plus propre?)
-
-%	Définir un style générique pour les articles, mémos, etc.
-\newcommand{\maketitleArticle}{%
-	\bgroup%
-	\if@twocolumn\@restonecoltrue\onecolumn
-	\else\@restonecolfalse
-	\fi
-	% Redéfinir les hauteurs de lignes pour éviter les problèmes d'alignement
-	\renewcommand*{\Large}{\fontsize{17}{29}\selectfont}
-	\if\expandafter\@empty\csname @title@\languagename\endcsname\relax
-		\@latex@warning@no@line{No \noexpand\title given}\fi
-	\clearpage
-	\noindent{\Large\scshape\raggedright\csname @title@\languagename\endcsname\if\@empty\csname @subtitle@\languagename\endcsname\relax\else :\par\noindent\csname @subtitle@\languagename\endcsname\fi}\par%
-	\noindent{\@author%
-		\if\@empty\@institution\relax\else~(\emph{\@institution%
-		\if\@empty\@school\relax\else, \@school\fi})\fi%
-		~---\space\@date\par}%
-	\vspace{2\baselineskip}%
-	\if@restonecol\twocolumn\fi\egroup%
-}
-
-\newcommand{\maketitleSyllabus}{%
-	\bgroup%
-	\if@twocolumn\@restonecoltrue\onecolumn
-	\else\@restonecolfalse
-	\fi
-	% Redéfinir les hauteurs de lignes pour éviter les problèmes d'alignement
-	\renewcommand*{\Large}{\fontsize{17}{29}\selectfont}
-	\if\expandafter\@empty\csname @title@\languagename\endcsname\relax
-		\@latex@warning@no@line{No \noexpand\title given}\fi
-	\clearpage
-	\vspace*{3\baselineskip}
-	\noindent{\Large\scshape\raggedright\csname @title@\languagename\endcsname}\par
-	\noindent{\large\scshape\raggedright\csname @subtitle@\languagename\endcsname}\par
-	\noindent{\@author%
-		\if\@empty\@institution\relax\else~(\emph{\@institution%
-		\if\@empty\@school\relax\else, \@school\fi})\fi}\par
-	\noindent{Contact: \@email}\par
-	\if@restonecol\twocolumn\fi\egroup%
-}
-
+%	Define a default style (esp. for long documents)
 \newcommand{\maketitleBook}{%
+	% Send out warnings on empty fields
+	\if\expandafter\@empty\csname @title@\languagename\endcsname\relax
+		\@latex@warning@no@line{No \noexpand\title given}\fi
+	% Change the numbering in \frontmatter to \Roman
+	\renewcommand{\@memfront}{\@smemfront\pagenumbering{Roman}}
+	% Create the \maketitle
+	\newcommand{\printtitle}{%
+		\normalize@fontsize%
+		\centering%	TODO » Tout aligner à gauche pour les livres
+		{\large\scshape\@institution\par}
+		{\itshape\@series\par}
+		\vspace*{8\baselineskip}
+		{\LARGE\scshape\csname @title@\languagename\endcsname\par}
+		{\Large\scshape\csname @subtitle@\languagename\endcsname\par}
+		\vspace{4\baselineskip}
+		{\Large\@author\par}
+		\vfill
+		{\large\@publisher\par}}
+	% Begin \frontmatter and print the title page twice
 	\frontmatter
-	\thispagestyle{empty}
 	\bgroup
-	\if@twocolumn\@restonecoltrue\onecolumn
-	\else\@restonecolfalse
-	\fi%
-	\centering%
-	% Redéfinir les hauteurs de lignes pour éviter les problèmes d'alignement
-	\renewcommand*{\large}{\fontsize{14}{14.5}\selectfont}
-	\renewcommand*{\Large}{\fontsize{17}{29}\selectfont}
-	\renewcommand*{\LARGE}{\fontsize{20}{29}\selectfont}
-	\if\expandafter\@empty\csname @title@\languagename\endcsname\relax
-		\@latex@warning@no@line{No \noexpand\title given}\fi
-	\vspace*{0pt}
-	{\large\scshape\@institution\par}% Add series?
-	\vspace*{8\baselineskip}
-	{\LARGE\scshape\csname @title@\languagename\endcsname\par}
-	{\Large\scshape\csname @subtitle@\languagename\endcsname\par}
-	\vspace{3\baselineskip}
-	{\Large\@author\par}
-	\vspace{24\baselineskip}
-	{\large\@publisher\par}
-	\if@restonecol\twocolumn\fi\egroup%
-	\cleardoublepage
+		\pagestyle{empty}%
+		\reset@twocolumns%
+		\printtitle%
+		\restore@twocolumns%
+		\cleartooddpage
+		\printtitle%
+		\cleartooddpage
+	\egroup
 }
 
-%	Définir le style d'une page de titre pour un mémoire de recherche
-\newcommand{\maketitleMemoir}{%
-	\frontmatter*% Pagination en chiffres arabes
-	\thispagestyle{empty}
-	\bgroup
-	\if@twocolumn\@restonecoltrue\onecolumn
-	\else\@restonecolfalse
-	\fi%
-	\centering%
-	% Redéfinir les hauteurs de lignes pour éviter les problèmes d'alignement
-	\renewcommand*{\large}{\fontsize{14}{14.5}\selectfont}
-	\renewcommand*{\Large}{\fontsize{17}{29}\selectfont}
-	\renewcommand*{\LARGE}{\fontsize{20}{29}\selectfont}
-	\if\expandafter\@empty\csname @title@\languagename\endcsname\relax
-		\@latex@warning@no@line{No \noexpand\title given}\fi
-	\if\@empty\@institution\relax
-		\@latex@warning@no@line{No \noexpand\institution given}\fi
-	\if\@empty\@school\relax
-		\@latex@warning@no@line{No \noexpand\school given}\fi
-	\if\@empty\@director\relax
-		\@latex@warning@no@line{No \noexpand\director given}\fi
-	\vspace*{0pt}
-	{\large\scshape\@institution\par}
-	\vspace{\baselineskip}
-	{\large\@school\par}
-	\vspace{8\baselineskip}
-	{\LARGE\csname @title@\languagename\endcsname\par}
-	{\Large\csname @subtitle@\languagename\endcsname\par}
-	\vspace{3\baselineskip}
-	{\Large\@author\par}
-	\vspace{8\baselineskip}
-	{\Large\@type\par}
-	\vspace{3\baselineskip}
-	{Sous la direction de:\par}
-	\vspace{\baselineskip}
-	{\large\@director\par}
-	\vspace{6\baselineskip}
-	{\large\@date\par}
-	\if@restonecol\twocolumn\fi\egroup%
-	\cleardoublepage
-	\let\mainmatter=\@smemmain% Pagination continue via \mainmatter* (redéfinition)
-}
-
-%	Définir le style d'une page de titre pour une thèse de doctorat
+%	Create a style for PhD theses / Dissertations
 \newcommand{\maketitlePhD}{%
-	\frontmatter*% Pagination en chiffres arabes
-	\thispagestyle{empty}
-	\bgroup
-	\if@twocolumn\@restonecoltrue\onecolumn
-	\else\@restonecolfalse
-	\fi%
-	\centering%
-	% Redéfinir les hauteurs de lignes pour éviter les problèmes d'alignement
-	\renewcommand*{\large}{\fontsize{14}{14.5}\selectfont}
-	\renewcommand*{\Large}{\fontsize{17}{29}\selectfont}
-	\renewcommand*{\LARGE}{\fontsize{20}{29}\selectfont}
+	% Send out warnings on empty fields
 	\if\expandafter\@empty\csname @title@\languagename\endcsname\relax
 		\@latex@warning@no@line{No \noexpand\title given}\fi
 	\if\@empty\@institution\relax
@@ -630,49 +583,151 @@
 		\@latex@warning@no@line{No \noexpand\school given}\fi
 	\if\@empty\subject\relax
 		\@latex@warning@no@line{No \noexpand\subject given}\fi
+	\if\@empty\@author\relax
+		\@latex@warning@no@line{No \noexpand\author given}\fi
 	\if\@empty\@director\relax
 		\@latex@warning@no@line{No \noexpand\director given}\fi
 	\if\@empty\@jury\relax
 		\@latex@warning@no@line{No \noexpand\jury given}\fi
-	\vspace*{0pt}
-	{\Large\scshape\@institution\par}
-	\vspace{\baselineskip}
-	{\large\@school\par}
-	\vspace{6\baselineskip}
-	{\LARGE\csname @title@\languagename\endcsname\par}
-	{\Large\csname @subtitle@\languagename\endcsname\par}
-	\vspace{6\baselineskip}
-	{\large Thèse pour le doctorat en \@subject\par}
-	\vspace{\baselineskip}
-	{\large présentée et soutenue publiquement le \@date\space par}\par
-	{\Large\@author\par}
-	\vspace{6\baselineskip}
-	{Sous la direction de:\par}
-	\vspace{\baselineskip}
-	{\large\@director\par}
-	\vspace{\baselineskip}
-	{Membres du jury:\par}
-	\vspace{\baselineskip}
-	{\large\@jury\par}
-	\if@restonecol\twocolumn\fi\egroup\cleardoublepage
-	\let\mainmatter=\@smemmain% Pagination continue via \mainmatter* (redéfinition)
+	% Create the \maketitle
+	\newcommand{\printtitle}{%
+		\normalize@fontsize%
+		\centering%
+		{\Large\scshape\@institution\par}
+		\vspace{\baselineskip}
+		{\large\@school\par}
+		\vspace{6\baselineskip}
+		{\LARGE\csname @title@\languagename\endcsname\par}
+		{\Large\csname @subtitle@\languagename\endcsname\par}
+		\vspace{4\baselineskip}
+		{\large\subjecttext\space\@subject\par}
+		\vspace{\baselineskip}
+		{\large\datetext\space\@date\space\par}
+		\vspace{4\baselineskip}
+		{\Large\@author\par}
+		\vspace{4\baselineskip}
+		{\directortext\par}
+		\vspace{\baselineskip}
+		{\large\@director\par}
+		\vspace{2\baselineskip}
+		{\jurytext\par}
+		\vspace{\baselineskip}
+		{\large\@jury\par}}
+	% Begin \frontmatter and print the title page twice, use arabic numbers throughout
+	\frontmatter*
+	\bgroup
+		\pagestyle{empty}
+		\reset@twocolumns%
+		\printtitle%
+		\cleartooddpage
+		\restore@twocolumns%
+		\printtitle%
+		\cleartoddpage
+	\egroup
+	\let\mainmatter=\@smemmain% == \let\mainmater=\mainmatter*
 }
 
-%	Définir un style pour les CV
-\newcommand{\maketitleCV}{%
-	\pagestyle{letterhead}
-	\thispagestyle{empty}
-	\setlength{\parindent}{0em}
-	%	TODO » Déplacer dans le style <letterhead> + charger automatiquement en option
-	\def\rightmark{\MakeLowercase{\scshape\@author~-- \csname @title@\languagename\endcsname}}
+%	Create a style for MA / MPhil theses
+\newcommand{\maketitleMemoir}{%
+	\frontmatter*% Use arabic page numbers throughout
+	% Send out warnings on empty fields
 	\if\expandafter\@empty\csname @title@\languagename\endcsname\relax
 		\@latex@warning@no@line{No \noexpand\title given}\fi
+	\if\@empty\@institution\relax
+		\@latex@warning@no@line{No \noexpand\institution given}\fi
+	\if\@empty\@school\relax
+		\@latex@warning@no@line{No \noexpand\school given}\fi
+	\if\@empty\@author\relax
+		\@latex@warning@no@line{No \noexpand\author given}\fi
+	\if\@empty\@director\relax
+		\@latex@warning@no@line{No \noexpand\director given}\fi
+	% Create the \maketitle
+	\newcommand{\printtitle}{%
+		\normalize@fontsize%
+		\centering%
+		{\large\scshape\@institution\par}
+		\vspace{\baselineskip}
+		{\large\@school\par}
+		\vspace{6\baselineskip}
+		{\LARGE\csname @title@\languagename\endcsname\par}
+		{\Large\csname @subtitle@\languagename\endcsname\par}
+		\vspace{4\baselineskip}
+		{\Large\@author\par}
+		\vspace{6\baselineskip}
+		{\Large\@thesis\par}
+		\vspace{4\baselineskip}
+		{\subjecttext\par}
+		\vspace{\baselineskip}
+		{\large\@director\par}
+		\vspace{8\baselineskip}
+		{\large\@date\par}}
+	% Begin \frontmatter and print the title page twice, use arabic numbers throughout
+	\frontmatter*
 	\bgroup
-	\if@twocolumn\@restonecoltrue\onecolumn
-	\else\@restonecolfalse
-	\fi%
-	% Redéfinir les hauteurs de lignes pour éviter les problèmes d'alignement
-	\renewcommand*{\large}{\fontsize{14}{14.5}\selectfont}
+		\pagestyle{empty}
+		\reset@twocolumns%
+		\printtitle%
+		\cleartooddpage
+		\restore@twocolumns%
+		\printtitle%
+		\cleartooddpage
+	\egroup
+	\let\mainmatter=\@smemmain% == \let\mainmater=\mainmatter*
+}
+
+%	Define a default style for articles and other short documents
+\newcommand{\maketitleArticle}{%
+	% Send out warnings on empty fields
+	\if\expandafter\@empty\csname @title@\languagename\endcsname\relax
+		\@latex@warning@no@line{No \noexpand\title given}\fi
+	% Print the \maketitle
+	\bgroup
+		\cleardoublepage%
+		\reset@twocolumns%
+		\normalize@fontsize%
+%		\vspace*{3\baselineskip}
+		{\Large\scshape\raggedright\csname @title@\languagename\endcsname\if\@empty\csname @subtitle@\languagename\endcsname\relax\else :\par\noindent\csname @subtitle@\languagename\endcsname\fi}\par%
+		{\if\@empty\@author\else\@author\fi\par}%
+		{\if\@empty\@email\else\emailname\@email\fi\par}%
+		\vspace{2\baselineskip}%
+		\restore@twocolumns%
+	\egroup
+}
+
+%	Define a style for academic papers and others homework
+\newcommand{\maketitleAcademic}{%
+	% Send out warnings on empty fields
+	\if\@empty\@author\relax
+		\@latex@warning@no@line{No \noexpand\author given}\fi
+	\if\expandafter\@empty\csname @title@\languagename\endcsname\relax
+		\@latex@warning@no@line{No \noexpand\title given}\fi
+	% Print the \maketitle
+	\bgroup
+		\cleardoublepage%
+		\reset@twocolumns%
+		\normalize@fontsize%
+		{\Large\scshape\raggedright\csname @title@\languagename\endcsname\if\@empty\csname @subtitle@\languagename\endcsname\relax\else :\par\noindent\csname @subtitle@\languagename\endcsname\fi}\par%
+		{\@author~---\space\@date\par}%
+		{\if\@empty\@email\else\emailname\@email\fi\par}%
+		\vspace{2\baselineskip}%
+		\restore@twocolumns%
+	\egroup
+}
+
+%	Create a style for resumés / CVs
+%	TODO » Ajouter un \website et \linkedin, + des pictogrammes + hyperlinks for emails and websites + \pagestyle{frenchletter}
+%	TODO » Non documenté
+\newcommand{\maketitleCV}{%
+	% Send out warnings on empty fields
+	\if\@empty\@author\relax
+		\@latex@warning@no@line{No \noexpand\author given}\fi
+	% Use \parindent = 0 for the whole document
+	\setlength{\parindent}{0em}
+	% Print the \maketitle
+	\bgroup
+	\thispagestyle{empty}
+	\reset@twocolumns%
+	\normalize@fontsize%
 	{\large\raggedright\@author}\par%
 	\vspace{\baselineskip}%
 	\begin{flushleft}
@@ -685,32 +740,37 @@
 	\end{flushright}
 	\par
 	\vspace{\baselineskip}
-	\if@restonecol\twocolumn\fi\egroup%
+	\restore@twocolumns%
 }
 
-%	Sélectionner la page de titre par défaut selon les options du document
+%	Set the default styles to <Book> or <Article>
 \if@article\titlepagestyle{Article}\else\titlepagestyle{Book}\fi
 
-%	#####	ENTÊTES ET PIEDS DE PAGES	#####
+%	#####	HEADERS & FOOTERS	#####
 
-%	Définir le style des <book> et <part>
+%	TODO » Documenté pour les livres, articles, lettres, CVs. Programmer et documenter les docs juridiques
+
+%	Set a style for <book>, <part>, <heading>, <subheading> and <chapter>
 \aliaspagestyle{book}{empty}
 \aliaspagestyle{part}{empty}
-
-%	Définir le style des <heading> et <subheading> et <chapter>
 \aliaspagestyle{chapter}{plain}
 
-%	Redéfinir le style <plain> pour tenir compte du mode <twoside>
+%	Redefine <plain> so that it takes into accout the <twoside> option
 \makepagestyle{plain}
 	\makeevenfoot{plain}{\if@twoside\thepage\fi}{\if@oneside\thepage\fi}{}
 	\makeoddfoot{plain}{}{\if@oneside\thepage\fi}{\if@twoside\thepage\fi}
 
-%	TODO » Tester en mode article (afficher la section s'il y en a une)
+%	Define the standard page style for the class
 %	TODO » Corriger pour \chapter* et \section* (définir \rightmark) -- difficile, on peut les laisser dans le \fontmatter ou \backmatter (à documenter)
-%	Définir le format des pages pour les documents normaux
+%	TODO » Ajouter le numéro de version et la date \if@draft
+%	TODO » Supprimé <generic>, utiliser <frenchlaw> + oneside (sinon impression du titre)
 \makepagestyle{frenchlaw}
 	\makepsmarks{frenchlaw}{%
 		\nouppercaseheads
+		\createmark{book}{right}{nonumber}{}{}
+		\createmark{part}{right}{nonumber}{}{}
+		\createmark{heading}{right}{nonumber}{}{}
+		\createmark{subheading}{right}{nonumber}{}{}
 		\createmark{chapter}{right}{nonumber}{}{}
 		\clearmark{section}
 		\createplainmark{toc}{right}{\contentsname}
@@ -721,26 +781,26 @@
 		\createplainmark{glossary}{right}{\glossaryname}
 	}
 	\makeevenhead{frenchlaw}{}{\scshape\csname @title@\languagename\endcsname}{}
-	\makeoddhead{frenchlaw}{}{\itshape\rightmark}{}
+	\makeoddhead{frenchlaw}{}{\itshape\if@article\@series\else\rightmark\fi}{}
 	\makeevenfoot{frenchlaw}{\if@twoside\thepage\fi}{\if@oneside\thepage\fi}{}
 	\makeoddfoot{frenchlaw}{}{\if@oneside\thepage\fi}{\if@twoside\thepage\fi}
 \pagestyle{frenchlaw}
 
-%	Définir le format des pages pour les lettres, CV, etc.
-\makepagestyle{letterhead}
-	\makeevenhead{letterhead}{}{}{}
-	\makeoddhead{letterhead}{}{}{}
-	\makeevenfoot{letterhead}{\rightmark}{}{\strut{\ifnum\value{lastpage}>1\relax\thepage\thinspace/\pageref{lastpage}\fi}}
-	\makeoddfoot{letterhead}{\rightmark}{}{\strut{\ifnum\value{lastpage}>1\relax\thepage\thinspace/\pageref{lastpage}\fi}}
+%	Define a style for letters, memos and resumés
+%	TODO » Créer une option CV et \if@CV
+%	TODO » Regrouper au style frenchlaw?
+%	TODO » Documenter: Compiler deux fois
+\makepagestyle{frenchletter}
+%	\makeevenhead{frenchletter}{}{\if@CV\MakeLowercase{\scshape\@author~-- \csname @title@\languagename\endcsname\fi}}{}
+%	\makeoddhead{frenchletter}{}{\if@CV\MakeLowercase{\scshape\@author~-- \csname @title@\languagename\endcsname\fi}}{}
+	\makeevenfoot{frenchletter}{\rightmark}{}{\strut{\ifnum\value{lastpage}>1\relax\thepage\thinspace/\pageref{lastpage}\fi}}
+	\makeoddfoot{frenchletter}{\rightmark}{}{\strut{\ifnum\value{lastpage}>1\relax\thepage\thinspace/\pageref{lastpage}\fi}}
 	\AtEndDocument{\label{lastpage}}
+%	TODO » Appliquer automatiquement sur certains types de docs + Créer les autres formats
 
-%	TODO » A revoir et à documenter + Créer les styles des autres formats
-
-%	Créer des en-têtes et pieds de page vides (utilisés en fin de classe)
-% Utiliser \leftmark et \rightmark en les redéfinissant (?)
+%	TODO » A reprendre pour didactic. Utiliser \leftmark et \rightmark en les redéfinissant (?)
 \def\leftheader{}
 \def\rightheader{}
-%	Définir le style des pages en mode <didactic>
 \makepagestyle{didactichead}
 	\makeheadrule{didactichead}{\textwidth}{.2ex}
 	\makeevenhead{didactichead}
@@ -758,23 +818,24 @@
 	\aliaspagestyle{chapter}{didactichead}
 \fi
 
-%	Créer un style de header pour les documents génériques
-\makepagestyle{generic}
-	\makeevenhead{generic}{\itshape\@series}{}{}
-	\makeoddhead{generic}{\itshape\@series}{}{}
-	\makeevenfoot{generic}{\if@twoside\thepage\fi}{\if@oneside\thepage\fi}{}
-	\makeoddfoot{generic}{}{\if@oneside\thepage\fi}{\if@twoside\thepage\fi}
 
-%	#####	STYLE ET ALIGNEMENT VERTICAL DES DIVISIONS LOGIQUES	#####
+%	####	TABLES DES MATIÈRES	####
 
 %	Définir la subdivision maximale pour la numérotation
-\if@article
-	\maxsecnumdepth{paragraph}
-	\maxtocdepth{paragraph}
-\else
-	\maxsecnumdepth{subparagraph}
-	\maxtocdepth{subparagraph}
-\fi
+\maxsecnumdepth{subparagraph}
+\maxtocdepth{subparagraph}
+\setcounter{tocdepth}{5}%
+
+%	TODO » Contentsname pour les shortcontents
+%	TODO » Modifier le style de la ToC pour supprimer l'une des lignes dans \afterchapterskip (car tout chapitre ajoute une ligne au début de la table)
+
+% Définir des tables des matières courte (sommaire) et longues (précis)
+\newcommand{\shortcontents}{%
+	\bgroup
+		\setcounter{tocdepth}{0}%
+		\tableofcontents
+	\egroup
+}
 
 %	Créer de nouvelles divisions logiques: <heading> et <subheading>
 \newlistentry[part]{heading}{toc}{0}
@@ -804,8 +865,14 @@
 \cftsetindents{paragraph}{6em}{1.5em}
 \cftsetindents{subparagraph}{7.5em}{1.5em}
 
+%	S'assurer que la table des matières termine bien le dernier paragraphe
+\AtEndDocument{\addtocontents{toc}{\par}}
+
+
+%	#####	LOGICAL DIVISIONS	#####
+
 %	Définir le style des livres dans le texte
-\renewcommand*{\booktitlefont}{\LARGE\scshape}
+\renewcommand*{\booktitlefont}{\Huge\scshape}
 \renewcommand*{\booknamefont}{\booktitlefont}
 \renewcommand*{\booknumfont}{\booktitlefont}
 \renewcommand*{\printbooknum}{%
@@ -815,9 +882,9 @@
 		\else					\Roman{book}\fi
 	\else						\Roman{book}%
 	\fi}
-\renewcommand{\beforebookskip}{\null\vspace{\baselinestretch\addto@LARGE}%
+\renewcommand{\beforebookskip}{\null\vspace{\baselinestretch\addto@Huge}%
 	\vspace{\if@tenpoints12\baselineskip\fi\if@twelvepoints10\baselineskip\fi}}
-\renewcommand{\midbookskip}{\par\vspace{\baselinestretch\addto@LARGE}}
+\renewcommand{\midbookskip}{\par\vspace{\baselinestretch\addto@Huge}}
 
 %	Définir le style des livres dans la table des matières
 \renewcommand*{\cftbookpresnum}{\space}
@@ -831,12 +898,18 @@
 %	Définir le style des parties dans le texte
 % Babel French gère la numérotation en toutes lettres des parties
 \renewcommand*{\thepart}{\Roman{part}}
-\renewcommand{\parttitlefont}{\Large}
+\renewcommand{\parttitlefont}{\LARGE\scshape}
 \renewcommand{\partnamefont}{\parttitlefont}
 \renewcommand{\partnumfont}{\parttitlefont}
-\renewcommand{\beforepartskip}{\null\vspace{\baselinestretch\addto@Large}%
-	\vspace{\if@tenpoints12\baselineskip\fi\if@twelvepoints10\baselineskip\fi}}
-\renewcommand{\midpartskip}{\par\vspace{\baselinestretch\addto@Large}}
+\renewcommand{\beforepartskip}{\null\vspace{\baselinestretch\addto@LARGE}%
+	%	TODO » Si PhD ou Memoir (ou article?)
+	\vspace{\baselineskip}%
+	%	TODO » Sauf PhD ou Memoir (ou article?)
+%	\vspace{\if@tenpoints12\baselineskip\fi\if@twelvepoints10\baselineskip\fi}%
+	}
+\renewcommand{\midpartskip}{\par\vspace{\baselinestretch\addto@LARGE}}
+%	TODO » Seulement si PhD ou Memoir (ou article?), utiliser des options
+\renewcommand{\afterpartskip}{\vspace{2\baselineskip}}
 
 %	Définir le style des parties dans la table des matières
 \renewcommand*{\cftpartpresnum}{\space}
@@ -927,11 +1000,12 @@
 \renewcommand{\chapternamenum}{\space}
 \renewcommand{\printchapternum}{%
 	\chapnumfont%
-	\if@french%
+	\ifanappendix					\Alph{chapter}%
+	\else\if@french%
 		\ifnum\value{chapter}=1		\ordinalstring{chapter}[m]%
 		\else						\Roman{chapter}\fi
 	\else							\Roman{chapter}%
-	\fi}
+	\fi\fi}
 \renewcommand{\afterchapternum}{~:\par\nobreak\vskip\midchapskip}
 \setlength{\beforechapskip}{\baselinestretch\addto@Large}
 \addtolength{\beforechapskip}{\baselineskip}
@@ -1036,73 +1110,79 @@
 \renewcommand*{\cftsubparagraphaftersnum}{.}
 \setlength{\cftbeforesubparagraphskip}{0pt}
 
-%	#####	COMMANDES SPÉCIFIQUES AU DROIT	#####
+%	#####	DIVISIONS SPÉCIFIQUES AU DROIT	#####
+
+%	TODO » Sub-para (323-3), article + clause de contrats + documenter
 
 %	Créer un compteur pour les paragraphes (juridiques)
-\newcounter{paragraphic}\setcounter{paragraphic}{0}
+\newcounter{para}
+\setcounter{para}{0}
 
 %	Créer les commandes pour paramétrer l'apparence du compteur de paragrpahes
-\renewcommand{\theparagraphic}{\arabic{paragraphic}}
-\newcommand{\afterparagraphicnum}{.}
-\newcommand{\afterparagraphictitle}{.}
-\newcommand{\afterparagraphic}{\enskip}
-\newcommand{\paragraphicnumfont}{\bfseries}
-\newcommand{\paragraphictitlefont}{\scshape}
-
-%	TODO » Vérifier le compteur <precisno> et ajouter les <heading> et <subheading>
-%	Créer un compteur <precisno> pour afficher les paragraphes dans la table des matières
-\newcounter{precisno}\setcounter{precisno}{0}
-\counterwithin{precisno}{book}% Utilité?
-\counterwithin{precisno}{part}
-\counterwithin{precisno}{chapter}
-\counterwithin{precisno}{section}
-\counterwithin{precisno}{subsection}
-\counterwithin{precisno}{subsubsection}
-\counterwithin{precisno}{paragraph}
+\renewcommand{\thepara}{\arabic{para}}
+\newcommand{\paranumsep}{.~}
+\newcommand{\parasep}{.\enskip}
+\newcommand{\paranumstyle}{\bfseries}
+\newcommand{\parastyle}{\normalsize\scshape}
 
 %	Créer des commandes pour paramétrer l'apparence dans la table des matières
-\newlength{\cftprecisskip}
-\setlength{\cftprecisskip}{.25\linewidth}
-\newcommand{\cftprecisstyle}{\normalsize}
-\newcommand{\cftprecissep}{---~}% Ou, e.g. \par\noindent
-\newcommand{\cftprecisnumfont}{}
-\newcommand{\cftprecistitlefont}{\itshape}
-\newcommand{\cftafterprecisnum}{}
-\newcommand{\cftbeforeprecistitle}{.~}
-\newcommand{\cftafterprecis}{, p.~\thepage.}
+\newcommand{\cftparafont}{\itshape}
+\newcommand{\cftparaaftersnum}{.\enskip}
+\newcommand{\cftparaleader}{,~p.~}
+\newcommand{\cftparaafterpnum}{.}
+\newcommand{\cftparasep}{\par}
+
+%	Créer un compteur <precis> pour savoir si un \para est le premier de sa section ou non (pour la table des matières)
+\newcounter{precis}
+\setcounter{precis}{0}
+\counterwithin{precis}{book}
+\counterwithin{precis}{part}
+\counterwithin{precis}{chapter}
+\counterwithin{precis}{section}
+\counterwithin{precis}{subsection}
+\counterwithin{precis}{subsubsection}
+\counterwithin{precis}{paragraph}
+\counterwithin{precis}{subparagraph}
+
+%	TODO » \if@precis, afficher les \precis{Résumé du paragraphe} (+ retrait de la liste?) \else juste la liste, éventuellement inline
+%	TODO » Utilité des numéros de page?
+%	TODO » Ajouter une commande manuelle pour insérer le chapitre / section, etc. juste en-dessous du titre (comme pour les labels) (?) + Ajouter autommatiquement à la commande via etoolbox (apptocmd, etc.) -- idem pour les chapitres non numérotés (header et toc)
 
 %	Créer une commande \para pour faire des paragraphes numérotés
-\newcommand{\para}[1][\@empty]{%
-	\refstepcounter{paragraphic}%
-	{\paragraphicnumfont\theparagraphic\afterparagraphicnum}%
-	{\paragraphictitlefont%
-	\if@precis\ifx#1\@empty%
-		\else\if@marginal\marginpar{\normalsize\scshape#1}%
-		\else~#1\afterparagraphictitle\fi\fi\fi}%
-	\afterparagraphic%
-	\ifx#1\@empty\label{para:\arabic{paragraphic}}\else\label{para:#1}\fi%
-	\if@precis%
+\newcommand{\para}[1][]{%
+	\refstepcounter{para}%
+	\refstepcounter{precis}%
+	\ifx\relax#1\relax\label{para:\thepara}\else\label{para:#1}\fi%
+	{\paranumstyle\thepara\paranumsep}%
+	\if@marginal%
+		\marginpar{\parastyle#1}%
+	\else%
+		{\parastyle#1\parasep}%
+	\fi
+	%
+	\if@precis
 		\addtocontents{toc}{%
-			\setlength{\leftskip}{\cftprecisskip}\relax%
-			\setlength{\rightskip}{\@tocrmarg}\relax%
-			{\cftprecisstyle%
-			\ifnum\value{precisno}>0 \cftprecissep\else\par\noindent\fi%
-			{\cftprecisnumfont\theparagraphic\cftafterprecisnum}%
-			{\cftprecistitlefont\ifx#1\@empty\else\cftbeforeprecistitle#1\fi}%
-			\cftafterprecis}}%
-	\fi%
-	\refstepcounter{precisno}}
+				\ifnum\value{precis}>1\cftparasep\else\vspace{\baselineskip}\par\fi%
+				{\cftparafont\noindent\llap{\thepara\cftparaaftersnum}#1%
+				 \cftparaleader\thepage\cftparaafterpnum}}%
+	\fi\ignorespaces}
+
+%	Créer une commande \precis{} pour indiquer un résumé du paragraphe.
+%	TODO » Truver un moyen de supprimer toutes les espaces horizontales / verticales et éventuellement le saut de paragraphe. Placer en début de \para avec des % en fin de ligne, ou en fin de \para (mais tester un \unskip au début du \para)
+%	TODO » \@gobble can work but only if the user doesn't add any %
+\newcommand{\precis}[1]{%
+	\if@precis\addtocontents{toc}{\ifx\relax#1\relax\else\unskip~-- #1\fi\par}\fi\ignorespaces}
+
+%	TODO » Créer une commande unique, type \para[<para>][<précis>], avec un ToC \par implicite si #2 est inexistant, sinon on est obligé de mettre un \precis{} avant toute nouvelle section qui requiert un \par dans la ToC
 
 %	Créer les commandes pour faire référence à un numéro
 \newcommand{\infra}[1]{Cf.~\emph{infra} \no\ref{para:#1}}
 \newcommand{\supra}[1]{Cf.~\emph{supra} \no\ref{para:#1}}
 
+%	TODO » A déplacer + documenter
 %	Créer une commande pour indiquer que le sujet est traité en note
 \newcommand{\note}[1]{#1~(\emph{n.})}% dans les index, utiliser: |note
 
-%	TODO » A déplacer
-%	S'assurer que la table des matières termine bien le dernier paragraphe
-\AtEndDocument{\addtocontents{toc}{\par}}
 
 %	#####	DÉFINITIONS RELATIVES AUX FLOATS	#####
 
@@ -1363,9 +1443,9 @@
 
 %	Faire en sorte que les index renvoient aux numéros de paragraphes
 \renewcommand{\preindexhook}{Les numéros renvoient aux paragraphes et non aux pages.\vspace{2\baselineskip}}
-\renewcommand{\index}[1]{\specialindex{\jobname}{paragraphic}{#1}}
+\renewcommand{\index}[1]{\specialindex{\jobname}{para}{#1}}
 %\renewcommand{\index}[1]{\index}[\jobname]{#1} % Pour un renvoi aux pages
-\newcommand{\bibindex}[1]{\specialindex{\jobname-bib}{paragraphic}{#1}}
+\newcommand{\bibindex}[1]{\specialindex{\jobname-bib}{para}{#1}}
 %\newcommand{\bibindex}[1]{\index}[\jobname-bib]{#1} % Pour un renvoi aux pages
 
 %	#####	CRÉATION DES BIBLIOGRAPHIES (BIBLATEX)	#####
@@ -1500,6 +1580,7 @@
 	\mainmatter
 }
 
+%	TODO » Idem pour les annexes > \makeappendix == \appendixpage + \appendix, cf. memoir
 %	Définir les éléments du <backmatter>
 \newcommand{\makebackmatter}{
 	\backmatter

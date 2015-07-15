@@ -84,6 +84,13 @@
 	\def\enclname{P.\thinspace J.}%
 	\def\centuryname{si{\`e}cle}%
 	\def\centuriesname{si{\`e}cles}%
+	% Pages de titre
+	\def\emailname{Email:~}
+	\def\phonename{Tél.:~}
+	\def\subjecttext{Thèse pour le doctorat en}
+	\def\datetext{Présentée et soutenue publiquement le}
+	\def\directortext{Sous la direction de:}
+	\def\jurytext{Membres du jury:}
 }
 
 %	Configurer les noms des différents éléments en anglais
@@ -252,3 +259,54 @@
 \newcommand{\AD}{apr.~J.-C.\xdot}
 \let\avJC=\BC
 \let\apJC=\AD
+
+
+% Créer les commandes des abréviations juridiques et les indexer via BibLaTeX. Elles doivent être inscrites dans le fichier bibtex (forme longue et forme courte).
+\newcommand{\abbrv}[2][\xdot]{%
+	\addtocategory{abbrv}{#2}%
+	\@ifstar%
+	{\cite{#2}#1}
+	{\citetitle{#2}\@\xspace}}
+%
+% Commandes générales
+\newcommand{\D}{\emph{D.}~\addtoshorthands{D}}% + inclut DA (analytique), DC (critique), DH (hebdomadaire), DP (périodique) selon les périodes
+\newcommand{\Sirey}{\emph{S.}~\addtoshorthands{S}}
+\newcommand{\Bull}[1]{Bull.~#1\addtoshorthands{Bull}}
+%
+% Commandes des juridictions
+\newcommand{\CC}{C.C.}
+\newcommand{\TC}{T.C.}
+\newcommand{\CE}{C.E.}
+\newcommand{\Cass}{Cass.}
+
+\newcommand{\CA}[1]{C.A. #1}
+\newcommand{\CAA}[1]{C.A.A. #1}
+
+\newcommand{\TGI}[1]{T.G.I. #1}
+\newcommand{\TI}[1]{T.I. #1}
+\newcommand{\TA}[1]{T.A. #1}
+\newcommand{\Tcomm}[1]{T.~comm. #1}
+\newcommand{\Tcorr}[1]{T.~corr. #1}
+\newcommand{\Tpol}[1]{T. pol. #1}
+
+\newcommand{\CIJ}{C.I.J}
+\newcommand{\CJCE}{C.J.C.E.}
+\newcommand{\CJUE}{C.J.U.E.}
+\newcommand{\CEDH}{C.E.D.H.}
+%
+% Commandes pour les Codes
+\newcommand{\BCE}{\abbrv{BCE}}
+\newcommand{\Cciv}{\abbrv{Cciv}}
+\newcommand{\Ccom}{\abbrv{Ccom}}
+\newcommand{\CDE}{\abbrv{CDE}}
+\newcommand{\CGI}{\abbrv{CGI}}
+\newcommand{\CGPPP}{\abbrv{CGPPP}}
+\newcommand{\CMF}{\abbrv{CMF}}
+\newcommand{\CPen}{\abbrv{CPen}}
+\newcommand{\JOUE}{\abbrv{JOUE}}
+\newcommand{\SEBC}{\abbrv{SEBC}}
+\newcommand{\ONU}{\abbrv[\@\xspace]{ONU}}
+%
+%	Liste des revues à ajouter lors de la compilation (entrykey)
+%\shorthandslist{ArchPhilDr,Droits,GazPal,RFDA,RTDCiv,RTDCom,AmEconRev,HarvLRev,LawQRev,ThInqL,YaleLJ}
+
