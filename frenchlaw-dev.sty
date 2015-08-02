@@ -42,7 +42,42 @@
 % }}
 
 %	Require the needed packages
-\RequirePackage{etoolbox,xstring,xcolor,listings,verbatim,docmute,makeidx,needspace,adforn}
+\RequirePackage{etoolbox,xstring,xcolor,verbatim,docmute,makeidx,needspace,metalogo}
+
+%	Change the kerning in the LaTeX logos
+\setlogokern{Xe}{-.3ex}
+\setlogokern{eT}{-.35ex}
+\setlogokern{eL}{-.25ex}
+\setlogokern{La}{-.65ex}
+\setlogokern{aT}{-.25ex}
+\setlogokern{Te}{-.35ex}
+\setlogokern{eX}{-.25ex}
+\setLaTeXa{\raisebox{.25em}{\scshape a}}
+\setlogodrop{.25em}
+
+%	Create the Frenchlaw logo
+\newcommand{\frenchlaw}{%
+	\ifxetex
+		{\itshape F\kern-.2ex rench}%
+		L\kern-.7ex%
+		\raisebox{.25em}{\scshape a}\kern-.3ex%
+		W%
+	\else%
+		{\itshape French\kern.1ex}%
+		L\kern-.65ex%
+		\raisebox{.2em}{\scshape a}\kern-.3ex%
+		W%
+	\fi%
+	\xspace%
+}
+\newcommand{\frenchlawlogo}{\adforn{25}\adforn{63}~\adforn{53}}
+
+\ifxetex
+	\RequirePackage{listings}
+\else
+	\RequirePackage{listingsutf8}
+	\lstset{inputencoding=utf8/latin1}
+\fi
 
 %	Set the default colours for code
 \newcommand{\numbercolor}{\color[HTML]{655643}}% Ash (contrast: white)
@@ -57,6 +92,7 @@
 \newcommand{\macrosign}{\adforn{34}}% \P
 
 %	Define different styles for listings
+%	TODO » Clean up unused styles
 \lstset{
 	language=[LaTeX]TeX,
 	breaklines=true,
@@ -143,10 +179,15 @@
 	 \if@twoside\else\hspace{-.5\marginparwidth}\fi%
 	 \lstinline{#1}\@option}
 	{\par\addvspace{\baselineskip}}
-
+%
 \newcommand{\@option}[2][]{%
 	  \ifstrempty{#1}{}{\lstinline[{style=macrocode}]{=<#1>}}%
 	  \hfill\ifstrempty{#2}{}{par d{\'e}faut~: \lstinline{#2}}\\}
 
+%	Command for printing and indexing commands
+\newcommand{\devindex}[1]{%
+	\index{#1@\ttfamily\textbackslash #1}%
+}
 
+%	New command for todos
 \newcommand{\todo}[1]{\marginpar{\mathcolor{#1}}}
