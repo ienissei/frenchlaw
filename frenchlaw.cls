@@ -36,20 +36,26 @@
 	\@tenpointsfalse
 \newif\if@twelvepoints
 	\@twelvepointsfalse
-\newif\if@article
-	\@articlefalse
-\newif\if@precis
-	\@precisfalse
-\newif\if@didactic
-	\@didacticfalse
 \newif\if@marginal
 	\@marginalfalse
+\newif\if@draft
+	\@draftfalse
+\newif\if@article
+	\@articlefalse
+\newif\if@didactic
+	\@didacticfalse
 \newif\if@british
 	\@britishfalse
 \newif\if@english
 	\@englishfalse
 \newif\if@french
 	\@frenchfalse
+
+%	Define command-activated switches
+\newif\if@printparagraphs
+	\@printparagraphstrue
+\newif\if@indexparagraphs
+	\@indexparagraphstrue
 
 %	Define options for paper size <a4paper>, <a5paper> & <a6paper>
 \DeclareOptionX{a4paper}{
@@ -79,7 +85,7 @@
 }
 
 %	Define options for <oneside> & <twoside>
-% Options <onecolumn> & <twocolumn> are passed to <memoir> without being redefined
+%	Options <onecolumn> & <twocolumn> are passed to <memoir> without being redefined
 \DeclareOptionX{oneside}{
 	\@onesidetrue\@twosidefalse
 	\PassOptionsToClass{oneside}{memoir}
@@ -89,23 +95,31 @@
 	\PassOptionsToClass{twoside}{memoir}
 }
 
+%	Define options for <final> & <draft>
+\DeclareOptionX{final}{
+	\@draftfalse
+	\PassOptionsToClass{final}{memoir}
+}
+\DeclareOptionX{draft}{
+	\@drafttrue
+	\PassOptionsToClass{draft}{memoir}
+}
+
+%	Define option for <marginal> document style
+\DeclareOptionX{marginal}{
+	\@marginaltrue
+}
+
 %	Define an option to change line spacing
 \DeclareOptionX{linespacing}[1.1]{\def\custom@baselinestretch{#1}}
 
-%	Define options for <article>, <marginal> & <precis> document styles
+%	Define options for <didactic>, ... document types
+%	TODO » Ajouter les formats de documents juridiques
 \DeclareOptionX{article}{
 	\@articletrue
 	\PassOptionsToClass{article}{memoir}
 }
-\DeclareOptionX{marginal}{
-	\@marginaltrue
-}
-\DeclareOptionX{precis}{
-	\@precistrue
-}
 
-%	Define options for <didactic>, ... document types
-%	TODO » Ajouter les formats de documents juridiques
 \DeclareOptionX{didactic}{
 	\@didactictrue
 	\@articletrue
@@ -114,24 +128,23 @@
 }
 
 %	Define options to change the main language of the document
-%	TODO » english est une option "legacy", mais plus pratique... + Charger <adforn> pour les symboles (et en ajouter, e.g. dans les CV, etc.)
-\DeclareOptionX{british}{%
+\DeclareOptionX{british}{%	TODO » Remplacer par UKenglish?
 	\@britishtrue
 	\@englishfalse
 	\@frenchfalse
-	\PassOptionsToPackage{british}{babel}%	TODO » Remplacer par UKenglish
-	\PassOptionsToPackage{british}{fmtcount}%	TODO » Remplacer par UKenglish
-	\AtBeginDocument{\main@language{british}}
+	\PassOptionsToPackage{UKenglish}{babel}
+	\PassOptionsToPackage{UKenglish}{fmtcount}%	TODO » Remplacer par UKenglish
+	\AtBeginDocument{\main@language{UKenglish}}
 }
-\DeclareOptionX{english}{%
+\DeclareOptionX{english}{%	TODO » Remplacer par USenglish?
 	\@englishtrue
 	\@frenchfalse
 	\@britishfalse
-	\PassOptionsToPackage{english}{babel}%	TODO » Remplacer par USenglish
-	\PassOptionsToPackage{english}{fmtcount}%	TODO » Remplacer par USenglish
-	\AtBeginDocument{\main@language{english}}
+	\PassOptionsToPackage{USenglish}{babel}
+	\PassOptionsToPackage{USenglish}{fmtcount}
+	\AtBeginDocument{\main@language{USenglish}}
 }
-\DeclareOptionX{french}{%
+\DeclareOptionX{french}{
 	\@frenchtrue
 	\@englishfalse
 	\@britishfalse
@@ -229,15 +242,15 @@
 %	#####	TYPOGRAPHY	#####
 
 %	Load the relevant fonts and packages for LaTeX and XeLaTeX
+\RequirePackage{adforn,mathpazo}% + Biolinum (sans serif)
 \ifxetex
-	%	Load XeLaTeX fonts (Junicode & Latin Modern)
-	\RequirePackage{fontspec,xltxtra}
-	\RequirePackage{mathpazo}
+	%	Load XeLaTeX fonts: Junicode & Latin Modern (?)
+	\RequirePackage{fontspec}
 	\defaultfontfeatures{
 		Ligatures = {TeX},
-		Numbers = {OldStyle},%	TODO » Rendre les OSF conditionnelles
+		Numbers = {OldStyle},%	TODO » Rendre les OSF conditionnelles (?)
 		SmallCapsFeatures = {WordSpace = 1.2, LetterSpace=3.0}}
-	%	TODO » Problème des accents qui apparaissent comme deux caractères sous Junicode
+	%	TODO » Problème des accents > deux caractères sous Junicode (?)
 	\setmainfont[	Extension		= .ttf,
 					UprightFont		= *,
 					ItalicFont		= *-Italic,
@@ -250,7 +263,7 @@
 					BoldFont		= *-bold,
 					BoldItalicFont	= *-boldoblique,
 					Scale			= MatchLowercase ]
-					{lmsans10}
+					{lmsans10}%	TODO » Changer… pour biolinum?
 	\setmonofont[	Extension		= .otf,
 					UprightFont		= *-regular,
 					ItalicFont		= *-italic,
@@ -259,19 +272,19 @@
 					{lmmono10}
 	\RequirePackage{microtype}
 \else
-	%	Load LaTeX fonts (Libertine & Latin Modern)
-	\RequirePackage[utf8]{inputenc}
-	\RequirePackage{mathpazo,libertine}
+	%	TODO » Don't forget to use \usepackage[utf8]{inputenc} in the preamble (Essayer de le glisser automatiquement dans le ficher .conf > \AtEndClass)
+	%	E.g. \ifxetex\else\usepackage[utf8]{inputenc}\fi
 	\RequirePackage[T1]{fontenc}
+	\RequirePackage{lmodern,libertine}
+	\renewcommand*{\ttdefault}{lmtt}
 	\RequirePackage[tracking,letterspace=30]{microtype}
 \fi
 
 %	Load language and number packages and fixes
 %	TODO » Implémenter {csquotes} et le documenter
 \RequirePackage{csquotes}
-%	TODO » english est une option "legacy", mais plus pratique...
-\RequirePackage[greek,latin,english,british,french]{babel}
-\RequirePackage{fmtcount}
+\RequirePackage[greek,latin,USenglish,UKenglish,french]{babel}
+\RequirePackage{fmtcount}% 	TODO » Ou autre?
 \RequirePackage{fixltxhyph}
 
 %	#####	FONT SIZE AND LEADING	#####
@@ -1144,9 +1157,13 @@
 \counterwithin{precis}{paragraph}
 \counterwithin{precis}{subparagraph}
 
-%	TODO » \if@precis, afficher les \precis{Résumé du paragraphe} (+ retrait de la liste?) \else juste la liste, éventuellement inline
+%	TODO » \if@draft, afficher les \precis{Résumé du paragraphe} (+ retrait de la liste?) \else juste la liste, éventuellement inline
 %	TODO » Utilité des numéros de page?
 %	TODO » Ajouter une commande manuelle pour insérer le chapitre / section, etc. juste en-dessous du titre (comme pour les labels) (?) + Ajouter autommatiquement à la commande via etoolbox (apptocmd, etc.) -- idem pour les chapitres non numérotés (header et toc)
+
+%	Créer un switch pour imprimer ou non les noms des \para
+\newcommand{\paragraphnames}{\@printparagraphstrue}
+\newcommand{\noparagraphnames}{\@printparagraphsfalse}
 
 %	Créer une commande \para pour faire des paragraphes numérotés
 \newcommand{\para}[1][]{%
@@ -1154,13 +1171,14 @@
 	\refstepcounter{precis}%
 	\ifx\relax#1\relax\label{para:\thepara}\else\label{para:#1}\fi%
 	{\paranumstyle\thepara\paranumsep}%
-	\if@marginal%
-		\marginpar{\parastyle#1}%
-	\else%
-		{\parastyle#1\parasep}%
-	\fi
+	\if@printparagraphs%
+		\if@marginal%
+			\marginpar{\parastyle#1}%
+		\else%
+			{\parastyle#1\parasep}%
+	\fi\fi%
 	%
-	\if@precis
+	\if@draft%
 		\addtocontents{toc}{%
 				\ifnum\value{precis}>1\cftparasep\else\vspace{\baselineskip}\par\fi%
 				{\cftparafont\noindent\llap{\thepara\cftparaaftersnum}#1%
@@ -1171,7 +1189,10 @@
 %	TODO » Truver un moyen de supprimer toutes les espaces horizontales / verticales et éventuellement le saut de paragraphe. Placer en début de \para avec des % en fin de ligne, ou en fin de \para (mais tester un \unskip au début du \para)
 %	TODO » \@gobble can work but only if the user doesn't add any %
 \newcommand{\precis}[1]{%
-	\if@precis\addtocontents{toc}{\ifx\relax#1\relax\else\unskip~-- #1\fi\par}\fi\ignorespaces}
+	\if@draft
+		\addtocontents{toc}{\ifx\relax#1\relax\else\unskip~-- #1\fi\par}
+	\fi%
+	\ignorespaces}
 
 %	TODO » Créer une commande unique, type \para[<para>][<précis>], avec un ToC \par implicite si #2 est inexistant, sinon on est obligé de mettre un \precis{} avant toute nouvelle section qui requiert un \par dans la ToC
 
@@ -1441,12 +1462,22 @@
 	\begintheglossaryhook}%
 	{\atendtheglossaryhook\if@restonecol\onecolumn\else\twocolumn\fi}
 
+\newcommand{\indexparagraphs}{\@indexparagraphstrue}
+\newcommand{\indexpages}{\@indexparagraphsfalse}
+
 %	Faire en sorte que les index renvoient aux numéros de paragraphes
-\renewcommand{\preindexhook}{Les numéros renvoient aux paragraphes et non aux pages.\vspace{2\baselineskip}}
-\renewcommand{\index}[1]{\specialindex{\jobname}{para}{#1}}
-%\renewcommand{\index}[1]{\index}[\jobname]{#1} % Pour un renvoi aux pages
-\newcommand{\bibindex}[1]{\specialindex{\jobname-bib}{para}{#1}}
-%\newcommand{\bibindex}[1]{\index}[\jobname-bib]{#1} % Pour un renvoi aux pages
+%	TODO » Define lastpara and save it in .aux. Run twice before indexing. Ou en faire une option activée avec les types de documents...
+%\ifnum\value{lastpara}>0
+	\if@indexparagraphs
+		\renewcommand{\preindexhook}{%
+			Les numéros renvoient aux paragraphes et non aux pages.\vspace{2\baselineskip}}
+		\newcommand{\paraindex}[1]{\specialindex{\jobname}{para}{#1}}
+		\newcommand{\bibindex}[1]{\specialindex{\jobname-bib}{para}{#1}}
+		\AtBeginDocument{\let\index\paraindex}
+	%\fi
+	\else
+		\newcommand{\bibindex}[1]{\index{\jobname-bib}{#1}}
+\fi
 
 %	#####	CRÉATION DES BIBLIOGRAPHIES (BIBLATEX)	#####
 
