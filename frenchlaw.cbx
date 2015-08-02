@@ -22,6 +22,8 @@
 %	Charger les options
 \ExecuteBibliographyOptions{uniquename,uniquelist,citetracker=true,ibidtracker=constrict,opcittracker=context,loccittracker=context,pagetracker,language=auto,useeditor=false}
 
+%	TODO » Pas d'espace avant la ponctuation haute si après un \citet. Supprimer language=auto ou trouver une autre solution? Revoir la définition d'origine...
+
 %	Créer des switches
 \newbool{cbx:parens}
 \newbool{cbx:multiciteparens}
@@ -91,8 +93,8 @@
 						{\ifentrytype{commentary}
 							{\usedriver{\clearname{author}}{commentary}}
 							{\usebibmacro{cite:title}}}}%
-			}
-		}
+			}%
+		}%
 		{\usebibmacro{cite:shorthand}}}
 
 % Initiales des auteurs (utiliser un labelname en .bbx ?) + Abréger en cas de seconde citation du même arrêt. + Voir pour une référence type D. 1858 I 52 (> avec l'arrêt ou en commentaire ?) + Auto \nocite des commentaires ?
@@ -188,22 +190,22 @@
 			{\printtext[bibhyperref]{\printfield[citetitle]{title}}}
 			{\printtext[bibhyperref]{\printfield[citetitle]{shorttitle}}}}%
 		{\printtext[bibhyperref]{\printfield[citetitle]{title}}%
-		  \ifentrytype{article}{%
+		 \ifentrytype{article}{%
 		  	\addcomma\addspace\usebibmacro{journal+issuetitle}%
 			\iffieldundef{postnote}{\addcomma\addspace\printfield{pages}}{}}{}%
-		  \ifentrytype{book}{%
+		 \ifentrytype{book}{%
 		  	\adddot\addspace\usebibmacro{publisher+location+date}}{}%
-		  \ifentrytype{reference}{%
+		 \ifentrytype{reference}{%
 		  	\adddot\addspace\usebibmacro{publisher+location+date}}{}%
-		  \ifentrytype{collection}{%
+		 \ifentrytype{collection}{%
 		  	\adddot\addspace\usebibmacro{publisher+location+date}}{}%
-		  \ifentrytype{proceedings}{%
+		 \ifentrytype{proceedings}{%
 		  	\adddot\addspace\usebibmacro{publisher+location+date}}{}%
-		  \ifentrytype{inbook}{%
+		 \ifentrytype{inbook}{%
 		  	\adddot\addspace\usebibmacro{publisher+location+date}}{}%
-		  \ifentrytype{inreference}{%
+		 \ifentrytype{inreference}{%
 		  	\adddot\addspace\usebibmacro{publisher+location+date}}{}%
-		  \ifentrytype{incollection}{%
+		 \ifentrytype{incollection}{%
 			\addcomma\addspace\usebibmacro{in:}%
 			\ifnameundef{editor}
 				{}
@@ -212,7 +214,7 @@
 			\addspace\printtext[bibhyperref]{\printfield{booktitle}}%
 			\adddot\addspace\usebibmacro{publisher+location+date}%
 			\iffieldundef{postnote}{\addcomma\addspace\printfield{pages}}}{}{}%
-		  \ifentrytype{inproceedings}{%
+		 \ifentrytype{inproceedings}{%
 			\addcomma\addspace\usebibmacro{in:}%
 			\ifnameundef{editor}
 				{}
@@ -221,10 +223,10 @@
 			\addspace\printtext[bibhyperref]{\printfield{booktitle}}%
 			\adddot\addspace\usebibmacro{publisher+location+date}%
 			\iffieldundef{postnote}{\addcomma\addspace\printfield{pages}}}{}{}%
-		  \ifentrytype{thesis}{%
+		 \ifentrytype{thesis}{%
 		  	\addcomma\addspace{\bibstring{phdthesis}}
 		  	\adddot\addspace\usebibmacro{institution+location+date}}{}%
-		  }}
+		 }}
 
 \newbibmacro*{cite:shorthand}{%
 	\iffieldundef{shorthand}
@@ -241,22 +243,6 @@
 	\ifbool{cbx:loccit}
 		{}
 		{\usebibmacro{postnote}}}
-
-\newbibmacro*{textcite:postnote}{%
-	\iffieldundef{postnote}
-		{\ifbool{cbx:parens}
-			{\bibcloseparen}
-			{}}%
-		{\ifbool{cbx:parens}
-			{}
-			{\addnbspace\bibopenparen}%
-		 \ifbool{cbx:loccit}
-		 	{}
-		 	{\usebibmacro{postnote}}%
-		 \bibcloseparen}%
-	% Switch back to the main language due to different spacing in French punctuation
-	\expandafter\selectlanguage\expandafter{\bbl@main@language}%
-	\global\boolfalse{cbx:parens}}
 
 % Citation commands
 
@@ -307,7 +293,15 @@
 	{\usebibmacro{citeindex}%
 	 \usebibmacro{textcite}}
 	{}
-	{\usebibmacro{textcite:postnote}}
+	{\usebibmacro{cite:postnote}%
+	 \ifbool{cbx:parens}
+    	{\bibcloseparen
+    	 \global\boolfalse{cbx:parens}}%
+    	{}}
+	%
+	%	TODO » Should be included, but ads spurious spaces :(
+	% Switch back to the main language due to different spacing in French punctuation
+	%\expandafter\selectlanguage\expandafter{\bbl@main@language}%
 
 \DeclareCiteCommand{\citeauthor}[\boolfalse{citetracker}\boolfalse{pagetracker}]
 	{\usebibmacro{prenote}}

@@ -132,17 +132,17 @@
 	\@britishtrue
 	\@englishfalse
 	\@frenchfalse
-	\PassOptionsToPackage{UKenglish}{babel}
-	\PassOptionsToPackage{UKenglish}{fmtcount}%	TODO » Remplacer par UKenglish
-	\AtBeginDocument{\main@language{UKenglish}}
+	\PassOptionsToPackage{british}{babel}
+	\PassOptionsToPackage{british}{fmtcount}%	TODO » Remplacer par UKenglish
+	\AtBeginDocument{\main@language{british}}
 }
 \DeclareOptionX{english}{%	TODO » Remplacer par USenglish?
 	\@englishtrue
 	\@frenchfalse
 	\@britishfalse
-	\PassOptionsToPackage{USenglish}{babel}
-	\PassOptionsToPackage{USenglish}{fmtcount}
-	\AtBeginDocument{\main@language{USenglish}}
+	\PassOptionsToPackage{english}{babel}
+	\PassOptionsToPackage{english}{fmtcount}
+	\AtBeginDocument{\main@language{english}}
 }
 \DeclareOptionX{french}{
 	\@frenchtrue
@@ -283,7 +283,7 @@
 %	Load language and number packages and fixes
 %	TODO » Implémenter {csquotes} et le documenter
 \RequirePackage{csquotes}
-\RequirePackage[greek,latin,USenglish,UKenglish,french]{babel}
+\RequirePackage[greek,latin,english,british,french]{babel}
 \RequirePackage{fmtcount}% 	TODO » Ou autre?
 \RequirePackage{fixltxhyph}
 
