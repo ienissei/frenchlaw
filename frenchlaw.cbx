@@ -330,13 +330,10 @@
 	{\usebibmacro{postnote}}
 
 \DeclareCiteCommand{\code}
-	{\iffootnote{\bibsentence\usebibmacro{prenote}}{}%
+	{\usebibmacro{prenote}%
 	 \iffieldundef{postnote}
 	 	{}
-	 	{\iffootnote
-	 		{\bibstring{article}%
-	 		 \setunit{\addnbspace}}
-	 		{}%
+	 	{\unskip\setunit{\addnbspace}
 	 	 \printfield{postnote}%
 		 \setunit{\addspace}
 		 \printfield{note}%
@@ -346,14 +343,11 @@
 	{\multicitedelim}
 	{}
 
-\DeclareCiteCommand*{\code}
-	{\iffootnote{}{\usebibmacro{prenote}}%
+\DeclareCiteCommand*{\code}[\unskip]
+	{\usebibmacro{prenote}%
 	 \iffieldundef{postnote}
 	 	{}
-	 	{\iffootnote
-	 		{}
-	 		{\bibstring{article}%
-	 		 \setunit{\addnbspace}}%
+	 	{\setunit{\addnbspace}
 	 	 \printfield{postnote}%
 		 \setunit{\addspace}
 		 \printfield{note}%
@@ -362,6 +356,40 @@
 	 \usebibmacro{cite:legislation:reverse}}
 	{\multicitedelim}
 	{}
+
+% \DeclareCiteCommand{\code}
+% 	{\iffootnote{\bibsentence\usebibmacro{prenote}}{}%
+% 	 \iffieldundef{postnote}
+% 	 	{}
+% 	 	{\iffootnote
+% 	 		{\bibstring{article}%
+% 	 		 \setunit{\addnbspace}}
+% 	 		{}%
+% 	 	 \printfield{postnote}%
+% 		 \setunit{\addspace}
+% 		 \printfield{note}%
+% 		 \setunit{\addspace}}}
+% 	{\usebibmacro{citeindex}%
+% 	 \usebibmacro{cite:legislation}}
+% 	{\multicitedelim}
+% 	{}
+
+% \DeclareCiteCommand*{\code}
+% 	{\iffootnote{}{\usebibmacro{prenote}}%
+% 	 \iffieldundef{postnote}
+% 	 	{}
+% 	 	{\iffootnote
+% 	 		{}
+% 	 		{\bibstring{article}%
+% 	 		 \setunit{\addnbspace}}%
+% 	 	 \printfield{postnote}%
+% 		 \setunit{\addspace}
+% 		 \printfield{note}%
+% 		 \setunit{\addspace}}}
+% 	{\usebibmacro{citeindex}%
+% 	 \usebibmacro{cite:legislation:reverse}}
+% 	{\multicitedelim}
+% 	{}
 
 \DeclareCiteCommand{\case}
 	{\bibsentence\usebibmacro{prenote}}

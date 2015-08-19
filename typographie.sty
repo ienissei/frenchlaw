@@ -99,6 +99,7 @@
 	\def\keywordsname{Keywords}
 	\def\centuryname{century}%
 	\def\centuriesname{centuries}%
+	\def\emailname{Contact:~}
 }
 
 %	Créer des commandes rapides pour le grec et le latin
@@ -133,7 +134,7 @@
 
 %	Créer les commandes pour afficher les siècles
 % Usage: \siecle{1}, \siecles[et]{1}{2}
-%	TODO » Rajouter les messages d'erreur prévus
+%	TODO » Rajouter les messages d'erreur prévus + configurer pour l'anglais
 \newcounter{century}
 \newcommand{\century}[1]{%
 	\ifboolexpr{test {\ifnumcomp{#1}{=}{0}}}

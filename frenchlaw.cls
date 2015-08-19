@@ -134,7 +134,7 @@
 	\@frenchfalse
 	\PassOptionsToPackage{british}{babel}
 	\PassOptionsToPackage{british}{fmtcount}%	TODO » Remplacer par UKenglish
-	\AtBeginDocument{\main@language{british}}
+	\AtBeginDocument{\main@language{british}}%	TODO » Avant le \begin{doc}, car sinon il faut écrire \title[british] si on est dans le préambule, mais pas ensuite
 }
 \DeclareOptionX{english}{%	TODO » Remplacer par USenglish?
 	\@englishtrue
@@ -1516,31 +1516,26 @@
 	{\endlist}
 	{\item}
 
-%	TODO » Revoir + déplacer
+%	TODO » Supprimer: Ajouter le \setcounter{page} dans la définition de \title et imprimer le titre.
 %	En mode <didactic>, utiliser une nouvelle division logique pour les headers
 \newcounter{division}
-\newcommand{\division}[2][\@empty]{%
+\def\@division{\relax}
+\newcommand{\division}[1]{%
 	\clearpage
 	\def\@division{#1}%
 	\refstepcounter{division}%
 	\setcounter{section}{0}
-	\setcounter{page}{1}
-	\noindent{\large\textsc{\hfill--- #2 ---\hfill}}%
+	\setcounter{page}{1}%
 }
-	\newcommand{\@division}{\relax}
 
+%	TODO » Ajouter la qualité de l'auteur avant (Lecturer, etc.)
 %	Pour le mode <didactic>, créer automatiquement un header adapté
 \if@didactic
 	\renewcommand{\leftheader}{%
-		{\if\@type\relax\else\@type%
-			\ifnum\thedivision > 0~\no\thedivision\fi
-			\if\@division\relax\else~(\@division)\fi
-			\par
-		\fi
-		 \Large\textsc{\csname @title@\languagename\endcsname}}}
+		{\Large\textsc{\csname @title@\languagename\endcsname}}}
 	\renewcommand{\rightheader}{%
 		\@author
-		\if\relax\@email\relax\else\par\@email\fi}
+		\ifx\relax\@email\relax\else\par\@email\fi}
 \fi
 
 
