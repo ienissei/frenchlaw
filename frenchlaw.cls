@@ -38,6 +38,8 @@
 	\@twelvepointsfalse
 \newif\if@marginal
 	\@marginalfalse
+\newif\if@precis
+	\@precisfalse
 \newif\if@draft
 	\@draftfalse
 \newif\if@article
@@ -102,12 +104,19 @@
 }
 \DeclareOptionX{draft}{
 	\@drafttrue
+	\@marginaltrue
+	\@precistrue
 	\PassOptionsToClass{draft}{memoir}
 }
 
 %	Define option for <marginal> document style
 \DeclareOptionX{marginal}{
 	\@marginaltrue
+}
+
+%	Define options for <precis> document style
+\DeclareOptionX{precis}{
+	\@precistrue
 }
 
 %	Define an option to change line spacing
@@ -120,6 +129,7 @@
 	\PassOptionsToClass{article}{memoir}
 }
 
+%	TODO » Reprendre + documenter
 \DeclareOptionX{didactic}{
 	\@didactictrue
 	\@articletrue
@@ -134,7 +144,7 @@
 	\@frenchfalse
 	\PassOptionsToPackage{british}{babel}
 	\PassOptionsToPackage{british}{fmtcount}%	TODO » Remplacer par UKenglish
-	\AtBeginDocument{\main@language{british}}%	TODO » Avant le \begin{doc}, car sinon il faut écrire \title[british] si on est dans le préambule, mais pas ensuite
+	\AtEndOfClass{\main@language{british}}
 }
 \DeclareOptionX{english}{%	TODO » Remplacer par USenglish?
 	\@englishtrue
@@ -142,7 +152,7 @@
 	\@britishfalse
 	\PassOptionsToPackage{english}{babel}
 	\PassOptionsToPackage{english}{fmtcount}
-	\AtBeginDocument{\main@language{english}}
+	\AtEndOfClass{\main@language{english}}
 }
 \DeclareOptionX{french}{
 	\@frenchtrue
@@ -150,7 +160,7 @@
 	\@britishfalse
 	\PassOptionsToPackage{french}{babel}
 	\PassOptionsToPackage{french}{fmtcount}
-	\AtBeginDocument{\main@language{french}}
+	\AtEndOfClass{\main@language{french}}
 }
 %	Define options to load secondary languages
 \DeclareOptionX{italian}{\PassOptionsToPackage{italian}{babel}}
@@ -219,7 +229,6 @@
 
 %	Use larger headers & footers with <didactic>
 \if@didactic
-	% Rééquilibrer les marges & espacements en conséquence
 	\setlength{\headheight}{3\baselineskip}
 	\setlength{\footskip}{2\baselineskip}
 \fi
@@ -272,8 +281,7 @@
 					{lmmono10}
 	\RequirePackage{microtype}
 \else
-	%	TODO » Don't forget to use \usepackage[utf8]{inputenc} in the preamble (Essayer de le glisser automatiquement dans le ficher .conf > \AtEndClass)
-	%	E.g. \ifxetex\else\usepackage[utf8]{inputenc}\fi
+	\AtEndOfClass{\usepackage[utf8]{inputenc}}
 	\RequirePackage[T1]{fontenc}
 	\RequirePackage{lmodern,libertine}
 	\renewcommand*{\ttdefault}{lmtt}
@@ -837,18 +845,28 @@
 %	Définir la subdivision maximale pour la numérotation
 \maxsecnumdepth{subparagraph}
 \maxtocdepth{subparagraph}
-\setcounter{tocdepth}{5}%
+\setcounter{tocdepth}{5}
 
-%	TODO » Contentsname pour les shortcontents
-%	TODO » Modifier le style de la ToC pour supprimer l'une des lignes dans \afterchapterskip (car tout chapitre ajoute une ligne au début de la table)
-
-% Définir des tables des matières courte (sommaire) et longues (précis)
-\newcommand{\shortcontents}{%
+%	Create a command for short tables of contents
+\newcommand{\shorttableofcontents}[1][0]{%
 	\bgroup
-		\setcounter{tocdepth}{0}%
-		\tableofcontents
-	\egroup
-}
+		\setcounter{tocdepth}{#1}
+		\ensureonecol
+		\if@article
+			\section*{\shortcontentsname}
+		\else
+			\chapter*{\shortcontentsname}
+		\fi
+		\markright{\shortcontentsname}
+		\bgroup
+			\makeatletter
+			\@input{\jobname.toc}
+			\global\@nobreakfalse
+		\egroup
+		\restorefromonecol
+	\egroup}
+\let\shorttoc\shorttableofcontents
+
 
 %	Créer de nouvelles divisions logiques: <heading> et <subheading>
 \newlistentry[part]{heading}{toc}{0}
@@ -1081,11 +1099,11 @@
 
 %	Définir le style des sections et sous-sections dans la table des matières
 \renewcommand*{\cftsectionaftersnum}{.}
-\setlength{\cftbeforesectionskip}{0pt}
+\setlength{\cftbeforesectionskip}{\if@precis\baselineskip\else0pt\fi}
 \renewcommand*{\cftsubsectionaftersnum}{.}
-\setlength{\cftbeforesubsectionskip}{0pt}
+\setlength{\cftbeforesubsectionskip}{\if@precis\baselineskip\else0pt\fi}
 \renewcommand*{\cftsubsubsectionaftersnum}{.}
-\setlength{\cftbeforesubsubsectionskip}{0pt}
+\setlength{\cftbeforesubsubsectionskip}{\if@precis\baselineskip\else0pt\fi}
 
 %	Définir le style des paragraphes
 \setparaheadstyle{\scshape\raggedright}
@@ -1157,8 +1175,8 @@
 \counterwithin{precis}{paragraph}
 \counterwithin{precis}{subparagraph}
 
-%	TODO » \if@draft, afficher les \precis{Résumé du paragraphe} (+ retrait de la liste?) \else juste la liste, éventuellement inline
-%	TODO » Utilité des numéros de page?
+%	TODO » \if@precis, afficher les \precis{Résumé du paragraphe} (+ retrait de la liste?) @OK \else juste la liste, éventuellement inline (style des PUF) @TODO
+%	TODO » Utilité des numéros de page? (imprimer > cf. PUF)
 %	TODO » Ajouter une commande manuelle pour insérer le chapitre / section, etc. juste en-dessous du titre (comme pour les labels) (?) + Ajouter autommatiquement à la commande via etoolbox (apptocmd, etc.) -- idem pour les chapitres non numérotés (header et toc)
 
 %	Créer un switch pour imprimer ou non les noms des \para
@@ -1178,9 +1196,10 @@
 			{\parastyle#1\parasep}%
 	\fi\fi%
 	%
-	\if@draft%
+	\if@precis%
 		\addtocontents{toc}{%
-				\ifnum\value{precis}>1\cftparasep\else\vspace{\baselineskip}\par\fi%
+				\ifnum\value{precis}>1\cftparasep\else%
+					\protect\nopagebreak\vspace{\baselineskip}\par\fi%
 				{\cftparafont\noindent\llap{\thepara\cftparaaftersnum}#1%
 				 \cftparaleader\thepage\cftparaafterpnum}}%
 	\fi\ignorespaces}
@@ -1189,7 +1208,7 @@
 %	TODO » Truver un moyen de supprimer toutes les espaces horizontales / verticales et éventuellement le saut de paragraphe. Placer en début de \para avec des % en fin de ligne, ou en fin de \para (mais tester un \unskip au début du \para)
 %	TODO » \@gobble can work but only if the user doesn't add any %
 \newcommand{\precis}[1]{%
-	\if@draft
+	\if@precis
 		\addtocontents{toc}{\ifx\relax#1\relax\else\unskip~-- #1\fi\par}
 	\fi%
 	\ignorespaces}
@@ -1632,6 +1651,16 @@
 		% nottype=reference,nottype=article,nottype=incollection,nottype=inproceedings]
 	% \printbibliography[title=Articles,
 		% nottype=book,nottype=collection,nottype=proceedings,nottype=reference,nottype=inbook,nottype=thesis]
+}
+
+
+%	TODO » Ranger. Fleuron pour séparer les sections + harmoniser avec celui utilisé pour la doc
+
+\newcommand{\sectionbreak}[1][\adforn{21}\quad\adfast{3}\quad\adforn{49}]{%
+	\needspace{5\baselineskip}
+	\vspace{\baselineskip}
+	\noindent\hfill#1\hfill%
+	\vspace{\baselineskip}
 }
 
 %	#####	GESTION DU MODE DRAFT	#####
