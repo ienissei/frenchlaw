@@ -218,43 +218,51 @@
 % Abréviations tirées du latin
 %	TODO » Reprendre celles de biblatex et les référencer automatiquement à l'usage
 %	TODO » Ajouter v\textsuperscript{o} / v\textsuperscript{is}, verbo, verbis, aux mots
-%	TODO » Ajouter les espaces (\xspace) après les abréviations
-\newcommand{\adde}{\latin{adde}}% Ajouter
-\newcommand{\Adde}{\latin{Adde}}
-\newcommand{\cf}{\latin{cf.}}% Se reporter à
-\newcommand{\Cf}{\latin{Cf.}}
-\newcommand{\contra}{\emph{contra\nocorr}\xspace}% en sens contraire
-\newcommand{\Contra}{\emph{Contra\nocorr}\xspace}
+%	TODO » Ajouter les espaces (\xspace) après les abréviations + \unskip avant ~(?)
+%	TODO » Dans Biblatex, prévoir les codes romains Dig. (digeste), etc.
+\newcommand{\adde}{\latin{adde}\xspace}% Ajouter
+\newcommand{\Adde}{\latin{Adde}\xspace}
+\newcommand{\cf}{\latin{cf.~}}% Se reporter à
+\newcommand{\Cf}{\latin{Cf.~}}
+\newcommand{\contra}{\latin{contra}\xspace}% en sens contraire
+\newcommand{\Contra}{\latin{Contra}\xspace}
+\newcommand{\verbo}{v\textsuperscript{o}~}% au mot …
+\newcommand{\verbis}{v\textsuperscript{is}~}
+\newcommand{\passim}{\latin{passim}}% À différents endroits
+\newcommand{\vol}{vol.~}% Volume
 
-\newcommand{\NB}{\emph{N.\thinpace B.}\xspace}
-\newcommand{\PS}{P.--S.~—\space}
-\newcommand{\ie}{\emph{i.\thinspace e.}~}
-\newcommand{\eg}{\emph{e.\thinspace g.}~}
-\newcommand{\passim}{\latin{passim}}
+\newcommand{\NB}{\emph{N.\thinpace B.}\xspace}% Nota bene
+\newcommand{\PS}{P.--S.~—\space}% Post-Scriptum
+\newcommand{\ie}{\emph{i.\thinspace e.}~}% Id est, c'est-à-dire
+\newcommand{\eg}{\emph{e.\thinspace g.}~}% Exempli gratia, par exemple
 % supra + infra (dans la classe)
 %
 % Abréviations françaises d'usage
 %	TODO » Reprendre celles de biblatex et les référencer automatiquement à l'usage
-%	TODO » Dans Biblatex, prévoir les codes romains Dig. (digeste), etc.
 %	TODO » Ajouter les tribunaux (cf. Abréviations) + les chambres / formations fréquentes (?)
-\renewcommand{\v}{voir\xspace}
+\renewcommand{\v}{voir\xspace}% Voir (abréger ?)
 \newcommand{\V}{Voir\xspace}
-\newcommand{\comp}{comp.~}
+\newcommand{\comp}{comp.~}% Comparer
 \newcommand{\Comp}{Comp.~}
-\renewcommand{\c}{c.~}% contre // TODO \vs plutôt (?)
 \newcommand{\anc}{anc.}% Ancien
-\renewcommand{\ss}{ss.}% Ancien // TODO check original \ss
+\newcommand{\Anc}{Anc.}% Ancien
 \newcommand{\Arr}{Arr.\xspace}% Arrêté
 \newcommand{\BO}{B.O.\xspace}% Bulletin officiel
 \newcommand{\Circ}{Circ.}% Circulaire
 \newcommand{\Cne}{C\textsuperscript{ne}}% Commune
-\newcommand{\JO}{J.O.}% Journal officiel
-% article (art.)
+\newcommand{\JO}{\emph{J.O.}~}% Journal officiel
+\newcommand{\rappr}{rappr.~}% Comparer
+\newcommand{\Rappr}{Rappr.~}
+% article (art.), aliéna (al.), § (?) comme pour les \no
 %
+\renewcommand{\c}{c.~}% Contre // TODO \vs plutôt (?)
+\renewcommand{\ss}{ss}% Sous … // TODO check original \ss
 \newcommand{\n}{\emph{n}\xdot}% Note, en note
 \newcommand{\obs}{\emph{obs}\xdot}
-\newcommand{\rapp}{\emph{rapp}\xdot}
+\newcommand{\chron}{\emph{chron}\xdot}
 \newcommand{\concl}{\emph{concl}\xdot}
+\newcommand{\pan}{\emph{pan}\xdot}
+\newcommand{\rapp}{\emph{rapp}\xdot}
 %
 \newcommand{\Cie}{C\textsuperscript{ie}\xspace}
 %
@@ -275,7 +283,7 @@
 % Commandes générales
 \newcommand{\D}{\emph{D.}~\addtoshorthands{D}}% + inclut DA (analytique), DC (critique), DH (hebdomadaire), DP (périodique) selon les périodes
 \newcommand{\Sirey}{\emph{S.}~\addtoshorthands{S}}
-\newcommand{\Bull}[1]{Bull.~#1\addtoshorthands{Bull}}
+\newcommand{\Bull}[1]{Bull.~\no #1\addtoshorthands{Bull}}
 %
 % Commandes des juridictions
 \newcommand{\CC}{C.C.}
@@ -298,8 +306,12 @@
 \newcommand{\CJUE}{C.J.U.E.}
 \newcommand{\CEDH}{C.E.D.H.}
 %
-% Commandes pour les Codes
 \newcommand{\BCE}{\abbrv{BCE}}
+\newcommand{\JOUE}{\abbrv{JOUE}}
+\newcommand{\SEBC}{\abbrv{SEBC}}
+\newcommand{\ONU}{\abbrv[\@\xspace]{ONU}}
+%
+% Commandes pour les Codes
 \newcommand{\Cciv}{\abbrv{Cciv}}
 \newcommand{\Ccom}{\abbrv{Ccom}}
 \newcommand{\CDE}{\abbrv{CDE}}
@@ -307,10 +319,3 @@
 \newcommand{\CGPPP}{\abbrv{CGPPP}}
 \newcommand{\CMF}{\abbrv{CMF}}
 \newcommand{\CPen}{\abbrv{CPen}}
-\newcommand{\JOUE}{\abbrv{JOUE}}
-\newcommand{\SEBC}{\abbrv{SEBC}}
-\newcommand{\ONU}{\abbrv[\@\xspace]{ONU}}
-%
-%	Liste des revues à ajouter lors de la compilation (entrykey)
-%\shorthandslist{ArchPhilDr,Droits,GazPal,RFDA,RTDCiv,RTDCom,AmEconRev,HarvLRev,LawQRev,ThInqL,YaleLJ}
-

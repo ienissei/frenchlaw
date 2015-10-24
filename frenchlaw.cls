@@ -56,6 +56,8 @@
 %	Define command-activated switches
 \newif\if@printparagraphs
 	\@printparagraphstrue
+\newif\if@precistoc
+	\@precistoctrue
 \newif\if@indexparagraphs
 	\@indexparagraphstrue
 
@@ -117,6 +119,7 @@
 %	Define options for <precis> document style
 \DeclareOptionX{precis}{
 	\@precistrue
+	\@precistoctrue
 }
 
 %	Define an option to change line spacing
@@ -247,6 +250,14 @@
 %	Check & fix the layout
 %	TODO » Charger un hook pour les modifier avant \checkandfixthelayout
 \checkandfixthelayout
+
+%	#####	UTILITIES	#####
+
+%	TODO » A documenter
+%	Create a command that gobbles all whitespace until the next paragraph
+% In another command, call:	\@ifnextchar\par{\@gobblepar}{\relax}
+\newcommand{\@gobblepar}[1]{%
+	\@ifnextchar\par{\@gobblepar}{\relax}}
 
 %	#####	TYPOGRAPHY	#####
 
@@ -1157,11 +1168,12 @@
 \newcommand{\parastyle}{\normalsize\scshape}
 
 %	Créer des commandes pour paramétrer l'apparence dans la table des matières
-\newcommand{\cftparafont}{\itshape}
+\newcommand{\cftparanumstyle}{\bfseries}
 \newcommand{\cftparaaftersnum}{.\enskip}
-\newcommand{\cftparaleader}{,~p.~}
+\newcommand{\cftparanumsep}{,~}
+\newcommand{\cftparaleader}{p.~}
 \newcommand{\cftparaafterpnum}{.}
-\newcommand{\cftparasep}{\par}
+\newcommand{\cftparasep}{\if@precis\par\else --- \fi}
 
 %	Créer un compteur <precis> pour savoir si un \para est le premier de sa section ou non (pour la table des matières)
 \newcounter{precis}
@@ -1183,26 +1195,31 @@
 \newcommand{\paragraphnames}{\@printparagraphstrue}
 \newcommand{\noparagraphnames}{\@printparagraphsfalse}
 
+%	Créer un switch pour imprimer ou non les \para dans la table des matières
+\newcommand{\precistoc}{\@precistoctrue}
+\newcommand{\noprecistoc}{\@precistocfalse}
+
 %	Créer une commande \para pour faire des paragraphes numérotés
 \newcommand{\para}[1][]{%
 	\refstepcounter{para}%
 	\refstepcounter{precis}%
-	\ifx\relax#1\relax\label{para:\thepara}\else\label{para:#1}\fi%
-	{\paranumstyle\thepara\paranumsep}%
+	{\paranumstyle\thepara\ifx\relax#1\relax\label{para:\thepara}\else\label{para:#1}\paranumsep\fi}%
 	\if@printparagraphs%
 		\if@marginal%
 			\marginpar{\parastyle#1}%
 		\else%
 			{\parastyle#1\parasep}%
 	\fi\fi%
-	%
-	\if@precis%
+	\if@precistoc%
 		\addtocontents{toc}{%
 				\ifnum\value{precis}>1\cftparasep\else%
 					\protect\nopagebreak\vspace{\baselineskip}\par\fi%
-				{\cftparafont\noindent\llap{\thepara\cftparaaftersnum}#1%
-				 \cftparaleader\thepage\cftparaafterpnum}}%
-	\fi\ignorespaces}
+				\noindent%
+				\if@precis\llap{\cftparanumstyle\thepara\cftparaaftersnum}%
+					\else{\cftparanumstyle\thepara\cftparaaftersnum}\fi%
+				\ifx\relax#1\relax\else#1\cftparanumsep\fi%
+				\cftparaleader\thepage\cftparaafterpnum}%
+	\fi\@ifnextchar\par{\@gobblepar}{\relax}}
 
 %	Créer une commande \precis{} pour indiquer un résumé du paragraphe.
 %	TODO » Truver un moyen de supprimer toutes les espaces horizontales / verticales et éventuellement le saut de paragraphe. Placer en début de \para avec des % en fin de ligne, ou en fin de \para (mais tester un \unskip au début du \para)
@@ -1210,8 +1227,7 @@
 \newcommand{\precis}[1]{%
 	\if@precis
 		\addtocontents{toc}{\ifx\relax#1\relax\else\unskip~-- #1\fi\par}
-	\fi%
-	\ignorespaces}
+	\fi\@ifnextchar\par{\@gobblepar}{\relax}}
 
 %	TODO » Créer une commande unique, type \para[<para>][<précis>], avec un ToC \par implicite si #2 est inexistant, sinon on est obligé de mettre un \precis{} avant toute nouvelle section qui requiert un \par dans la ToC
 
