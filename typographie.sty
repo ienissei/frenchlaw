@@ -94,13 +94,14 @@
 }
 
 %	Configurer les noms des différents éléments en anglais
-%	TODO » Vérifier l'exhaustivité + Idem pour USenglish
-\addto\captionsbritish{
+%	TODO » Vérifier l'exhaustivité 
+\addto\captionsenglish{
 	\def\keywordsname{Keywords}
 	\def\centuryname{century}%
 	\def\centuriesname{centuries}%
 	\def\emailname{Contact:~}
 }
+\let\captionsbritish=\captionsenglish
 
 %	Créer des commandes rapides pour le grec et le latin
 %	TODO » Utiliser \emph au lieu de \textit (?)
@@ -126,10 +127,9 @@
 
 %	Définir une commande pour ajouter automatiquement un point et une espace
 \newcommand{\xdot}{%
-	\@ifnextchar{.}%
-		{\get@sf}%
-		{\@\xspace}%
-}
+	\@ifnextchar{.}
+		{\get@sf}
+		{\@\xspace}}
 \def\get@sf#1{\spacefactor\the\sfcode`#1\relax}% Thanks @egreg
 
 %	Créer les commandes pour afficher les siècles
@@ -140,9 +140,11 @@
 	\ifboolexpr{test {\ifnumcomp{#1}{=}{0}}}
 		{ERREUR}
 		{\ifnum#1>0\setcounter{century}{#1}\else\setcounter{century}{-#1}\fi%
-		\textsc{\roman{century}}%
-		\ifnum\value{century}=1			\er\else\e\fi\unskip~\centuryname%
-		\ifboolexpr{	test {\ifnumcomp{#1}{>}{0}}}{}{\space\BC}}}
+		\iflanguage{french}
+			{\textsc{\roman{century}}%
+			 \ifnum\value{century}=1			\er\else\e\fi\unskip~\centuryname}
+			{\FCordinal{century}~\centuryname}%
+		 \ifboolexpr{	test {\ifnumcomp{#1}{>}{0}}}{}{\space\BC}}}
 \newcommand{\centuries}[3][\@empty]{%
 	\ifboolexpr{	test {\ifnumcomp{#2}{=}{0}} or test {\ifnumcomp{#3}{=}{0}}%
 				or (test {\ifnumcomp{#2}{<}{0}} and test {\ifnumcomp{#3}{>}{0}})%
@@ -150,17 +152,23 @@
 				or test {\ifnumcomp{#2}{>}{#3}}}
 		{ERREUR}
 		{\ifnum#2>0\setcounter{century}{#2}\else\setcounter{century}{-#2}\fi%
-		\textsc{\roman{century}}%
-		\ifnum\value{century}=1			\er\else\e\fi%
+		\iflanguage{french}
+			{\textsc{\roman{century}}%
+			 \ifnum\value{century}=1			\er\else\e\fi}
+			{\FCordinal{century}}%
 		\unskip\ifx#1\@empty--\else~#1~\fi%
 		\ifnum#3>0\setcounter{century}{#3}\else\setcounter{century}{-#3}\fi%
-		\textsc{\roman{century}}%
-		\ifnum\value{century}=1			\er\else\e\fi%
+		\iflanguage{french}
+			{\textsc{\roman{century}}%
+			 \ifnum\value{century}=1			\er\else\e\fi}
+			{\FCordinal{century}}%
 		\ifboolexpr{	test{\ifnumcomp{#2+1}{=}{#3}}%
 					 or test {\ifnumcomp{#2}{=}{#3+1}}}
 			{\unskip~\centuryname}
 			{\unskip~\centuriesname}%
 		\ifboolexpr{	test {\ifnumcomp{#2}{>}{0}}}{}{\space\BC}}}
+
+
 \let\siecle=\century
 \let\siecles=\centuries
 
@@ -186,10 +194,13 @@
 }
 \newcommand{\s@heure}[2]{\unskip~#1\,h\,#2}
 
-%	TODO » Internationaliser + Rajouter les autres abréviations courantes
-%	TODO » Créer une commande type \abbrv, et fournir la command, l'abréviation et la définition en trois arguments (pour les abréviations spéciales uniquement)
+%	TODO » Internationaliser + Rajouter les autres abréviations courantes, adde une option \abbrv[french]{\Cne}{}
+%	TODO » Créer une commande type \abbrv[Signification]{Commande}{Abréviation}
+%	Insérer automatiquement celles qui ont une signification (i.e. les spéciales) dans une liste -- e.g. avec {nomencl} ou équivalent (rechercher dans memoir) -- et une commande pour en rajouter à la main.
+%	Ajouter celles du .lbx et les y reporter, ou leur intégrer une commande pour les ajouter à la liste des abréviations.
 
 %	Définir les abréviations générales
+
 % Civilités
 \newcommand{\St}{S\textsuperscript{t}~}
 \newcommand{\Ste}{S\textsuperscript{te}~}
@@ -203,75 +214,79 @@
 \newcommand{\Mes}{M\textsuperscript{es}~}
 \newcommand{\Dr}{D\textsuperscript{r}~}
 \newcommand{\Vve}{V\textsuperscript{ve}~}
-%
-% Superscripts / numérotation
+
+% Adjectifs ordinaux
 \newcommand{\e}{\textsuperscript{e}\xspace}
 \newcommand{\es}{\textsuperscript{es}\xspace}
 \newcommand{\er}{\textsuperscript{er}\xspace}
 \newcommand{\ers}{\textsuperscript{ers}\xspace}
 \newcommand{\re}{\textsuperscript{re}\xspace}
 \newcommand{\res}{\textsuperscript{res}\xspace}
-\renewcommand{\o}{\textsuperscript{o}\xspace}
-%
-%	Définir les abréviations spéciales 
-%	TODO » Automatiser les capitalisations ?
-% Abréviations tirées du latin
-%	TODO » Reprendre celles de biblatex et les référencer automatiquement à l'usage
-%	TODO » Ajouter v\textsuperscript{o} / v\textsuperscript{is}, verbo, verbis, aux mots
-%	TODO » Ajouter les espaces (\xspace) après les abréviations + \unskip avant ~(?)
-%	TODO » Dans Biblatex, prévoir les codes romains Dig. (digeste), etc.
-\newcommand{\adde}{\latin{adde}\xspace}% Ajouter
-\newcommand{\Adde}{\latin{Adde}\xspace}
-\newcommand{\cf}{\latin{cf.~}}% Se reporter à
-\newcommand{\Cf}{\latin{Cf.~}}
-\newcommand{\contra}{\latin{contra}\xspace}% en sens contraire
-\newcommand{\Contra}{\latin{Contra}\xspace}
-\newcommand{\verbo}{v\textsuperscript{o}~}% au mot …
-\newcommand{\verbis}{v\textsuperscript{is}~}
-\newcommand{\passim}{\latin{passim}}% À différents endroits
-\newcommand{\vol}{vol.~}% Volume
 
-\newcommand{\NB}{\emph{N.\thinpace B.}\xspace}% Nota bene
-\newcommand{\PS}{P.--S.~—\space}% Post-Scriptum
-\newcommand{\ie}{\emph{i.\thinspace e.}~}% Id est, c'est-à-dire
-\newcommand{\eg}{\emph{e.\thinspace g.}~}% Exempli gratia, par exemple
-% supra + infra (dans la classe)
-%
-% Abréviations françaises d'usage
-%	TODO » Reprendre celles de biblatex et les référencer automatiquement à l'usage
-%	TODO » Ajouter les tribunaux (cf. Abréviations) + les chambres / formations fréquentes (?)
-\renewcommand{\v}{voir\xspace}% Voir (abréger ?)
-\newcommand{\V}{Voir\xspace}
-\newcommand{\comp}{comp.~}% Comparer
-\newcommand{\Comp}{Comp.~}
-\newcommand{\anc}{anc.}% Ancien
-\newcommand{\Anc}{Anc.}% Ancien
-\newcommand{\Arr}{Arr.\xspace}% Arrêté
-\newcommand{\BO}{B.O.\xspace}% Bulletin officiel
-\newcommand{\Circ}{Circ.}% Circulaire
-\newcommand{\Cne}{C\textsuperscript{ne}}% Commune
-\newcommand{\JO}{\emph{J.O.}~}% Journal officiel
-\newcommand{\rappr}{rappr.~}% Comparer
-\newcommand{\Rappr}{Rappr.~}
-% article (art.), aliéna (al.), § (?) comme pour les \no
-%
-\renewcommand{\c}{c.~}% Contre // TODO \vs plutôt (?)
-\renewcommand{\ss}{ss}% Sous … // TODO check original \ss
-\newcommand{\n}{\emph{n}\xdot}% Note, en note
-\newcommand{\obs}{\emph{obs}\xdot}
-\newcommand{\chron}{\emph{chron}\xdot}
-\newcommand{\concl}{\emph{concl}\xdot}
-\newcommand{\pan}{\emph{pan}\xdot}
-\newcommand{\rapp}{\emph{rapp}\xdot}
-%
-\newcommand{\Cie}{C\textsuperscript{ie}\xspace}
-%
-% Divers
+% Noms communs abrégés
+\newcommand{\Cne}{C\textsuperscript{ne}~}% Commune
+\newcommand{\Cie}{C\textsuperscript{ie}\xspace}% Compagnie
+
+% Abréviations d'emploi commun
 \newcommand{\BC}{av.~J.-C.\xdot}
 \newcommand{\AD}{apr.~J.-C.\xdot}
+\newcommand{\NB}{N.\thinpace B.\xdot}% Nota bene
+\newcommand{\PS}{P.--S.~—\xdot}% Post-Scriptum
+
+% Synonymes
 \let\avJC=\BC
 \let\apJC=\AD
 
+%	Définir les abréviations spéciales
+
+% Expressions latines
+\newcommand{\adde}{\latin{adde}\xspace}% Ajouter
+\newcommand{\Adde}{\latin{Adde}\xspace}
+\newcommand{\cf}{\latin{cf.\xspace}}% Se reporter à
+\newcommand{\Cf}{\latin{Cf.\xspace}}
+\newcommand{\contra}{\latin{contra}\xspace}% en sens contraire
+\newcommand{\Contra}{\latin{Contra}\xspace}
+\newcommand{\passim}{\latin{passim}\xspace}% À différents endroits
+\newcommand{\verbo}{\latin{v\textsuperscript{o}~}}% au mot …
+\newcommand{\verbis}{\latin{v\textsuperscript{is}~}}
+%
+\newcommand{\ie}{\latin{i.\thinspace e.}\xdot}% Id est, c'est-à-dire
+\newcommand{\Ie}{\latin{I.\thinspace e.}\xdot}% Id est, c'est-à-dire
+\newcommand{\eg}{\latin{e.\thinspace g.}\xdot}% Exempli gratia, par exemple
+\newcommand{\Eg}{\latin{E.\thinspace g.}\xdot}% Exempli gratia, par exemple
+
+% Expressions françaises
+%	TODO » Adde: art., al., § (?) comme pour les \no et \vol
+%	TODO » Adde: documents juridiques (dont romains (?)), tribunaux, chambres
+\newcommand{\anc}{anc.\xdot}% Ancien
+\newcommand{\Anc}{Anc.\xdot}
+\newcommand{\comp}{comp.\xdot}% Comparer
+\newcommand{\Comp}{Comp.\xdot}
+\newcommand{\rappr}{rappr.\xdot}% Rapprocher
+\newcommand{\Rappr}{Rappr.\xdot}% Rapprocher
+\renewcommand{\v}{voir\xdot}% Voir (abréger ?)
+\newcommand{\V}{Voir\xdot}
+%
+\newcommand{\vs}{c.\xdot}% Contre // TODO \c ou \vs (?)
+\newcommand{\n}{n.\xdot}% Note, en note
+\newcommand{\obs}{obs.\xdot}
+\newcommand{\chron}{chron.\xdot}
+\newcommand{\concl}{concl.\xdot}
+\newcommand{\pan}{pan.\xdot}
+\newcommand{\rapp}{rapp.\xdot}
+%
+\renewcommand{\ss}{ss\xspace}% TODO » Utile ?
+\newcommand{\vol}{vol.~}% Volume
+%
+\newcommand{\BO}{B.O.\xdot}% Bulletin officiel
+\newcommand{\JO}{\emph{J.O.}\xdot}% Journal officiel
+%
+% Thanks @egreg pour le test \ifnum (qui détecte les nombres positifs vs. tout le reste)
+\newcommand{\Bull}[1]{%
+	Bull.~\ifnum0<0#1\relax\uppercase\expandafter{\romannumeral#1}\else#1\fi\xspace}
+
+
+%	TODO » Sort
 
 % Créer les commandes des abréviations juridiques et les indexer via BibLaTeX. Elles doivent être inscrites dans le fichier bibtex (forme longue et forme courte).
 \newcommand{\abbrv}[2][\xdot]{%
@@ -280,10 +295,6 @@
 	{\cite{#2}#1}
 	{\citetitle{#2}\@\xspace}}
 %
-% Commandes générales
-\newcommand{\D}{\emph{D.}~\addtoshorthands{D}}% + inclut DA (analytique), DC (critique), DH (hebdomadaire), DP (périodique) selon les périodes
-\newcommand{\Sirey}{\emph{S.}~\addtoshorthands{S}}
-\newcommand{\Bull}[1]{Bull.~\no #1\addtoshorthands{Bull}}
 %
 % Commandes des juridictions
 \newcommand{\CC}{C.C.}

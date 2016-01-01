@@ -1,19 +1,19 @@
 %%
-%%   This is file "frenchlaw.bbx", which is part of the "frenchlaw" package
-%%   Copyright 2009--2014: Fora VERN -- ienissei (at) gmail (dot) com
-%%a%%   This work may be distributed and/or modified under the conditions of the
-%%   LaTeX Project Public License, either version 1.3 of this license or, at your
-%%   option, any later version.
+%%	This is file "frenchlaw.bbx", which is part of the "frenchlaw" package
+%%	Copyright 2009--2014: Fora VERN -- ienissei (at) gmail (dot) com
+%%	This work may be distributed and/or modified under the conditions of the
+%%	LaTeX Project Public License, either version 1.3 of this license or, at your
+%%	option, any later version.
 %%
-%%   The latest version of the license can be found at:
-%%      http://www.latex-project.org/lppl.txt
-%%   and version 1.3 or later is part of all distributions of LaTeX, 2005/12/01 or later.
-%% 
-%%   This work has the LPPL maintenance status "author-maintained".
-%%   This work consists of the files listed in the README file.
+%%	The latest version of the license can be found at:
+%%		http://www.latex-project.org/lppl.txt
+%%	and version 1.3 or later is part of all distributions of LaTeX, 2005/12/01 or later.
+%%
+%%	This work has the LPPL maintenance status "author-maintained".
+%%	This work consists of the files listed in the README file.
 %%
 
-%	WARNING: Please note that this is a BibLaTeX style file for "frenchlaw.cls"
+%%	WARNING: Please note that this is a BibLaTeX style file for "frenchlaw.cls"
 
 \ProvidesFile{frenchlaw.bbx}%
 	[2014/09/30 v.0.9. Bibliography style for French legal documents]
@@ -44,7 +44,8 @@
 	\iftoggle{bbx:dashed}{\ExecuteBibliographyOptions{pagetracker}}{}}
 
 %	Execute bibliography options
-\ExecuteBibliographyOptions{isbn,url,doi,eprint,related,dashed,sorting=nymdt}
+\ExecuteBibliographyOptions{isbn,url,doi,eprint,related,dashed,%
+	sorting=nymdt,useeditor=false,usetranslator=false,language=auto}
 
 % #####	SORTING	#####
 
@@ -56,6 +57,7 @@
 			\name{author}
 			\name{editor}
 			\name{translator}
+			\field{type}
 			\list{institution}}
 	\sort{\field{year}}
 	\sort{\field{month}}
@@ -63,6 +65,22 @@
 	\sort{	\field{sorttitle}
 			\field{title}}
 }
+
+\DeclareSortingScheme{shortjournal}{
+	\sort{\field{shortjournal}}
+	\sort{\field{journal}}
+}
+
+
+	% \ifboolexpr {	test	{\iffieldsequal{journal}{shortjournal}}
+	% 				or test	{\iffieldundef{journal}}
+	% 				or test	{\iffieldundef{shortjournal}}	}
+
+% \iffieldundef{shortjournal}{\skipentry}{%
+% 	\iffieldundef{journal}{\skipentry}{%
+% 	\ifcsdef{\strfield{shortjournal}=\strfield{journal}}
+% 		{\skipentry}
+%  		{\savefieldcs{journal}{\strfield{shortjournal}=\strfield{journal}}}
 
 % #####	FIELD FORMATS	#####
 
@@ -89,29 +107,47 @@
 %	Use French formatting for all last names
 \protect\def\mkbibnamelast#1{\textsc{\textnohyphenation{#1}}}
 
-%	Define the dash to be used when there are several works by the same author
-\renewcommand*{\bibnamedash}{%
-	\ifthenelse{\ifuseauthor\AND\NOT\ifnameundef{author}}
-		{\textemdash\adddot\addspace}
-		{\textemdash\addspace}%
-}
-
 %	Use last-name only for the first author in the entry.
 \DeclareNameAlias{author}{last-first/first-last}
 \DeclareNameAlias{editor}{last-first/first-last}
 \DeclareNameAlias{translator}{last-first/first-last}
+
 %\DeclareNameAlias[jurisdiction]{institution}{sortname}%	TODO	» Utilité?
+
+%	TODO » NameFormat first-last if bbx:related -- insérer dans une commande \DeclareNameFormat{author}
+% Utiliser \ifbibliography pour trier entre les auteurs alphabétiques et ceux dans l'ordre normal (?)
 
 % #####	PUNCTUATION	#####
 
 %	Redefine punctuation
 \renewcommand*{\newunitpunct}{\adddot\space\bibsentence}% Avoid double spaces in English
-\renewcommand{\subtitlepunct}{\addcolon\addspace}
-\renewcommand{\intitlepunct}{\addspace}
+\renewcommand*{\subtitlepunct}{\addcolon\addspace}
+\renewcommand*{\intitlepunct}{\addspace}
+\renewcommand*{\textcitedelim}{\addsemicolon\addspace}
 
-%	TODO » Create shorthand, e.g. for commas or colons
+%	TODO » Create commands, e.g. for commas or colons
 
-% #####	CITATION COMMANDS	#####
+% #####	VERTICAL ALIGNMENT	#####
+
+\setlength{\bibitemsep}{0pt}
+\setlength{\bibnamesep}{0pt}
+\setlength{\bibinitsep}{0pt}
+\setlength{\bibparsep}{0pt}
+
+\defbibheading{subbibliography}[\refname]{%
+	\setlength{\beforesecskip}{2\baselineskip}
+	\renewcommand*{\large}{\fontsize{14}{14.5}\selectfont}
+	\section*{#1}%
+	\if@twoside\markright{\MakeUppercase{#1}}\fi}
+
+\defbibheading{subbibintoc}[\refname]{%
+	\setlength{\beforesecskip}{2\baselineskip}
+	\renewcommand*{\large}{\fontsize{14}{14.5}\selectfont}
+	\section*{#1}%
+	\addcontentsline{toc}{section}{#1}%
+	\if@twoside\markright{\MakeUppercase{#1}}\fi}
+
+% #####	CITATION PROCESSORS	#####
 
 %	Set up a citation command for cross-references
 \DeclareCiteCommand{\bbx@crossref}
@@ -121,6 +157,17 @@
 	 \printfield[title]{labeltitle}}
 	{}
 	{}
+
+%	Set up a bibliography check that removes duplicate journal titles
+\defbibcheck{shortjournal}{%
+	\iffieldundef{shortjournal}
+		{\skipentry}
+		{\iffieldundef{journaltitle}
+			{\skipentry}
+			{\ifcsdef{\strfield{shortjournal}=\strfield{journaltitle}}
+				{\skipentry}
+				{\savefieldcs{journaltitle}%
+					{\strfield{shortjournal}=\strfield{journaltitle}}}}}}
 
 % #####	BIBLIOGRAPHY DRIVERS	#####
 
@@ -141,8 +188,6 @@
 \DeclareBibliographyAlias{mvreference}{reference}
 \DeclareBibliographyAlias{suppreference}{inreference}
 \DeclareBibliographyAlias{*}{misc}
-
-%	TODO » Delete after defining the driver
 
 %	Define a driver for <article> entries
 \DeclareBibliographyDriver{article}{%
@@ -370,7 +415,7 @@
 		{\newunit\newblock
 		 \usebibmacro{in:}%
 		 \usebibmacro{bybookauthor}%
-		 \setunit*{\addcomma\addspace}\newblock
+		 \setunit{\addcomma\addspace}\newblock
 		 \usebibmacro{maintitle+booktitle}%
 		 \newunit\newblock
 		 \usebibmacro{byeditor+others}%
@@ -426,7 +471,7 @@
 		{\newunit\newblock
 		 \usebibmacro{in:}%
 		 \usebibmacro{bybookauthor}%
-		 \setunit*{\addcomma\addspace}\newblock
+		 \setunit{\addcomma\addspace}\newblock
 		 \usebibmacro{maintitle+booktitle}%
 		 \newunit\newblock
 		 \usebibmacro{editor-bis}%
@@ -544,7 +589,7 @@
 		{\newunit\newblock
 		 \usebibmacro{in:}%
 		 \usebibmacro{bybookauthor}%
-		 \setunit*{\addcomma\addspace}\newblock
+		 \setunit{\addcomma\addspace}\newblock
 		 \usebibmacro{maintitle+booktitle}%
 		 \newunit\newblock
 		 \usebibmacro{editor-bis}%
@@ -652,20 +697,22 @@
 		{}%
 	\usebibmacro{finentry}}
 
-%	TODO » Suiv. à reprendre + legislation
-
 %	Define a driveer for <legislation> entries
 \DeclareBibliographyDriver{legislation}{%
 	\usebibmacro{bibindex}%
 	\usebibmacro{begentry}%
-	\printfield{type}%
+	\iffieldundef{type}
+		{}
+		{\printfield{type}%
+		 \setunit{\addnbspace}}%
 	\iflistundef{institution}
 		{}
-		{\setunit{\addnbspace}
-		 \printtext[parens]{\printlist{institution}}}%
-	\setunit{\addspace}
-	\printfield{number}%
-	\setunit{\addspace}
+		{\printtext[parens]{\printlist{institution}}
+		 \setunit{\addspace}}%
+	\iffieldundef{number}
+		{}
+		{\printfield{number}%
+		 \setunit{\addspace}}%
 	\iflistundef{location}
 		{\ifthenelse{\iffieldundef{day}\AND\iffieldundef{month}\AND\iffieldundef{year}}
 			{}
@@ -673,16 +720,12 @@
 			 \setunit{\addspace}
 			 \usebibmacro{date}%
 			 \setunit{\addspace}}}
-		{}
-	\printtext{\printfield{title}}%
-	\iffieldundef{shorttitle}
-		{}
-		{\setunit{\addnbspace}
-		 \printtext[parens]{\printfield{shorttitle}}}%
-	\setunit{\addspace}
+		{}%
+	\printfield{title}%
 	\iflistundef{location}
 		{}
-		{\bibstring{signedat}%
+		{\setunit{\addspace}
+		 \bibstring{signedat}%
 		 \setunit{\addspace}
 		 \printlist{location}%
 		 \setunit{\addspace}
@@ -692,10 +735,16 @@
 			 \setunit{\addspace}
 			 \usebibmacro{date}%
 			 \setunit{\addspace}}}%
-	\newunit\newblock
-	\printfield{series}%
-	\newunit\newblock
-	\printfield{note}%
+	% Primary citations and references print the series and commentaries
+	\iftoggle{bbx:related}
+		{\setunit{\addcomma\addspace}\newblock
+		 \printfield{series}%
+		 \newunit\newblock
+		 \printfield{note}%
+		 \newunit\newblock
+		 \usebibmacro{related:init}%
+		 \usebibmacro{related}}
+		{}%
 	\usebibmacro{finentry}}
 
 %	Define a driver for <jurisdiction> entries
@@ -703,43 +752,55 @@
 	\usebibmacro{bibindex}%
 	\usebibmacro{begentry}%
 	\printlist{institution}%
-	\ifthenelse{	\ifkeyword{CEDH} }
+	\ifkeyword{CEDH}
 		% Define ECHR case citations
 		{\setunit{\addcomma\addspace}
 		 \printfield{title}%
-		 \setunit{\addspace}
-		 \printtext[parens]{\printfield{type}}%
-		 \setunit{\addcomma\addspace}
+		 \iffieldundef{type}
+		 	{}
+			{\setunit{\addspace}
+		 	 \printtext[parens]{\printfield{type}}}%
+		 \setunit*{\addcomma\addspace}
 		 \usebibmacro{date}%
-		 \setunit{\addcomma\addspace}
-		 \printfield{number}}
+		 \iffieldundef{number}
+		 	{}
+		 	{\setunit*{\addcomma\addspace}
+		 	 \printfield{number}}}%
 		{\ifthenelse{	\ifkeyword{CC}\OR\ifkeyword{CConst}\OR
 						\ifkeyword{CJUE}\OR\ifkeyword{CJCE} }
 			% Define CJEU and Constitutional Court case citations
 			{\setunit{\addcomma\addspace}
 			 \printfield{type}%
-			 \setunit{\addspace}
+			 \setunit{\addspace\midsentence}
 			 \printfield{number}%
 			 \setunit{\addspace}
 			 \bibstring{fromdate}%
 			 \setunit{\addspace}
 			 \usebibmacro{date}%
-			 \setunit{\addcomma\addspace}
-			 \printfield{title}}
+			 \iffieldundef{title}
+			 	{}
+			 	{\setunit{\addcomma\addspace}
+				 \printfield{title}}}%
 			% Define generic case citations
 			{\setunit{\addcomma\addspace}
 			 \printfield{type}%
 			 \setunit{\addcomma\addspace}
 			 \usebibmacro{date}%
-			 \setunit{\addcomma\addspace}
-			 \printfield{title}%
-			 \setunit{\addcomma\addspace}
-			 \printfield{number}}}%
-	\setunit{\addcomma\addspace}
+			 \iffieldundef{title}
+			 	{}
+			 	{\setunit{\addcomma\addspace}
+				 \printfield{title}}%
+			 \iffieldundef{number}
+			 	{}
+			 	{\setunit{\addcomma\addspace}
+			 	 \printfield{number}}}}%
 	% Primary citations and references print the series and commentaries
 	\iftoggle{bbx:related}
-		{\printfield{series}
-		 \setunit{\addsemicolon\addspace}\newblock
+		{\iffieldundef{series}
+			{}
+			{\setunit{\addcomma\addspace}
+			 \printfield{series}}%
+		 \setunit{\addcolon\addspace}\newblock
 		 \usebibmacro{related:init}%
 		 \usebibmacro{related}}
 		{}%
@@ -753,16 +814,21 @@
 		% Long citation for stand-alone references
 		{\usebibmacro{author}%
 		 \setunit{\labelnamepunct}\newblock
-		 \usebibmacro{title}
+		 \usebibmacro{title}%
 		 \setunit{\addcomma\addspace}\newblock
-		 \usebibmacro{journal+issue+date}
-		 \setunit{\addcolon\addspace}\newblock
+		 \usebibmacro{journal+issue+date}%
+		 \setunit{\addcomma\addspace}\newblock
 		 \settoggle{bbx:related}{false}%
-		 \usebibmacro{under:}%
+		 \printfield{type}%
+		 \setunit{\adddot\addspace}% The abbreviation point is swallowed by BibLaTeX
+		 \bibstring{under}%
+		 \setunit{\addspace}
 		 \usebibmacro{related:init}%
 		 \usebibmacro{related}}
 		% Short citation -- after the case citation
-		{\usebibmacro{author}
+		{\printfield{type}%
+		 \setunit{\adddot\addspace}% The abbreviation point is swallowed by BibLaTeX
+		 \usebibmacro{author}%
 		 \setunit{\addcomma\addspace}\newblock
 		 \usebibmacro{journal+issue+date}}%
 	\usebibmacro{finentry}}
@@ -784,13 +850,12 @@
 
 % #####	CUSTOM BIBLIOGRAPHY MACROS	#####
 
-\newbibmacro*{see:}{%
-	\bibstring{see}%
+\renewbibmacro*{in:}{%
+	\bibstring{in}%
 	\setunit{\addspace}}
 
-\newbibmacro*{under:}{%
-	\printfield{type}%
-	\bibstring{under}%
+\newbibmacro*{see:}{%
+	\bibstring{see}%
 	\setunit{\addspace}}
 
 %	Create a macro for collection/proceedings editors
@@ -799,8 +864,7 @@
 		{}
 		{\printnames[labelname]{editor}%
 		 \setunit{\addnbspace}%
-		 \ifthenelse{	\ifnumgreater{\value{editor}}{1} \OR
-						\ifandothers{editor} }
+		 \ifthenelse{	\value{listcount} > 1 }
 			{\printtext[parens]{\bibstring{compilers}}}
 			{\printtext[parens]{\bibstring{compiler}}}%
 		 \clearname{editor}}}
@@ -834,20 +898,27 @@
 		{\usebibmacro{journal}}
 		{\printfield[journaltitle]{shortjournal}}%
 	\midsentence%
-	\setunit*{\addcomma\addspace}
+	\setunit{\addcomma\addspace}
 	\printfield{series}%
-	\setunit*{\addcomma\addspace}
+	\setunit{\addcomma\addspace}
 	\iffieldequalstr{langid}{french}%
-		{\printfield[plain]{part}%
-		 \setunit{\addcomma\addspace}
-		 \iffieldundef{part}
+		{\iffieldundef{part}
 			{\printfield{number}}
-			{\printfield[plain]{number}}%
-		 \setunit{\addcomma\addspace}
-		 \usebibmacro{date}%
-		 \setunit{\addslash}
-		 \printfield[plain]{volume}
-		 \ifthenelse{	\iffieldundef{number} \OR
+			{\printfield{year}%
+			 \setunit{\addcomma\addspace}
+			 \printfield[plain]{part}%
+			 \setunit{\addcomma\addspace}
+			 \printfield[plain]{number}%
+			 \clearfield{year}}%
+		 \iffieldundef{year}
+		 	{}
+			{\setunit{\addcomma\addspace}
+			 \usebibmacro{date}}%
+		 \iffieldundef{volume}
+		 	{}
+		 	{\setunit{\addslash}
+			 \printfield[plain]{volume}}%
+		 \ifthenelse{	\iffieldundef{number}\AND
 		 				\iffieldundef{volume} }
 			{\setunit{\adddot}
 			 \printfield[plain]{pages}%
@@ -858,11 +929,15 @@
 		 \setunit{\addcomma\addspace}
 		 \printfield{number}%
 		 \setunit{\addspace}
-		 \printtext[parens]{\usebibmacro{date}}}
-	\setunit{\addcolon\addspace}
-	\usebibmacro{issue}%
-	\newunit
-	\usebibmacro{pages}
+		 \printtext[parens]{\usebibmacro{date}}}%
+	\iffieldundef{issue}
+		{}
+		{\setunit{\addcolon\addspace}
+		 \usebibmacro{issue}}%
+	\iffieldundef{pages}
+		{}
+		{\setunit{\addcolon\addspace}
+		 \usebibmacro{pages}}%
 	\newunit
 	\printfield{eid}}
 
@@ -887,7 +962,7 @@
 %	Create macros for publication information
 \newbibmacro*{publisher+location+date}{%
 	\printlist{location}%
-	\iflistundef{publisher}
+	\iflistundef{location}
 		{\setunit*{\addcomma\space}}
 		{\setunit*{\addcolon\space}}%
 	\printlist{publisher}%
@@ -896,7 +971,7 @@
 
 \newbibmacro*{institution+location+date}{%
 	\printlist{location}%
-	\iflistundef{institution}
+	\iflistundef{location}
 		{\setunit{\addcomma\space}}
 		{\setunit{\addcolon\space}}%
 	\printlist{institution}%
@@ -938,7 +1013,9 @@
 \newbibmacro*{pages}{%
 	\setunit{\bibpagespunct}
 	\printfield{pages}%
-	\iffieldint{pages}{\addnbspace\bibstring{sequentes}}{}}
+	\iffieldint{pages}
+		{\addnbspace\bibstring{sequentes}}
+		{}}
 
 %	Create macros for standard book numbers
 \newbibmacro*{doi+eprint+url}{%

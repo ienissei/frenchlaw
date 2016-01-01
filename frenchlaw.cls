@@ -54,10 +54,10 @@
 	\@frenchfalse
 
 %	Define command-activated switches
-\newif\if@printparagraphs
-	\@printparagraphstrue
-\newif\if@precistoc
-	\@precistoctrue
+\newif\if@paraname
+	\@paranametrue
+\newif\if@paratoc
+	\@paratoctrue
 \newif\if@indexparagraphs
 	\@indexparagraphstrue
 
@@ -119,7 +119,7 @@
 %	Define options for <precis> document style
 \DeclareOptionX{precis}{
 	\@precistrue
-	\@precistoctrue
+	\@paratoctrue
 }
 
 %	Define an option to change line spacing
@@ -1192,25 +1192,29 @@
 %	TODO » Ajouter une commande manuelle pour insérer le chapitre / section, etc. juste en-dessous du titre (comme pour les labels) (?) + Ajouter autommatiquement à la commande via etoolbox (apptocmd, etc.) -- idem pour les chapitres non numérotés (header et toc)
 
 %	Créer un switch pour imprimer ou non les noms des \para
-\newcommand{\paragraphnames}{\@printparagraphstrue}
-\newcommand{\noparagraphnames}{\@printparagraphsfalse}
+\newcommand{\paragraphnames}{\@paranametrue}
+\newcommand{\noparagraphnames}{\@paranamefalse}
 
 %	Créer un switch pour imprimer ou non les \para dans la table des matières
-\newcommand{\precistoc}{\@precistoctrue}
-\newcommand{\noprecistoc}{\@precistocfalse}
+\newcommand{\paratoc}{\@paratoctrue}
+\newcommand{\noparatoc}{\@paratocfalse}
+
+%	Créer un switch pour imprimer ou non les \precis dans la table des matières
+\newcommand{\precistoc}{\@precistrue}
+\newcommand{\noprecistoc}{\@precisfalse}
 
 %	Créer une commande \para pour faire des paragraphes numérotés
 \newcommand{\para}[1][]{%
 	\refstepcounter{para}%
 	\refstepcounter{precis}%
 	{\paranumstyle\thepara\ifx\relax#1\relax\label{para:\thepara}\else\label{para:#1}\paranumsep\fi}%
-	\if@printparagraphs%
+	\if@paraname%
 		\if@marginal%
 			\marginpar{\parastyle#1}%
 		\else%
 			{\parastyle#1\parasep}%
 	\fi\fi%
-	\if@precistoc%
+	\if@paratoc%
 		\addtocontents{toc}{%
 				\ifnum\value{precis}>1\cftparasep\else%
 					\protect\nopagebreak\vspace{\baselineskip}\par\fi%
@@ -1336,54 +1340,49 @@
 %	TODO » Enumerate numbering
 % Enumerate > 1. a) i. A.
 
-%	TODO » Revoir les espacements horizontaux des descriptions
-%	Modifier l'environnement <description>
-\renewenvironment{description}
-	{\list	{}
-		{\vskip\baselineskip
-		\let\makelabel\descriptionlabel
-		\setlength{\itemsep}{\baselineskip}
-		\setlength{\leftmargin}{2\parindent}}}
-	{\vskip\baselineskip\endlist}
-
-%	Modifier l'environnement <blockdescription>
-\renewenvironment{blockdescription}%
-	{\list	{}
-		{\vskip\baselineskip
-		\let\makelabel\blockdescriptionlabel
-		\setlength{\leftmargin}{2\parindent}}}%
-	{\vskip\baselineskip\endlist}
-
-%	Créer l'environnement <vitae> pour les CV (label dans la marge)
-\newenvironment{vitae}
-  {\list	{}
-    {\let\makelabel\vitaelabel
-     \setlength{\leftmargin}{\z@}
-     \setlength{\labelwidth}{\marginparwidth}}}
-  {\endlist}
 
 %	Définir le style des labels des descriptions
 \renewcommand{\descriptionlabel}[1]{\scshape{\hfill#1:}}
 \renewcommand{\blockdescriptionlabel}[1]{\scshape{\hfill#1:}}
 \newcommand{\vitaelabel}[1]{\footnotesize\itshape{\hfill\strut#1:\strut}}
 
+%	TODO » Revoir les espacements horizontaux des descriptions
+%	Modifier l'environnement <description>
+\renewenvironment{description}
+	{\list{}{\let\makelabel\descriptionlabel
+			 \setlength{\leftmargin}{2\parindent}}}
+	{\endlist}
+
+%	Modifier l'environnement <blockdescription>
+\renewenvironment{blockdescription}%
+	{\list{}{\vskip\baselineskip
+			 \let\makelabel\blockdescriptionlabel
+			 \setlength{\itemsep}{\baselineskip}
+			 \setlength{\leftmargin}{2\parindent}}}%
+	{\vskip\baselineskip\endlist}
+
+%	Créer l'environnement <vitae> pour les CV (label dans la marge)
+\newenvironment{vitae}
+	{\list{}{\let\makelabel\vitaelabel
+			 \setlength{\leftmargin}{\z@}
+			 \setlength{\labelwidth}{\marginparwidth}}}
+	{\endlist}
+
 %	TODO » Appliquer \idemindent si le texte est en français (<quote>, <quotation>)
 
 %	Appliquer à l'environnement quote    
 \renewenvironment{quote}%
-	{\list	{}
-		{\vskip\baselineskip
-		 \setlength{\itemindent}{\z@}}%
-		\small\item[]}
-	{\vskip\baselineskip\endlist}
+	{\list{}{\setlength{\itemindent}{\z@}%
+			 \setlength{\leftmargin}{2\parindent}}%
+	 \small\item[]\ignorespaces}
+	{\endlist}
 
 %	Appliquer à l'environnement quotation
 \renewenvironment{quotation}%
-	{\list	{}
-		{\vskip\baselineskip
-		 \setlength{\itemindent}{\parindent}}%
-		\small\item[]}
-	{\vskip\baselineskip\endlist}
+	{\list{}{\setlength{\itemindent}{\parindent}%
+			 \setlength{\leftmargin}{2\parindent}}%
+	 \small\item[]\ignorespaces}
+	{\endlist}
 
 %	Définir le style des épigraphes
 \epigraphfontsize{\normalsize}
@@ -1672,12 +1671,17 @@
 
 %	TODO » Ranger. Fleuron pour séparer les sections + harmoniser avec celui utilisé pour la doc
 
-\newcommand{\sectionbreak}[1][\adforn{21}\quad\adfast{3}\quad\adforn{49}]{%
+\newcommand{\chapterbreak}[1][\adforn{21}\quad\adfast{3}\quad\adforn{49}]{%
 	\needspace{5\baselineskip}
 	\vspace{\baselineskip}
 	\noindent\hfill#1\hfill%
+	\vspace{\baselineskip}}
+
+\newcommand{\sectionbreak}[1][\adfast{3}\quad\adfast{3}\quad\adfast{3}]{%
+	\needspace{3\baselineskip}
 	\vspace{\baselineskip}
-}
+	\noindent\hfill#1\hfill%
+	\vspace{\baselineskip}}
 
 %	#####	GESTION DU MODE DRAFT	#####
 
