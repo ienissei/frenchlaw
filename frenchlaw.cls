@@ -784,7 +784,7 @@
 
 %	Set a style for <book>, <part>, <heading>, <subheading> and <chapter>
 \aliaspagestyle{book}{empty}
-\aliaspagestyle{part}{empty}
+\aliaspagestyle{part}{plain}
 \aliaspagestyle{chapter}{plain}
 
 %	Redefine <plain> so that it takes into accout the <twoside> option
@@ -1243,6 +1243,10 @@
 %	Créer une commande pour indiquer que le sujet est traité en note
 \newcommand{\note}[1]{#1~(\emph{n.})}% dans les index, utiliser: |note
 
+%	TODO » Créer une commande pour des superscripts utilités dans une exégèse
+\newcommand{\glose}[1]{\emph{#1).~}\ignorespaces}
+\newcommand{\glosemark}[1]{\textsuperscript{\thinspace\emph{#1)}}}
+
 
 %	#####	DÉFINITIONS RELATIVES AUX FLOATS	#####
 
@@ -1373,14 +1377,14 @@
 %	Appliquer à l'environnement quote    
 \renewenvironment{quote}%
 	{\list{}{\setlength{\itemindent}{\z@}%
-			 \setlength{\leftmargin}{2\parindent}}%
+			 \setlength{\leftmargin}{\parindent}}%
 	 \small\item[]\ignorespaces}
 	{\endlist}
 
 %	Appliquer à l'environnement quotation
 \renewenvironment{quotation}%
 	{\list{}{\setlength{\itemindent}{\parindent}%
-			 \setlength{\leftmargin}{2\parindent}}%
+			 \setlength{\leftmargin}{t\parindent}}%
 	 \small\item[]\ignorespaces}
 	{\endlist}
 
@@ -1389,7 +1393,7 @@
 \setlength{\epigraphwidth}{.5\textwidth}
 \setlength{\epigraphrule}{0pt}
 \setlength{\beforeepigraphskip}{0pt}
-\setlength{\afterepigraphskip}{\baselineskip}
+\setlength{\afterepigraphskip}{2\baselineskip}
 %
 %	TODO » Documenter les minipages, utiliser \footnotemark et \footnotetext pour des notes
 %	Définir le format de la citation de l'épigraphe
@@ -1407,8 +1411,8 @@
 	\vspace*{\beforeepigraphskip}
 	{\begin{\epigraphflush}
 		\epigraphsize
-		\@epitext{#1}\par\vspace{.5\baselineskip}
-		\@episource{#2}\par\vspace{.5\baselineskip}
+		\@epitext{#1}\par\vspace{\baselineskip}
+		\@episource{#2}\par
 	\end{\epigraphflush}}
 	\vspace*{\afterepigraphskip}}
 

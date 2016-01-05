@@ -99,19 +99,22 @@
 			{\usebibmacro{cite:legal}}
 			{\ifthenelse{\ifciteibid\AND\NOT\iffirstonpage}
 				{\bibsentence\usebibmacro{cite:ibid}}
-				{\iffieldequals{namehash}{\cbx@lasthash}
-					{\setunit{\unspace}}
-					{\ifnameundef{labelname}
-						{}
-						{\printnames{labelname}%
-						 \setunit{\nametitledelim}}%
-					 \savefield{namehash}{\cbx@lasthash}}%
-				 \ifopcit
-					{\ifloccit
-						{\bibsentence\usebibmacro{cite:loccit}}
-						{\bibsentence\usebibmacro{cite:opcit}}}
-				 	{\usebibmacro{cite:title}%
-				 	 \usebibmacro{cite:related}}}}%
+				{\ifnameundef{shortauthor}							% ADDED
+					{\iffieldequals{namehash}{\cbx@lasthash}
+						{\setunit{\unspace}}
+						{\ifnameundef{labelname}
+							{}
+							{\printnames{labelname}%
+							 \setunit{\nametitledelim}}%
+						 \savefield{namehash}{\cbx@lasthash}}%
+					 \ifopcit
+						{\ifloccit
+							{\bibsentence\usebibmacro{cite:loccit}}
+							{\bibsentence\usebibmacro{cite:opcit}}}
+					 	{\usebibmacro{cite:title}%
+					 	 \usebibmacro{cite:related}}}
+					{\printnames{shortauthor}%						% ADDED >> Change (?)
+					 \ifloccit{\usebibmacro{cite:loccit}}}}}%		% ADDED
 			 \iffieldundef{shorthand}
 			 	{}
 			 	{\usebibmacro{shorthandintro}}}}
@@ -212,8 +215,10 @@
 		 				\ifentrytype{inproceedings} }
 		 	{\usebibmacro{in:}%
 		 	 \setunit{\addspace}\newblock
-			 \usebibmacro{bybookauthor}%
-			 \setunit{\addcomma\addspace}\newblock
+		 	 \ifnameundef{bybookauthor}
+		 	 	{}
+		 	 	{\usebibmacro{bybookauthor}%
+				 \setunit{\addcomma\addspace}\newblock}%
 			 \usebibmacro{maintitle+booktitle}%
 			 \setunit{\addcomma\addspace}\newblock
 			 \usebibmacro{event+venue+date}%
@@ -300,7 +305,7 @@
 		{\ifthenelse{	\ifentrytype{reference}\AND\NOT\ifciteseen }
 			{}
 			{\setunit{\postnotedelim}}%
-			 \printfield{postnote}}}
+			 \printfield{postnote}\@}}% Enforce abbreviative dot just in case
 
 % Citation commands
 

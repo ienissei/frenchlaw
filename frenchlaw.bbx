@@ -46,6 +46,7 @@
 %	Execute bibliography options
 \ExecuteBibliographyOptions{isbn,url,doi,eprint,related,dashed,%
 	sorting=nymdt,useeditor=false,usetranslator=false,language=auto}
+\ExecuteBibliographyOptions[reference]{useauthor=false}
 
 % #####	SORTING	#####
 
@@ -56,12 +57,42 @@
 	\sort{	\name{sortname}
 			\name{author}
 			\name{editor}
-			\name{translator}
-			\field{type}
-			\list{institution}}
+			\name{translator}}
 	\sort{\field{year}}
 	\sort{\field{month}}
 	\sort{\field{day}}
+	\sort{	\field{sorttitle}
+			\field{title}}
+}
+
+\DeclareSortingScheme{reference}{
+	\sort{\field{presort}}
+	\sort[final]{\field{sortkey}}
+	\sort{	\field{sorttitle}
+			\field{title}}
+}
+
+\DeclareSortingScheme{legislation}{
+	\sort{\field{presort}}
+	\sort[final]{\field{sortkey}}
+	\sort{\field{type}}
+	\sort{\list{institution}}
+	\sort{\field{year}}
+	\sort{\field{month}}
+	\sort{\field{day}}
+	\sort{\field{number}}
+	\sort{	\field{sorttitle}
+			\field{title}}
+}
+
+\DeclareSortingScheme{jurisdiction}{
+	\sort{\field{presort}}
+	\sort[final]{\field{sortkey}}
+	\sort{\list{institution}}
+	\sort{\field{year}}
+	\sort{\field{month}}
+	\sort{\field{day}}
+	\sort{\field{number}}
 	\sort{	\field{sorttitle}
 			\field{title}}
 }
@@ -87,6 +118,7 @@
 %	Define {title} fields
 \DeclareFieldFormat[inbook,thesis]{title}{\mkbibemph{#1}}
 \DeclareFieldFormat[commentary]{title}{\mkbibquote{#1}}
+\DeclareFieldFormat[shortjournal]{shortjournal}{\mkbibemph{#1}}
 
 % Define various numbering fields
 \DeclareFieldFormat{number}{\bibstring{number}\addnbthinspace#1}%
@@ -198,7 +230,7 @@
 	\usebibmacro{title}%
 	% \newunit
 	% \printlist{language}%
-	\newunit\newblock
+	\setunit{\addcomma\addspace}\newblock
 	\usebibmacro{byauthor}%
 	\newunit\newblock
 	\usebibmacro{bytranslator+others}%
@@ -232,7 +264,7 @@
 	\usebibmacro{maintitle+title}%
 	% \newunit%
 	% \printlist{language}%
-	\newunit\newblock
+	\setunit{\addcomma\addspace}\newblock
 	\usebibmacro{byauthor}%
 	\newunit\newblock
 	\usebibmacro{byeditor+others}%
@@ -274,7 +306,7 @@
 	\usebibmacro{maintitle+title}%
 	% \newunit%
 	% \printlist{language}%
-	\newunit\newblock
+	\setunit{\addcomma\addspace}\newblock
 	\usebibmacro{byauthor}%
 	\newunit\newblock
 	\usebibmacro{editor-bis}%
@@ -320,7 +352,7 @@
 	% \printlist{language}%
 	\newunit\newblock
 	\usebibmacro{event+venue+date}%
-	\newunit\newblock
+	\setunit{\addcomma\addspace}\newblock
 	\usebibmacro{byauthor}%
 	\newunit\newblock
 	\usebibmacro{editor-bis}%
@@ -367,7 +399,7 @@
 	\usebibmacro{maintitle+title}%
 	% \newunit%
 	% \printlist{language}%
-	\newunit\newblock
+	\setunit{\addcomma\addspace}\newblock
 	\usebibmacro{byauthor}%
 	\newunit\newblock
 	\usebibmacro{editor-bis}%
@@ -409,13 +441,15 @@
 	\usebibmacro{title}%
 	% \newunit%
 	% \printlist{language}%
-	\newunit\newblock
+	\setunit{\addcomma\addspace}\newblock
 	\usebibmacro{byauthor}%
 	\iffieldundef{crossref}%
 		{\newunit\newblock
 		 \usebibmacro{in:}%
-		 \usebibmacro{bybookauthor}%
-		 \setunit{\addcomma\addspace}\newblock
+		 \ifnameundef{bookauthor}
+			{}
+		 	{\usebibmacro{bybookauthor}%
+			 \setunit{\addcomma\addspace}\newblock}%
 		 \usebibmacro{maintitle+booktitle}%
 		 \newunit\newblock
 		 \usebibmacro{byeditor+others}%
@@ -465,13 +499,15 @@
 	\usebibmacro{title}%
 	% \newunit
 	% \printlist{language}%
-	\newunit\newblock
+	\setunit{\addcomma\addspace}\newblock
 	\usebibmacro{byauthor}%
 	\iffieldundef{crossref}%
 		{\newunit\newblock
 		 \usebibmacro{in:}%
-		 \usebibmacro{bybookauthor}%
-		 \setunit{\addcomma\addspace}\newblock
+		 \ifnameundef{bookauthor}
+			{}
+		 	{\usebibmacro{bybookauthor}%
+			 \setunit{\addcomma\addspace}\newblock}%
 		 \usebibmacro{maintitle+booktitle}%
 		 \newunit\newblock
 		 \usebibmacro{editor-bis}%
@@ -523,7 +559,7 @@
 	\usebibmacro{title}%
 	% \newunit
 	% \printlist{language}%
-	\newunit\newblock
+	\setunit{\addcomma\addspace}\newblock
 	\usebibmacro{byauthor}%
 	\iffieldundef{crossref}%
 		{\newunit\newblock
@@ -583,13 +619,15 @@
 	\usebibmacro{title}%
 	% \newunit
 	% \printlist{language}%
-	\newunit\newblock
+	\setunit{\addcomma\addspace}\newblock
 	\usebibmacro{byauthor}%
 	\iffieldundef{crossref}%
 		{\newunit\newblock
 		 \usebibmacro{in:}%
-		 \usebibmacro{bybookauthor}%
-		 \setunit{\addcomma\addspace}\newblock
+		 \ifnameundef{bookauthor}
+			{}
+		 	{\usebibmacro{bybookauthor}%
+			 \setunit{\addcomma\addspace}\newblock}%
 		 \usebibmacro{maintitle+booktitle}%
 		 \newunit\newblock
 		 \usebibmacro{editor-bis}%
@@ -632,7 +670,7 @@
 	\usebibmacro{title}%
 	% \newunit
 	% \printlist{language}%
-	\newunit\newblock
+	\setunit{\addcomma\addspace}\newblock
 	\usebibmacro{byauthor}%
 	\newunit\newblock
 	\printfield{note}%
@@ -670,7 +708,7 @@
 	\usebibmacro{title}%
 	% \newunit
 	% \printlist{language}%
-	\newunit\newblock
+	\setunit{\addcomma\addspace}\newblock
 	\usebibmacro{byauthor}%
 	\newunit\newblock
 	\usebibmacro{byeditor+others}%
@@ -820,14 +858,14 @@
 		 \setunit{\addcomma\addspace}\newblock
 		 \settoggle{bbx:related}{false}%
 		 \printfield{type}%
-		 \setunit{\adddot\addspace}% The abbreviation point is swallowed by BibLaTeX
+		 \setunit{\addspace}
 		 \bibstring{under}%
 		 \setunit{\addspace}
 		 \usebibmacro{related:init}%
 		 \usebibmacro{related}}
 		% Short citation -- after the case citation
 		{\printfield{type}%
-		 \setunit{\adddot\addspace}% The abbreviation point is swallowed by BibLaTeX
+		 \setunit{\addspace}%
 		 \usebibmacro{author}%
 		 \setunit{\addcomma\addspace}\newblock
 		 \usebibmacro{journal+issue+date}}%
@@ -835,7 +873,7 @@
 
 %	Define a driver for <shortjournal> abreviations
 \DeclareBibliographyDriver{shortjournal}{%
-	\printfield{journaltitle}}
+	\printfield[plain]{journaltitle}}
 
 %	TODO » Delete
 \DeclareBibliographyDriver{customa}{%
@@ -903,28 +941,32 @@
 	\setunit{\addcomma\addspace}
 	\iffieldequalstr{langid}{french}%
 		{\iffieldundef{part}
-			{\printfield{number}}
+			{\ifthenelse{ \iffieldundef{number}\AND
+						  \iffieldundef{volume}\AND
+						  \iffieldundef{month} }
+				% Ex: RTD civ. 2010.123
+				{\setunit{\nopunct\addspace}
+				 \printfield{year}%
+				 \setunit{\adddot}
+				 \printfield[plain]{pages}%
+				 \clearfield{pages}%
+				 \clearfield{issue}}
+				% Ex: Gaz. Pal., n°123, 5 janv. 2015, p. 123
+				% --- Arch. phil. dr., n°123, 2015/4, p. 123
+				{\setunit{\addcomma\addspace}
+				 \printfield{number}%
+				 \setunit{\addcomma\addspace}
+				 \iffieldundef{volume}
+				 	{\usebibmacro{date}}
+				 	{\printfield{year}%
+				 	 \setunit{\addslash}
+					 \printfield[plain]{volume}}}}
+			% Ex: JCP 1950, I, 12345 -- JCP 2015, chron., 123
 			{\printfield{year}%
 			 \setunit{\addcomma\addspace}
 			 \printfield[plain]{part}%
 			 \setunit{\addcomma\addspace}
-			 \printfield[plain]{number}%
-			 \clearfield{year}}%
-		 \iffieldundef{year}
-		 	{}
-			{\setunit{\addcomma\addspace}
-			 \usebibmacro{date}}%
-		 \iffieldundef{volume}
-		 	{}
-		 	{\setunit{\addslash}
-			 \printfield[plain]{volume}}%
-		 \ifthenelse{	\iffieldundef{number}\AND
-		 				\iffieldundef{volume} }
-			{\setunit{\adddot}
-			 \printfield[plain]{pages}%
-			 \clearfield{pages}%
-			 \clearfield{issue}}
-			{}}%
+			 \printfield[plain]{number}}}
 		{\printfield{volume}%
 		 \setunit{\addcomma\addspace}
 		 \printfield{number}%
@@ -946,13 +988,11 @@
 	\printfield{eventtitle}%
 	\setunit{\addspace}
 	\printfield{eventtitleaddon}%
-	\setunit{\addspace}
 	\ifthenelse{	\iffieldundef{eventyear} \OR
 					\iffieldundef{eventmonth} \OR
 					\iffieldundef{eventday} }
 		{}
-		{\bibstring{fromdate}%
-		 \setunit{\addspace}
+		{\setunit{\addcomma\addspace}
 		 \printeventdate}
 	\setunit{\addspace}
 	\iffieldundef{venue}

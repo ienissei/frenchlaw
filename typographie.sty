@@ -146,27 +146,28 @@
 			{\FCordinal{century}~\centuryname}%
 		 \ifboolexpr{	test {\ifnumcomp{#1}{>}{0}}}{}{\space\BC}}}
 \newcommand{\centuries}[3][\@empty]{%
-	\ifboolexpr{	test {\ifnumcomp{#2}{=}{0}} or test {\ifnumcomp{#3}{=}{0}}%
-				or (test {\ifnumcomp{#2}{<}{0}} and test {\ifnumcomp{#3}{>}{0}})%
-				or (test {\ifnumcomp{#2}{>}{0}} and test {\ifnumcomp{#3}{<}{0}})%
-				or test {\ifnumcomp{#2}{>}{#3}}}
+	\ifboolexpr{	(test {\ifnumcomp{#2}{=}{0}} or test {\ifnumcomp{#3}{=}{0}})%
+				 or (test {\ifnumcomp{#2}{>}{0}} and test {\ifnumcomp{#3}{<}{0}})%
+				 or test {\ifnumcomp{#2}{>}{#3}}}
 		{ERREUR}
-		{\ifnum#2>0\setcounter{century}{#2}\else\setcounter{century}{-#2}\fi%
-		\iflanguage{french}
-			{\textsc{\roman{century}}%
-			 \ifnum\value{century}=1			\er\else\e\fi}
-			{\FCordinal{century}}%
-		\unskip\ifx#1\@empty--\else~#1~\fi%
-		\ifnum#3>0\setcounter{century}{#3}\else\setcounter{century}{-#3}\fi%
-		\iflanguage{french}
-			{\textsc{\roman{century}}%
-			 \ifnum\value{century}=1			\er\else\e\fi}
-			{\FCordinal{century}}%
-		\ifboolexpr{	test{\ifnumcomp{#2+1}{=}{#3}}%
-					 or test {\ifnumcomp{#2}{=}{#3+1}}}
-			{\unskip~\centuryname}
-			{\unskip~\centuriesname}%
-		\ifboolexpr{	test {\ifnumcomp{#2}{>}{0}}}{}{\space\BC}}}
+		{\ifboolexpr{	(test {\ifnumcomp{#2}{<}{0}} and test {\ifnumcomp{#3}{>}{0}}) }
+			{\century{#2}\ifx#1\@empty~-- \else~#1~\fi\century{#3}~\AD}
+			{\ifnum#2>0\setcounter{century}{#2}\else\setcounter{century}{-#2}\fi%
+			 \iflanguage{french}
+				{\textsc{\roman{century}}%
+				 \ifnum\value{century}=1			\er\else\e\fi}
+				{\FCordinal{century}}%
+			 \unskip\ifx#1\@empty--\else~#1~\fi%
+			 \ifnum#3>0\setcounter{century}{#3}\else\setcounter{century}{-#3}\fi%
+			 \iflanguage{french}
+				{\textsc{\roman{century}}%
+				 \ifnum\value{century}=1			\er\else\e\fi}
+				{\FCordinal{century}}%
+			 \ifboolexpr{	test{\ifnumcomp{#2+1}{=}{#3}}%
+						 or test {\ifnumcomp{#2}{=}{#3+1}}}
+				{\unskip~\centuryname}
+				{\unskip~\centuriesname}%
+			 \ifboolexpr{	test {\ifnumcomp{#2}{>}{0}}}{}{\space\BC}}}}
 
 
 \let\siecle=\century
@@ -228,8 +229,14 @@
 \newcommand{\Cie}{C\textsuperscript{ie}\xspace}% Compagnie
 
 % Abréviations d'emploi commun
-\newcommand{\BC}{av.~J.-C.\xdot}
-\newcommand{\AD}{apr.~J.-C.\xdot}
+\newcommand{\BC}{%
+	\iflanguage{french}
+		{av.~J.-C.\xdot}
+		{B.\thinspace C.\xdot}}
+\newcommand{\AD}{%
+	\iflanguage{french}
+		{apr.~J.-C.\xdot}
+		{A.\thinspace D.\xdot}}
 \newcommand{\NB}{N.\thinpace B.\xdot}% Nota bene
 \newcommand{\PS}{P.--S.~—\xdot}% Post-Scriptum
 
