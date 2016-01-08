@@ -102,23 +102,12 @@
 	\sort{\field{journal}}
 }
 
-
-	% \ifboolexpr {	test	{\iffieldsequal{journal}{shortjournal}}
-	% 				or test	{\iffieldundef{journal}}
-	% 				or test	{\iffieldundef{shortjournal}}	}
-
-% \iffieldundef{shortjournal}{\skipentry}{%
-% 	\iffieldundef{journal}{\skipentry}{%
-% 	\ifcsdef{\strfield{shortjournal}=\strfield{journal}}
-% 		{\skipentry}
-%  		{\savefieldcs{journal}{\strfield{shortjournal}=\strfield{journal}}}
-
 % #####	FIELD FORMATS	#####
 
 %	Define {title} fields
 \DeclareFieldFormat[inbook,thesis]{title}{\mkbibemph{#1}}
 \DeclareFieldFormat[commentary]{title}{\mkbibquote{#1}}
-\DeclareFieldFormat[shortjournal]{shortjournal}{\mkbibemph{#1}}
+\DeclareFieldFormat[shortjournal]{title}{\mkbibemph{#1}}
 
 % Define various numbering fields
 \DeclareFieldFormat{number}{\bibstring{number}\addnbthinspace#1}%
@@ -190,6 +179,7 @@
 	{}
 	{}
 
+%	TODO » Copier les defbibfilter et catégories ici
 %	Set up a bibliography check that removes duplicate journal titles
 \defbibcheck{shortjournal}{%
 	\iffieldundef{shortjournal}
@@ -621,44 +611,40 @@
 	% \printlist{language}%
 	\setunit{\addcomma\addspace}\newblock
 	\usebibmacro{byauthor}%
-	\iffieldundef{crossref}%
-		{\newunit\newblock
-		 \usebibmacro{in:}%
-		 \ifnameundef{bookauthor}
-			{}
-		 	{\usebibmacro{bybookauthor}%
-			 \setunit{\addcomma\addspace}\newblock}%
-		 \usebibmacro{maintitle+booktitle}%
-		 \newunit\newblock
-		 \usebibmacro{editor-bis}%
-		 \newunit\newblock
-		 \usebibmacro{bytranslator+others}%
-		 \newunit\newblock
-		 \printfield{edition}%
-		 \newunit\newblock
-		 \printfield{note}%
-		 \newunit\newblock
-		 \usebibmacro{publisher+location+date}%
-		 \setunit{\addspace}
-		 \usebibmacro{series+number}%
-		 \newunit\newblock
-		 \iftoggle{bbx:isbn}
-			{\printfield{isbn}}
-			{}%
-		 \newunit\newblock
-		 \usebibmacro{doi+eprint+url}%
-		 \newunit\newblock
-		 \usebibmacro{addendum+pubstate}%
-		 \setunit{\bibpagerefpunct}\newblock
-		 \usebibmacro{pageref}%
-		 \newunit\newblock
-		 \iftoggle{bbx:related}
-			{\usebibmacro{related:init}%
-			 \usebibmacro{related}}
-			{}}%
-		{\newunit\newblock
-		 \usebibmacro{see:}%
-		 \bbx@crossref{\thefield{crossref}}}%
+	\newunit\newblock
+	%\usebibmacro{in:}% No Crossref, no {in}
+	\ifnameundef{bookauthor}
+		{}
+	 	{\usebibmacro{bybookauthor}%
+		 \setunit{\addcomma\addspace}\newblock}%
+	\usebibmacro{maintitle+booktitle}%
+	\newunit\newblock
+	\usebibmacro{editor-bis}%
+	\newunit\newblock
+	\usebibmacro{bytranslator+others}%
+	\newunit\newblock
+	\printfield{edition}%
+	\newunit\newblock
+	\printfield{note}%
+	\newunit\newblock
+	\usebibmacro{publisher+location+date}%
+	\setunit{\addspace}
+	\usebibmacro{series+number}%
+	\newunit\newblock
+	\iftoggle{bbx:isbn}
+		{\printfield{isbn}}
+		{}%
+	\newunit\newblock
+	\usebibmacro{doi+eprint+url}%
+	\newunit\newblock
+	\usebibmacro{addendum+pubstate}%
+	\setunit{\bibpagerefpunct}\newblock
+	\usebibmacro{pageref}%
+	\newunit\newblock
+	\iftoggle{bbx:related}
+		{\usebibmacro{related:init}%
+		 \usebibmacro{related}}
+		{}%
 	\usebibmacro{finentry}}
 
 %	Define a driver for <thesis> entries
@@ -874,6 +860,16 @@
 %	Define a driver for <shortjournal> abreviations
 \DeclareBibliographyDriver{shortjournal}{%
 	\printfield[plain]{journaltitle}}
+
+\DeclareBibliographyDriver{shortauthor}{% TODO
+	\usedriver{}{\thefield{entrytype}}%
+	\setunit{\addcomma\addspace}
+	\printtext{\bibstring{citedas}}%
+	\setunit{\addspace}
+	\printnames{shortauthor}%
+	\setunit{\addcomma\addspace}
+	\printfield{shorttitle}
+	\usebibmacro{finentry}}
 
 %	TODO » Delete
 \DeclareBibliographyDriver{customa}{%

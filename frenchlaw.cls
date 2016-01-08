@@ -1384,7 +1384,7 @@
 %	Appliquer à l'environnement quotation
 \renewenvironment{quotation}%
 	{\list{}{\setlength{\itemindent}{\parindent}%
-			 \setlength{\leftmargin}{t\parindent}}%
+			 \setlength{\leftmargin}{\parindent}}%
 	 \small\item[]\ignorespaces}
 	{\endlist}
 

@@ -99,7 +99,7 @@
 			{\usebibmacro{cite:legal}}
 			{\ifthenelse{\ifciteibid\AND\NOT\iffirstonpage}
 				{\bibsentence\usebibmacro{cite:ibid}}
-				{\ifnameundef{shortauthor}							% ADDED
+				{\ifnameundef{shortauthor}
 					{\iffieldequals{namehash}{\cbx@lasthash}
 						{\setunit{\unspace}}
 						{\ifnameundef{labelname}
@@ -113,8 +113,10 @@
 							{\bibsentence\usebibmacro{cite:opcit}}}
 					 	{\usebibmacro{cite:title}%
 					 	 \usebibmacro{cite:related}}}
-					{\printnames{shortauthor}%						% ADDED >> Change (?)
-					 \ifloccit{\usebibmacro{cite:loccit}}}}}%		% ADDED
+					{\printnames{shortauthor}%
+					 \setunit{\addcomma\addspace}
+					 \printfield{shorttitle}\@%
+					 \ifloccit{\usebibmacro{cite:loccit}}}}}%
 			 \iffieldundef{shorthand}
 			 	{}
 			 	{\usebibmacro{shorthandintro}}}}
@@ -151,7 +153,9 @@
 				 \printtext[bibhyperref]{\printfield{title}}%
 				 \clearfield{labeltitle}
 				 \clearfield{title}}}
-			{\printnames{labelname}}%
+			{\ifnameundef{shortauthor}
+				{\printnames{labelname}}
+				{\printnames{shortauthor}}}%
 		 \stepcounter{textcitecount}%
 		 \savefield{namehash}{\cbx@lasthash}}%
 	\ifbool{cbx:parens}
@@ -168,12 +172,14 @@
 			{\usebibmacro{cite:legal:reverse}}
 			{\ifthenelse{\ifciteibid\AND\NOT\iffirstonpage}
 				{\usebibmacro{cite:ibid}}
-				{\ifthenelse{	\ifopcit\OR\iffieldundef{labeltitle}\AND\ifciteseen }
+				{\ifthenelse{	\ifopcit\OR\iffieldundef{labeltitle}\AND\ifciteseen }% TODO » labeltitle ???
 					{\ifloccit
 						{\usebibmacro{cite:loccit}}
 						{\usebibmacro{cite:opcit}}}
-				 	{\usebibmacro{cite:title}%
-				 	 \usebibmacro{cite:related}}}}}%
+				 	{\ifnameundef{shortauthor}
+					 	{\usebibmacro{cite:title}%
+					 	 \usebibmacro{cite:related}}
+					 	{\printfield{shorttitle}\@}}}}}%
 	\ifthenelse{	\ifentrytype{legislation}\AND\NOT\iffieldundef{postnote} }
 		{\printfield{prenote}%
 		 \setunit{\addnbspace}
@@ -189,7 +195,7 @@
 	 	{}%
 	\iffieldundef{labeltitle}
 		{}
-		{\printtext[bibhyperref]{\printfield[title]{labeltitle}}%
+		{\printtext[bibhyperref]{\printfield[title]{labeltitle}\@}%
 		 \setunit{\addcomma\addspace}\newblock}%
 	\ifciteseen
 		{}
@@ -246,7 +252,7 @@
 	\ifentrytype{commentary}
 		{\settoggle{bbx:related}{false}%
 		 \printfield{type}%
-		 \setunit{\adddot\addspace}
+		 \setunit{\addspace}
 		 \bibstring{under}%
 		 \setunit{\addspace}
 		 \usebibmacro{related:init}%
@@ -257,7 +263,7 @@
 	\ifentrytype{legislation}
 		{\ifthenelse{	\iffootnote\AND\NOT
 						\iffieldundef{shorttitle} }
-			{\printtext[bibhyperref]{\printfield{shorttitle}}}
+			{\printtext[bibhyperref]{\printfield{shorttitle}\@}}
 			{\usedriver{}{\thefield{entrytype}}}}
 		{\ifciteseen
 			{\togglefalse{bbx:related}}
@@ -271,12 +277,14 @@
 	\printtext[bibhyperref]{\printfield{shorthand}}}
 
 \newbibmacro*{cite:ibid}{%
-	\bibstring[\mkibid]{ibidem}%
-	\ifbool{cbx:loccit}{\clearfield{postnote}{}}}
+	\ifloccit
+		{\bibstring[\mkibid]{ibidem}%
+		 \global\booltrue{cbx:loccit}}
+		{\usebibmacro{cite:loccit}}}
 
 \newbibmacro*{cite:loccit}{%
 	\bibstring[\mkibid]{loccit}%
-	\ifbool{cbx:loccit}{\clearfield{postnote}{}}}
+	\global\booltrue{cbx:loccit}}
 
 \newbibmacro*{cite:opcit}{%
 	\bibstring[\mkibid]{opcit}}
@@ -300,9 +308,9 @@
 		{}}
 
 \newbibmacro*{cite:postnote}{%
-	\iffieldundef{postnote}
+	\ifthenelse{	\iffieldundef{postnote} }
 		{}
-		{\ifthenelse{	\ifentrytype{reference}\AND\NOT\ifciteseen }
+		{\ifthenelse{	\ifentrytype{reference}\AND\NOT\ifciteseen }% TODO » ifciteseen ???
 			{}
 			{\setunit{\postnotedelim}}%
 			 \printfield{postnote}\@}}% Enforce abbreviative dot just in case
