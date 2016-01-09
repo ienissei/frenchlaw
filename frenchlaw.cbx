@@ -59,7 +59,7 @@
 %	TODO
 \DeclareNameFormat{labelname}{%
 	% Imprimer le nom de l'auteur
-	\usebibmacro{name:first-last}{#1}{#3}{#5}{#7}%
+	\usebibmacro{name:first-last}{#1}{#4}{#5}{#7}%
 	\usebibmacro{name:andothers}}%
 
 \DeclareFieldFormat{citetitle}{\mkbibemph{#1}}%
@@ -154,7 +154,7 @@
 				 \clearfield{labeltitle}
 				 \clearfield{title}}}
 			{\ifnameundef{shortauthor}
-				{\printnames{labelname}}
+				{\printnames[first-last]{labelname}}
 				{\printnames{shortauthor}}}%
 		 \stepcounter{textcitecount}%
 		 \savefield{namehash}{\cbx@lasthash}}%
@@ -199,58 +199,67 @@
 		 \setunit{\addcomma\addspace}\newblock}%
 	\ifciteseen
 		{}
-		{\ifthenelse{	\ifentrytype{article}\OR
-		 				\ifentrytype{commentary} }
-			{\usebibmacro{journal+issue+date}}
-			{}%
-		 \ifthenelse{	\ifentrytype{book}\OR
-		 				\ifentrytype{collection}\OR
-		 				\ifentrytype{proceedings} }
-		 	{\iffieldundef{eventtitle}
-		 		{}
-		 		{\usebibmacro{event+venue+date}%
-				 \setunit{\addcomma\addspace}\newblock}%
-			 \iffieldundef{edition}
-			 	{}
-			 	{\printfield{edition}%
-				 \setunit{\addcomma\addspace}\newblock}%
-			 \usebibmacro{publisher+location+date}}
-		 	{}%
-		 \ifthenelse{	\ifentrytype{inbook}\OR
-		 				\ifentrytype{incollection}\OR
-		 				\ifentrytype{inproceedings} }
-		 	{\usebibmacro{in:}%
-		 	 \setunit{\addspace}\newblock
-		 	 \ifnameundef{bybookauthor}
-		 	 	{}
-		 	 	{\usebibmacro{bybookauthor}%
-				 \setunit{\addcomma\addspace}\newblock}%
-			 \usebibmacro{maintitle+booktitle}%
-			 \setunit{\addcomma\addspace}\newblock
-			 \usebibmacro{event+venue+date}%
-			 \setunit{\addcomma\addspace}\newblock
-		 	 \printfield{edition}%
-			 \setunit{\addcomma\addspace}\newblock
-			 \usebibmacro{publisher+location+date}}
-		 	{}%
-		 \ifentrytype{thesis}
-		 	{\printfield{type}%
-			 \setunit{\addcomma\addspace}\newblock
-		 	 \usebibmacro{institution+location+date}}
-		 	{}%
-		 \ifentrytype{misc}
-		 	{\printfield{howpublished}%
-			 \setunit{\addcomma\addspace}\newblock
-			 \printfield{type}%
-			 \setunit{\addcomma\addspace}\newblock
-			 \printfield{version}%
-			 \setunit{\addcomma\addspace}\newblock
-		 	 \usebibmacro{organization+location+date}}
-		 	{}}}
+		{\ifthenelse{	\ifentryinbib{\thefield{crossref}}\AND\NOT\ifentrytype{inreference} }
+			{\setunit{\addcomma\addspace}\newblock
+			 \usebibmacro{in:}%
+			 \setunit{\addspace}
+			 \bbx@crossref{\thefield{crossref}}%
+			 \setunit{\bibpagespunct}\newblock
+			 \usebibmacro{volume+part}%
+			 \setunit{\bibpagespunct}\newblock
+			 \usebibmacro{chapter+pages}}
+			{\ifthenelse{	\ifentrytype{article}\OR
+			 				\ifentrytype{commentary} }
+				{\usebibmacro{journal+issue+date}}
+				{}%
+			 \ifthenelse{	\ifentrytype{book}\OR
+			 				\ifentrytype{collection}\OR
+			 				\ifentrytype{proceedings} }
+			 	{\iffieldundef{eventtitle}
+			 		{}
+			 		{\usebibmacro{event+venue+date}%
+					 \setunit{\addcomma\addspace}\newblock}%
+				 \iffieldundef{edition}
+				 	{}
+				 	{\printfield{edition}%
+					 \setunit{\addcomma\addspace}\newblock}%
+				 \usebibmacro{publisher+location+date}}
+			 	{}%
+			 \ifthenelse{	\ifentrytype{inbook}\OR
+			 				\ifentrytype{incollection}\OR
+			 				\ifentrytype{inproceedings} }
+			 	{\usebibmacro{in:}%
+			 	 \setunit{\addspace}\newblock
+			 	 \ifnameundef{bybookauthor}
+			 	 	{}
+			 	 	{\usebibmacro{bybookauthor}%
+					 \setunit{\addcomma\addspace}\newblock}%
+				 \usebibmacro{maintitle+booktitle}%
+				 \setunit{\addcomma\addspace}\newblock
+				 \usebibmacro{event+venue+date}%
+				 \setunit{\addcomma\addspace}\newblock
+			 	 \printfield{edition}%
+				 \setunit{\addcomma\addspace}\newblock
+				 \usebibmacro{publisher+location+date}}
+			 	{}%
+			 \ifentrytype{thesis}
+			 	{\printfield{type}%
+				 \setunit{\addcomma\addspace}\newblock
+			 	 \usebibmacro{institution+location+date}}
+			 	{}%
+			 \ifentrytype{misc}
+			 	{\printfield{howpublished}%
+				 \setunit{\addcomma\addspace}\newblock
+				 \printfield{type}%
+				 \setunit{\addcomma\addspace}\newblock
+				 \printfield{version}%
+				 \setunit{\addcomma\addspace}\newblock
+			 	 \usebibmacro{organization+location+date}}
+			 	{}}}}
 
 \newbibmacro*{cite:related}{%
 	\ifentrytype{commentary}
-		{\settoggle{bbx:related}{false}%
+		{\togglefalse{bbx:related}%
 		 \printfield{type}%
 		 \setunit{\addspace}
 		 \bibstring{under}%
@@ -280,7 +289,7 @@
 	\ifloccit
 		{\bibstring[\mkibid]{ibidem}%
 		 \global\booltrue{cbx:loccit}}
-		{\usebibmacro{cite:loccit}}}
+		{\usebibmacro{cite:opcit}}}
 
 \newbibmacro*{cite:loccit}{%
 	\bibstring[\mkibid]{loccit}%
@@ -308,12 +317,14 @@
 		{}}
 
 \newbibmacro*{cite:postnote}{%
-	\ifthenelse{	\iffieldundef{postnote} }
+	\ifbool{cbx:loccit}
 		{}
-		{\ifthenelse{	\ifentrytype{reference}\AND\NOT\ifciteseen }% TODO » ifciteseen ???
+		{\iffieldundef{postnote}
 			{}
-			{\setunit{\postnotedelim}}%
-			 \printfield{postnote}\@}}% Enforce abbreviative dot just in case
+			{\ifthenelse{	\ifentrytype{reference}\AND\NOT\ifciteseen }% TODO » ifciteseen ???
+				{}
+				{\setunit{\postnotedelim}}%
+				 \printfield{postnote}\@}}}% Enforce abbreviative dot just in case
 
 % Citation commands
 
@@ -405,7 +416,7 @@
 		{}%
 	 \ifnameundef{labelname}
 		{\printtext[bold]{???}}
-	 	{\printnames{labelname}}}%
+	 	{\printnames[first-last]{labelname}}}%
 	{\multicitedelim}
 	{}%
 
