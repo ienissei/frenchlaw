@@ -939,9 +939,8 @@
 	\booknumfont%
 	\if@french
 		\ifnum\value{book}=1	\ordinalstring{book}[m]%
-		\else					\Roman{book}\fi
 	\else						\Roman{book}%
-	\fi}
+	\fi\fi}
 \renewcommand{\beforebookskip}{\null\vspace{\baselinestretch\addto@Huge}%
 	\vspace{\if@tenpoints12\baselineskip\fi\if@twelvepoints10\baselineskip\fi}}
 \renewcommand{\midbookskip}{\par\vspace{\baselinestretch\addto@Huge}}
@@ -988,7 +987,11 @@
 \newcommand{\afterheadingnum}{\par\nobreak\vskip\midchapskip}
 \newcommand{\printheadingname}{\headnamefont\headingname}
 \newcommand{\headingnamenum}{\space}
-\newcommand{\printheadingnum}{\headnumfont\if@french\ordinalstring{heading}[m]\else\theheading\fi}
+\newcommand{\printheadingnum}{\headnumfont%
+	\if@french
+		\ifnum\value{book}=1	\ordinalstring{heading}[m]%
+	\else					\Roman{heading}%
+	\fi\fi}
 \newcommand{\printheadingtitle}[1]{\headtitlefont#1}
 
 %	Définir le style des titres dans la table des matières
@@ -1023,7 +1026,11 @@
 \newcommand{\aftersubheadingnum}{\par\nobreak\vskip\midchapskip}
 \newcommand{\printsubheadingname}{\subheadnamefont\subheadingname}
 \newcommand{\subheadingnamenum}{\space}
-\newcommand{\printsubheadingnum}{\subheadnumfont\if@french\ordinalstring{subheading}[m]\else\thesubheading\fi}
+\newcommand{\printsubheadingnum}{\subheadnumfont%
+	\if@french
+		\ifnum\value{book}=1	\ordinalstring{subheading}[m]%
+	\else					\Roman{subheading}%
+	\fi\fi}
 \newcommand{\printsubheadingtitle}[1]{\subheadtitlefont#1}
 
 %	Définir le style des sous-titres dans la table des matières
