@@ -989,7 +989,7 @@
 \newcommand{\headingnamenum}{\space}
 \newcommand{\printheadingnum}{\headnumfont%
 	\if@french
-		\ifnum\value{book}=1	\ordinalstring{heading}[m]%
+		\ifnum\value{heading}=1	\ordinalstring{heading}[m]%
 	\else					\Roman{heading}%
 	\fi\fi}
 \newcommand{\printheadingtitle}[1]{\headtitlefont#1}
@@ -1028,7 +1028,7 @@
 \newcommand{\subheadingnamenum}{\space}
 \newcommand{\printsubheadingnum}{\subheadnumfont%
 	\if@french
-		\ifnum\value{book}=1	\ordinalstring{subheading}[m]%
+		\ifnum\value{subheading}=1	\ordinalstring{subheading}[m]%
 	\else					\Roman{subheading}%
 	\fi\fi}
 \newcommand{\printsubheadingtitle}[1]{\subheadtitlefont#1}
