@@ -40,6 +40,10 @@
 	\@marginalfalse
 \newif\if@precis
 	\@precisfalse
+\newif\if@paratoc
+	\@paratocfalse
+\newif\if@outline
+	\@outlinefalse
 \newif\if@draft
 	\@draftfalse
 \newif\if@article
@@ -56,8 +60,6 @@
 %	Define command-activated switches
 \newif\if@paraname
 	\@paranametrue
-\newif\if@paratoc
-	\@paratoctrue
 \newif\if@indexparagraphs
 	\@indexparagraphstrue
 
@@ -119,7 +121,13 @@
 %	Define options for <precis> document style
 \DeclareOptionX{precis}{
 	\@precistrue
+	\@outlinetrue
 	\@paratoctrue
+}
+
+%	Define options for <precis> document style
+\DeclareOptionX{outline}{
+	\@outlinetrue
 }
 
 %	Define an option to change line spacing
@@ -792,6 +800,15 @@
 	\makeevenfoot{plain}{\if@twoside\thepage\fi}{\if@oneside\thepage\fi}{}
 	\makeoddfoot{plain}{}{\if@oneside\thepage\fi}{\if@twoside\thepage\fi}
 
+%	Create a command that copies \rightmark towards \leftmark if empty
+\newcommand{\leftrightmark}{%
+	\begingroup\protected@edef\x{\leftmark}%
+	\ifx\x\@empty
+		\endgroup\rightmark
+	\else
+		\endgroup\leftmark
+	\fi}
+
 %	Define the standard page style for the class
 %	TODO » Corriger pour \chapter* et \section* (définir \rightmark) -- difficile, on peut les laisser dans le \fontmatter ou \backmatter (à documenter)
 %	TODO » Ajouter le numéro de version et la date \if@draft
@@ -799,20 +816,20 @@
 \makepagestyle{frenchlaw}
 	\makepsmarks{frenchlaw}{%
 		\nouppercaseheads
-		\createmark{book}{right}{nonumber}{}{}
-		\createmark{part}{right}{nonumber}{}{}
+		\createmark{book}{both}{nonumber}{}{}
+		\createmark{part}{both}{nonumber}{}{}
 		\createmark{heading}{right}{nonumber}{}{}
 		\createmark{subheading}{right}{nonumber}{}{}
 		\createmark{chapter}{right}{nonumber}{}{}
 		\clearmark{section}
-		\createplainmark{toc}{right}{\contentsname}
-		\createplainmark{lof}{right}{\listfigurename}
-		\createplainmark{lot}{right}{\listtablename}
-		\createplainmark{bib}{right}{\bibname}
-		\createplainmark{index}{right}{\indexname}
-		\createplainmark{glossary}{right}{\glossaryname}
+		\createplainmark{toc}{both}{\contentsname}
+		\createplainmark{lof}{both}{\listfigurename}
+		\createplainmark{lot}{both}{\listtablename}
+		\createplainmark{bib}{both}{\bibname}
+		\createplainmark{index}{both}{\indexname}
+		\createplainmark{glossary}{both}{\glossaryname}
 	}
-	\makeevenhead{frenchlaw}{}{\scshape\csname @title@\languagename\endcsname}{}
+	\makeevenhead{frenchlaw}{}{\itshape\if@article\csname @title@\languagename\endcsname\else\leftrightmark\fi}{}
 	\makeoddhead{frenchlaw}{}{\itshape\if@article\@series\else\rightmark\fi}{}
 	\makeevenfoot{frenchlaw}{\if@twoside\thepage\fi}{\if@oneside\thepage\fi}{}
 	\makeoddfoot{frenchlaw}{}{\if@oneside\thepage\fi}{\if@twoside\thepage\fi}
@@ -856,32 +873,33 @@
 %	Définir la subdivision maximale pour la numérotation
 \maxsecnumdepth{subparagraph}
 \maxtocdepth{subparagraph}
-\setcounter{tocdepth}{5}
+\setcounter{tocdepth}{6}
 
-%	Create a command for short tables of contents
-\newcommand{\shorttableofcontents}[1][0]{%
+%	Create a command for short table of contents
+\newcommand{\shortcontents}[1][0]{%
 	\bgroup
+		% Reset all necessary commands and remove page numbers
+		\renewcommand{\contentsname}{\shortcontentsname}
+		\renewcommand{\printprecis}[1]{}
+		\cftpagenumbersoff{part}
+		\cftpagenumbersoff{heading}
+		\cftpagenumbersoff{subheading}
+		\cftpagenumbersoff{chapter}
+		% Save tocdepth counter
+		\newcounter{save@tocdepth}
+		\setcounter{save@tocdepth}{\value{tocdepth}}
 		\setcounter{tocdepth}{#1}
-		\ensureonecol
-		\if@article
-			\section*{\shortcontentsname}
-		\else
-			\chapter*{\shortcontentsname}
-		\fi
-		\markright{\shortcontentsname}
-		\bgroup
-			\makeatletter
-			\@input{\jobname.toc}
-			\global\@nobreakfalse
-		\egroup
-		\restorefromonecol
-	\egroup}
-\let\shorttoc\shorttableofcontents
+		% Print the table of contents and restore tocdepth
+		\tableofcontents*
+		\setcounter{tocdepth}{\value{save@tocdepth}}
+		\clearpage
+	\egroup
+}
 
 
 %	Créer de nouvelles divisions logiques: <heading> et <subheading>
-\newlistentry[part]{heading}{toc}{0}
-\newlistentry[heading]{subheading}{toc}{0}
+\newlistentry[part]{heading}{toc}{-1}
+\newlistentry[heading]{subheading}{toc}{-1}
 
 %	TODO » Vérifier la pertinence de toutes les lignes
 %	Réinitialiser les compteurs 
@@ -1175,6 +1193,9 @@
 \newcommand{\cftparaafterpnum}{.}
 \newcommand{\cftparasep}{\if@precis\par\else --- \fi}
 
+%	Créer une commande qui définit l'affichage des \para, \precis et \outline en ToC
+\newcommand{\printprecis}[1]{#1}
+
 %	Créer un compteur <precis> pour savoir si un \para est le premier de sa section ou non (pour la table des matières)
 \newcounter{precis}
 \setcounter{precis}{0}
@@ -1191,7 +1212,7 @@
 %	TODO » Utilité des numéros de page? (imprimer > cf. PUF)
 %	TODO » Ajouter une commande manuelle pour insérer le chapitre / section, etc. juste en-dessous du titre (comme pour les labels) (?) + Ajouter autommatiquement à la commande via etoolbox (apptocmd, etc.) -- idem pour les chapitres non numérotés (header et toc)
 
-%	Créer un switch pour imprimer ou non les noms des \para
+%	Créer un switch pour imprimer ou non les noms des \para dans le texte
 \newcommand{\paragraphnames}{\@paranametrue}
 \newcommand{\noparagraphnames}{\@paranamefalse}
 
@@ -1202,6 +1223,10 @@
 %	Créer un switch pour imprimer ou non les \precis dans la table des matières
 \newcommand{\precistoc}{\@precistrue}
 \newcommand{\noprecistoc}{\@precisfalse}
+
+%	Créer un switch pour imprimer ou non les \outline dans la table des matières
+\newcommand{\outlinetoc}{\@outlinetrue}
+\newcommand{\nooutlinetoc}{\@outlinefalse}
 
 %	Créer une commande \para pour faire des paragraphes numérotés
 \newcommand{\para}[1][]{%
@@ -1216,13 +1241,14 @@
 	\fi\fi%
 	\if@paratoc%
 		\addtocontents{toc}{%
+			\protect\printprecis{%
 				\ifnum\value{precis}>1\cftparasep\else%
 					\protect\nopagebreak\vspace{\baselineskip}\par\fi%
 				\noindent%
 				\if@precis\llap{\cftparanumstyle\thepara\cftparaaftersnum}%
 					\else{\cftparanumstyle\thepara\cftparaaftersnum}\fi%
 				\ifx\relax#1\relax\else#1\cftparanumsep\fi%
-				\cftparaleader\thepage\cftparaafterpnum}%
+				\cftparaleader\thepage\cftparaafterpnum}}%
 	\fi\@ifnextchar\par{\@gobblepar}{\relax}}
 
 %	Créer une commande \precis{} pour indiquer un résumé du paragraphe.
@@ -1230,8 +1256,16 @@
 %	TODO » \@gobble can work but only if the user doesn't add any %
 \newcommand{\precis}[1]{%
 	\if@precis
-		\addtocontents{toc}{\ifx\relax#1\relax\else\unskip~-- #1\fi\par}
-	\fi\@ifnextchar\par{\@gobblepar}{\relax}}
+		\addtocontents{toc}{\protect\printprecis{%
+			\ifx\relax#1\relax\else\unskip~#1\fi\par}}\fi%
+	\@ifnextchar\par{\@gobblepar}{\relax}}
+
+\newcommand{\outline}[1]{%
+	\if@outline
+		\addtocontents{toc}{\protect\printprecis{%
+			\ifx\relax#1\relax\else\protect\nopagebreak\vspace{\baselineskip}%
+			\par\noindent#1\fi\par}}\fi%
+	#1\xspace}
 
 %	TODO » Créer une commande unique, type \para[<para>][<précis>], avec un ToC \par implicite si #2 est inexistant, sinon on est obligé de mettre un \precis{} avant toute nouvelle section qui requiert un \par dans la ToC
 
