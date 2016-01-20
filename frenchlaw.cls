@@ -145,7 +145,16 @@
 	\@didactictrue
 	\@articletrue
 	\@tenpointstrue
+	\@twosidefalse
 	\PassOptionsToClass{10pt,article,twocolumn,oneside}{memoir}
+}
+\DeclareOptionX{didactic+}{
+	\@didactictrue
+	\@articletrue
+	\@stockavtrue
+	\@tenpointstrue
+	\@twosidefalse
+	\PassOptionsToClass{a5paper,10pt,article,oneside}{memoir}
 }
 
 %	Define options to change the main language of the document
@@ -241,7 +250,8 @@
 %	Use larger headers & footers with <didactic>
 \if@didactic
 	\setlength{\headheight}{3\baselineskip}
-	\setlength{\footskip}{2\baselineskip}
+	\setlength{\headsep}{\baselineskip}
+	\setlength{\uppermargin}{4.5\baselineskip}
 \fi
 
 %	Use smaller footers in <a5> and <a5> if text is set to <12pt>
@@ -313,6 +323,9 @@
 \RequirePackage[greek,latin,english,british,french]{babel}
 \RequirePackage{fmtcount}% 	TODO » Ou autre?
 \RequirePackage{fixltxhyph}
+
+%	TODO » Reprendre les documents pour intégrer le package + Renommer {frenchlaw-typo}
+\RequirePackage{typographie}
 
 %	#####	FONT SIZE AND LEADING	#####
 
@@ -848,20 +861,34 @@
 %	TODO » Appliquer automatiquement sur certains types de docs + Créer les autres formats
 
 %	TODO » A reprendre pour didactic. Utiliser \leftmark et \rightmark en les redéfinissant (?)
-\def\leftheader{}
-\def\rightheader{}
 \makepagestyle{didactichead}
 	\makeheadrule{didactichead}{\textwidth}{.2ex}
 	\makeevenhead{didactichead}
-		{\leftheader\vspace*{0pt}}
+		{\textit{\csname @title@\languagename\endcsname}
+		 \ifnum\value{division}>0\relax\par\thedivision\afterdivnum\@division\fi%
+		 \vspace*{0pt}}
 		{}
-		{\rightheader\vspace*{0pt}}
+		{}
 	\makeoddhead{didactichead}
-		{\leftheader\vspace*{0pt}}
+		{\textit{\csname @title@\languagename\endcsname}%
+		 \ifnum\value{division}>0\relax\par\thedivision\afterdivnum\@division\fi%
+		 \vspace*{0pt}}
 		{}
-		{\rightheader\vspace*{0pt}}
-	\makeevenfoot{didactichead}{}{\thepage}{}
-	\makeoddfoot{didactichead}{}{\thepage}{}
+		{}
+	\makeevenfoot{didactichead}
+		{\footnotesize{%
+			\@author%
+			\ifx\relax\@email\relax\else~(\@email)\fi%
+			\ifx\relax\@date\relax\else, \@date.\fi}}
+		{}
+		{\thepage}
+	\makeoddfoot{didactichead}
+		{\footnotesize{%
+			\@author%
+			\ifx\relax\@email\relax\else~(\@email)\fi%
+			\ifx\relax\@date\relax\else, \@date.\fi}}
+		{}
+		{\thepage}
 \if@didactic
 	\pagestyle{didactichead}
 	\aliaspagestyle{chapter}{didactichead}
@@ -875,13 +902,17 @@
 \maxtocdepth{subparagraph}
 \setcounter{tocdepth}{6}
 
+%	Ne pas numéroter les pages des livres et parties (car centrés)
+\cftpagenumbersoff{book}
+\cftpagenumbersoff{part}
+
 %	Create a command for short table of contents
 \newcommand{\shortcontents}[1][0]{%
 	\bgroup
+		\pagestyle{empty}
 		% Reset all necessary commands and remove page numbers
 		\renewcommand{\contentsname}{\shortcontentsname}
 		\renewcommand{\printprecis}[1]{}
-		\cftpagenumbersoff{part}
 		\cftpagenumbersoff{heading}
 		\cftpagenumbersoff{subheading}
 		\cftpagenumbersoff{chapter}
@@ -916,7 +947,7 @@
 \renewcommand*{\cftdotsep}{2}
 \cftsetindents{book}{0em}{2em}
 \cftsetindents{part}{0em}{2em}
-\cftsetindents{heading}{0em}{2em}
+\cftsetindents{heading}{0em}{2.4em}
 \cftsetindents{subheading}{0em}{2em}
 \cftsetindents{chapter}{0em}{2em}
 \cftsetindents{section}{1.5em}{2em}
@@ -949,11 +980,10 @@
 \renewcommand*{\cftbookpresnum}{\space}
 \renewcommand*{\cftbookaftersnum}{.}
 \renewcommand*{\cftbookaftersnumb}{\space}
-\renewcommand*{\cftbookfont}{\large\bfseries\scshape}
+\renewcommand*{\cftbookfont}{\large\scshape\hfil}
 \renewcommand*{\cftbookpagefont}{\normalsize}
-\newcommand*{\cftafterbooktitle}{}
 \setlength{\cftbeforebookskip}{2\baselineskip}
-	
+
 %	Définir le style des parties dans le texte
 % Babel French gère la numérotation en toutes lettres des parties
 \renewcommand*{\thepart}{\Roman{part}}
@@ -974,9 +1004,8 @@
 \renewcommand*{\cftpartpresnum}{\space}
 \renewcommand*{\cftpartaftersnum}{.}
 \renewcommand*{\cftpartaftersnumb}{\space}
-\renewcommand*{\cftpartfont}{\large\bfseries}
+\renewcommand*{\cftpartfont}{\large\scshape\hfil}
 \renewcommand*{\cftpartpagefont}{\normalsize}
-\newcommand*{\cftafterparttitle}{}
 \setlength{\cftbeforepartskip}{\baselineskip}
 
 %	Définir le style des titres dans le texte
@@ -995,10 +1024,10 @@
 \newcommand{\printheadingtitle}[1]{\headtitlefont#1}
 
 %	Définir le style des titres dans la table des matières
-\renewcommand{\cftheadingfont}{\large\scshape}
 \renewcommand{\cftheadingpresnum}{\space}
 \renewcommand{\cftheadingaftersnum}{.}
-\renewcommand{\cftheadingaftersnumb}{\space}
+\renewcommand{\cftheadingaftersnumb}{\mdseries\space}
+\renewcommand{\cftheadingfont}{\large\bfseries\scshape}
 \renewcommand{\cftheadingleader}{\hfill}
 \setlength{\cftbeforeheadingskip}{\baselineskip}
 
@@ -1034,10 +1063,10 @@
 \newcommand{\printsubheadingtitle}[1]{\subheadtitlefont#1}
 
 %	Définir le style des sous-titres dans la table des matières
-\renewcommand{\cftsubheadingfont}{\large}
 \renewcommand{\cftsubheadingpresnum}{\space}
 \renewcommand{\cftsubheadingaftersnum}{.}
-\renewcommand{\cftsubheadingaftersnumb}{\space}
+\renewcommand{\cftsubheadingaftersnumb}{\mdseries\space}
+\renewcommand{\cftsubheadingfont}{\bfseries\scshape}
 \renewcommand{\cftsubheadingleader}{\hfill}
 \setlength{\cftbeforesubheadingskip}{\baselineskip}
 
@@ -1083,8 +1112,9 @@
 
 %	Définir le style des chapitres dans la table des matières
 \renewcommand*{\cftchapterpresnum}{\space}
-\renewcommand*{\cftchapteraftersnum}{~:}
-\renewcommand*{\cftchapteraftersnumb}{\space}
+\renewcommand*{\cftchapteraftersnum}{.}
+\renewcommand*{\cftchapteraftersnumb}{\mdseries\space}
+\renewcommand{\cftchapterfont}{\bfseries}
 \renewcommand*{\cftchapterpagefont}{\normalsize}
 \setlength{\cftbeforechapterskip}{\baselineskip}
 
@@ -1137,8 +1167,10 @@
 \renewcommand*{\cftsectionaftersnum}{.}
 \setlength{\cftbeforesectionskip}{\if@precis\baselineskip\else0pt\fi}
 \renewcommand*{\cftsubsectionaftersnum}{.}
+\renewcommand*{\cftsubsectionfont}{\footnotesize}
 \setlength{\cftbeforesubsectionskip}{\if@precis\baselineskip\else0pt\fi}
 \renewcommand*{\cftsubsubsectionaftersnum}{.}
+\renewcommand*{\cftsubsubsectionfont}{\footnotesize}
 \setlength{\cftbeforesubsubsectionskip}{\if@precis\baselineskip\else0pt\fi}
 
 %	Définir le style des paragraphes
@@ -1173,8 +1205,10 @@
 
 %	Définir lz stylz des paragraphes et sous-paragraphes dans la table des matières
 \renewcommand*{\cftparagraphaftersnum}{.}
+\renewcommand*{\cftparagraphfont}{\footnotesize}
 \setlength{\cftbeforeparagraphskip}{0pt}
 \renewcommand*{\cftsubparagraphaftersnum}{.}
+\renewcommand*{\cftsubparagraphfont}{\footnotesize}
 \setlength{\cftbeforesubparagraphskip}{0pt}
 
 %	#####	DIVISIONS SPÉCIFIQUES AU DROIT	#####
@@ -1606,16 +1640,8 @@
 	\setcounter{section}{0}
 	\setcounter{page}{1}%
 }
-
-%	TODO » Ajouter la qualité de l'auteur avant (Lecturer, etc.)
-%	Pour le mode <didactic>, créer automatiquement un header adapté
-\if@didactic
-	\renewcommand{\leftheader}{%
-		{\Large\textsc{\csname @title@\languagename\endcsname}}}
-	\renewcommand{\rightheader}{%
-		\@author
-		\ifx\relax\@email\relax\else\par\@email\fi}
-\fi
+\renewcommand{\thedivision}{\arabic{division}}
+\newcommand{\afterdivnum}{.~}
 
 
 
@@ -1717,13 +1743,13 @@
 %	TODO » Ranger. Fleuron pour séparer les sections + harmoniser avec celui utilisé pour la doc
 
 \newcommand{\chapterbreak}[1][\adforn{21}\quad\adfast{3}\quad\adforn{49}]{%
-	\needspace{5\baselineskip}
+%	\needspace{5\baselineskip}
 	\vspace{\baselineskip}
 	\noindent\hfill#1\hfill%
 	\vspace{\baselineskip}}
 
 \newcommand{\sectionbreak}[1][\adfast{3}\quad\adfast{3}\quad\adfast{3}]{%
-	\needspace{3\baselineskip}
+%	\needspace{3\baselineskip}
 	\vspace{\baselineskip}
 	\noindent\hfill#1\hfill%
 	\vspace{\baselineskip}}
@@ -1747,9 +1773,6 @@
 
 %	TODO » Pour les notes
 \usepackage{xcolor}
-
-%	TODO » Reprendre les documents pour intégrer le package + Renommer {frenchlaw-typo}
-\RequirePackage{typographie}
 
 %	TODO » Implémenter <hyperref>
 %\RequirePackage{hyperref}% Mais crée des bugs avec les références type \supra
