@@ -41,13 +41,13 @@
 	\def\cftpartname{Partie}%
 	\def\partrefname{Partie}%
 	\def\headingname{Titre}%
-	\def\cftheadingname{Titre}%
+	\def\cftheadingname{\llap{Titre}}%
 	\def\headingrefname{Titre}%
 	\def\subheadingname{Sous-titre}%
-	\def\cftsubheadingname{Sous-titre}%
+	\def\cftsubheadingname{\llap{Sous-titre}}%
 	\def\subheadingrefname{Sous-titre}%
 	\def\chaptername{Chapitre}%
-	\def\cftchaptername{Chapitre}%
+	\def\cftchaptername{\llap{Chapitre}}%
 	\def\chapterrefname{Chapitre}%
 	\if@article%
 		\def\sectionname{}%
@@ -58,15 +58,15 @@
 		\def\subsectionrefname{}%
 	\else%
 		\def\sectionname{Section}%
-		\def\cftsectionname{Section~}%
+		\def\cftsectionname{\llap{Section}}%
 		\def\sectionrefname{Section}%
 		\def\subsectionname{\S}%
-		\def\cftsubsectionname{\S~}%
+		\def\cftsubsectionname{\llap{\S}}%
 		\def\subsectionrefname{\S}%
 	\fi%
 	\def\appendixname{Annexe}%
 	\def\cftappendixname{Annexe}%
-	\def\appendixrefname{Annexe}%
+	\def\appendixrefname{\llap{Annexe}}%
 	\def\bibname{Bibliographie}%
 	\def\refname{R{\'e}f{\'e}rences}%
 	\def\indexname{Index}%

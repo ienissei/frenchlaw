@@ -550,6 +550,8 @@
 	\newcommand{\@institution}{\@empty}
 \newcommand{\school}[1]{\gdef\@school{#1}}
 	\newcommand{\@school}{\@empty}
+\newcommand{\laboratory}[1]{\gdef\@laboratory{#1}}
+	\newcommand{\@laboratory}{\@empty}
 \newcommand{\subject}[1]{\gdef\@subject{#1}}
 	\newcommand{\@subject}{\@empty}
 \newcommand{\thesis}[1]{\gdef\@thesis{#1}}
@@ -626,6 +628,7 @@
 }
 
 %	Create a style for PhD theses / Dissertations
+%	TODO » Adde \lab
 \newcommand{\maketitlePhD}{%
 	% Send out warnings on empty fields
 	\if\expandafter\@empty\csname @title@\languagename\endcsname\relax
@@ -648,8 +651,8 @@
 		\centering%
 		{\Large\scshape\@institution\par}
 		\vspace{\baselineskip}
-		{\large\@school\par}
-		\vspace{6\baselineskip}
+		{\large\@school\par\@laboratory\par}
+		\vspace{4\baselineskip}
 		{\LARGE\csname @title@\languagename\endcsname\par}
 		{\Large\csname @subtitle@\languagename\endcsname\par}
 		\vspace{4\baselineskip}
@@ -675,7 +678,7 @@
 		\cleartooddpage
 		\restore@twocolumns%
 		\printtitle%
-		\cleartoddpage
+		\cleartooddpage\par
 	\egroup
 	\let\mainmatter=\@smemmain% == \let\mainmater=\mainmatter*
 }
@@ -700,7 +703,7 @@
 		\centering%
 		{\large\scshape\@institution\par}
 		\vspace{\baselineskip}
-		{\large\@school\par}
+		{\large\@school\par\@laboratory\par}
 		\vspace{6\baselineskip}
 		{\LARGE\csname @title@\languagename\endcsname\par}
 		{\Large\csname @subtitle@\languagename\endcsname\par}
@@ -723,7 +726,7 @@
 		\cleartooddpage
 		\restore@twocolumns%
 		\printtitle%
-		\cleartooddpage
+		\cleartooddpage\par
 	\egroup
 	\let\mainmatter=\@smemmain% == \let\mainmater=\mainmatter*
 }
@@ -906,6 +909,7 @@
 \cftpagenumbersoff{book}
 \cftpagenumbersoff{part}
 
+
 %	Create a command for short table of contents
 \newcommand{\shortcontents}[1][0]{%
 	\bgroup
@@ -916,6 +920,7 @@
 		\cftpagenumbersoff{heading}
 		\cftpagenumbersoff{subheading}
 		\cftpagenumbersoff{chapter}
+		\setlength{\cftbeforechapterskip}{0pt}
 		% Save tocdepth counter
 		\newcounter{save@tocdepth}
 		\setcounter{save@tocdepth}{\value{tocdepth}}
@@ -932,6 +937,16 @@
 \newlistentry[part]{heading}{toc}{-1}
 \newlistentry[heading]{subheading}{toc}{-1}
 
+%	Créer une commande pour définir la taille des labels
+\newlength{\toclabelwidth}
+\if@article
+	\setlength{\toclabelwidth}{-.3em}
+\else
+	\settowidth{\toclabelwidth}{\cftchapterfont\space Chapitre\space}
+\fi
+\newlength{\tocnumwidth}
+\setlength{\tocnumwidth}{2.5em}
+
 %	TODO » Vérifier la pertinence de toutes les lignes
 %	Réinitialiser les compteurs 
 \counterwithin*{part}{book}
@@ -945,16 +960,16 @@
 
 %	Définir l'espacement des différentes divisions dans la table des matières
 \renewcommand*{\cftdotsep}{2}
-\cftsetindents{book}{0em}{2em}
-\cftsetindents{part}{0em}{2em}
-\cftsetindents{heading}{0em}{2.4em}
-\cftsetindents{subheading}{0em}{2em}
-\cftsetindents{chapter}{0em}{2em}
-\cftsetindents{section}{1.5em}{2em}
-\cftsetindents{subsection}{3em}{1.5em}
-\cftsetindents{subsubsection}{4.5em}{1.5em}
-\cftsetindents{paragraph}{6em}{1.5em}
-\cftsetindents{subparagraph}{7.5em}{1.5em}
+\cftsetindents{book}{0em}{\tocnumwidth}
+\cftsetindents{part}{0em}{\tocnumwidth}
+\cftsetindents{heading}{\toclabelwidth}{\tocnumwidth}
+\cftsetindents{subheading}{\toclabelwidth}{\tocnumwidth}
+\cftsetindents{chapter}{\toclabelwidth}{\tocnumwidth}
+\cftsetindents{section}{\toclabelwidth}{\tocnumwidth}
+\cftsetindents{subsection}{\toclabelwidth}{\tocnumwidth}
+\cftsetindents{subsubsection}{\toclabelwidth}{\tocnumwidth}
+\cftsetindents{paragraph}{\toclabelwidth}{\tocnumwidth}
+\cftsetindents{subparagraph}{\toclabelwidth}{\tocnumwidth}
 
 %	S'assurer que la table des matières termine bien le dernier paragraphe
 \AtEndDocument{\addtocontents{toc}{\par}}
@@ -979,7 +994,7 @@
 %	Définir le style des livres dans la table des matières
 \renewcommand*{\cftbookpresnum}{\space}
 \renewcommand*{\cftbookaftersnum}{.}
-\renewcommand*{\cftbookaftersnumb}{\space}
+\renewcommand*{\cftbookaftersnumb}{}
 \renewcommand*{\cftbookfont}{\large\scshape\hfil}
 \renewcommand*{\cftbookpagefont}{\normalsize}
 \setlength{\cftbeforebookskip}{2\baselineskip}
@@ -1003,7 +1018,7 @@
 %	Définir le style des parties dans la table des matières
 \renewcommand*{\cftpartpresnum}{\space}
 \renewcommand*{\cftpartaftersnum}{.}
-\renewcommand*{\cftpartaftersnumb}{\space}
+\renewcommand*{\cftpartaftersnumb}{}
 \renewcommand*{\cftpartfont}{\large\scshape\hfil}
 \renewcommand*{\cftpartpagefont}{\normalsize}
 \setlength{\cftbeforepartskip}{\baselineskip}
@@ -1026,7 +1041,7 @@
 %	Définir le style des titres dans la table des matières
 \renewcommand{\cftheadingpresnum}{\space}
 \renewcommand{\cftheadingaftersnum}{.}
-\renewcommand{\cftheadingaftersnumb}{\mdseries\space}
+\renewcommand{\cftheadingaftersnumb}{\mdseries}
 \renewcommand{\cftheadingfont}{\large\bfseries\scshape}
 \renewcommand{\cftheadingleader}{\hfill}
 \setlength{\cftbeforeheadingskip}{\baselineskip}
@@ -1065,8 +1080,8 @@
 %	Définir le style des sous-titres dans la table des matières
 \renewcommand{\cftsubheadingpresnum}{\space}
 \renewcommand{\cftsubheadingaftersnum}{.}
-\renewcommand{\cftsubheadingaftersnumb}{\mdseries\space}
-\renewcommand{\cftsubheadingfont}{\bfseries\scshape}
+\renewcommand{\cftsubheadingaftersnumb}{\mdseries}
+\renewcommand{\cftsubheadingfont}{\normalsize\bfseries\scshape}
 \renewcommand{\cftsubheadingleader}{\hfill}
 \setlength{\cftbeforesubheadingskip}{\baselineskip}
 
@@ -1113,7 +1128,7 @@
 %	Définir le style des chapitres dans la table des matières
 \renewcommand*{\cftchapterpresnum}{\space}
 \renewcommand*{\cftchapteraftersnum}{.}
-\renewcommand*{\cftchapteraftersnumb}{\mdseries\space}
+\renewcommand*{\cftchapteraftersnumb}{\mdseries}
 \renewcommand{\cftchapterfont}{\bfseries}
 \renewcommand*{\cftchapterpagefont}{\normalsize}
 \setlength{\cftbeforechapterskip}{\baselineskip}
@@ -1125,10 +1140,11 @@
 	\renewcommand{\thesubsection}{\Alph{subsection}}
 	\renewcommand{\thesubsubsection}{\arabic{subsubsection}}
 	\renewcommand{\theparagraph}{\alph{paragraph}}
+	\renewcommand{\thesubparagraph}{\roman{subparagraph}}
 \else
 	% En mode normal, utiliser les intitulés classiques
 	\renewcommand{\thesection}{\Roman{section}}
-	\renewcommand{\thesubsection}{\arabic{subsection}}
+	\renewcommand{\thesubsection}{\Roman{subsection}}
 	\renewcommand{\thesubsubsection}{\Alph{subsubsection}}
 	\renewcommand{\theparagraph}{\arabic{paragraph}}
 	\renewcommand{\thesubparagraph}{\alph{subparagraph}}
@@ -1138,8 +1154,8 @@
 % S'il est défini dans babel, on rajoute le nom donné à la section concernée
 % En anglais, les paragraphes suivant les sections ne sont pas indentés
 \setsecnumformat{%
-	\ifcsname #1name\endcsname\csname #1name\endcsname\fi%
-	\space\csname the#1\endcsname.\enskip}
+	\ifcsname #1name\endcsname\csname #1name\endcsname\space\fi%
+	\csname the#1\endcsname.\enskip}
 
 %	Définir le style des sections
 \setsecheadstyle{\large\scshape\raggedright}	
@@ -1164,13 +1180,20 @@
 \setlength{\aftersubsubsecskip}{\baselineskip}
 
 %	Définir le style des sections et sous-sections dans la table des matières
+\renewcommand*{\cftsectionpresnum}{\space}
 \renewcommand*{\cftsectionaftersnum}{.}
+\renewcommand*{\cftsectionaftersnumb}{\mdseries}
+\renewcommand*{\cftsectionfont}{\bfseries}
 \setlength{\cftbeforesectionskip}{\if@precis\baselineskip\else0pt\fi}
+\renewcommand*{\cftsubsectionpresnum}{\space}
 \renewcommand*{\cftsubsectionaftersnum}{.}
-\renewcommand*{\cftsubsectionfont}{\footnotesize}
+\renewcommand*{\cftsubsectionaftersnumb}{\mdseries}
+\renewcommand*{\cftsubsectionfont}{\footnotesize\bfseries}
 \setlength{\cftbeforesubsectionskip}{\if@precis\baselineskip\else0pt\fi}
+\renewcommand*{\cftsubsubsectionpresnum}{\space}
 \renewcommand*{\cftsubsubsectionaftersnum}{.}
-\renewcommand*{\cftsubsubsectionfont}{\footnotesize}
+\renewcommand*{\cftsubsubsectionaftersnumb}{\mdseries}
+\renewcommand*{\cftsubsubsectionfont}{\footnotesize\bfseries}
 \setlength{\cftbeforesubsubsectionskip}{\if@precis\baselineskip\else0pt\fi}
 
 %	Définir le style des paragraphes
@@ -1204,11 +1227,15 @@
 \fi\fi
 
 %	Définir lz stylz des paragraphes et sous-paragraphes dans la table des matières
+\renewcommand*{\cftparagraphpresnum}{\space}
 \renewcommand*{\cftparagraphaftersnum}{.}
-\renewcommand*{\cftparagraphfont}{\footnotesize}
+\renewcommand*{\cftparagraphaftersnumb}{\mdseries}
+\renewcommand*{\cftparagraphfont}{\footnotesize\bfseries}
 \setlength{\cftbeforeparagraphskip}{0pt}
+\renewcommand*{\cftsubparagraphpresnum}{\space}
 \renewcommand*{\cftsubparagraphaftersnum}{.}
-\renewcommand*{\cftsubparagraphfont}{\footnotesize}
+\renewcommand*{\cftsubparagraphaftersnumb}{\mdseries}
+\renewcommand*{\cftsubparagraphfont}{\footnotesize\bfseries}
 \setlength{\cftbeforesubparagraphskip}{0pt}
 
 %	#####	DIVISIONS SPÉCIFIQUES AU DROIT	#####
