@@ -946,6 +946,7 @@
 \fi
 \newlength{\tocnumwidth}
 \setlength{\tocnumwidth}{2.5em}
+\newcommand{\toclabelbox}[1]{\makebox[\toclabelwidth]{\hfill#1}}
 
 %	TODO » Vérifier la pertinence de toutes les lignes
 %	Réinitialiser les compteurs 
@@ -962,11 +963,11 @@
 \renewcommand*{\cftdotsep}{2}
 \cftsetindents{book}{0em}{\tocnumwidth}
 \cftsetindents{part}{0em}{\tocnumwidth}
-\cftsetindents{heading}{\toclabelwidth}{\tocnumwidth}
-\cftsetindents{subheading}{\toclabelwidth}{\tocnumwidth}
-\cftsetindents{chapter}{\toclabelwidth}{\tocnumwidth}
-\cftsetindents{section}{\toclabelwidth}{\tocnumwidth}
-\cftsetindents{subsection}{\toclabelwidth}{\tocnumwidth}
+\cftsetindents{heading}{0em}{\tocnumwidth}
+\cftsetindents{subheading}{0em}{\tocnumwidth}
+\cftsetindents{chapter}{0em}{\tocnumwidth}
+\cftsetindents{section}{0em}{\tocnumwidth}
+\cftsetindents{subsection}{0em}{\tocnumwidth}
 \cftsetindents{subsubsection}{\toclabelwidth}{\tocnumwidth}
 \cftsetindents{paragraph}{\toclabelwidth}{\tocnumwidth}
 \cftsetindents{subparagraph}{\toclabelwidth}{\tocnumwidth}
@@ -1042,7 +1043,7 @@
 \renewcommand{\cftheadingpresnum}{\space}
 \renewcommand{\cftheadingaftersnum}{.}
 \renewcommand{\cftheadingaftersnumb}{\mdseries}
-\renewcommand{\cftheadingfont}{\large\bfseries\scshape}
+\renewcommand{\cftheadingfont}{\large\bfseries}
 \renewcommand{\cftheadingleader}{\hfill}
 \setlength{\cftbeforeheadingskip}{\baselineskip}
 
@@ -1081,7 +1082,7 @@
 \renewcommand{\cftsubheadingpresnum}{\space}
 \renewcommand{\cftsubheadingaftersnum}{.}
 \renewcommand{\cftsubheadingaftersnumb}{\mdseries}
-\renewcommand{\cftsubheadingfont}{\normalsize\bfseries\scshape}
+\renewcommand{\cftsubheadingfont}{\normalsize\bfseries}
 \renewcommand{\cftsubheadingleader}{\hfill}
 \setlength{\cftbeforesubheadingskip}{\baselineskip}
 
@@ -1333,7 +1334,7 @@
 		\addtocontents{toc}{\protect\printprecis{%
 			\ifx\relax#1\relax\else\protect\nopagebreak\vspace{\baselineskip}%
 			\par\noindent#1\fi\par}}\fi%
-	#1\xspace}
+	\@ifnextchar\par{\@gobblepar}{\relax}}
 
 %	TODO » Créer une commande unique, type \para[<para>][<précis>], avec un ToC \par implicite si #2 est inexistant, sinon on est obligé de mettre un \precis{} avant toute nouvelle section qui requiert un \par dans la ToC
 
@@ -1739,6 +1740,7 @@
 }
 
 %	TODO » Idem pour les annexes > \makeappendix == \appendixpage + \appendix, cf. memoir
+%	TODO » Adde une ligne vierge en ToC
 %	Définir les éléments du <backmatter>
 \newcommand{\makebackmatter}{
 	\backmatter

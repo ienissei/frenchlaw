@@ -41,13 +41,13 @@
 	\def\cftpartname{Partie}%
 	\def\partrefname{Partie}%
 	\def\headingname{Titre}%
-	\def\cftheadingname{\llap{Titre}}%
+	\def\cftheadingname{\toclabelbox{Titre}}%
 	\def\headingrefname{Titre}%
 	\def\subheadingname{Sous-titre}%
-	\def\cftsubheadingname{\llap{Sous-titre}}%
+	\def\cftsubheadingname{\toclabelbox{Sous-titre}}%
 	\def\subheadingrefname{Sous-titre}%
 	\def\chaptername{Chapitre}%
-	\def\cftchaptername{\llap{Chapitre}}%
+	\def\cftchaptername{\toclabelbox{Chapitre}}%
 	\def\chapterrefname{Chapitre}%
 	\if@article%
 		\def\sectionname{}%
@@ -58,15 +58,15 @@
 		\def\subsectionrefname{}%
 	\else%
 		\def\sectionname{Section}%
-		\def\cftsectionname{\llap{Section}}%
+		\def\cftsectionname{\toclabelbox{Section}}%
 		\def\sectionrefname{Section}%
 		\def\subsectionname{\S}%
-		\def\cftsubsectionname{\llap{\S}}%
+		\def\cftsubsectionname{\toclabelbox{\S}}%
 		\def\subsectionrefname{\S}%
 	\fi%
 	\def\appendixname{Annexe}%
 	\def\cftappendixname{Annexe}%
-	\def\appendixrefname{\llap{Annexe}}%
+	\def\appendixrefname{\toclabelbox{Annexe}}%
 	\def\bibname{Bibliographie}%
 	\def\refname{R{\'e}f{\'e}rences}%
 	\def\indexname{Index}%
