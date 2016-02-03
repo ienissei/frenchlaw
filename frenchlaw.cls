@@ -1198,13 +1198,13 @@
 \setlength{\cftbeforesubsubsectionskip}{\if@precis\baselineskip\else0pt\fi}
 
 %	Définir le style des paragraphes
-\setparaheadstyle{\scshape\raggedright}
+\setparaheadstyle{\scshape}
 \setparaindent{0em}
 \setlength{\beforeparaskip}{\baselineskip}
 \setlength{\afterparaskip}{\baselineskip}
 
 %	Définir le style des sous-paragraphes
-\setsubparaheadstyle{\itshape\raggedright}
+\setsubparaheadstyle{\itshape}
 \setsubparaindent{0em}
 \setlength{\beforesubparaskip}{\baselineskip}
 \setlength{\aftersubparaskip}{\baselineskip}
@@ -1217,12 +1217,12 @@
 	\setlength{\aftersubparaskip}{-1em}
 \else\if@marginal
 	% En mode <marginal>, ils sont placés dans une note marginale
-	\newcommand{\marginparahead}[1]{\marginpar{\normalsize\scshape#1}}
+	\newcommand{\marginparahead}[1]{\marginpar{\itshape#1}}
 	\setparaheadstyle{\marginparahead}
 	\setlength{\afterparaskip}{-1em}
 	
 	% Définir les titres de sous-paragraphes (dans la marge)
-	\newcommand{\marginsubparahead}[1]{\marginpar{\normalsize\itshape#1}}
+	\newcommand{\marginsubparahead}[1]{\marginpar{\itshape#1}}
 	\setsubparaheadstyle{\marginsubparahead}
 	\setlength{\aftersubparaskip}{-1em}
 \fi\fi
@@ -1772,16 +1772,16 @@
 %	TODO » Ranger. Fleuron pour séparer les sections + harmoniser avec celui utilisé pour la doc
 
 \newcommand{\chapterbreak}[1][\adforn{21}\quad\adfast{3}\quad\adforn{49}]{%
-%	\needspace{5\baselineskip}
-	\vspace{\baselineskip}
-	\noindent\hfill#1\hfill%
-	\vspace{\baselineskip}}
+	\needspace{\baselineskip}
+	\addvspace{\baselineskip}
+	{\noindent\centering#1\par}%
+	\addvspace{\baselineskip}}
 
 \newcommand{\sectionbreak}[1][\adfast{3}\quad\adfast{3}\quad\adfast{3}]{%
-%	\needspace{3\baselineskip}
-	\vspace{\baselineskip}
-	\noindent\hfill#1\hfill%
-	\vspace{\baselineskip}}
+	\needspace{\baselineskip}
+	\addvspace{\baselineskip}
+	{\noindent\centering#1\par}%
+	\addvspace{\baselineskip}}
 
 %	#####	GESTION DU MODE DRAFT	#####
 
