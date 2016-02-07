@@ -1333,7 +1333,7 @@
 	\if@outline
 		\addtocontents{toc}{\protect\printprecis{%
 			\ifx\relax#1\relax\else\protect\nopagebreak\vspace{\baselineskip}%
-			\par\noindent#1\fi\par}}\fi%
+			\par\noindent#1\vspace{\baselineskip}\par\fi}}\fi%
 	\@ifnextchar\par{\@gobblepar}{\relax}}
 
 %	TODO » Créer une commande unique, type \para[<para>][<précis>], avec un ToC \par implicite si #2 est inexistant, sinon on est obligé de mettre un \precis{} avant toute nouvelle section qui requiert un \par dans la ToC
