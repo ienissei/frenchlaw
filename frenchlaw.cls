@@ -1332,8 +1332,8 @@
 \newcommand{\outline}[1]{%
 	\if@outline
 		\addtocontents{toc}{\protect\printprecis{%
-			\ifx\relax#1\relax\else\protect\nopagebreak\vspace{\baselineskip}%
-			\par\noindent#1\vspace{\baselineskip}\par\fi}}\fi%
+			\ifx\relax#1\relax\else\protect\nopagebreak%
+			\noindent#1\vspace{\baselineskip}\par\fi}}\fi%
 	\@ifnextchar\par{\@gobblepar}{\relax}}
 
 %	TODO » Créer une commande unique, type \para[<para>][<précis>], avec un ToC \par implicite si #2 est inexistant, sinon on est obligé de mettre un \precis{} avant toute nouvelle section qui requiert un \par dans la ToC
@@ -1775,7 +1775,10 @@
 	\needspace{\baselineskip}
 	\addvspace{\baselineskip}
 	{\noindent\centering#1\par}%
-	\addvspace{\baselineskip}}
+	\addvspace{\baselineskip}%
+	\if@precis\if@outline
+		\addtocontents{toc}{\par\vspace{\baselineskip}}%
+	\fi\fi}
 
 \newcommand{\sectionbreak}[1][\adfast{3}\quad\adfast{3}\quad\adfast{3}]{%
 	\needspace{\baselineskip}

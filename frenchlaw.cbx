@@ -83,6 +83,9 @@
 
 \newbibmacro*{cite:init}{%
 	\global\boolfalse{cbx:loccit}%
+	\ifentrytype{reference}
+		{\boolfalse{citetracker}}
+		{}%
 	\ifnumless{\value{multicitecount}}{2}
 		{\global\boolfalse{cbx:parens}%
 		 \global\undef\cbx@lasthash}
@@ -321,7 +324,7 @@
 		{}
 		{\iffieldundef{postnote}
 			{}
-			{\ifthenelse{	\ifentrytype{reference}\AND\NOT\ifciteseen }% TODO » ifciteseen ???
+			{\ifentrytype{reference}% TODO » ifciteseen ???
 				{}
 				{\setunit{\postnotedelim}}%
 				 \printfield{postnote}\@}}}% Enforce abbreviative dot just in case
