@@ -319,7 +319,7 @@
 
 %	Load language and number packages and fixes
 %	TODO » Implémenter {csquotes} et le documenter
-\RequirePackage{csquotes}
+\RequirePackage[autostyle=true]{csquotes}
 \RequirePackage[greek,latin,english,british,french]{babel}
 \RequirePackage{fmtcount}% 	TODO » Ou autre?
 \RequirePackage{fixltxhyph}
