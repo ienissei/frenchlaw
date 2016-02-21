@@ -22,24 +22,24 @@
 	[2014/09/30 v.0.9. Developer macros for the Frenchlaw class]
 
 %	Print a grid
- \usepackage{tikz}
- \usepackage{calc} % Try to remove it and calculate with dimexpr
- \usepackage{eso-pic}
-
- \definecolor{grid}{gray}{0.8}
- \newlength{\topline}
- \setlength{\topline}{\paperheight}
- \addtolength{\topline}{-1in}
- \addtolength{\topline}{-\voffset-\topmargin-\headheight-\headsep-\topskip}
- \newcounter{nlines}
- \setcounter{nlines}{\textheight / \baselineskip + 1}
- \AtBeginDocument{
- \AddToShipoutPicture{%
-     \color{grid}
-     \multiput(0,\strip@pt\topline)%
-     (0,-\strip@pt\baselineskip){\value{nlines}}%
-         {\line(1,0){\strip@pt\paperwidth}}%
- }}
+% \usepackage{tikz}
+% \usepackage{calc} % Try to remove it and calculate with dimexpr
+% \usepackage{eso-pic}
+%
+% \definecolor{grid}{gray}{0.8}
+% \newlength{\topline}
+% \setlength{\topline}{\paperheight}
+% \addtolength{\topline}{-1in}
+% \addtolength{\topline}{-\voffset-\topmargin-\headheight-\headsep-\topskip}
+% \newcounter{nlines}
+% \setcounter{nlines}{\textheight / \baselineskip + 1}
+% \AtBeginDocument{
+% \AddToShipoutPicture{%
+%     \color{grid}
+%     \multiput(0,\strip@pt\topline)%
+%     (0,-\strip@pt\baselineskip){\value{nlines}}%
+%         {\line(1,0){\strip@pt\paperwidth}}%
+% }}
 
 %	Require the needed packages
 \RequirePackage{etoolbox,xstring,xcolor,verbatim,docmute,makeidx,needspace,metalogo}
