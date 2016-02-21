@@ -38,18 +38,18 @@
 	\@twelvepointsfalse
 \newif\if@marginal
 	\@marginalfalse
-\newif\if@precis
-	\@precisfalse
-\newif\if@paratoc
-	\@paratocfalse
-\newif\if@outline
-	\@outlinefalse
 \newif\if@draft
 	\@draftfalse
 \newif\if@article
 	\@articlefalse
 \newif\if@didactic
 	\@didacticfalse
+\newif\if@precis
+	\@precisfalse
+\newif\if@paratoc
+	\@paratocfalse
+\newif\if@outline
+	\@outlinefalse
 \newif\if@british
 	\@britishfalse
 \newif\if@english
@@ -459,6 +459,7 @@
 \newcommand{\symbolfootnote}[2][2]{%
 	\begingroup%
 	\renewcommand{\thefootnote}{\fnsymbol{footnote}}%
+%	\footnotemark[#1]%
 	\footnotetext[#1]{#2}%
 	\endgroup%
 }
