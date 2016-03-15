@@ -743,9 +743,9 @@
 		\reset@twocolumns%
 		\normalize@fontsize%
 %		\vspace*{3\baselineskip}
-		{\Large\scshape\raggedright\csname @title@\languagename\endcsname\if\@empty\csname @subtitle@\languagename\endcsname\relax\else :\par\noindent\csname @subtitle@\languagename\endcsname\fi}\par%
-		{\if\@empty\@author\else\@author\fi\par}%
-		{\if\@empty\@email\else\emailname\@email\fi\par}%
+		{\Large\scshape\raggedright\csname @title@\languagename\endcsname\if\@empty\csname @subtitle@\languagename\endcsname\relax\else :\par\vspace{.25\baselineskip}\noindent\csname @subtitle@\languagename\endcsname\vspace{.25\baselineskip}\fi}\par%
+		{\if\@empty\@author\else\vspace{\baselineskip}\@author\par%
+		 \if\@empty\@email\else\emailname\@email\fi\fi\par}%
 		\vspace{2\baselineskip}%
 		\restore@twocolumns%
 	\egroup
