@@ -62,14 +62,13 @@
 	\usebibmacro{name:first-last}{#1}{#4}{#5}{#7}%
 	\usebibmacro{name:andothers}}%
 
-\DeclareFieldFormat{citetitle}{\mkbibemph{#1}}%
-\DeclareFieldFormat[book,inbook,collection,proceedings,thesis]{citetitle}{\mkbibemph{#1}}%
+\DeclareFieldFormat{citetitle}{\mkbibemph{#1}\isdot}%
+\DeclareFieldFormat[book,inbook,collection,proceedings,thesis]{citetitle}{\mkbibemph{#1}\isdot}%
 \DeclareFieldFormat[article,incollection,inproceedings,patent,unpublished]{citetitle}{\mkbibquote{#1\isdot}}%
-\DeclareFieldFormat[suppbook,suppcollection,suppperiodical]{citetitle}{#1}%
+\DeclareFieldFormat[suppbook,suppcollection,suppperiodical]{citetitle}{#1\isdot}%
 % Format des abréviations: citetitle = forme longue, citeshorthand = dans le texte (point ajouté dynamiquement), shorthandlist = dans la liste des abréviations (ajouter un point).
-\DeclareFieldFormat[legislation]{title}{#1}
-\DeclareFieldFormat[legislation]{shorttitle}{#1}
-\DeclareFieldFormat[legislation]{postnote}{#1\nopunct}
+\DeclareFieldFormat{postnote}{#1\isdot}
+
 \DeclareFieldFormat[customa]{citetitle}{\mkbibemph{#1}}
 \DeclareFieldFormat[customa]{citeshorthand}{\mkbibemph{#1}}
 \DeclareFieldFormat[customb]{citetitle}{#1}
@@ -79,6 +78,7 @@
 
 \DeclareFieldAlias{shorttitle}{title}
 \DeclareFieldAlias{shorthand}{title}
+\DeclareFieldAlias{labeltitle}{title}
 
 
 \newbibmacro*{cite:init}{%
@@ -118,7 +118,7 @@
 					 	 \usebibmacro{cite:related}}}
 					{\printnames{shortauthor}%
 					 \setunit{\addcomma\addspace}
-					 \printfield{shorttitle}\@%
+					 \printfield{shorttitle}%
 					 \ifloccit{\usebibmacro{cite:loccit}}}}}%
 			 \iffieldundef{shorthand}
 			 	{}
@@ -182,7 +182,7 @@
 				 	{\ifnameundef{shortauthor}
 					 	{\usebibmacro{cite:title}%
 					 	 \usebibmacro{cite:related}}
-					 	{\printfield{shorttitle}\@}}}}}%
+					 	{\printfield{shorttitle}}}}}}%
 	\ifthenelse{	\ifentrytype{legislation}\AND\NOT\iffieldundef{postnote} }
 		{\printfield{prenote}%
 		 \setunit{\addnbspace}
@@ -198,7 +198,7 @@
 	 	{}%
 	\iffieldundef{labeltitle}
 		{}
-		{\printtext[bibhyperref]{\printfield[title]{labeltitle}\@}%
+		{\printtext[bibhyperref]{\printfield[title]{labeltitle}}%
 		 \setunit{\addcomma\addspace}\newblock}%
 	\ifciteseen
 		{}
@@ -275,7 +275,7 @@
 	\ifentrytype{legislation}
 		{\ifthenelse{	\iffootnote\AND\NOT
 						\iffieldundef{shorttitle} }
-			{\printtext[bibhyperref]{\printfield{shorttitle}\@}}
+			{\printtext[bibhyperref]{\printfield{shorttitle}}}
 			{\usedriver{}{\thefield{entrytype}}}}
 		{\ifciteseen
 			{\togglefalse{bbx:related}}
@@ -327,7 +327,7 @@
 			{\ifentrytype{reference}% TODO » ifciteseen ???
 				{}
 				{\setunit{\postnotedelim}}%
-				 \printfield{postnote}\@}}}% Enforce abbreviative dot just in case
+				 \printfield{postnote}}}}% Enforce abbreviative dot just in case
 
 % Citation commands
 
