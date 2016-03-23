@@ -104,10 +104,17 @@
 }
 \let\captionsbritish=\captionsenglish
 
-%	Créer des commandes rapides pour le grec et le latin
-%	TODO » Utiliser \emph au lieu de \textit (?)
-\newcommand{\latin}[1]{\foreignlanguage{latin}{\textit{#1}}}
+%	Créer des commandes rapides pour les citations dans d'autres langues
+\newcommand{\british}[1]{\foreignlanguage{british}{\emph{#1}}}
+\newcommand{\english}[1]{\foreignlanguage{english}{\emph{#1}}}
+\newcommand{\french}[1]{\foreignlanguage{french}{\emph{#1}}}
+
 \newcommand{\greek}[1]{\foreignlanguage{greek}{#1}}
+\newcommand{\latin}[1]{\foreignlanguage{latin}{\emph{#1}}}
+
+\newcommand{\german}[1]{\foreignlanguage{german}{\emph{#1}}}
+\newcommand{\italian}[1]{\foreignlanguage{italian}{\emph{#1}}}
+\newcommand{\spanish}[1]{\foreignlanguage{spanish}{\emph{#1}}}
 
 % 	Définir une commande pour souligner une partie du texte proprement
 %\newcommand{\textul}[1]{\uline{#1}}
