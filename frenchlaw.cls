@@ -787,15 +787,9 @@
 	\normalize@fontsize%
 	{\large\raggedright\@author}\par%
 	\vspace{\baselineskip}%
-	\begin{flushleft}
-		\@address
-	\end{flushleft}
-	\vspace{-2\baselineskip}
-	\begin{flushright}
-		\setlength{\fboxrule}{0pt}
-		\@phone\par\@email%\href{\@email}{\@email}
-	\end{flushright}
-	\par
+	\@address\par
+	\phonename\@phone\par
+	\emailname\@email\par%\href{\@email}{\@email}
 	\vspace{\baselineskip}
 	\restore@twocolumns%
 }

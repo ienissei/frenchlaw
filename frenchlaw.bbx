@@ -198,6 +198,36 @@
 				{\savefieldcs{journaltitle}%
 					{\strfield{shortjournal}=\strfield{journaltitle}}}}}}
 
+% #####	BIBER PROCESSORS	#####
+
+%	Abbreviate first names that start with a sequence of consonants (Philip > Ph.)
+% Thanks @Yves-de-Saint-Pern
+\DeclareStyleSourcemap{%
+  \maps[datatype=bibtex]{%
+    \map{%
+      % Author Field
+      \step[fieldsource=author,%
+      	match={\regexp{\b(Chr|Ch|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))(\S*,)}},%
+      	replace={\regexp{\{$1\}$3}}]% Protect last name in "First Last" fields
+      \step[fieldsource=author,%
+      	match={\regexp{([^,]\s)\b(Chr|Ch|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))}},%
+      	replace={\regexp{$1\{$2\}}}]% Protect last name in "Last, First" fields
+      \step[fieldsource=author,%
+      	match={\regexp{\b(Chr|Ch|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))([^\}])}},%
+      	replace={\regexp{\{\\relax\{\}$1\}$3}}]% Insert \relax afterwards
+      % Editor Field
+      \step[fieldsource=editor,%
+      	match={\regexp{\b(Chr|Ch|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))(\S*,)}},%
+      	replace={\regexp{\{$1\}$3}}]% Protect last name in "First Last" fields
+      \step[fieldsource=editor,%
+      	match={\regexp{([^,]\s)\b(Chr|Ch|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))}},%
+      	replace={\regexp{$1\{$2\}}}]% Protect last name in "Last, First" fields
+      \step[fieldsource=editor,%
+      	match={\regexp{\b(Chr|Ch|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))([^\}])}},%
+      	replace={\regexp{\{\\relax\{\}$1\}$3}}]% Insert \relax afterwards
+}}}%
+
+
 % #####	BIBLIOGRAPHY DRIVERS	#####
 
 %	Create hooks for bibliography drivers
