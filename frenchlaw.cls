@@ -194,9 +194,9 @@
 \ExecuteOptionsX{a4paper,12pt,french,linespacing=1.1}
 \ProcessOptionsX\relax
 
-%	Load the main dependencies: <memoir>, <fixltx2e>
+%	Load the main dependencies: <memoir>, <fixltx2e>, <environ>
 \LoadClass{memoir}
-\RequirePackage{fixltx2e}
+\RequirePackage{fixltx2e,environ}
 
 %	Deactivate incompatible options
 % Option <twocolumn> always defeats option <marginal>
@@ -1319,17 +1319,31 @@
 %	TODO » Truver un moyen de supprimer toutes les espaces horizontales / verticales et éventuellement le saut de paragraphe. Placer en début de \para avec des % en fin de ligne, ou en fin de \para (mais tester un \unskip au début du \para)
 %	TODO » \@gobble can work but only if the user doesn't add any %
 \newcommand{\precis}[1]{%
-	\if@precis
+	\if@precis\bgroup
+		\let\footnote\@gobble
 		\addtocontents{toc}{\protect\printprecis{%
-			\ifx\relax#1\relax\else\unskip~#1\fi\par}}\fi%
+			\ifx\relax#1\relax\else\noindent#1\fi\par}}
+	\egroup\fi%
 	\@ifnextchar\par{\@gobblepar}{\relax}}
 
-\newcommand{\outline}[1]{%
-	\if@outline
+
+%	Créer un environnement {outline} pour indiquer les passages à copier en ToC.
+% On utilise le package {environ} pour récupérer le texte dans l'environnement.
+\NewEnviron{outline}{
+	\if@outline\bgroup
+		\let\footnote\@gobble
 		\addtocontents{toc}{\protect\printprecis{%
-			\ifx\relax#1\relax\else\protect\nopagebreak%
-			\noindent#1\vspace{\baselineskip}\par\fi}}\fi%
+			\ifx\relax\BODY\relax\else\protect\nopagebreak%
+				\BODY\vspace{\baselineskip}\fi\par}}
+	\egroup\fi%
 	\@ifnextchar\par{\@gobblepar}{\relax}}
+
+% \newcommand{\outline}[1]{%
+% 	\if@outline
+% 		\addtocontents{toc}{\protect\printprecis{%
+% 			\ifx\relax#1\relax\else\protect\nopagebreak%
+% 			\noindent#1\vspace{\baselineskip}\par\fi}}\fi%
+% 	\@ifnextchar\par{\@gobblepar}{\relax}}
 
 %	TODO » Créer une commande unique, type \para[<para>][<précis>], avec un ToC \par implicite si #2 est inexistant, sinon on est obligé de mettre un \precis{} avant toute nouvelle section qui requiert un \par dans la ToC
 
