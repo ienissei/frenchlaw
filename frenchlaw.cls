@@ -44,12 +44,14 @@
 	\@articlefalse
 \newif\if@didactic
 	\@didacticfalse
-\newif\if@precis
-	\@precisfalse
-\newif\if@paratoc
-	\@paratocfalse
+\newif\if@summary
+	\@summaryfalse
 \newif\if@outline
 	\@outlinefalse
+\newif\if@paratoc
+	\@paratocfalse
+\newif\if@precis
+	\@precisfalse
 \newif\if@british
 	\@britishfalse
 \newif\if@english
@@ -119,15 +121,17 @@
 }
 
 %	Define options for <precis> document style
-\DeclareOptionX{precis}{
-	\@precistrue
+\DeclareOptionX{outline}{
 	\@outlinetrue
+	\@summarytrue
 	\@paratoctrue
 }
 
 %	Define options for <precis> document style
-\DeclareOptionX{outline}{
-	\@outlinetrue
+\DeclareOptionX{precis}{
+	\@summarytrue
+	\@precistrue
+	\@paratoctrue
 }
 
 %	Define an option to change line spacing
@@ -276,6 +280,9 @@
 % In another command, call:	\@ifnextchar\par{\@gobblepar}{\relax}
 \newcommand{\@gobblepar}[1]{%
 	\@ifnextchar\par{\@gobblepar}{\relax}}
+
+%	Create a command that just prints its argument. Some macros \let it to \@gobble
+\newcommand{\sanitize}[1]{#1}
 
 %	#####	TYPOGRAPHY	#####
 
@@ -911,7 +918,6 @@
 		\pagestyle{empty}
 		% Reset all necessary commands and remove page numbers
 		\renewcommand{\contentsname}{\shortcontentsname}
-		\renewcommand{\printprecis}[1]{}
 		\cftpagenumbersoff{heading}
 		\cftpagenumbersoff{subheading}
 		\cftpagenumbersoff{chapter}
@@ -940,7 +946,10 @@
 	\settowidth{\toclabelwidth}{\cftchapterfont\space Chapitre\space}
 \fi
 \newlength{\tocnumwidth}
-\setlength{\tocnumwidth}{2.5em}
+	\settowidth{\tocnumwidth}{\cftchapterfont\space XXX\space}
+\newlength{\toccenterwidth}
+	\setlength{\toccenterwidth}{\tocnumwidth}
+	\addtolength{\toccenterwidth}{\toclabelwidth}
 \newcommand{\toclabelbox}[1]{\makebox[\toclabelwidth]{\hfill#1}}
 
 %	TODO » Vérifier la pertinence de toutes les lignes
@@ -956,8 +965,8 @@
 
 %	Définir l'espacement des différentes divisions dans la table des matières
 \renewcommand*{\cftdotsep}{2}
-\cftsetindents{book}{0em}{\tocnumwidth}
-\cftsetindents{part}{0em}{\tocnumwidth}
+\cftsetindents{book}{\toccenterwidth}{\tocnumwidth}
+\cftsetindents{part}{\toccenterwidth}{\tocnumwidth}
 \cftsetindents{heading}{0em}{\tocnumwidth}
 \cftsetindents{subheading}{0em}{\tocnumwidth}
 \cftsetindents{chapter}{0em}{\tocnumwidth}
@@ -1180,17 +1189,17 @@
 \renewcommand*{\cftsectionaftersnum}{.}
 \renewcommand*{\cftsectionaftersnumb}{\mdseries}
 \renewcommand*{\cftsectionfont}{\bfseries}
-\setlength{\cftbeforesectionskip}{\if@precis\baselineskip\else0pt\fi}
+\setlength{\cftbeforesectionskip}{\if@outline\baselineskip\else0pt\fi}
 \renewcommand*{\cftsubsectionpresnum}{\space}
 \renewcommand*{\cftsubsectionaftersnum}{.}
 \renewcommand*{\cftsubsectionaftersnumb}{\mdseries}
 \renewcommand*{\cftsubsectionfont}{\footnotesize\bfseries}
-\setlength{\cftbeforesubsectionskip}{\if@precis\baselineskip\else0pt\fi}
+\setlength{\cftbeforesubsectionskip}{\if@outline\baselineskip\else0pt\fi}
 \renewcommand*{\cftsubsubsectionpresnum}{\space}
 \renewcommand*{\cftsubsubsectionaftersnum}{.}
 \renewcommand*{\cftsubsubsectionaftersnumb}{\mdseries}
 \renewcommand*{\cftsubsubsectionfont}{\footnotesize\bfseries}
-\setlength{\cftbeforesubsubsectionskip}{\if@precis\baselineskip\else0pt\fi}
+\setlength{\cftbeforesubsubsectionskip}{\if@outline\baselineskip\else0pt\fi}
 
 %	Définir le style des paragraphes
 \setparaheadstyle{\scshape}
@@ -1250,15 +1259,13 @@
 \newcommand{\parastyle}{\normalsize\scshape}
 
 %	Créer des commandes pour paramétrer l'apparence dans la table des matières
+\newcommand{\cftparastyle}{}
 \newcommand{\cftparanumstyle}{\bfseries}
 \newcommand{\cftparaaftersnum}{.\enskip}
 \newcommand{\cftparanumsep}{,~}
 \newcommand{\cftparaleader}{p.~}
 \newcommand{\cftparaafterpnum}{.}
-\newcommand{\cftparasep}{\if@precis\par\else --- \fi}
-
-%	Créer une commande qui définit l'affichage des \para, \precis et \outline en ToC
-\newcommand{\printprecis}[1]{#1}
+\newcommand{\cftparasep}{\par}
 
 %	Créer un compteur <precis> pour savoir si un \para est le premier de sa section ou non (pour la table des matières)
 \newcounter{precis}
@@ -1280,6 +1287,14 @@
 \newcommand{\paragraphnames}{\@paranametrue}
 \newcommand{\noparagraphnames}{\@paranamefalse}
 
+%	Créer un switch pour imprimer ou non les \outline dans la table des matières
+\newcommand{\summarytoc}{\@summarytrue}
+\newcommand{\nosummarytoc}{\@summaryfalse}
+
+%	Créer un switch pour imprimer ou non les \outline dans la table des matières
+\newcommand{\outlinetoc}{\@outlinetrue}
+\newcommand{\nooutlinetoc}{\@outlinefalse}
+
 %	Créer un switch pour imprimer ou non les \para dans la table des matières
 \newcommand{\paratoc}{\@paratoctrue}
 \newcommand{\noparatoc}{\@paratocfalse}
@@ -1287,10 +1302,6 @@
 %	Créer un switch pour imprimer ou non les \precis dans la table des matières
 \newcommand{\precistoc}{\@precistrue}
 \newcommand{\noprecistoc}{\@precisfalse}
-
-%	Créer un switch pour imprimer ou non les \outline dans la table des matières
-\newcommand{\outlinetoc}{\@outlinetrue}
-\newcommand{\nooutlinetoc}{\@outlinefalse}
 
 %	Créer une commande \para pour faire des paragraphes numérotés
 \newcommand{\para}[1][]{%
@@ -1303,17 +1314,14 @@
 		\else%
 			{\parastyle#1\parasep}%
 	\fi\fi%
-	\if@paratoc%
+	\if@paratoc\ifx\relax#1\relax\else%
 		\addtocontents{toc}{%
-			\protect\printprecis{%
 				\ifnum\value{precis}>1\cftparasep\else%
 					\protect\nopagebreak\vspace{\baselineskip}\par\fi%
-				\noindent%
-				\if@precis\llap{\cftparanumstyle\thepara\cftparaaftersnum}%
-					\else{\cftparanumstyle\thepara\cftparaaftersnum}\fi%
-				\ifx\relax#1\relax\else#1\cftparanumsep\fi%
-				\cftparaleader\thepage\cftparaafterpnum}}%
-	\fi\@ifnextchar\par{\@gobblepar}{\relax}}
+			\protect\noindent%
+			{\cftparastyle{\cftparanumstyle\thepara\cftparaaftersnum}#1\cftparanumsep%
+			\cftparaleader\thepage\cftparaafterpnum}\par}\fi\fi%
+	\@ifnextchar\par{\@gobblepar\relax}{\relax}}
 
 %	Créer une commande \precis{} pour indiquer un résumé du paragraphe.
 %	TODO » Truver un moyen de supprimer toutes les espaces horizontales / verticales et éventuellement le saut de paragraphe. Placer en début de \para avec des % en fin de ligne, ou en fin de \para (mais tester un \unskip au début du \para)
@@ -1321,22 +1329,27 @@
 \newcommand{\precis}[1]{%
 	\if@precis\bgroup
 		\let\footnote\@gobble
-		\addtocontents{toc}{\protect\printprecis{%
-			\ifx\relax#1\relax\else\noindent#1\fi\par}}
+		\addtocontents{toc}{%
+			\ifx\relax#1\relax\else\noindent#1\par\fi}
 	\egroup\fi%
 	\@ifnextchar\par{\@gobblepar}{\relax}}
-
 
 %	Créer un environnement {outline} pour indiquer les passages à copier en ToC.
 % On utilise le package {environ} pour récupérer le texte dans l'environnement.
-\NewEnviron{outline}{
-	\if@outline\bgroup
-		\let\footnote\@gobble
-		\addtocontents{toc}{\protect\printprecis{%
-			\ifx\relax\BODY\relax\else\protect\nopagebreak%
-				\BODY\vspace{\baselineskip}\fi\par}}
+% Utiliser \sanitize[<remplacement>]{<original>} pour retirer les passages problématiques de la ToC. Tester. Sinon utiliser une macro sans argument + \@gobble
+\NewEnviron{outline}{%
+	\if@outline\bgroup%
+		\let\footnote\@gobble%
+		\let\sanitize\@gobble%
+		\addtocontents{toc}{%
+			\ifx\relax\BODY\relax\else%
+				\protect\nopagebreak\vspace{\baselineskip}%
+				\BODY\par\fi}%
 	\egroup\fi%
+	\BODY%
 	\@ifnextchar\par{\@gobblepar}{\relax}}
+
+%	Env. {summary} >> avec les {blockquotation}
 
 % \newcommand{\outline}[1]{%
 % 	\if@outline
@@ -1460,7 +1473,11 @@
 %	Définir le style des labels des descriptions
 \renewcommand{\descriptionlabel}[1]{\scshape{\hfill#1:}}
 \renewcommand{\blockdescriptionlabel}[1]{\scshape{\hfill#1:}}
+\newcommand{\summarylabel}[1]{\scshape{\hfill\summaryname:}}
 \newcommand{\vitaelabel}[1]{\footnotesize\itshape{\hfill\strut#1:\strut}}
+
+%	TODO » Placer avec les commandes babel +  Défaut == "En résumé"
+\newcommand{\summaryname}{Pour l'essentiel}
 
 %	TODO » Revoir les espacements horizontaux des descriptions
 %	Modifier l'environnement <description>
@@ -1477,7 +1494,24 @@
 			 \setlength{\leftmargin}{2\parindent}}}%
 	{\vskip\baselineskip\endlist}
 
-%	Créer l'environnement <vitae> pour les CV (label dans la marge)
+%	Créer un environnement <summmary> pour des conclusions avec un label prédéfini
+\NewEnviron{summary}
+	{\if@outline\bgroup%
+		\let\footnote\@gobble%
+		\let\sanitize\@gobble%
+		\addtocontents{toc}{%
+			\ifx\relax\BODY\relax\else%
+				\protect\nopagebreak\vspace{\baselineskip}%
+				\textsc{\summaryname}: \BODY\par\fi}%
+	\egroup\fi%
+	\list{}{\vskip\baselineskip%
+			\let\makelabel\summarylabel%
+			\setlength{\itemsep}{\baselineskip}%
+			\setlength{\leftmargin}{2\parindent}}%
+	 \needspace{2\baselineskip}\item\BODY%
+	 \vskip\baselineskip\endlist}
+
+%	Créer un environnement <vitae> pour les CV (label dans la marge)
 \newenvironment{vitae}
 	{\list{}{\let\makelabel\vitaelabel
 			 \setlength{\leftmargin}{\z@}
@@ -1784,10 +1818,7 @@
 	\needspace{\baselineskip}
 	\addvspace{\baselineskip}
 	{\noindent\centering#1\par}%
-	\addvspace{\baselineskip}%
-	\if@precis\if@outline
-		\addtocontents{toc}{\par\vspace{\baselineskip}}%
-	\fi\fi}
+	\addvspace{\baselineskip}}
 
 \newcommand{\sectionbreak}[1][\adfast{3}\quad\adfast{3}\quad\adfast{3}]{%
 	\needspace{\baselineskip}

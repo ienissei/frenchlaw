@@ -965,6 +965,20 @@
 
 %	Create a macro for journal titles + citation in French and English
 \newbibmacro*{journal+issue+date}{%
+	\iffieldequalstr{langid}{english}
+		{\ifthenelse{ \iffieldundef{number}\AND
+					  \iffieldundef{volume}\AND
+					  \iffieldundef{month} }
+			{\printfield{year}%
+			 \clearfield{date}%
+			 \setunit{\addspace}}
+			{\printfield[plain]{volume}%
+			 \clearfield{volume}%
+			 \iffieldsequal{year}{volume}
+			 	{\clearfield{year}}
+			 	{}
+			 \setunit{\addspace}}}
+		{}%
 	\iffieldundef{shortjournal}
 		{\usebibmacro{journal}}
 		{\printfield[journaltitle]{shortjournal}}%
@@ -978,7 +992,7 @@
 						  \iffieldundef{volume}\AND
 						  \iffieldundef{month} }
 				% Ex: RTD civ. 2010.123
-				{\setunit{\nopunct\addnbspace}
+				{\setunit{\nopunct\addspace}
 				 \printfield{year}%
 				 \setunit{\adddot}
 				 \printfield[plain]{pages}%
@@ -986,14 +1000,11 @@
 				 \clearfield{issue}}
 				% Ex: Gaz. Pal., n°123, 5 janv. 2015, p. 123
 				% --- Arch. phil. dr., n°123, 2015/4, p. 123
-				{\setunit{\addcomma\addspace}
-				 \printfield{number}%
+				{\usebibmacro{date}
 				 \setunit{\addcomma\addspace}
-				 \iffieldundef{volume}
-				 	{\usebibmacro{date}}
-				 	{\printfield{year}%
-				 	 \setunit{\addslash}
-					 \printfield[plain]{volume}}}}
+				 \printfield{volume}
+				 \setunit{\addcomma\addspace}
+				 \printfield{number}}}%
 			% Ex: JCP 1950, I, 12345 -- JCP 2015, chron., 123
 			{\printfield{year}%
 			 \setunit{\addcomma\addspace}
