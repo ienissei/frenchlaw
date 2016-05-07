@@ -310,8 +310,8 @@
 \newbibmacro*{cite:prenote}{%
 	\iffieldundef{prenote}
 		{}
-		{\printfield{prenote}
-		 \setunit{\prenotedelim}}%
+		{\printfield{prenote}%
+		 \unspace\setunit{\prenotedelim}}% Unspace car il y a des "~" (nbsp) dans les abréviations. Corriger (?)
 	\ifthenelse{	\ifentrytype{legislation}\AND\NOT\iffieldundef{postnote} }
 	 	{\unskip\setunit{\addnbspace}
 	 	 \printfield{postnote}%
