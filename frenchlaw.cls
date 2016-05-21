@@ -50,6 +50,8 @@
 	\@outlinefalse
 \newif\if@paratoc
 	\@paratocfalse
+\newif\if@longtoc
+	\@longtocfalse
 \newif\if@precis
 	\@precisfalse
 \newif\if@british
@@ -125,6 +127,7 @@
 	\@outlinetrue
 	\@summarytrue
 	\@paratoctrue
+	\@longtoctrue
 }
 
 %	Define options for <precis> document style
@@ -132,6 +135,7 @@
 	\@summarytrue
 	\@precistrue
 	\@paratoctrue
+	\@longtoctrue
 }
 
 %	Define an option to change line spacing
@@ -1189,17 +1193,17 @@
 \renewcommand*{\cftsectionaftersnum}{.}
 \renewcommand*{\cftsectionaftersnumb}{\mdseries}
 \renewcommand*{\cftsectionfont}{\bfseries}
-\setlength{\cftbeforesectionskip}{\if@outline\baselineskip\else0pt\fi}
+\setlength{\cftbeforesectionskip}{\if@longtoc\baselineskip\else0pt\fi}
 \renewcommand*{\cftsubsectionpresnum}{\space}
 \renewcommand*{\cftsubsectionaftersnum}{.}
 \renewcommand*{\cftsubsectionaftersnumb}{\mdseries}
 \renewcommand*{\cftsubsectionfont}{\footnotesize\bfseries}
-\setlength{\cftbeforesubsectionskip}{\if@outline\baselineskip\else0pt\fi}
+\setlength{\cftbeforesubsectionskip}{\if@longtoc\baselineskip\else0pt\fi}
 \renewcommand*{\cftsubsubsectionpresnum}{\space}
 \renewcommand*{\cftsubsubsectionaftersnum}{.}
 \renewcommand*{\cftsubsubsectionaftersnumb}{\mdseries}
 \renewcommand*{\cftsubsubsectionfont}{\footnotesize\bfseries}
-\setlength{\cftbeforesubsubsectionskip}{\if@outline\baselineskip\else0pt\fi}
+\setlength{\cftbeforesubsubsectionskip}{\if@longtoc\baselineskip\else0pt\fi}
 
 %	Définir le style des paragraphes
 \setparaheadstyle{\scshape}
@@ -1496,7 +1500,7 @@
 
 %	Créer un environnement <summmary> pour des conclusions avec un label prédéfini
 \NewEnviron{summary}
-	{\if@outline\bgroup%
+	{\if@summary\bgroup%
 		\let\footnote\@gobble%
 		\let\sanitize\@gobble%
 		\addtocontents{toc}{%
@@ -1585,6 +1589,7 @@
 %	Préparer les index
 \makeindex
 \makeindex[\jobname-bib]
+\makeindex[\jobname-law]
 
 %	Définir le style des index
 \setlength{\indexcolsep}{1em}
@@ -1657,10 +1662,12 @@
 			Les numéros renvoient aux paragraphes et non aux pages.\vspace{2\baselineskip}}
 		\newcommand{\paraindex}[1]{\specialindex{\jobname}{para}{#1}}
 		\newcommand{\bibindex}[1]{\specialindex{\jobname-bib}{para}{#1}}
+		\newcommand{\lawindex}[1]{\specialindex{\jobname-law}{para}{#1}}
 		\AtBeginDocument{\let\index\paraindex}
 	%\fi
 	\else
 		\newcommand{\bibindex}[1]{\index{\jobname-bib}{#1}}
+		\newcommand{\lawindex}[1]{\index{\jobname-law}{#1}}
 \fi
 
 %	#####	CRÉATION DES BIBLIOGRAPHIES (BIBLATEX)	#####
@@ -1671,9 +1678,26 @@
 %	Indexer automatiquement les noms des auteurs cités
 \DeclareIndexNameFormat{default}{%
 	\usebibmacro{index:name}{\bibindex}{#1@\textsc{#1}}{#3}{#5}{#7}}
-\DeclareIndexFieldFormat{default}{}
+% \DeclareIndexFieldFormat{default}{\lawindex{#1}}
+
+% Problèmes:
+%	- Sorting des postnotes (??)
+%	  Break au premier non-integer pour le classement.
+%	- Ajouter "art." avant. ± les "anc." des prenotes (ou CNap directement).
+%	- Pour les types autres que législation, mettre ça dan sli'ndex par auteur
+%	  Cf. index:name:title dans biblatex.def
+\DeclareIndexFieldFormat{indextitle}{%
+	\usebibmacro{index:entry}%
+		{\lawindex}
+		{\mkbibindexfield{\thefield{indexsorttitle}}{#1}%
+		 \mkbibindexsubentry{\thefield{postnote}}{\textbf{\thefield{postnote}}}}}
+
 \renewbibmacro{bibindex}{\ifbibindex{\indexnames{labelname}}{}}
-\renewbibmacro{citeindex}{\ifciteindex{\indexnames{labelname}}{}}
+\renewbibmacro{citeindex}{%
+	\ifciteindex
+		{\indexnames{labelname}%
+		 \indexfield{indextitle}}
+		{}}
 
 %	#####	CRÉATION DU SYSTÈME D'ABRÉVIATIONS (BIBLATEX)	#####
 
@@ -1814,17 +1838,19 @@
 
 %	TODO » Ranger. Fleuron pour séparer les sections + harmoniser avec celui utilisé pour la doc
 
-\newcommand{\chapterbreak}[1][\adforn{21}\quad\adfast{3}\quad\adforn{49}]{%
-	\needspace{\baselineskip}
-	\addvspace{\baselineskip}
-	{\noindent\centering#1\par}%
-	\addvspace{\baselineskip}}
-
 \newcommand{\sectionbreak}[1][\adfast{3}\quad\adfast{3}\quad\adfast{3}]{%
 	\needspace{\baselineskip}
 	\addvspace{\baselineskip}
 	{\noindent\centering#1\par}%
-	\addvspace{\baselineskip}}
+	\addvspace{\baselineskip}%
+	\if@longtoc\addtocontents{toc}{\vspace{\baselineskip}}\fi}
+
+\newcommand{\chapterbreak}[1][\adforn{21}\quad\adfast{3}\quad\adforn{49}]{%
+	\needspace{\baselineskip}
+	\addvspace{\baselineskip}
+	{\noindent\centering#1\par}%
+	\addvspace{\baselineskip}%
+	\if@longtoc\addtocontents{toc}{\vspace{\baselineskip}}\fi}
 
 %	#####	GESTION DU MODE DRAFT	#####
 

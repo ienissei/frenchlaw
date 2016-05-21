@@ -313,7 +313,7 @@
 		{\printfield{prenote}%
 		 \unspace\setunit{\prenotedelim}}% Unspace car il y a des "~" (nbsp) dans les abréviations. Corriger (?)
 	\ifthenelse{	\ifentrytype{legislation}\AND\NOT\iffieldundef{postnote} }
-	 	{\unskip\setunit{\addnbspace}
+	 	{%\unskip\setunit{\addnbspace}% Créait des spurrious spaces
 	 	 \printfield{postnote}%
 	 	 \clearfield{postnote}%
 	 	 \setunit{\addspace}
@@ -337,75 +337,74 @@
 
 \DeclareCiteCommand{\cite}
 	{\usebibmacro{cite:init}%
+	 \usebibmacro{citeindex}%
 	 \usebibmacro{cite:prenote}}
-	{\usebibmacro{citeindex}%
-	 \usebibmacro{cite}}
+	{\usebibmacro{cite}}
 	{\multicitedelim}
 	{\usebibmacro{cite:postnote}}
 
 \DeclareCiteCommand*{\cite}
 	{\usebibmacro{cite:init}%
+	 \usebibmacro{citeindex}%
 	 \usebibmacro{cite:prenote}}
-	{\usebibmacro{citeindex}%
-	 \usebibmacro{citetitle}}
+	{\usebibmacro{citetitle}}
 	{\multicitedelim}
 	{\usebibmacro{cite:postnote}}
 
 \DeclareCiteCommand{\parencite}[\unskip~\mkbibparens]
 	{\usebibmacro{cite:init}%
+	 \usebibmacro{citeindex}%
 	 \usebibmacro{cite:prenote}}
-	{\usebibmacro{citeindex}%
-	 \usebibmacro{cite}}
+	{\usebibmacro{cite}}
 	{\multicitedelim}
 	{\usebibmacro{cite:postnote}}
 
 \DeclareCiteCommand*{\parencite}[\unskip~\mkbibparens]
 	{\usebibmacro{cite:init}%
+	 \usebibmacro{citeindex}%
 	 \usebibmacro{cite:prenote}}
-	{\usebibmacro{citeindex}%
-	 \usebibmacro{citetitle}}
+	{\usebibmacro{citetitle}}
 	{\multicitedelim}
 	{\usebibmacro{cite:postnote}}
 
 \DeclareCiteCommand{\footcite}[\mkbibfootnote]
 	{\usebibmacro{cite:init}%
+	 \usebibmacro{citeindex}%
 	 \usebibmacro{cite:prenote}}
-	{\usebibmacro{citeindex}%
-	 \usebibmacro{cite}}
+	{\usebibmacro{cite}}
 	{\multicitedelim}
 	{\usebibmacro{cite:postnote}}
 
 \DeclareCiteCommand*{\footcite}[\mkbibfootnote]
 	{\usebibmacro{cite:init}%
+	 \usebibmacro{citeindex}%
 	 \usebibmacro{cite:prenote}}
-	{\usebibmacro{citeindex}%
-	 \usebibmacro{citetitle}}
+	{\usebibmacro{citetitle}}
 	{\multicitedelim}
 	{\usebibmacro{cite:postnote}}
 
 \DeclareCiteCommand{\smartcite}[\iffootnote\mkbibparens\mkbibfootnote]
 	{\usebibmacro{cite:init}%
+	 \usebibmacro{citeindex}%
 	 \usebibmacro{cite:prenote}}
-	{\usebibmacro{citeindex}%
-	 \usebibmacro{cite}}
+	{\usebibmacro{cite}}
 	{\multicitedelim}
 	{\usebibmacro{cite:postnote}}
 
 \DeclareCiteCommand*{\smartcite}[\iffootnote\mkbibparens\mkbibfootnote]
 	{\usebibmacro{cite:init}%
+	 \usebibmacro{citeindex}%
 	 \usebibmacro{cite:prenote}}
-	{\usebibmacro{citeindex}%
-	 \usebibmacro{citetitle}}
+	{\usebibmacro{citetitle}}
 	{\multicitedelim}
 	{\usebibmacro{cite:postnote}}
-
 
 %	TODO » Reprendre sur authortitle-icomp avec toutes les macros associées
 %	Problème avec ; ou : juste après la parenthèse... ou revoir language=auto (> que dans la bibliographie (?)). Vérifier sur les autres styles, dont verbose + authortitle
 \DeclareCiteCommand{\textcite}
-	{\usebibmacro{cite:init}}
-	{\usebibmacro{citeindex}%
-	 \usebibmacro{textcite}}
+	{\usebibmacro{cite:init}%
+	 \usebibmacro{citeindex}}
+	{\usebibmacro{textcite}}
 	{}
 	{\ifbool{cbx:parens}
 		{\bibcloseparen%
