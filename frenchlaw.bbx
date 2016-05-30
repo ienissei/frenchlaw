@@ -966,6 +966,7 @@
 %	Create a macro for journal titles + citation in French and English
 \newbibmacro*{journal+issue+date}{%
 	\iffieldequalstr{langid}{english}
+		% Champ "volume" des revues en anglais
 		{\ifthenelse{ \iffieldundef{number}\AND
 					  \iffieldundef{volume}\AND
 					  \iffieldundef{month} }
@@ -987,6 +988,7 @@
 	\printfield{series}%
 	\setunit{\addcomma\addspace}
 	\iffieldequalstr{langid}{french}%
+		% Revues en français
 		{\iffieldundef{part}
 			{\ifthenelse{ \iffieldundef{number}\AND
 						  \iffieldundef{volume}\AND
@@ -1011,6 +1013,7 @@
 			 \printfield[plain]{part}%
 			 \setunit{\addcomma\addspace}
 			 \printfield[plain]{number}}}
+		% Revues dans d'autres langues
 		{\printfield{volume}%
 		 \setunit{\addcomma\addspace}
 		 \printfield{number}%

@@ -58,9 +58,15 @@
 
 %	TODO
 \DeclareNameFormat{labelname}{%
-	% Imprimer le nom de l'auteur
+	% Imprimer le nom de l'auteur (Initiale du premier prénom + Nom de famille)
+	% \usebibmacro{name:first-last}{#1}{\firstinit{#4}\adddot}{#5}{#7}%
+	% \usebibmacro{name:andothers}}
+	% OLD: Initiales de tous les prénoms + Nom de famille
 	\usebibmacro{name:first-last}{#1}{#4}{#5}{#7}%
 	\usebibmacro{name:andothers}}%
+% Obtenir l'initiale du premier prénom seulement.
+% \def\firstinit#1{\justfirst#1\relax}
+% \def\justfirst#1#2\relax{#1}
 
 
 % Utilité (?)
