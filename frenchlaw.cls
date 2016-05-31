@@ -1235,7 +1235,7 @@
 	\setlength{\aftersubparaskip}{-1em}
 \fi\fi
 
-%	Définir lz stylz des paragraphes et sous-paragraphes dans la table des matières
+%	Définir lz style des paragraphes et sous-paragraphes dans la table des matières
 \renewcommand*{\cftparagraphpresnum}{\space}
 \renewcommand*{\cftparagraphaftersnum}{.}
 \renewcommand*{\cftparagraphaftersnumb}{\mdseries}
@@ -1318,13 +1318,15 @@
 		\else%
 			{\parastyle#1\parasep}%
 	\fi\fi%
-	\if@paratoc\ifx\relax#1\relax\else%
+	\if@paratoc
 		\addtocontents{toc}{%
-				\ifnum\value{precis}>1\cftparasep\else%
-					\protect\nopagebreak\vspace{\baselineskip}\par\fi%
-			\protect\noindent%
-			{\cftparastyle{\cftparanumstyle\thepara\cftparaaftersnum}#1\cftparanumsep%
-			\cftparaleader\thepage\cftparaafterpnum}\par}\fi\fi%
+			\ifnum\value{precis}>1\cftparasep\else
+				\protect\nopagebreak\vspace{\baselineskip}\par\fi%
+			\ifx\relax#1\relax\else
+				\protect\noindent%
+				{\cftparastyle{\cftparanumstyle\thepara\cftparaaftersnum}
+					#1\cftparanumsep\cftparaleader\thepage\cftparaafterpnum}\par\fi}%
+	\fi%
 	\@ifnextchar\par{\@gobblepar\relax}{\relax}}
 
 %	Créer une commande \precis{} pour indiquer un résumé du paragraphe.
@@ -1842,8 +1844,7 @@
 	\needspace{\baselineskip}
 	\addvspace{\baselineskip}
 	{\noindent\centering#1\par}%
-	\addvspace{\baselineskip}%
-	\if@longtoc\addtocontents{toc}{\vspace{\baselineskip}}\fi}
+	 \addvspace{\baselineskip}}
 
 \newcommand{\chapterbreak}[1][\adforn{21}\quad\adfast{3}\quad\adforn{49}]{%
 	\needspace{\baselineskip}
