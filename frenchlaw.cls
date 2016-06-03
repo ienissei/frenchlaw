@@ -1291,6 +1291,10 @@
 \newcommand{\paragraphnames}{\@paranametrue}
 \newcommand{\noparagraphnames}{\@paranamefalse}
 
+%	Créer un switch pour imprimer ou non les \para dans la table des matières
+\newcommand{\paratoc}{\@paratoctrue}
+\newcommand{\noparatoc}{\@paratocfalse}
+
 %	Créer un switch pour imprimer ou non les \outline dans la table des matières
 \newcommand{\summarytoc}{\@summarytrue}
 \newcommand{\nosummarytoc}{\@summaryfalse}
@@ -1298,10 +1302,6 @@
 %	Créer un switch pour imprimer ou non les \outline dans la table des matières
 \newcommand{\outlinetoc}{\@outlinetrue}
 \newcommand{\nooutlinetoc}{\@outlinefalse}
-
-%	Créer un switch pour imprimer ou non les \para dans la table des matières
-\newcommand{\paratoc}{\@paratoctrue}
-\newcommand{\noparatoc}{\@paratocfalse}
 
 %	Créer un switch pour imprimer ou non les \precis dans la table des matières
 \newcommand{\precistoc}{\@precistrue}
@@ -1320,8 +1320,8 @@
 	\fi\fi%
 	\if@paratoc
 		\addtocontents{toc}{%
-			\ifnum\value{precis}>1\cftparasep\else
-				\protect\nopagebreak\vspace{\baselineskip}\par\fi%
+			\ifnum\value{precis}>1\cftparasep\else%
+				\protect\nopagebreak\vskip\baselineskip\par\fi%
 			\ifx\relax#1\relax\else
 				\protect\noindent%
 				{\cftparastyle{\cftparanumstyle\thepara\cftparaaftersnum}
@@ -1349,8 +1349,7 @@
 		\let\sanitize\@gobble%
 		\addtocontents{toc}{%
 			\ifx\relax\BODY\relax\else%
-				\protect\nopagebreak\vspace{\baselineskip}%
-				\BODY\par\fi}%
+				\vskip-\lastskip\vskip\baselineskip\BODY\par\fi}%
 	\egroup\fi%
 	\BODY%
 	\@ifnextchar\par{\@gobblepar}{\relax}}
