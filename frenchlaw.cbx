@@ -16,6 +16,8 @@
 
 %	WARNING: Please note that this is a BibLaTeX style file for "frenchlaw.cls"
 
+% \citet des {legislation}, supprimer le legistype- (gender)
+
 \ProvidesFile{frenchlaw.cbx}%
 	[2014/09/30 v.0.9. Bibliography style for French legal documents]
 
@@ -43,6 +45,10 @@
 \renewcommand{\bibnamedelimd}{\addnbspace}% Non-breaking space between initials and name
 \renewcommand{\bibnamedelimi}{\addnbspace}% Non-breaking space between initials and name
 
+% Corriger les spurrious spaces
+\renewcommand*{\postnotedelim}{\addcomma\ifpunct{\addspace}{}}
+\renewcommand*{\multicitedelim}{\setunit{\addsemicolon\addspace}}
+
 \providecommand*{\mkibid}[1]{\emph{#1}}
 
 %	TODO » Needed?
@@ -58,16 +64,12 @@
 
 %	TODO
 \DeclareNameFormat{labelname}{%
-	% Imprimer le nom de l'auteur (Initiale du premier prénom + Nom de famille)
-	% \usebibmacro{name:first-last}{#1}{\firstinit{#4}\adddot}{#5}{#7}%
-	% \usebibmacro{name:andothers}}
-	% OLD: Initiales de tous les prénoms + Nom de famille
 	\usebibmacro{name:first-last}{#1}{#4}{#5}{#7}%
 	\usebibmacro{name:andothers}}%
-% Obtenir l'initiale du premier prénom seulement.
-% \def\firstinit#1{\justfirst#1\relax}
-% \def\justfirst#1#2\relax{#1}
-
+% 	Hack: Imprimer seulement la première initiale
+% Biber sépare les initiales par \bibinitdelim + initiale + \bibinitpunct
+% Redéfinir \bibinitdelim pour prendre deux arguments et ne rien en faire
+\renewcommand{\bibinitdelim}[2]{\relax}
 
 % Utilité (?)
 \DeclareFieldFormat{citetitle}{\mkbibemph{#1}}%
@@ -101,9 +103,7 @@
 	\ifnumless{\value{multicitecount}}{2}
 		{\global\boolfalse{cbx:parens}%
 		 \global\undef\cbx@lasthash}
-		{\iffieldundef{prenote}
-			{}
-			{\global\undef\cbx@lasthash}}}
+		{}}
 
 \newbibmacro*{cite}{%
 	\ifthenelse{	\ifciteseen\AND\NOT\iffieldundef{shorthand} }
@@ -112,51 +112,45 @@
 		{\ifthenelse{	\ifentrytype{jurisdiction}\OR
 						\ifentrytype{legislation} }
 			{\usebibmacro{cite:legal}}
-			{\ifthenelse{\ifciteibid\AND\NOT\iffirstonpage}
-				{\bibsentence\usebibmacro{cite:ibid}}
-				{\ifnameundef{shortauthor}
-					{\iffieldequals{namehash}{\cbx@lasthash}
-						{\setunit{\unspace}}
-						{\ifnameundef{labelname}
-							{}
-							{\printnames{labelname}%
-							 \setunit{\nametitledelim}}%
-						 \savefield{namehash}{\cbx@lasthash}}%
-					 \ifopcit
-						{\ifloccit
-							{\bibsentence\usebibmacro{cite:loccit}}
-							{\bibsentence\usebibmacro{cite:opcit}}}
+			{\ifloccit
+				{\usebibmacro{cite:ibid}}
+				{\iffieldequals{namehash}{\cbx@lasthash}
+					{}% \unspace, mais causait un problème avec la prénote
+					{\ifnameundef{labelname}
+						{}
+						{\printnames{labelname}%
+						 \setunit{\nametitledelim}}%
+					 \savefield{namehash}{\cbx@lasthash}}%
+				 \ifnameundef{shortauthor}
+					{\ifopcit
+						{\usebibmacro{cite:opcit}}
 					 	{\usebibmacro{cite:title}%
 					 	 \usebibmacro{cite:related}}}
-					{\printnames{shortauthor}%
-					 \setunit{\addcomma\addspace}
-					 \printfield{shorttitle}%
-					 \ifloccit{\usebibmacro{cite:loccit}}}}}%
-			 \iffieldundef{shorthand}
-			 	{}
-			 	{\usebibmacro{shorthandintro}}}}
+					{\printfield{shorttitle}}}}}%
+	\iffieldundef{shorthand}
+		{}
+		{\usebibmacro{shorthandintro}}}
 
 \newbibmacro*{citetitle}{%
 	\ifthenelse{	\ifciteseen\AND\NOT\iffieldundef{shorthand} }
-		{\usebibmacro{cite:shorthand}}
+		{\usebibmacro{cite:shorthand}%
+		 \global\undef\cbx@lasthash}
 		{\ifthenelse{	\ifentrytype{jurisdiction}\OR
 						\ifentrytype{legislation} }
 			{\usebibmacro{cite:legal:reverse}}
-			{\ifthenelse{\ifciteibid\AND\NOT\iffirstonpage}
-				{\bibsentence\usebibmacro{cite:ibid}}
-				{\ifopcit
-					{\ifloccit
-						{\bibsentence\usebibmacro{cite:loccit}}
-						{\bibsentence\usebibmacro{cite:opcit}}}
-				 	{\usebibmacro{cite:title}%
-				 	 \usebibmacro{cite:related}}}}}}
+			{\ifciteibid
+				{\usebibmacro{cite:ibid}}
+				{\usebibmacro{cite:title}%
+				 	 \usebibmacro{cite:related}}}}%
+	\iffieldundef{shorthand}
+		{}
+		{\usebibmacro[\mkparens]{shorthandintro}}}
 
 \newbibmacro*{textcite}{%
 	\iffieldequals{namehash}{\cbx@lasthash}
-		{\setunit{\textcitedelim}}
+		{\textcitedelim}
 		{\ifbool{cbx:parens}
-			{\global\boolfalse{cbx:parens}%
-			 \bibcloseparen}
+			{\global\booltrue{cbx:parens}\bibcloseparen}
 			{}%
 		 \ifnameundef{labelname}
 			{\iffieldundef{labeltitle}
@@ -168,40 +162,37 @@
 				 \printtext[bibhyperref]{\printfield{title}}%
 				 \clearfield{labeltitle}
 				 \clearfield{title}}}
-			{\ifnameundef{shortauthor}
-				{\printnames[first-last]{labelname}}
-				{\printnames{shortauthor}}}%
+			{\printnames[first-last]{labelname}}%
 		 \stepcounter{textcitecount}%
 		 \savefield{namehash}{\cbx@lasthash}}%
 	\ifbool{cbx:parens}
 		{}
-		{\global\booltrue{cbx:parens}%
-		 \addspace\bibopenparen}%
-	% \ifnumequal{\value{citecount}}{1}
+		{\setunit{\global\booltrue{cbx:parens}\addspace\bibopenparen}}%
 	% 	{\usebibmacro{prenote}}
 	% 	{}%
 	\ifthenelse{	\ifciteseen\AND\NOT\iffieldundef{shorthand} }
-		{\usebibmacro{cite:shorthand}}
+		{\usebibmacro{cite:shorthand}%
+		 \global\undef\cbx@lasthash}
 		{\ifthenelse{	\ifentrytype{jurisdiction}\OR
 						\ifentrytype{legislation} }
 			{\usebibmacro{cite:legal:reverse}}
-			{\ifthenelse{\ifciteibid\AND\NOT\iffirstonpage}
+			{\ifloccit
 				{\usebibmacro{cite:ibid}}
-				{\ifthenelse{	\ifopcit\OR\iffieldundef{labeltitle}\AND\ifciteseen }% TODO » labeltitle ???
-					{\ifloccit
-						{\usebibmacro{cite:loccit}}
-						{\usebibmacro{cite:opcit}}}
-				 	{\ifnameundef{shortauthor}
-					 	{\usebibmacro{cite:title}%
-					 	 \usebibmacro{cite:related}}
-					 	{\printfield{shorttitle}}}}}}%
-	\ifthenelse{	\ifentrytype{legislation}\AND\NOT\iffieldundef{postnote} }
-		{\printfield{prenote}%
-		 \setunit{\addnbspace}
-	 	 \printfield{postnote}}
-		{\ifloccit
-			{}
-			{\usebibmacro{cite:postnote}}}}
+				{\ifnameundef{shortauthor}
+					{\ifopcit
+						{\usebibmacro{cite:opcit}}
+						{\usebibmacro{cite:title}%
+						 \usebibmacro{cite:related}}}
+					{\printfield{shorttitle}}}}}%
+	\ifbool{cbx:parens}
+		{}
+		{\setunit{\global\booltrue{cbx:parens}\addspace\bibopenparen}}% \setunit le tout
+	\ifentrytype{legislation}
+		{\usebibmacro{cite:prenote}}
+		{\usebibmacro{cite:postnote}}%
+	\iffieldundef{shorthand}
+		{}
+		{\usebibmacro{shorthandintro}}}
 
 \newbibmacro*{cite:title}{%
 	\ifentrytype{inreference}
@@ -301,17 +292,22 @@
 	\printtext[bibhyperref]{\printfield{shorthand}}}
 
 \newbibmacro*{cite:ibid}{%
-	\ifloccit
+	\ifthenelse{	\ifloccit\AND\NOT\iffirstonpage }
 		{\bibstring[\mkibid]{ibidem}%
 		 \global\booltrue{cbx:loccit}}
 		{\usebibmacro{cite:opcit}}}
 
-\newbibmacro*{cite:loccit}{%
-	\bibstring[\mkibid]{loccit}%
-	\global\booltrue{cbx:loccit}}
-
 \newbibmacro*{cite:opcit}{%
-	\bibstring[\mkibid]{opcit}}
+	\ifloccit
+		{\bibstring[\mkibid]{loccit}%
+		 \global\booltrue{cbx:loccit}}
+		{\bibstring[\mkibid]{opcit}}}
+
+% TODO » Nettoyer les {cite:prenote}
+%	Nettoyer -- ne laisser que le code de {prenote}
+%	Créer un cite:pre-post pour les {legislation}
+%	Uriliser, dedans, un {cite:prenote} + {cite:postnote} avec du code pour les agencer
+%	Le {du / de la} est facultatif, i.e. uniquement pour {cite} vs. {textcite}, donc macro séparée
 
 \newbibmacro*{cite:prenote}{%
 	\iffieldundef{prenote}
@@ -334,14 +330,12 @@
 \newbibmacro*{cite:postnote}{%
 	\ifbool{cbx:loccit}
 		{}
-		{\iffieldundef{postnote}
-			{}
-			{\setunit{\postnotedelim}}%
-			 \printfield{postnote}}}% Enforce abbreviative dot just in case
+		{\setunit*{\postnotedelim}%
+		 \printfield{postnote}}}% Enforce abbreviative dot just in case (?)
 
 % Citation commands
 
-\DeclareCiteCommand{\cite}
+\DeclareCiteCommand{\cite}[\bibsentence]
 	{\usebibmacro{cite:init}%
 	 \usebibmacro{citeindex}%
 	 \usebibmacro{cite:prenote}}
@@ -349,7 +343,7 @@
 	{\multicitedelim}
 	{\usebibmacro{cite:postnote}}
 
-\DeclareCiteCommand*{\cite}
+\DeclareCiteCommand*{\cite}[\bibsentence]
 	{\usebibmacro{cite:init}%
 	 \usebibmacro{citeindex}%
 	 \usebibmacro{cite:prenote}}
@@ -411,24 +405,27 @@
 	{\usebibmacro{cite:init}%
 	 \usebibmacro{citeindex}}
 	{\usebibmacro{textcite}}
-	{}
+	{\multicitedelim}
 	{\ifbool{cbx:parens}
-		{\bibcloseparen%
-		 \global\boolfalse{cbx:parens}}
+		{\global\boolfalse{cbx:parens}\bibcloseparen}
 		{}}
 	%
 	%	TODO » Should be included, but ads spurious spaces :(
 	% Switch back to the main language due to different spacing in French punctuation
 	%\expandafter\selectlanguage\expandafter{\bbl@main@language}%
 
+\DeclareMultiCiteCommand{\textcites}{\textcite}{\multicitedelim}
+
 \DeclareCiteCommand{\citeauthor}[\boolfalse{citetracker}\boolfalse{pagetracker}]
 	{\usebibmacro{cite:init}}
 	{\ifciteindex%
 		{\indexnames{labelname}}
 		{}%
-	 \ifnameundef{labelname}
+	 \ifnameundef{author}
 		{\printtext[bold]{???}}
-	 	{\printnames[first-last]{labelname}}}%
+	 	{\ifnameundef{author}
+	 		{\printtext[bold]{???}}
+	 		{\printnames[first-last]{author}}}}%
 	{\multicitedelim}
 	{}%
 
