@@ -1479,7 +1479,7 @@
 \renewcommand{\descriptionlabel}[1]{\scshape{\hfill#1:}}
 \renewcommand{\blockdescriptionlabel}[1]{\scshape{\hfill#1:}}
 \newcommand{\summarylabel}[1]{\scshape{\hfill\summaryname:}}
-\newcommand{\vitaelabel}[1]{\footnotesize\itshape{\hfill\strut#1:\strut}}
+\newcommand{\vitaelabel}[1]{\footnotesize\hfill\itshape{\strut#1:\strut}}
 
 %	TODO » Placer avec les commandes babel +  Défaut == "En résumé"
 \newcommand{\summaryname}{Pour l'essentiel}
