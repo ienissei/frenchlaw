@@ -910,7 +910,7 @@
 	\printfield[plain]{journaltitle}}
 
 \DeclareBibliographyDriver{shortauthor}{% TODO
-	\usedriver{}{\thefield{entrytype}}%
+	\usedriver{\clearfield{crossref}}{\thefield{entrytype}}%
 	\setunit{\addcomma\addspace}
 	\printtext{\bibstring{citedas}}%
 	\setunit{\addspace}
