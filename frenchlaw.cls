@@ -165,16 +165,17 @@
 	\PassOptionsToClass{a5paper,10pt,article,oneside}{memoir}
 }
 
+%	TODO » Utilité des switch de langue ? On utilise languagename partout
 %	Define options to change the main language of the document
-\DeclareOptionX{british}{%	TODO » Remplacer par UKenglish?
+\DeclareOptionX{british}{
 	\@britishtrue
 	\@englishfalse
 	\@frenchfalse
 	\PassOptionsToPackage{british}{babel}
-	\PassOptionsToPackage{british}{fmtcount}%	TODO » Remplacer par UKenglish
+	\PassOptionsToPackage{british}{fmtcount}
 	\AtEndOfClass{\main@language{british}}
 }
-\DeclareOptionX{english}{%	TODO » Remplacer par USenglish?
+\DeclareOptionX{english}{%	TODO » Remplacer par USenglish? // Créer un alias dans le code de biber pour les langid / hyphenation
 	\@englishtrue
 	\@frenchfalse
 	\@britishfalse
@@ -330,8 +331,9 @@
 
 %	Load language and number packages and fixes
 %	TODO » Implémenter {csquotes} et le documenter
-\RequirePackage[autostyle=true]{csquotes}
 \RequirePackage[greek,latin,english,british,french]{babel}
+\RequirePackage[autostyle=true]{csquotes}
+\DeclareQuoteAlias[american]{english}{british}% Use double quotes in British english
 \RequirePackage{fmtcount}% 	TODO » Ou autre?
 \RequirePackage{fixltxhyph}
 
@@ -501,14 +503,14 @@
 %	Define a style for side paragraphs (\sidebar)
 \setsidebars{\marginparsep}{\marginparwidth}{\baselineskip}{0pt}{\footnotesize}{\textheight}
 
-%	Margin and side notes are set in the widest margin with option <marginal>
-\if@marginal\if@twoside
+%	Margin and side notes are set in the widest margin
+\if@twoside
 	\marginparmargin{outer}
 	\sidebarmargin{outer}
 \else
 	\marginparmargin{left}
 	\sidebarmargin{left}
-\fi\fi
+\fi
 
 %	Create a command that forces the same line-spacing in notes as in the main block
 % This allows for better vertical alignment, but is not part of standard styles
@@ -1159,6 +1161,12 @@
 	\renewcommand{\thesubparagraph}{\alph{subparagraph}}
 \fi
 
+%	Replace \vskip with \addvspace at the end of section titles
+% Prevents stacking vertical white space when using environments which also add some.
+\patchcmd{\@xsect}
+	{\vskip\@tempskipa\vskip-\parskip}{\addvspace{\@tempskipa}\addvspace{-\parskip}}
+	{}{\typeout{WARNING! Patching \noexpand\@xsect failed!}}
+
 %	Définir la ponctuation après chaque numéro de section et paragraphe
 % S'il est défini dans babel, on rajoute le nom donné à la section concernée
 % En anglais, les paragraphes suivant les sections ne sont pas indentés
@@ -1428,18 +1436,10 @@
 \setlength{\belowcaptionskip}{.5\baselineskip}
 \hangcaption
 
-%	Redéfinir les <minipage> pour les aligner verticalement
-\let\old@minipage=\minipage
-\let\old@endminipage=\endminipage
-\renewenvironment{minipage}[2][t]
-	{\old@minipage[#1]{#2}}
-	{\par\xdef\tpd{\the\prevdepth}\old@endminipage\par\prevdepth\tpd}
-
-%	Définir un environnement <minipage*> avec la définition originele
-% Rompt l'alignement vertical, mais ne crée pas de paragraphe supplémentaire...
+%	Définir un environnement <minipage> qui respecte l'alignement vertical
 \newenvironment{minipage*}[2][t]
-	{\old@minipage[#1]{#2}}
-	{\old@endminipage}
+	{\minipage[#1]{#2}}
+	{\par\xdef\tpd{\the\prevdepth}\endminipage\par\prevdepth\tpd}
 
 %	#####	DÉFINITIONS RELATIVES AUX LISTES	#####
 
@@ -1479,7 +1479,7 @@
 \renewcommand{\descriptionlabel}[1]{\scshape{\hfill#1:}}
 \renewcommand{\blockdescriptionlabel}[1]{\scshape{\hfill#1:}}
 \newcommand{\summarylabel}[1]{\scshape{\hfill\summaryname:}}
-\newcommand{\vitaelabel}[1]{\footnotesize\hfill\itshape{\strut#1:\strut}}
+\newcommand{\vitaelabel}[1]{\footnotesize\itshape{\hfill\strut#1:\strut}}
 
 %	TODO » Placer avec les commandes babel +  Défaut == "En résumé"
 \newcommand{\summaryname}{Pour l'essentiel}
@@ -1549,12 +1549,12 @@
 %	TODO » Documenter les minipages, utiliser \footnotemark et \footnotetext pour des notes
 %	Définir le format de la citation de l'épigraphe
 \renewcommand{\@epitext}[1]{%
-	\begin{minipage}{\epigraphwidth}\begin{\textflush}#1\end{\textflush}\end{minipage}
+	\begin{minipage*}{\epigraphwidth}\begin{\textflush}#1\end{\textflush}\end{minipage*}
 }
 
 %	Redéfinir le format de la source de l'épigraphe
 \renewcommand{\@episource}[1]{%
-	\begin{minipage}{\epigraphwidth}\begin{\sourceflush}---~#1\end{\sourceflush}\end{minipage}
+	\begin{minipage*}{\epigraphwidth}\begin{\sourceflush}---~#1\end{\sourceflush}\end{minipage*}
 }
 
 %	Redéfinir la commande des épigraphes simples
@@ -1734,7 +1734,12 @@
 	\def\@division{#1}%
 	\refstepcounter{division}%
 	\setcounter{section}{0}
-	\setcounter{page}{1}%
+	\if@didactic
+		\setcounter{page}{1}%
+	\else
+		{\Large\scshape\raggedright\thedivision. \@division}
+		\par\addvspace{\baselineskip}
+	\fi
 }
 \renewcommand{\thedivision}{\arabic{division}}
 \newcommand{\afterdivnum}{.~}
