@@ -72,14 +72,14 @@
 \renewcommand{\bibinitdelim}[2]{\relax}
 
 % Utilité (?)
-\DeclareFieldFormat{citetitle}{\mkbibemph{#1}}%
+\DeclareFieldFormat{citetitle}{\mkbibemph{#1}\isdot}%
 \DeclareFieldFormat[book,inbook,collection,proceedings,thesis]{citetitle}{\mkbibemph{#1}}%
 \DeclareFieldFormat[article,incollection,inproceedings,patent,unpublished]{citetitle}{\mkbibquote{#1}}%
 \DeclareFieldFormat[suppbook,suppcollection,suppperiodical]{citetitle}{#1}%
 % Format des abréviations: citetitle = forme longue, citeshorthand = dans le texte (point ajouté dynamiquement), shorthandlist = dans la liste des abréviations (ajouter un point).
 
 % Adde pour tous les shorttitle (dans le fichier .bbx) des \isdot à la fin. Pas en alias de title qui n'en a pas besoin. -- Adde, sur le labeltitle si besoin. Ou sur tous les types de titres pour ne pas s'emmerder. (?)
-\DeclareFieldFormat[legislation]{shorttitle}{#1\isdot}
+\DeclareFieldFormat[book,reference,legislation]{shorttitle}{#1\isdot}
 
 \DeclareFieldFormat{postnote}{#1\isdot}
 
@@ -90,12 +90,17 @@
 \DeclareFieldFormat[customc]{citetitle}{#1}%
 \DeclareFieldFormat{editortype}{\mkbibparens{#1}}%
 
-\DeclareFieldAlias{shorttitle}{title}
-\DeclareFieldAlias{shorthand}{title}
-\DeclareFieldAlias{labeltitle}{title}
-
+\DeclareFieldAlias{title}{citetitle}
+\DeclareFieldAlias{shorttitle}{citetitle}
+\DeclareFieldAlias{shorthand}{citetitle}
+\DeclareFieldAlias{labeltitle}{citetitle}
 
 \newbibmacro*{cite:init}{%
+	% Backref to all citation keys (TODO » Rename to backindex)
+	\lawindex{%
+		{{\color{violet}\ttfamily[\thefield{entrykey}]}}%
+		\iffieldundef{title}{}{\space\thefield{title}}%
+		\iffieldundef{postnote}{}{!{\color{cyan}\thefield{postnote}}}}%
 	\global\boolfalse{cbx:loccit}%
 	\ifentrytype{reference}
 		{\boolfalse{citetracker}}

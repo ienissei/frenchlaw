@@ -50,8 +50,6 @@
 	\@outlinefalse
 \newif\if@paratoc
 	\@paratocfalse
-\newif\if@longtoc
-	\@longtocfalse
 \newif\if@precis
 	\@precisfalse
 \newif\if@british
@@ -66,6 +64,8 @@
 	\@paranametrue
 \newif\if@indexparagraphs
 	\@indexparagraphstrue
+\newif\if@special@chapter
+	\@special@chapterfalse
 
 %	Define options for paper size <a4paper>, <a5paper> & <a6paper>
 \DeclareOptionX{a4paper}{
@@ -127,7 +127,6 @@
 	\@outlinetrue
 	\@summarytrue
 	\@paratoctrue
-	\@longtoctrue
 }
 
 %	Define options for <precis> document style
@@ -135,7 +134,6 @@
 	\@summarytrue
 	\@precistrue
 	\@paratoctrue
-	\@longtoctrue
 }
 
 %	Define an option to change line spacing
@@ -151,14 +149,14 @@
 %	TODO » Reprendre + documenter
 \DeclareOptionX{didactic}{
 	\@didactictrue
-	\@articletrue
+%	\@articletrue
 	\@tenpointstrue
 	\@twosidefalse
 	\PassOptionsToClass{10pt,article,twocolumn,oneside}{memoir}
 }
 \DeclareOptionX{didactic+}{
 	\@didactictrue
-	\@articletrue
+%	\@articletrue
 	\@stockavtrue
 	\@tenpointstrue
 	\@twosidefalse
@@ -699,7 +697,6 @@
 
 %	Create a style for MA / MPhil theses
 \newcommand{\maketitleMemoir}{%
-	\frontmatter*% Use arabic page numbers throughout
 	% Send out warnings on empty fields
 	\if\expandafter\@empty\csname @title@\languagename\endcsname\relax
 		\@latex@warning@no@line{No \noexpand\title given}\fi
@@ -738,11 +735,41 @@
 		\reset@twocolumns%
 		\printtitle%
 		\cleartooddpage
-		\restore@twocolumns%
 		\printtitle%
+		\restore@twocolumns%
 		\cleartooddpage\par
 	\egroup
 	\let\mainmatter=\@smemmain% == \let\mainmater=\mainmatter*
+}
+
+%	Define a default style for lecture notes, handbooks, etx.
+\newcommand{\maketitleDidactic}{%
+	% Send out warnings on empty fields
+	\if\expandafter\@empty\csname @title@\languagename\endcsname\relax
+		\@latex@warning@no@line{No \noexpand\title given}\fi
+	% Create the title page
+	\newcommand{\printtitle}{
+		\reset@twocolumns%
+		\normalize@fontsize%
+		\vspace*{3\baselineskip}
+		{\large\scshape\raggedright\csname @title@\languagename\endcsname\par}%
+		\vspace{\baselineskip}%
+		{\if\@empty\csname @subtitle@\languagename\endcsname\relax\else
+		 \large\raggedright\csname @subtitle@\languagename\endcsname\fi\par}%
+		\vspace{2\baselineskip}
+		{\if\@empty\@author\else\@author\par%
+		 \if\@empty\@email\else\emailname\@email\fi\fi\par}%
+		\vspace{\baselineskip}
+		{\@date\par}}
+	% Print the title page
+	\frontmatter
+	\bgroup
+		\pagestyle{empty}
+		\reset@twocolumns%
+		\printtitle%
+		\restore@twocolumns%
+		\cleartooddpage\par
+	\egroup
 }
 
 %	Define a default style for articles and other short documents
@@ -808,7 +835,9 @@
 }
 
 %	Set the default styles to <Book> or <Article>
-\if@article\titlepagestyle{Article}\else\titlepagestyle{Book}\fi
+\if@article\titlepagestyle{Article}\else
+\if@didactic\titlepagestyle{Didactic}\else
+\titlepagestyle{Book}\fi\fi
 
 %	#####	HEADERS & FOOTERS	#####
 
@@ -1129,6 +1158,7 @@
 	\else							\Roman{chapter}%
 	\fi\fi}
 \renewcommand{\afterchapternum}{~:\par\nobreak\vskip\midchapskip}
+\newcommand{\afterxchapternum}{~:\\[\midchapskip]}% Used by \xchapter. No \par
 \setlength{\beforechapskip}{\baselinestretch\addto@Large}
 \addtolength{\beforechapskip}{\baselineskip}
 \setlength{\midchapskip}{\baselinestretch\addto@Large}
@@ -1143,6 +1173,31 @@
 \renewcommand{\cftchapterfont}{\bfseries}
 \renewcommand*{\cftchapterpagefont}{\normalsize}
 \setlength{\cftbeforechapterskip}{\baselineskip}
+
+%	Ajouter un hook dans la commande \@chapter
+% Utilisé par \xchapter (pour simuler un chapitre du \frontmatter, i.e. avec toutes les informations sauf le numéro du chapitre)
+\patchcmd{\@chapter}
+  {\ifm@m@And}
+  {\if@special@chapter\m@m@Andfalse\fi%
+   \ifm@m@And}
+  {}
+  {\typeout{WARNING! Patching \noexpand\@chapter failed!}}
+
+\newcommand{\xchapter}[1][\@empty]{%
+	\def\tmpch@ptoc{#1}% Capture first optional argument (ToC-name)
+	\@ifnextchar[{\@xchapter}{\@xchapter[]}}
+\def\@xchapter[#1]#2#3{%
+	\@special@chaptertrue
+	\def\ch@phead{% If #1 (header-name) undefined, use #3 (regular title)
+		\ifx\relax#1\relax#3\else#1\fi}
+	\def\ch@ptoc{%
+		#2\ifx\relax#2\relax\else\ifx\relax#3\relax\else\cftchapteraftersnum\cftchapteraftersnumb~\fi\fi#3}% If both #2 and #3 are defined, add ToC separators between them
+	\if\@empty\tmpch@ptoc\relax\else\def\ch@ptoc{\tmpch@ptoc}\fi
+	\def\ch@pname{%
+		\ifx\relax#2\relax\else#2\afterxchapternum\fi#3}
+	\chapter[\ch@ptoc][\ch@phead]{\ch@pname}
+	\@special@chapterfalse
+}
 
 %	Définir le mode de numérotation des sections et paragraphes
 \if@article
@@ -1201,17 +1256,17 @@
 \renewcommand*{\cftsectionaftersnum}{.}
 \renewcommand*{\cftsectionaftersnumb}{\mdseries}
 \renewcommand*{\cftsectionfont}{\bfseries}
-\setlength{\cftbeforesectionskip}{\if@longtoc\baselineskip\else0pt\fi}
+\setlength{\cftbeforesectionskip}{\if@paratoc\baselineskip\else0pt\fi}
 \renewcommand*{\cftsubsectionpresnum}{\space}
 \renewcommand*{\cftsubsectionaftersnum}{.}
 \renewcommand*{\cftsubsectionaftersnumb}{\mdseries}
 \renewcommand*{\cftsubsectionfont}{\footnotesize\bfseries}
-\setlength{\cftbeforesubsectionskip}{\if@longtoc\baselineskip\else0pt\fi}
+\setlength{\cftbeforesubsectionskip}{\if@paratoc\baselineskip\else0pt\fi}
 \renewcommand*{\cftsubsubsectionpresnum}{\space}
 \renewcommand*{\cftsubsubsectionaftersnum}{.}
 \renewcommand*{\cftsubsubsectionaftersnumb}{\mdseries}
 \renewcommand*{\cftsubsubsectionfont}{\footnotesize\bfseries}
-\setlength{\cftbeforesubsubsectionskip}{\if@longtoc\baselineskip\else0pt\fi}
+\setlength{\cftbeforesubsubsectionskip}{\if@paratoc\baselineskip\else0pt\fi}
 
 %	Définir le style des paragraphes
 \setparaheadstyle{\scshape}
@@ -1316,6 +1371,7 @@
 \newcommand{\noprecistoc}{\@precisfalse}
 
 %	Créer une commande \para pour faire des paragraphes numérotés
+%	TODO » Supprimer le \precis, et utiliser plutôt \chapterprecis et \precistoctext (memoir)
 \newcommand{\para}[1][]{%
 	\refstepcounter{para}%
 	\refstepcounter{precis}%
@@ -1506,7 +1562,8 @@
 		\let\sanitize\@gobble%
 		\addtocontents{toc}{%
 			\ifx\relax\BODY\relax\else%
-				\protect\nopagebreak\vspace{\baselineskip}%
+				\vskip-\lastskip\vskip\baselineskip%
+				\protect\nopagebreak%
 				\textsc{\summaryname}: \BODY\par\fi}%
 	\egroup\fi%
 	\list{}{\vskip\baselineskip%
@@ -1660,16 +1717,16 @@
 %\ifnum\value{lastpara}>0
 	\if@indexparagraphs
 		\renewcommand{\preindexhook}{%
-			Les numéros renvoient aux paragraphes et non aux pages.\vspace{2\baselineskip}}
+			Les numéros renvoient aux paragraphes et non aux pages.\par\vspace{2\baselineskip}}
 		\newcommand{\paraindex}[1]{\specialindex{\jobname}{para}{#1}}
 		\newcommand{\bibindex}[1]{\specialindex{\jobname-bib}{para}{#1}}
 		\newcommand{\lawindex}[1]{\specialindex{\jobname-law}{para}{#1}}
 		\AtBeginDocument{\let\index\paraindex}
-	%\fi
 	\else
 		\newcommand{\bibindex}[1]{\index{\jobname-bib}{#1}}
 		\newcommand{\lawindex}[1]{\index{\jobname-law}{#1}}
-\fi
+	\fi
+%\fi
 
 %	#####	CRÉATION DES BIBLIOGRAPHIES (BIBLATEX)	#####
 
@@ -1685,19 +1742,27 @@
 %	- Sorting des postnotes (??)
 %	  Break au premier non-integer pour le classement.
 %	- Ajouter "art." avant. ± les "anc." des prenotes (ou CNap directement).
-%	- Pour les types autres que législation, mettre ça dan sli'ndex par auteur
+%	- Pour les types autres que législation, mettre ça dans l'index par auteur
 %	  Cf. index:name:title dans biblatex.def
-\DeclareIndexFieldFormat{indextitle}{%
-	\usebibmacro{index:entry}%
-		{\lawindex}
-		{\mkbibindexfield{\thefield{indexsorttitle}}{#1}%
-		 \mkbibindexsubentry{\thefield{postnote}}{\textbf{\thefield{postnote}}}}}
+% \DeclareIndexFieldFormat{indextitle}{%
+% 	\usebibmacro{index:entry}%
+% 		{\lawindex}
+% 		{\mkbibindexfield{\thefield{indexsorttitle}}{#1}%
+% 		 \mkbibindexsubentry{\thefield{postnote}}{\textbf{\thefield{postnote}}}}}
+% \DeclareIndexFieldFormat{indextitle}{%
+% 	\usebibmacro{index:entry}%
+% 		{\lawindex}
+% 		{%\mkbibindexfield{\thefield{labelname}!}{\thefield{labelname}}%
+% 		 \mkbibindexsubentry{\thefield{indexsorttitle}}{#1}%
+% 		 \mkbibindexsubentry{\thefield{postnote}}{\textbf{\thefield{postnote}}}}}
 
-\renewbibmacro{bibindex}{\ifbibindex{\indexnames{labelname}}{}}
+\renewbibmacro{bibindex}{\ifbibindex{\indexnames{labelname}}{}}% TODO » Sert apparemment à supprimer le bibindex (qui indexe les entrées de la bib finale) >> Turn it off without redefining
+
 \renewbibmacro{citeindex}{%
 	\ifciteindex
 		{\indexnames{labelname}%
-		 \indexfield{indextitle}}
+		% \indexfield{indextitle}%
+		}
 		{}}
 
 %	#####	CRÉATION DU SYSTÈME D'ABRÉVIATIONS (BIBLATEX)	#####
@@ -1734,12 +1799,8 @@
 	\def\@division{#1}%
 	\refstepcounter{division}%
 	\setcounter{section}{0}
-	\if@didactic
-		\setcounter{page}{1}%
-	\else
-		{\Large\scshape\raggedright\thedivision. \@division}
-		\par\addvspace{\baselineskip}
-	\fi
+	{\Large\scshape\raggedright\thedivision. \@division}
+	 \par\addvspace{\baselineskip}
 }
 \renewcommand{\thedivision}{\arabic{division}}
 \newcommand{\afterdivnum}{.~}
@@ -1854,8 +1915,7 @@
 	\needspace{\baselineskip}
 	\addvspace{\baselineskip}
 	{\noindent\centering#1\par}%
-	\addvspace{\baselineskip}%
-	\if@longtoc\addtocontents{toc}{\vspace{\baselineskip}}\fi}
+	\addvspace{\baselineskip}}
 
 %	#####	GESTION DU MODE DRAFT	#####
 

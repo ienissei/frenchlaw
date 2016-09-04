@@ -108,7 +108,7 @@
 \DeclareFieldFormat[inbook,thesis]{title}{\mkbibemph{#1}}
 \DeclareFieldFormat[commentary]{title}{\mkbibquote{#1}}
 \DeclareFieldFormat[shortjournal]{title}{\mkbibemph{#1}}
-\DeclareFieldFormat[legislation]{title}{#1\isdot}
+\DeclareFieldFormat[legislation,reference]{title}{#1\isdot}% Utilité?
 
 % Define various numbering fields
 \DeclareFieldFormat{number}{\bibstring{number}\addnbthinspace#1}%
@@ -328,6 +328,8 @@
 	\usebibmacro{addendum+pubstate}%
 	\setunit{\bibpagerefpunct}\newblock
 	\usebibmacro{pageref}%
+	\newunit\newblock
+	\thefield{postnote}%
 	\newunit\newblock
 	\iftoggle{bbx:related}
 		{\usebibmacro{related:init}%
