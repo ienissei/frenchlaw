@@ -45,7 +45,7 @@
 
 %	Execute bibliography options
 \ExecuteBibliographyOptions{isbn,url,doi,eprint,related,dashed,%
-	sorting=nymdt,useeditor=false,usetranslator=false,language=auto}
+	sorting=nymdt,useeditor=false,usetranslator=false,maxnames=5,language=auto}
 \ExecuteBibliographyOptions[reference]{useauthor=false}
 
 % #####	SORTING	#####
@@ -105,16 +105,17 @@
 % #####	FIELD FORMATS	#####
 
 %	Define {title} fields
-\DeclareFieldFormat[inbook,thesis]{title}{\mkbibemph{#1}}
-\DeclareFieldFormat[commentary]{title}{\mkbibquote{#1}}
+\DeclareFieldFormat[reference]{title}{\mkbibemph{#1}\isdot}
+\DeclareFieldFormat[inreference]{title}{\biblcstring[\emph]{verbo}~#1\isdot}
+\DeclareFieldFormat[inbook,thesis]{title}{\mkbibemph{#1}\isdot}
+\DeclareFieldFormat[commentary]{title}{\mkbibquote{#1}\isdot}
+\DeclareFieldFormat[legislation]{title}{#1\isdot}
 \DeclareFieldFormat[shortjournal]{title}{\mkbibemph{#1}}
-\DeclareFieldFormat[legislation,reference]{title}{#1\isdot}% Utilité?
 
 % Define various numbering fields
 \DeclareFieldFormat{number}{\bibstring{number}\addnbthinspace#1}%
 \DeclareFieldFormat[article,periodical]{number}{\bibstring{number}\addnbthinspace#1}
 \DeclareFieldFormat[article,periodical]{volume}{\bibstring{volume}~#1}
-\DeclareFieldFormat[inreference]{title}{\mkbibemph{\MakeLowercase{\bibstring{verbo}}}~#1}
 
 %	TODO » Delete
 \DeclareFieldFormat[customa]{title}{\mkbibemph{#1}}
@@ -214,29 +215,34 @@
 %	Abbreviate first names that start with a sequence of consonants (Philip > Ph.)
 % Thanks @Yves-de-Saint-Pern
 \DeclareStyleSourcemap{%
-  \maps[datatype=bibtex]{%
-    \map{%
-      % Author Field
-      \step[fieldsource=author,%
-      	match={\regexp{\b(Chr|Ch|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))(\S*,)}},%
-      	replace={\regexp{\{$1\}$3}}]% Protect last name in "First Last" fields
-      \step[fieldsource=author,%
-      	match={\regexp{([^,]\s)\b(Chr|Ch|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))}},%
-      	replace={\regexp{$1\{$2\}}}]% Protect last name in "Last, First" fields
-      \step[fieldsource=author,%
-      	match={\regexp{\b(Chr|Ch|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))([^\}])}},%
-      	replace={\regexp{\{\\relax\{\}$1\}$3}}]% Insert \relax afterwards
-      % Editor Field
-      \step[fieldsource=editor,%
-      	match={\regexp{\b(Chr|Ch|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))(\S*,)}},%
-      	replace={\regexp{\{$1\}$3}}]% Protect last name in "First Last" fields
-      \step[fieldsource=editor,%
-      	match={\regexp{([^,]\s)\b(Chr|Ch|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))}},%
-      	replace={\regexp{$1\{$2\}}}]% Protect last name in "Last, First" fields
-      \step[fieldsource=editor,%
-      	match={\regexp{\b(Chr|Ch|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))([^\}])}},%
-      	replace={\regexp{\{\\relax\{\}$1\}$3}}]% Insert \relax afterwards
-}}}%
+	\maps[datatype=bibtex]{%
+		\map{%
+			% Author Field
+			\step[fieldsource=author,%
+				match={\regexp{\b(Chr|Ch|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))(\S*,)}},%
+				replace={\regexp{\{$1\}$3}}]% Protect last name in "First Last" fields
+			\step[fieldsource=author,%
+				match={\regexp{([^,]\s)\b(Chr|Ch|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))}},%
+				replace={\regexp{$1\{$2\}}}]% Protect last name in "Last, First" fields
+			\step[fieldsource=author,%
+				match={\regexp{\b(Chr|Ch|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))([^\}])}},%
+				replace={\regexp{\{\\relax\{\}$1\}$3}}]% Insert \relax afterwards
+			% Editor Field
+			\step[fieldsource=editor,%
+				match={\regexp{\b(Chr|Ch|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))(\S*,)}},%
+				replace={\regexp{\{$1\}$3}}]% Protect last name in "First Last" fields
+			\step[fieldsource=editor,%
+				match={\regexp{([^,]\s)\b(Chr|Ch|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))}},%
+				replace={\regexp{$1\{$2\}}}]% Protect last name in "Last, First" fields
+			\step[fieldsource=editor,%
+				match={\regexp{\b(Chr|Ch|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))([^\}])}},%
+				replace={\regexp{\{\\relax\{\}$1\}$3}}]% Insert \relax afterwards
+		}%
+		\map[overwrite=false]{%
+			\pertype{mvbook}
+			\step[fieldset=editortype, fieldvalue={compiler}]
+		}
+}}%
 
 
 % #####	BIBLIOGRAPHY DRIVERS	#####
@@ -305,12 +311,19 @@
 	\setunit{\addcomma\addspace}\newblock
 	\usebibmacro{byauthor}%
 	\newunit\newblock
+	\iffieldequalstr{editortype}{compiler}
+		{\ifnamesequal{author}{editor}
+			{\clearname{editor}}
+			{\usebibmacro{bycompiler}}}% Print mvbook editor
+		{}%
+	\newunit\newblock
 	\usebibmacro{byeditor+others}%
 	\newunit\newblock
 	\printfield{edition}%
 	\newunit\newblock
 	\printfield{note}%
 	\newunit\newblock
+	\iffieldxref{endyear}{\clearfield{endyear}}{}% If mvbook defines an end date and book doesn't, clear it.
 	\usebibmacro{publisher+location+date}%
 	\setunit{\addspace}
 	\usebibmacro{series+number}%
@@ -349,7 +362,7 @@
 	\setunit{\addcomma\addspace}\newblock
 	\usebibmacro{byauthor}%
 	\newunit\newblock
-	\usebibmacro{editor-bis}%
+	\usebibmacro{bycompiler}%
 	\newunit\newblock
 	\usebibmacro{bytranslator+others}%
 	\newunit\newblock
@@ -395,7 +408,7 @@
 	\setunit{\addcomma\addspace}\newblock
 	\usebibmacro{byauthor}%
 	\newunit\newblock
-	\usebibmacro{editor-bis}%
+	\usebibmacro{bycompiler}%
 	\newunit\newblock
 	\usebibmacro{bytranslator+others}%
 	\newunit\newblock
@@ -442,7 +455,7 @@
 	\setunit{\addcomma\addspace}\newblock
 	\usebibmacro{byauthor}%
 	\newunit\newblock
-	\usebibmacro{editor-bis}%
+	\usebibmacro{bycompiler}%
 	\newunit\newblock
 	\usebibmacro{bytranslator+others}%
 	\newunit\newblock
@@ -550,7 +563,7 @@
 			 \setunit{\addcomma\addspace}\newblock}%
 		 \usebibmacro{maintitle+booktitle}%
 		 \newunit\newblock
-		 \usebibmacro{editor-bis}%
+		 \usebibmacro{bycompiler}%
 		 \newunit\newblock
 		 \usebibmacro{bytranslator+others}%
 		 \newunit\newblock
@@ -608,7 +621,7 @@
 		 \newunit\newblock
 		 \usebibmacro{event+venue+date}%
 		 \newunit\newblock
-		 \usebibmacro{editor-bis}%
+		 \usebibmacro{bycompiler}%
 		 \newunit\newblock
 		 \usebibmacro{bytranslator+others}%
 		 \newunit\newblock
@@ -669,7 +682,7 @@
 		 \setunit{\addcomma\addspace}\newblock}%
 	\usebibmacro{maintitle+booktitle}%
 	\newunit\newblock
-	\usebibmacro{editor-bis}%
+	\usebibmacro{bycompiler}%
 	\newunit\newblock
 	\usebibmacro{bytranslator+others}%
 	\newunit\newblock
@@ -943,7 +956,7 @@
 	\setunit{\addspace}}
 
 %	Create a macro for collection/proceedings editors
-\newbibmacro*{editor-bis}{%
+\newbibmacro*{bycompiler}{%
 	\ifnameundef{editor}
 		{}
 		{\printnames[labelname]{editor}%

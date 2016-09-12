@@ -71,15 +71,14 @@
 % Redéfinir \bibinitdelim pour prendre deux arguments et ne rien en faire
 \renewcommand{\bibinitdelim}[2]{\relax}
 
-% Utilité (?)
+% Utilité -- \isdot en cas de {shorttitle}, mais à nettoyer
 \DeclareFieldFormat{citetitle}{\mkbibemph{#1}\isdot}%
-\DeclareFieldFormat[book,inbook,collection,proceedings,thesis]{citetitle}{\mkbibemph{#1}}%
-\DeclareFieldFormat[article,incollection,inproceedings,patent,unpublished]{citetitle}{\mkbibquote{#1}}%
-\DeclareFieldFormat[suppbook,suppcollection,suppperiodical]{citetitle}{#1}%
+\DeclareFieldFormat[book,reference,inbook,collection,proceedings,thesis]{citetitle}{\mkbibemph{#1}\isdot}%
+\DeclareFieldFormat[article,incollection,inproceedings,patent,unpublished]{citetitle}{\mkbibquote{#1}\isdot}%
+\DeclareFieldFormat[suppbook,suppcollection,suppperiodical]{citetitle}{#1\isdot}%
 % Format des abréviations: citetitle = forme longue, citeshorthand = dans le texte (point ajouté dynamiquement), shorthandlist = dans la liste des abréviations (ajouter un point).
+\DeclareFieldFormat[legislation]{citetitle}{#1\isdot}%
 
-% Adde pour tous les shorttitle (dans le fichier .bbx) des \isdot à la fin. Pas en alias de title qui n'en a pas besoin. -- Adde, sur le labeltitle si besoin. Ou sur tous les types de titres pour ne pas s'emmerder. (?)
-\DeclareFieldFormat[book,reference,legislation]{shorttitle}{#1\isdot}
 
 \DeclareFieldFormat{postnote}{#1\isdot}
 
@@ -94,6 +93,8 @@
 \DeclareFieldAlias{shorttitle}{citetitle}
 \DeclareFieldAlias{shorthand}{citetitle}
 \DeclareFieldAlias{labeltitle}{citetitle}
+
+\DeclareFieldFormat[legislation]{shorttitle}{#1\isdot}%
 
 \newbibmacro*{cite:init}{%
 	% Backref to all citation keys (TODO » Rename to backindex)
@@ -117,7 +118,7 @@
 		{\ifthenelse{	\ifentrytype{jurisdiction}\OR
 						\ifentrytype{legislation} }
 			{\usebibmacro{cite:legal}}
-			{\ifloccit
+			{\ifciteibid
 				{\usebibmacro{cite:ibid}}
 				{\iffieldequals{namehash}{\cbx@lasthash}
 					{}% \unspace, mais causait un problème avec la prénote
@@ -181,7 +182,7 @@
 		{\ifthenelse{	\ifentrytype{jurisdiction}\OR
 						\ifentrytype{legislation} }
 			{\usebibmacro{cite:legal:reverse}}
-			{\ifloccit
+			{\ifciteibid
 				{\usebibmacro{cite:ibid}}
 				{\ifnameundef{shortauthor}
 					{\ifopcit

@@ -145,38 +145,42 @@
 %	Créer les commandes pour afficher les siècles
 % Usage: \siecle{1}, \siecles[et]{1}{2}
 %	TODO » Rajouter les messages d'erreur prévus + configurer pour l'anglais
-\newcounter{century}
-\newcommand{\century}[1]{%
-	\ifboolexpr{test {\ifnumcomp{#1}{=}{0}}}
+
+\usepackage{engord}% >> Mieux que Fmtcount pour les ordinaux (fonctionne en ToC)
+
+\newcommand{\century}[2][]{% Having a dummy (optional) argument fixes the expansion of \xdot (in \AD and \BC) when used in ToC methods. No idea why. % \ifboolexpr also used for \xdot expansion in all contexts (it scans for next character, \if...\fi don't work).
+	\ifboolexpr{test {\ifnumcomp{#2}{=}{0}}}
 		{ERREUR}
-		{\ifnum#1>0\setcounter{century}{#1}\else\setcounter{century}{-#1}\fi%
-		\iflanguage{french}
-			{\textsc{\roman{century}}%
-			 \ifnum\value{century}=1			\er\else\e\fi\unskip~\centuryname}
-			{\FCordinal{century}~\centuryname}%
-		 \ifboolexpr{	test {\ifnumcomp{#1}{>}{0}}}{}{\space\BC}}}
-\newcommand{\centuries}[3][\@empty]{%
-	\ifboolexpr{	(test {\ifnumcomp{#2}{=}{0}} or test {\ifnumcomp{#3}{=}{0}})%
-				 or (test {\ifnumcomp{#2}{>}{0}} and test {\ifnumcomp{#3}{<}{0}})%
-				 or test {\ifnumcomp{#2}{>}{#3}}}
+		{\ifnum\numexpr#2>0\relax%
+			\iflanguage{french}
+				{\textsc{\romannumeral#2}%
+				 \ifnum\numexpr#2=1			\er\else\e\fi~\centuryname}
+				{\engordnumber{#2}~\centuryname}%
+		 \else%
+			\iflanguage{french}
+				{\textsc{\romannumeral-#2}%
+				 \ifnum\numexpr#2=-1		\er\else\e\fi~\centuryname}
+				{\engordnumber{-#2}~\centuryname}%
+		 \fi}%
+		 \ifboolexpr{	test {\ifnumcomp{#2}{>}{0}}}{}{\space\BC}}
+
+\newcommand{\centuries}[3][--]{%
+	\ifboolexpr{	(test {\ifnumcomp{#2}{=}{0}} or test {\ifnumcomp{#3}{=}{0}})
+				 or (test {\ifnumcomp{#2}{>}{0}} and test {\ifnumcomp{#3}{<}{0}})
+				 or (test {\ifnumcomp{#2}{>}{#3}})}%
 		{ERREUR}
-		{\ifboolexpr{	(test {\ifnumcomp{#2}{<}{0}} and test {\ifnumcomp{#3}{>}{0}}) }
-			{\century{#2}\ifx#1\@empty~-- \else~#1~\fi\century{#3}~\AD}
-			{\ifnum#2>0\setcounter{century}{#2}\else\setcounter{century}{-#2}\fi%
-			 \iflanguage{french}
-				{\textsc{\roman{century}}%
-				 \ifnum\value{century}=1			\er\else\e\fi}
-				{\FCordinal{century}}%
-			 \unskip\ifx#1\@empty--\else~#1~\fi%
-			 \ifnum#3>0\setcounter{century}{#3}\else\setcounter{century}{-#3}\fi%
-			 \iflanguage{french}
-				{\textsc{\roman{century}}%
-				 \ifnum\value{century}=1			\er\else\e\fi}
-				{\FCordinal{century}}%
-			 \ifboolexpr{	test{\ifnumcomp{#2+1}{=}{#3}}%
+		{\ifboolexpr{	test {\ifnumcomp{#2}{<}{0}} and test {\ifnumcomp{#3}{>}{0}} }
+			{\century{#2}~#1\space\century{#3}~\AD}
+			{\bgroup%
+			 \let\centuryname\unskip%
+			 \let\AD\unskip%
+			 \let\BC\unskip%
+			 \century{#2}\thinspace#1\thinspace\century{#3}%
+			 \egroup%
+			 \ifboolexpr{	test{\ifnumcomp{#2+1}{=}{#3}}
 						 or test {\ifnumcomp{#2}{=}{#3+1}}}
-				{\unskip~\centuriesname}
-				{\unskip~\centuriesname}%
+				{~\centuriesname}
+				{~\centuriesname}%
 			 \ifboolexpr{	test {\ifnumcomp{#2}{>}{0}}}{}{\space\BC}}}}
 
 

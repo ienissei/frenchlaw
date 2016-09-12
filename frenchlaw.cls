@@ -332,7 +332,7 @@
 \RequirePackage[greek,latin,english,british,french]{babel}
 \RequirePackage[autostyle=true]{csquotes}
 \DeclareQuoteAlias[american]{english}{british}% Use double quotes in British english
-\RequirePackage{fmtcount}% 	TODO » Ou autre?
+\RequirePackage{fmtcount}% 	TODO » Ou autre? {engord} pour l'anglais + babel FR
 \RequirePackage{fixltxhyph}
 
 %	TODO » Reprendre les documents pour intégrer le package + Renommer {frenchlaw-typo}
@@ -1570,7 +1570,7 @@
 			\let\makelabel\summarylabel%
 			\setlength{\itemsep}{\baselineskip}%
 			\setlength{\leftmargin}{2\parindent}}%
-	 \needspace{2\baselineskip}\item\BODY%
+	 \item\BODY% + \needspace{2\baselineskip} (?) [Semble inutile]
 	 \vskip\baselineskip\endlist}
 
 %	Créer un environnement <vitae> pour les CV (label dans la marge)
