@@ -106,7 +106,7 @@
 
 %	Define {title} fields
 \DeclareFieldFormat[reference]{title}{\mkbibemph{#1}\isdot}
-\DeclareFieldFormat[inreference]{title}{\biblcstring[\emph]{verbo}~#1\isdot}
+\DeclareFieldFormat[inreference]{title}{\biblcstring{\thefield{pagination}}#1\isdot}
 \DeclareFieldFormat[inbook,thesis]{title}{\mkbibemph{#1}\isdot}
 \DeclareFieldFormat[commentary]{title}{\mkbibquote{#1}\isdot}
 \DeclareFieldFormat[legislation]{title}{#1\isdot}
@@ -302,6 +302,8 @@
 %	Define a driver for <book> entries
 \DeclareBibliographyDriver{book}{%
 	\usebibmacro{bibindex}%
+	% Crossref Hook -- % TODO	» Replace with a set
+	\iffieldxref{endyear}{\clearfield{endyear}}{}% If mvbook defines an end date and book doesn't, clear it.
 	\usebibmacro{begentry}%
 	\usebibmacro{author/editor+others/translator+others}%
 	\setunit{\labelnamepunct}\newblock
@@ -323,7 +325,6 @@
 	\newunit\newblock
 	\printfield{note}%
 	\newunit\newblock
-	\iffieldxref{endyear}{\clearfield{endyear}}{}% If mvbook defines an end date and book doesn't, clear it.
 	\usebibmacro{publisher+location+date}%
 	\setunit{\addspace}
 	\usebibmacro{series+number}%
@@ -669,18 +670,13 @@
 	\usebibmacro{begentry}%
 	\usebibmacro{author/translator+others}%
 	\setunit{\labelnamepunct}\newblock
+	\usebibmacro{maintitle+booktitle}%
+	\setunit{\addcomma\addspace}\newblock
 	\usebibmacro{title}%
 	% \newunit
 	% \printlist{language}%
 	\setunit{\addcomma\addspace}\newblock
 	\usebibmacro{byauthor}%
-	\newunit\newblock
-	%\usebibmacro{in:}% No Crossref, no {in}
-	\ifnameundef{bookauthor}
-		{}
-	 	{\usebibmacro{bybookauthor}%
-		 \setunit{\addcomma\addspace}\newblock}%
-	\usebibmacro{maintitle+booktitle}%
 	\newunit\newblock
 	\usebibmacro{bycompiler}%
 	\newunit\newblock
@@ -722,12 +718,18 @@
 	\setunit{\addcomma\addspace}\newblock
 	\usebibmacro{byauthor}%
 	\newunit\newblock
+	\printfield{type}%
+	\newunit\newblock
+	\usebibmacro{byeditor+others}%
+	\newunit\newblock
+	\printfield{edition}%
+	\newunit\newblock
 	\printfield{note}%
 	\newunit\newblock
-	\printfield{type}%
-	\newunit
-	\usebibmacro{institution+location+date}%
-	\newunit
+	\iflistundef{publisher}
+		{\usebibmacro{institution+location+date}}
+		{\usebibmacro{publisher+location+date}}%
+	\newunit\newblock
 	\printfield{pagetotal}%
 	\setunit{\addcomma\addspace}\newblock
 	\usebibmacro{chapter+pages}%
@@ -976,16 +978,16 @@
 \newbibmacro*{maintitle+title}{%
 	\iffieldsequal{maintitle}{title}
 		{\clearfield{maintitle}%
-		  \clearfield{mainsubtitle}%
-		  \clearfield{maintitleaddon}}
+		 \clearfield{mainsubtitle}%
+		 \clearfield{maintitleaddon}}
 		{\usebibmacro{maintitle}}%
 	\usebibmacro{title}}
 
 \newbibmacro*{maintitle+booktitle}{%
 	\iffieldsequal{maintitle}{booktitle}
 		{\clearfield{maintitle}%
-		  \clearfield{mainsubtitle}%
-		  \clearfield{maintitleaddon}}
+		 \clearfield{mainsubtitle}%
+		 \clearfield{maintitleaddon}}
 		{\usebibmacro{maintitle}}%
 	\usebibmacro{booktitle}}
 
@@ -1085,7 +1087,7 @@
 \newbibmacro*{institution+location+date}{%
 	\printlist{location}%
 	\iflistundef{location}
-		{\setunit{\addcomma\space}}
+		{\setunit{\adddot\space}}
 		{\setunit{\addcolon\space}}%
 	\printlist{institution}%
 	\setunit*{\addcomma\space}%

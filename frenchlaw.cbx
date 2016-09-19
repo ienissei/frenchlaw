@@ -257,7 +257,9 @@
 			 \ifentrytype{thesis}
 			 	{\printfield{type}%
 				 \setunit{\addcomma\addspace}\newblock
-			 	 \usebibmacro{institution+location+date}}
+				 \iflistundef{publisher}
+					{\usebibmacro{institution+location+date}}
+					{\usebibmacro{publisher+location+date}}}
 			 	{}%
 			 \ifentrytype{misc}
 			 	{\printfield{howpublished}%
