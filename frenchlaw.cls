@@ -52,6 +52,8 @@
 	\@paratocfalse
 \newif\if@precis
 	\@precisfalse
+\newif\if@backindex
+	\@backindexfalse
 \newif\if@british
 	\@britishfalse
 \newif\if@english
@@ -134,6 +136,11 @@
 	\@summarytrue
 	\@precistrue
 	\@paratoctrue
+}
+
+%	Define options for <backindex> option
+\DeclareOptionX{backindex}{
+	\@backindextrue
 }
 
 %	Define an option to change line spacing
@@ -1174,7 +1181,7 @@
 \renewcommand*{\cftchapterpagefont}{\normalsize}
 \setlength{\cftbeforechapterskip}{\baselineskip}
 
-%	Ajouter un hook dans la commande \@chapter
+%	TODO » Clean-up. Ajouter un hook dans la commande \@chapter
 % Utilisé par \xchapter (pour simuler un chapitre du \frontmatter, i.e. avec toutes les informations sauf le numéro du chapitre)
 \patchcmd{\@chapter}
   {\ifm@m@And}
@@ -1196,6 +1203,9 @@
 	\def\ch@pname{%
 		\ifx\relax#2\relax\else#2\afterxchapternum\fi#3}
 	\chapter[\ch@ptoc][\ch@phead]{\ch@pname}
+	% Increase, then decrease chapter counter (to reset all sub-counters)
+	\refstepcounter{chapter}
+	\addtocounter{chapter}{-1}
 	\@special@chapterfalse
 }
 
@@ -1256,17 +1266,17 @@
 \renewcommand*{\cftsectionaftersnum}{.}
 \renewcommand*{\cftsectionaftersnumb}{\mdseries}
 \renewcommand*{\cftsectionfont}{\bfseries}
-\setlength{\cftbeforesectionskip}{\if@paratoc\baselineskip\else0pt\fi}
+\setlength{\cftbeforesectionskip}{0pt}
 \renewcommand*{\cftsubsectionpresnum}{\space}
 \renewcommand*{\cftsubsectionaftersnum}{.}
 \renewcommand*{\cftsubsectionaftersnumb}{\mdseries}
 \renewcommand*{\cftsubsectionfont}{\footnotesize\bfseries}
-\setlength{\cftbeforesubsectionskip}{\if@paratoc\baselineskip\else0pt\fi}
+\setlength{\cftbeforesubsectionskip}{0pt}
 \renewcommand*{\cftsubsubsectionpresnum}{\space}
 \renewcommand*{\cftsubsubsectionaftersnum}{.}
 \renewcommand*{\cftsubsubsectionaftersnumb}{\mdseries}
 \renewcommand*{\cftsubsubsectionfont}{\footnotesize\bfseries}
-\setlength{\cftbeforesubsubsectionskip}{\if@paratoc\baselineskip\else0pt\fi}
+\setlength{\cftbeforesubsubsectionskip}{0pt}
 
 %	Définir le style des paragraphes
 \setparaheadstyle{\scshape}
@@ -1326,7 +1336,7 @@
 \newcommand{\parastyle}{\normalsize\scshape}
 
 %	Créer des commandes pour paramétrer l'apparence dans la table des matières
-\newcommand{\cftparastyle}{}
+\newcommand{\cftparastyle}{\llap}
 \newcommand{\cftparanumstyle}{\bfseries}
 \newcommand{\cftparaaftersnum}{.\enskip}
 \newcommand{\cftparanumsep}{,~}
@@ -1377,6 +1387,7 @@
 	\refstepcounter{precis}%
 	{\paranumstyle\thepara\ifx\relax#1\relax\label{para:\thepara}\else\label{para:#1}\paranumsep\fi}%
 	\if@paraname%
+		\if@backindex\specialindex{\jobname-par}{para}{#1}\fi
 		\if@marginal%
 			\marginpar{\parastyle#1}%
 		\else%
@@ -1384,12 +1395,15 @@
 	\fi\fi%
 	\if@paratoc
 		\addtocontents{toc}{%
-			\ifnum\value{precis}>1\cftparasep\else%
+			\ifnum\value{precis}>1\unskip\cftparasep\else%
 				\protect\nopagebreak\vskip\baselineskip\par\fi%
-			\ifx\relax#1\relax\else
+			% TODO » \ifx...\fi désactivé TMP (pour vérifier les \para innommés)
+			%% Et suppr. le \ifx...\fi interne
+			%\ifx\relax#1\relax\else
 				\protect\noindent%
 				{\cftparastyle{\cftparanumstyle\thepara\cftparaaftersnum}
-					#1\cftparanumsep\cftparaleader\thepage\cftparaafterpnum}\par\fi}%
+					\ifx\relax#1\relax\else#1\cftparanumsep\fi\cftparaleader\thepage\cftparaafterpnum}\par\vskip\baselineskip%\fi
+			}%
 	\fi%
 	\@ifnextchar\par{\@gobblepar\relax}{\relax}}
 
@@ -1648,6 +1662,10 @@
 \makeindex
 \makeindex[\jobname-bib]
 \makeindex[\jobname-law]
+\if@backindex
+	\makeindex[\jobname-ref]
+	\makeindex[\jobname-par]
+\fi
 
 %	Définir le style des index
 \setlength{\indexcolsep}{1em}
