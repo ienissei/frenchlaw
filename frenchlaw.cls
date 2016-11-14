@@ -210,7 +210,7 @@
 
 %	Load the main dependencies: <memoir>, <fixltx2e>, <environ>
 \LoadClass{memoir}
-\RequirePackage{fixltx2e,environ}
+\RequirePackage{fixltx2e,environ,pdfpages}
 
 %	Deactivate incompatible options
 % Option <twocolumn> always defeats option <marginal>
@@ -1402,7 +1402,7 @@
 			%\ifx\relax#1\relax\else
 				\protect\noindent%
 				{\cftparastyle{\cftparanumstyle\thepara\cftparaaftersnum}
-					\ifx\relax#1\relax\else#1\cftparanumsep\fi\cftparaleader\thepage\cftparaafterpnum}\par\vskip\baselineskip%\fi
+					\ifx\relax#1\relax\else#1\cftparanumsep\fi\cftparaleader\thepage\cftparaafterpnum}\par%\fi
 			}%
 	\fi%
 	\@ifnextchar\par{\@gobblepar\relax}{\relax}}
@@ -1425,6 +1425,7 @@
 	\if@outline\bgroup%
 		\let\footnote\@gobble%
 		\let\sanitize\@gobble%
+		\setcounter{precis}{0}
 		\addtocontents{toc}{%
 			\ifx\relax\BODY\relax\else%
 				\vskip-\lastskip\vskip\baselineskip\BODY\par\fi}%
@@ -1467,6 +1468,9 @@
 	\counterwithout{figure}{chapter}
 	\counterwithout{table}{chapter}}
 
+%	Utiliser l'interligne standard pour les floats
+\edef\m@m@float@spacing{\custom@baselinestretch}
+
 %	Définir l'alignement des <floats> (centré)
 \setfloatadjustment{figure}{\centering}
 \setfloatadjustment{table}{\centering}
@@ -1497,7 +1501,7 @@
 \let\old@tabular=\tabular
 \let\old@endtabular=\endtabular
 \renewenvironment{tabular}[2][t]
-	{\old@tabular[#1]{#2}\toprule}
+	{\noindent\old@tabular[#1]{#2}\toprule}
 	{\bottomrule\old@endtabular}
 
 %	Définir le style de la légende
