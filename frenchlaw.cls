@@ -23,37 +23,45 @@
 %	Load <xkeyval>
 \RequirePackage{xkeyval}
 
-%	Define new switches for options
+%	GENERAL OPTION SWITCHES
+
 \newif\if@stockaiv
 	\@stockaivfalse
 \newif\if@stockav
 	\@stockavfalse
 \newif\if@stockavi
 	\@stockavifalse
-\newif\if@oneside
-	\@onesidefalse
 \newif\if@tenpoints
 	\@tenpointsfalse
 \newif\if@twelvepoints
 	\@twelvepointsfalse
-\newif\if@marginal
-	\@marginalfalse
+\newif\if@oneside							% Note: @twoside is already defined
+	\@onesidefalse
 \newif\if@draft
 	\@draftfalse
+\newif\if@marginal
+	\@marginalfalse
+
+%	SPECIAL OPTION SWITCHES
+
 \newif\if@article
 	\@articlefalse
 \newif\if@didactic
 	\@didacticfalse
+
+%	VARIOUS OPTION SWITCHES
+
 \newif\if@summary
 	\@summaryfalse
 \newif\if@outline
 	\@outlinefalse
-\newif\if@paratoc
-	\@paratocfalse
-\newif\if@precis
+\newif\if@precis							% Delete or rewrite
 	\@precisfalse
 \newif\if@backindex
 	\@backindexfalse
+
+%	LANGUAGE OPTION SWITCHES
+
 \newif\if@british
 	\@britishfalse
 \newif\if@english
@@ -61,13 +69,18 @@
 \newif\if@french
 	\@frenchfalse
 
-%	Define command-activated switches
+%	COMMAND ACTIVATED SWITCHES
+
 \newif\if@paraname
 	\@paranametrue
+\newif\if@paratoc
+	\@paratocfalse
 \newif\if@indexparagraphs
 	\@indexparagraphstrue
-\newif\if@special@chapter
+\newif\if@special@chapter					% Delete. Redzfine \xchapter to \chapter*
 	\@special@chapterfalse
+
+%	GENERAL OPTIONS
 
 %	Define options for paper size <a4paper>, <a5paper> & <a6paper>
 \DeclareOptionX{a4paper}{
@@ -97,7 +110,7 @@
 }
 
 %	Define options for <oneside> & <twoside>
-%	Options <onecolumn> & <twocolumn> are passed to <memoir> without being redefined
+% Options <onecolumn> & <twocolumn> are passed to <memoir> without being redefined
 \DeclareOptionX{oneside}{
 	\@onesidetrue\@twosidefalse
 	\PassOptionsToClass{oneside}{memoir}
@@ -119,20 +132,49 @@
 	\PassOptionsToClass{draft}{memoir}
 }
 
-%	Define option for <marginal> document style
+%	Define option for <marginal> layout
 \DeclareOptionX{marginal}{
 	\@marginaltrue
 }
 
-%	Define options for <precis> document style
+%	Define an option to change line spacing
+\DeclareOptionX{linespacing}[1.1]{\def\custom@baselinestretch{#1}}
+
+%	SPECIAL OTIONS
+%	TODO » Ajouter les formats pour les thèses, les docs juridiques, etc.
+
+%	Define option for <article> document style
+\DeclareOptionX{article}{
+	\@articletrue
+	\PassOptionsToClass{article}{memoir}
+}
+
+%	Define option for <didactic> document style
+\DeclareOptionX{didactic}{
+	\@didactictrue
+	\@tenpointstrue
+	\@twosidefalse
+	\PassOptionsToClass{10pt,article,twocolumn,oneside}{memoir}
+}
+\DeclareOptionX{didactic+}{
+	\@didactictrue
+	\@stockavtrue
+	\@tenpointstrue
+	\@twosidefalse
+	\PassOptionsToClass{a5paper,10pt,article,oneside}{memoir}
+}
+
+%	VARIOUS OPTIONS
+
+%	Define options for <outline> document style
 \DeclareOptionX{outline}{
 	\@outlinetrue
 	\@summarytrue
 	\@paratoctrue
 }
 
-%	Define options for <precis> document style
-\DeclareOptionX{precis}{
+%	Define options for <summary> document style
+\DeclareOptionX{summary}{
 	\@summarytrue
 	\@precistrue
 	\@paratoctrue
@@ -143,32 +185,7 @@
 	\@backindextrue
 }
 
-%	Define an option to change line spacing
-\DeclareOptionX{linespacing}[1.1]{\def\custom@baselinestretch{#1}}
-
-%	Define options for <didactic>, ... document types
-%	TODO » Ajouter les formats de documents juridiques
-\DeclareOptionX{article}{
-	\@articletrue
-	\PassOptionsToClass{article}{memoir}
-}
-
-%	TODO » Reprendre + documenter
-\DeclareOptionX{didactic}{
-	\@didactictrue
-%	\@articletrue
-	\@tenpointstrue
-	\@twosidefalse
-	\PassOptionsToClass{10pt,article,twocolumn,oneside}{memoir}
-}
-\DeclareOptionX{didactic+}{
-	\@didactictrue
-%	\@articletrue
-	\@stockavtrue
-	\@tenpointstrue
-	\@twosidefalse
-	\PassOptionsToClass{a5paper,10pt,article,oneside}{memoir}
-}
+%	LANGUAGE OPTIONS
 
 %	TODO » Utilité des switch de langue ? On utilise languagename partout
 %	Define options to change the main language of the document
@@ -201,6 +218,8 @@
 \DeclareOptionX{german}{\PassOptionsToPackage{german}{babel}}
 \DeclareOptionX{spanish}{\PassOptionsToPackage{spanish}{babel}}
 
+%	IMPLEMENT OPTIONS, LOAD MEMOIR
+
 %	Pass all undefined options to <memoir>
 \DeclareOptionX*{\PassOptionsToClass{\CurrentOption}{memoir}}
 
@@ -217,6 +236,7 @@
 \if@marginal\if@twocolumn\@marginalfalse\fi\fi
 
 %	Set \baselinestretch to the ratio given in the option
+%	TODO » Voir si on peut faire des valeurs nommées "simple" = 0.83, "median" = 1.25, "double" = 1.66
 \def\baselinestretch{\custom@baselinestretch}\selectfont
 
 %	#####	PAGE LAYOUT	#####
@@ -327,7 +347,7 @@
 					{lmmono10}
 	\RequirePackage{microtype}
 \else
-	\AtEndOfClass{\usepackage[utf8]{inputenc}}
+	\RequirePackage[utf8]{inputenc}% OLD: \AtEndOfClass{\usepackage[utf8]{inputenc}} (?)
 	\RequirePackage[T1]{fontenc}
 	\RequirePackage{lmodern,libertine}
 	\renewcommand*{\ttdefault}{lmtt}
@@ -592,6 +612,13 @@
 \newcommand{\email}[1]{\gdef\@email{#1}}
 	\newcommand{\@email}{\@empty}
 
+\newcommand{\licensing}[1]{\long\gdef\@licensing{#1}}
+	\newcommand{\@licensing}{\@empty}
+\newcommand{\printcopyright}{%
+	\if\@empty\@licensing\relax\else
+		\cleartoverso\vspace*{25\baselineskip}%
+		\bgroup\parindent=0pt\@licensing\egroup\fi}
+
 %	TODO » Ajouter un mailto: crypté en UTF-8 (\@ifstar ?), mais uniquement si on crypte l'adresse
 \begingroup
 	\catcode`\@=\active
@@ -642,6 +669,7 @@
 		\restore@twocolumns%
 		\cleartooddpage
 		\printtitle%
+		\printcopyright%
 		\cleartooddpage
 	\egroup
 }
@@ -1616,7 +1644,7 @@
 
 %	Définir le style des épigraphes
 \epigraphfontsize{\normalsize}
-\setlength{\epigraphwidth}{.5\textwidth}
+\setlength{\epigraphwidth}{.6\textwidth}
 \setlength{\epigraphrule}{0pt}
 \setlength{\beforeepigraphskip}{0pt}
 \setlength{\afterepigraphskip}{2\baselineskip}
@@ -1624,12 +1652,12 @@
 %	TODO » Documenter les minipages, utiliser \footnotemark et \footnotetext pour des notes
 %	Définir le format de la citation de l'épigraphe
 \renewcommand{\@epitext}[1]{%
-	\begin{minipage*}{\epigraphwidth}\begin{\textflush}#1\end{\textflush}\end{minipage*}
+	\begin{minipage*}\epigraphwidth#1\end{minipage*}
 }
 
 %	Redéfinir le format de la source de l'épigraphe
 \renewcommand{\@episource}[1]{%
-	\begin{minipage*}{\epigraphwidth}\begin{\sourceflush}---~#1\end{\sourceflush}\end{minipage*}
+	\begin{minipage*}\epigraphwidth\begin{\sourceflush}---~#1\end{\sourceflush}\end{minipage*}
 }
 
 %	Redéfinir la commande des épigraphes simples

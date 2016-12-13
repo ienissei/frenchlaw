@@ -45,7 +45,7 @@
 
 %	Execute bibliography options
 \ExecuteBibliographyOptions{isbn,url,doi,eprint,related,dashed,%
-	sorting=nymdt,useeditor=false,usetranslator=false,maxnames=5,language=auto}
+	sorting=nymdt,useeditor=true,usetranslator=false,maxnames=5,language=auto}
 \ExecuteBibliographyOptions[reference]{useauthor=false}
 
 % #####	SORTING	#####
@@ -303,22 +303,18 @@
 %	Define a driver for <book> entries
 \DeclareBibliographyDriver{book}{%
 	\usebibmacro{bibindex}%
-	% Crossref Hook -- % TODO	» Replace with a set
+	% TODO	» Replace with biber (?)
 	\iffieldxref{endyear}{\clearfield{endyear}}{}% If mvbook defines an end date and book doesn't, clear it.
 	\usebibmacro{begentry}%
 	\usebibmacro{author/editor+others/translator+others}%
 	\setunit{\labelnamepunct}\newblock
 	\usebibmacro{maintitle+title}%
+	\setunit{\bibpagespunct}\newblock
+	\usebibmacro{volume+part}%
 	% \newunit%
 	% \printlist{language}%
 	\setunit{\addcomma\addspace}\newblock
 	\usebibmacro{byauthor}%
-	\newunit\newblock
-	\iffieldequalstr{editortype}{compiler}
-		{\ifnamesequal{author}{editor}
-			{\clearname{editor}}
-			{\usebibmacro{bycompiler}}}% Print mvbook editor
-		{}%
 	\newunit\newblock
 	\usebibmacro{byeditor+others}%
 	\newunit\newblock
@@ -331,8 +327,6 @@
 	\usebibmacro{series+number}%
 	\setunit{\bibpagespunct}\newblock
 	\usebibmacro{pagetotal/volumes}%
-	\setunit{\bibpagespunct}\newblock
-	\usebibmacro{volume+part}%
 	\newunit\newblock
 	\iftoggle{bbx:isbn}
 		{\printfield{isbn}}
@@ -364,7 +358,7 @@
 	\setunit{\addcomma\addspace}\newblock
 	\usebibmacro{byauthor}%
 	\newunit\newblock
-	\usebibmacro{bycompiler}%
+	\usebibmacro{compiler}%
 	\newunit\newblock
 	\usebibmacro{bytranslator+others}%
 	\newunit\newblock
@@ -410,7 +404,7 @@
 	\setunit{\addcomma\addspace}\newblock
 	\usebibmacro{byauthor}%
 	\newunit\newblock
-	\usebibmacro{bycompiler}%
+	\usebibmacro{compiler}%
 	\newunit\newblock
 	\usebibmacro{bytranslator+others}%
 	\newunit\newblock
@@ -457,7 +451,7 @@
 	\setunit{\addcomma\addspace}\newblock
 	\usebibmacro{byauthor}%
 	\newunit\newblock
-	\usebibmacro{bycompiler}%
+	\usebibmacro{compiler}%
 	\newunit\newblock
 	\usebibmacro{bytranslator+others}%
 	\newunit\newblock
@@ -565,7 +559,7 @@
 			 \setunit{\addcomma\addspace}\newblock}%
 		 \usebibmacro{maintitle+booktitle}%
 		 \newunit\newblock
-		 \usebibmacro{bycompiler}%
+		 \usebibmacro{compiler}%
 		 \newunit\newblock
 		 \usebibmacro{bytranslator+others}%
 		 \newunit\newblock
@@ -623,7 +617,7 @@
 		 \newunit\newblock
 		 \usebibmacro{event+venue+date}%
 		 \newunit\newblock
-		 \usebibmacro{bycompiler}%
+		 \usebibmacro{compiler}%
 		 \newunit\newblock
 		 \usebibmacro{bytranslator+others}%
 		 \newunit\newblock
@@ -679,7 +673,7 @@
 	\setunit{\addcomma\addspace}\newblock
 	\usebibmacro{byauthor}%
 	\newunit\newblock
-	\usebibmacro{bycompiler}%
+	\usebibmacro{compiler}%
 	\newunit\newblock
 	\usebibmacro{bytranslator+others}%
 	\newunit\newblock
@@ -959,7 +953,7 @@
 	\setunit{\addspace}}
 
 %	Create a macro for collection/proceedings editors
-\newbibmacro*{bycompiler}{%
+\newbibmacro*{compiler}{%
 	\ifnameundef{editor}
 		{}
 		{\printnames[labelname]{editor}%
@@ -969,6 +963,16 @@
 			{\printtext[parens]{\bibstring{compiler}}}%
 		 \clearname{editor}}}
 
+%	Create a macro for multi-volume book editors
+\newbibmacro*{bycompiler}{%
+	\iffieldequalstr{editortype}{compiler}
+		{\setunit{\addcomma\addspace}
+		 \printtext{\bibstring{bycompiler}}
+		 \setunit{\addspace}
+		 \printnames[labelname]{editor}%
+		 \clearname{editor}}
+		{}}
+
 %	Biblatex.def forgot to format the by-bookauthor properly
 \renewbibmacro*{bybookauthor}{%
 	\ifnamesequal{author}{bookauthor}
@@ -977,20 +981,32 @@
 
 %	Create macros for printing title elements
 \newbibmacro*{maintitle+title}{%
+	\usebibmacro{title}%
 	\iffieldsequal{maintitle}{title}
 		{\clearfield{maintitle}%
 		 \clearfield{mainsubtitle}%
 		 \clearfield{maintitleaddon}}
-		{\usebibmacro{maintitle}}%
-	\usebibmacro{title}}
+		{\iffieldundef{maintitle}
+			{}
+			{\setunit{\addcomma\addspace}
+			 \usebibmacro{in:}
+			 \ifnamesequal{author}{editor}
+				{\clearname{editor}}
+				{\usebibmacro{compiler}}% Print mvbook editor
+			 \setunit{\addcomma\addspace}
+			 \usebibmacro{maintitle}}}}
 
 \newbibmacro*{maintitle+booktitle}{%
+	\usebibmacro{booktitle}%
 	\iffieldsequal{maintitle}{booktitle}
 		{\clearfield{maintitle}%
 		 \clearfield{mainsubtitle}%
 		 \clearfield{maintitleaddon}}
-		{\usebibmacro{maintitle}}%
-	\usebibmacro{booktitle}}
+		{\iffieldundef{maintitle}
+			{}
+			{\setunit{\addcomma\addspace}
+			 \usebibmacro{in:}
+			 \usebibmacro{maintitle}}}}
 
 %	Create a macro for journal titles + citation in French and English
 \newbibmacro*{journal+issue+date}{%
@@ -1078,27 +1094,21 @@
 %	Create macros for publication information
 \newbibmacro*{publisher+location+date}{%
 	\printlist{location}%
-	\iflistundef{location}
-		{\setunit*{\addcomma\space}}
-		{\setunit*{\addcolon\space}}%
+	\setunit*{\addcomma\space}%
 	\printlist{publisher}%
 	\setunit*{\addcomma\space}%
 	\usebibmacro{date}}
 
 \newbibmacro*{institution+location+date}{%
 	\printlist{location}%
-	\iflistundef{location}
-		{\setunit{\adddot\space}}
-		{\setunit{\addcolon\space}}%
+	\setunit*{\addcomma\space}%
 	\printlist{institution}%
 	\setunit*{\addcomma\space}%
 	\usebibmacro{date}}
 
 \newbibmacro*{organization+location+date}{%
 	\printlist{location}%
-	\iflistundef{organization}
-		{\setunit*{\addcomma\space}}
-		{\setunit*{\addcolon\space}}%
+	\setunit*{\addcomma\space}%
 	\printlist{organization}%
 	\setunit*{\addcomma\space}%
 	\usebibmacro{date}}
@@ -1115,7 +1125,9 @@
 \newbibmacro*{pagetotal/volumes}{%
 	\iffieldundef{volumes}
 		{\printfield{pagetotal}}%
-		{\printfield{volumes}}%
+		{\iffieldundef{volume}
+			{\printfield{volumes}}
+			{\printfield{pagetotal}}}%
 }
 
 \newbibmacro*{volume+part}{%
@@ -1188,7 +1200,7 @@
 		{\usebibmacro{bbx:dashcheck}
 			{\bibnamedash}
 			{\printnames{editor}%
-			 \setunit{\addcomma\space}%
+			 \setunit{\addspace}%
 			 \usebibmacro{bbx:savehash}}%
 		 \usebibmacro{#1}%
 		 \clearname{editor}}
@@ -1204,7 +1216,7 @@
 		{\usebibmacro{bbx:dashcheck}
 			{\bibnamedash}
 			{\printnames{translator}%
-			 \setunit{\addcomma\space}%
+			 \setunit{\addspace}%
 			 \usebibmacro{bbx:savehash}}%
 		 \usebibmacro{#1}%
 		 \clearname{translator}}
