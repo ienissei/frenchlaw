@@ -990,10 +990,12 @@
 			{}
 			{\setunit{\addcomma\addspace}
 			 \usebibmacro{in:}
-			 \ifnamesequal{author}{editor}
-				{\clearname{editor}}
-				{\usebibmacro{compiler}}% Print mvbook editor
-			 \setunit{\addcomma\addspace}
+			 \iffieldundef{editor}
+			 	{}
+				{\ifnamesequal{author}{editor}
+			 		{\clearname{editor}}
+			 		{\usebibmacro{compiler}% Print mvbook editor
+			 		 \setunit{\addcomma\addspace}}}%
 			 \usebibmacro{maintitle}}}}
 
 \newbibmacro*{maintitle+booktitle}{%
