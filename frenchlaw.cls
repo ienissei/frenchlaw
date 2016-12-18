@@ -819,7 +819,7 @@
 		\normalize@fontsize%
 %		\vspace*{3\baselineskip}
 		{\Large\scshape\raggedright\csname @title@\languagename\endcsname\if\@empty\csname @subtitle@\languagename\endcsname\relax\else :\par\vspace{.25\baselineskip}\noindent\csname @subtitle@\languagename\endcsname\vspace{.25\baselineskip}\fi}\par%
-		{\if\@empty\@author\else\vspace{\baselineskip}\@author\par%
+		{\if\@empty\@author\else\@author\par%
 		 \if\@empty\@email\else\emailname\@email\fi\fi\par}%
 		\vspace{2\baselineskip}%
 		\restore@twocolumns%
@@ -1423,14 +1423,14 @@
 	\fi\fi%
 	\if@paratoc
 		\addtocontents{toc}{%
-			\ifnum\value{precis}>1\unskip\cftparasep\else%
-				\protect\nopagebreak\vskip\baselineskip\par\fi%
+			\ifnum\value{precis}>1\vskip-\lastskip\cftparasep\else%
+				\vskip\baselineskip\par\fi%
 			% TODO » \ifx...\fi désactivé TMP (pour vérifier les \para innommés)
 			%% Et suppr. le \ifx...\fi interne
 			%\ifx\relax#1\relax\else
 				\protect\noindent%
 				{\cftparastyle{\cftparanumstyle\thepara\cftparaaftersnum}
-					\ifx\relax#1\relax\else#1\cftparanumsep\fi\cftparaleader\thepage\cftparaafterpnum}\par%\fi
+					\ifx\relax#1\relax\else#1\cftparanumsep\fi\cftparaleader\thepage\cftparaafterpnum}\vskip\baselineskip\par%\fi
 			}%
 	\fi%
 	\@ifnextchar\par{\@gobblepar\relax}{\relax}}
