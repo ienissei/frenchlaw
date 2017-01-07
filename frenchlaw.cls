@@ -817,7 +817,8 @@
 		\cleardoublepage%
 		\reset@twocolumns%
 		\normalize@fontsize%
-%		\vspace*{3\baselineskip}
+		% Imposer une valeur (même \z@) pour maintenir l'alignement vertical:
+		\vspace*{0em}% Orig. = 3\baselineskip
 		{\Large\scshape\raggedright\csname @title@\languagename\endcsname\if\@empty\csname @subtitle@\languagename\endcsname\relax\else :\par\vspace{.25\baselineskip}\noindent\csname @subtitle@\languagename\endcsname\vspace{.25\baselineskip}\fi}\par%
 		{\if\@empty\@author\else\@author\par%
 		 \if\@empty\@email\else\emailname\@email\fi\fi\par}%
@@ -838,6 +839,7 @@
 		\cleardoublepage%
 		\reset@twocolumns%
 		\normalize@fontsize%
+		\vspace*{0em}
 		{\Large\scshape\raggedright\csname @title@\languagename\endcsname\if\@empty\csname @subtitle@\languagename\endcsname\relax\else :\par\noindent\csname @subtitle@\languagename\endcsname\fi}\par%
 		{\@author~---\space\@date\par}%
 		{\if\@empty\@email\else\emailname\@email\fi\par}%
@@ -985,19 +987,19 @@
 %	Create a command for short table of contents
 \newcommand{\shortcontents}[1][0]{%
 	\bgroup
-		\pagestyle{empty}
 		% Reset all necessary commands and remove page numbers
 		\renewcommand{\contentsname}{\shortcontentsname}
 		\cftpagenumbersoff{heading}
 		\cftpagenumbersoff{subheading}
 		\cftpagenumbersoff{chapter}
-		\setlength{\cftbeforechapterskip}{0pt}
+		\setlength{\cftbeforechapterskip}{.5\baselineskip}
 		% Save tocdepth counter
 		\newcounter{save@tocdepth}
 		\setcounter{save@tocdepth}{\value{tocdepth}}
 		\setcounter{tocdepth}{#1}
 		% Print the table of contents and restore tocdepth
 		\tableofcontents*
+		\thispagestyle{empty}
 		\setcounter{tocdepth}{\value{save@tocdepth}}
 		\clearpage
 	\egroup
@@ -1046,7 +1048,13 @@
 \cftsetindents{paragraph}{\toclabelwidth}{\tocnumwidth}
 \cftsetindents{subparagraph}{\toclabelwidth}{\tocnumwidth}
 
-%	S'assurer que la table des matières termine bien le dernier paragraphe
+
+%	Adjust vertical spacing in ToC
+% The first entry (book, part, heading, chapter) has an extra \baselineskip
+%	TODO » Adde + +.5\baselineskip sous le titre du Sommaire
+%		   Ou supprimer automatiquement les intro / ccl (mais pas les ch. prélim.), auquel cas on peut garder le \cftbefroechapterskip dans le sommaire
+\AtBeginDocument{\addtocontents{toc}{\vspace{-\baselineskip}}}
+% S'assurer que la table des matières termine bien le dernier paragraphe
 \AtEndDocument{\addtocontents{toc}{\par}}
 
 
