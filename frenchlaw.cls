@@ -820,7 +820,8 @@
 		% Imposer une valeur (même \z@) pour maintenir l'alignement vertical:
 		\vspace*{0em}% Orig. = 3\baselineskip
 		{\Large\scshape\raggedright\csname @title@\languagename\endcsname\if\@empty\csname @subtitle@\languagename\endcsname\relax\else :\par\vspace{.25\baselineskip}\noindent\csname @subtitle@\languagename\endcsname\vspace{.25\baselineskip}\fi}\par%
-		{\if\@empty\@author\else\@author\par%
+		{\if\@empty\@author\else\@author%
+		 \if\@empty\@institution\else, \@institution\fi\par%
 		 \if\@empty\@email\else\emailname\@email\fi\fi\par}%
 		\vspace{2\baselineskip}%
 		\restore@twocolumns%
@@ -941,13 +942,15 @@
 \makepagestyle{didactichead}
 	\makeheadrule{didactichead}{\textwidth}{.2ex}
 	\makeevenhead{didactichead}
-		{\textit{\csname @title@\languagename\endcsname}
+		{\textit{\csname @title@\languagename\endcsname%
+		 \ifx\relax\csname @subtitle@\languagename\endcsname\relax\else: \csname @subtitle@\languagename\endcsname\fi}%
 		 \ifnum\value{division}>0\relax\par\thedivision\afterdivnum\@division\fi%
 		 \vspace*{0pt}}
 		{}
 		{}
 	\makeoddhead{didactichead}
-		{\textit{\csname @title@\languagename\endcsname}%
+		{\textit{\csname @title@\languagename\endcsname%
+		 \ifx\relax\csname @subtitle@\languagename\endcsname\relax\else: \csname @subtitle@\languagename\endcsname\fi}%
 		 \ifnum\value{division}>0\relax\par\thedivision\afterdivnum\@division\fi%
 		 \vspace*{0pt}}
 		{}
@@ -1464,7 +1467,7 @@
 		\setcounter{precis}{0}
 		\addtocontents{toc}{%
 			\ifx\relax\BODY\relax\else%
-				\vskip-\lastskip\vskip\baselineskip\BODY\par\fi}%
+				\vskip-\lastskip\vskip\baselineskip\BODY\vskip\baselineskip\par\fi}%
 	\egroup\fi%
 	\BODY%
 	\@ifnextchar\par{\@gobblepar}{\relax}}
@@ -1618,7 +1621,7 @@
 			\ifx\relax\BODY\relax\else%
 				\vskip-\lastskip\vskip\baselineskip%
 				\protect\nopagebreak%
-				\textsc{\summaryname}: \BODY\par\fi}%
+				\textsc{\summaryname}: \BODY\vskip\baselineskip\par\fi}%
 	\egroup\fi%
 	\list{}{\vskip\baselineskip%
 			\let\makelabel\summarylabel%
