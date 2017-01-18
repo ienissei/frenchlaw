@@ -301,6 +301,7 @@
 
 %	Check & fix the layout
 %	TODO » Charger un hook pour les modifier avant \checkandfixthelayout
+%	TODO » Bug si on met la page en <landscape> => Résoudre (?)
 \checkandfixthelayout
 
 %	#####	UTILITIES	#####
@@ -860,16 +861,20 @@
 	\setlength{\parindent}{0em}
 	% Print the \maketitle
 	\bgroup
-	\thispagestyle{empty}
 	\reset@twocolumns%
 	\normalize@fontsize%
-	{\large\raggedright\@author}\par%
-	\vspace{\baselineskip}%
-	\@address\par
-	\phonename\@phone\par
-	\emailname\@email\par%\href{\@email}{\@email}
-	\vspace{\baselineskip}
+	\vspace*{-\baselineskip}
+	{\Large\raggedright\@author}\par%
+	% Use carriage returns instead of \par to stay in control of line length
+	% E.g. spaces can be adjusted with \kern or other commands to make lines even
+	\begin{minipage*}{\linewidth}
+		\@address\par
+		\phonename\@phone\par
+		\emailname\@email
+	\end{minipage*}\par%\href{\@email}{\@email}
 	\restore@twocolumns%
+	\vspace{\baselineskip}
+	\egroup
 }
 
 %	Set the default styles to <Book> or <Article>
@@ -1332,19 +1337,19 @@
 \if@twocolumn
 	% En mode <twocolumn>, ils sont insérés dans le corps du texte (inline)
 	\setparaheadstyle{\scshape\raggedright\addperiod}
-	\setlength{\afterparaskip}{-1em}
+	\setlength{\afterparaskip}{0em}
+	% Idem pour les sous-paragraphes (inline)
 	\setsubparaheadstyle{\itshape\raggedright\addperiod}
-	\setlength{\aftersubparaskip}{-1em}
+	\setlength{\aftersubparaskip}{0em}
 \else\if@marginal
 	% En mode <marginal>, ils sont placés dans une note marginale
 	\newcommand{\marginparahead}[1]{\marginpar{\itshape#1}}
 	\setparaheadstyle{\marginparahead}
-	\setlength{\afterparaskip}{-1em}
-	
-	% Définir les titres de sous-paragraphes (dans la marge)
+	\setlength{\afterparaskip}{0em}
+	% Idem pour les sous-paragraphes (dans la marge)
 	\newcommand{\marginsubparahead}[1]{\marginpar{\itshape#1}}
 	\setsubparaheadstyle{\marginsubparahead}
-	\setlength{\aftersubparaskip}{-1em}
+	\setlength{\aftersubparaskip}{0em}
 \fi\fi
 
 %	Définir lz style des paragraphes et sous-paragraphes dans la table des matières
