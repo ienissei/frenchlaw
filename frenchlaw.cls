@@ -46,6 +46,8 @@
 
 \newif\if@article
 	\@articlefalse
+\newif\if@CV
+	\@CVfalse
 \newif\if@didactic
 	\@didacticfalse
 
@@ -147,6 +149,14 @@
 \DeclareOptionX{article}{
 	\@articletrue
 	\PassOptionsToClass{article}{memoir}
+}
+
+%	Define option for <CV> document style
+\DeclareOptionX{vitae}{
+	\@CVtrue
+	\@marginaltrue
+	\@twosidefalse
+	\PassOptionsToClass{oneside}{memoir}
 }
 
 %	Define option for <didactic> document style
@@ -519,9 +529,9 @@
 \newlength{\marginwidth}
 \setlength{\marginwidth}{\dimexpr\stockwidth-\textwidth\relax}
 \if@marginal
-	\setmarginnotes{.07\marginwidth}{.45\marginwidth}{0pt}
+	\setmarginnotes{.05\marginwidth}{.5\marginwidth}{0pt}
 \else\if@twoside
-	\setmarginnotes{.07\marginwidth}{.40\marginwidth}{0pt}
+	\setmarginnotes{.05\marginwidth}{.4\marginwidth}{0pt}
 \else
 	\setmarginnotes{.05\marginwidth}{.35\marginwidth}{0pt}
 \fi\fi
@@ -541,6 +551,12 @@
 %	Create a command that forces the same line-spacing in notes as in the main block
 % This allows for better vertical alignment, but is not part of standard styles
 \newcommand{\notespacing}{\edef\m@m@footnote@spacing{\custom@baselinestretch}}
+
+%	Create a command for alternative emphasis of text (Bold ± Color).
+\DeclareTextFontCommand{\headline}{\bfseries\color{\@headlinecolor}}
+% Create color specification commands
+\newcommand{\headlinecolor}[1]{\gdef\@headlinecolor{#1}}
+	\newcommand{\@headlinecolor}{black}% E.g. "black", "darkgray"
 
 %	TODO » Ajouter ici les paramètres des listes et floats
 
@@ -867,7 +883,7 @@
 	{\Large\raggedright\@author}\par%
 	% Use carriage returns instead of \par to stay in control of line length
 	% E.g. spaces can be adjusted with \kern or other commands to make lines even
-	\begin{minipage*}{\linewidth}
+	\begin{minipage*}{.5\linewidth}
 		\@address\par
 		\phonename\@phone\par
 		\emailname\@email
@@ -879,8 +895,9 @@
 
 %	Set the default styles to <Book> or <Article>
 \if@article\titlepagestyle{Article}\else
+\if@CV\titlepagestyle{CV}\else
 \if@didactic\titlepagestyle{Didactic}\else
-\titlepagestyle{Book}\fi\fi
+\titlepagestyle{Book}\fi\fi\fi
 
 %	#####	HEADERS & FOOTERS	#####
 
@@ -896,7 +913,7 @@
 	\makeevenfoot{plain}{\if@twoside\thepage\fi}{\if@oneside\thepage\fi}{}
 	\makeoddfoot{plain}{}{\if@oneside\thepage\fi}{\if@twoside\thepage\fi}
 
-%	Create a command that copies \rightmark towards \leftmark if empty
+%	Create a command that uses \rightmark instead of \leftmark if empty
 \newcommand{\leftrightmark}{%
 	\begingroup\protected@edef\x{\leftmark}%
 	\ifx\x\@empty
@@ -929,19 +946,23 @@
 	\makeoddhead{frenchlaw}{}{\itshape\if@article\@series\else\rightmark\fi}{}
 	\makeevenfoot{frenchlaw}{\if@twoside\thepage\fi}{\if@oneside\thepage\fi}{}
 	\makeoddfoot{frenchlaw}{}{\if@oneside\thepage\fi}{\if@twoside\thepage\fi}
+
 \pagestyle{frenchlaw}
 
 %	Define a style for letters, memos and resumés
-%	TODO » Créer une option CV et \if@CV
 %	TODO » Regrouper au style frenchlaw?
 %	TODO » Documenter: Compiler deux fois
-\makepagestyle{frenchletter}
-%	\makeevenhead{frenchletter}{}{\if@CV\MakeLowercase{\scshape\@author~-- \csname @title@\languagename\endcsname\fi}}{}
-%	\makeoddhead{frenchletter}{}{\if@CV\MakeLowercase{\scshape\@author~-- \csname @title@\languagename\endcsname\fi}}{}
-	\makeevenfoot{frenchletter}{\rightmark}{}{\strut{\ifnum\value{lastpage}>1\relax\thepage\thinspace/\pageref{lastpage}\fi}}
-	\makeoddfoot{frenchletter}{\rightmark}{}{\strut{\ifnum\value{lastpage}>1\relax\thepage\thinspace/\pageref{lastpage}\fi}}
+\makepagestyle{letterhead}
+	\makeevenhead{letterhead}{}{\if@CV\ifnum\value{page}>1\MakeLowercase{\scshape\@author~-- \csname @title@\languagename\endcsname}\fi\fi}{}
+	\makeoddhead{letterhead}{}{\if@CV\ifnum\value{page}>1\MakeLowercase{\scshape\@author~-- \csname @title@\languagename\endcsname}\fi\fi}{}
+	\makeevenfoot{letterhead}{\leftrightmark}{\ifnum\value{lastpage}>1\relax\raisebox{1ex}{\thepage}/\pageref{lastpage}\fi}{}
+	\makeoddfoot{letterhead}{\leftrightmark}{\ifnum\value{lastpage}>1\relax\raisebox{1ex}{\thepage}/\pageref{lastpage}\fi}{}
 	\AtEndDocument{\label{lastpage}}
 %	TODO » Appliquer automatiquement sur certains types de docs + Créer les autres formats
+
+\if@CV
+	\pagestyle{letterhead}
+\fi
 
 %	TODO » A reprendre pour didactic. Utiliser \leftmark et \rightmark en les redéfinissant (?)
 \makepagestyle{didactichead}
@@ -974,6 +995,7 @@
 			\ifx\relax\@date\relax\else, \@date.\fi}}
 		{}
 		{\thepage}
+
 \if@didactic
 	\pagestyle{didactichead}
 	\aliaspagestyle{chapter}{didactichead}
@@ -983,7 +1005,11 @@
 %	####	TABLES DES MATIÈRES	####
 
 %	Définir la subdivision maximale pour la numérotation
-\maxsecnumdepth{subparagraph}
+\if@CV
+	\maxsecnumdepth{chapter}
+\else
+	\maxsecnumdepth{subparagraph}
+\fi
 \maxtocdepth{subparagraph}
 \setcounter{tocdepth}{6}
 
@@ -1882,22 +1908,30 @@
 \renewenvironment{abstract}[1][]
 	{\bgroup
 	 \if@twocolumn\@restonecoltrue\onecolumn
-	 \else\@restonecolfalse
+		\else\@restonecolfalse
 	 \fi%
-	 \if\relax#1\relax\else\selectlanguage{#1}\fi
 	 \renewcommand*{\Large}{\fontsize{17}{29}\selectfont}
-	 \vspace*{\baselineskip}
-	 \noindent{\Large\scshape\raggedright\abstractname\par}%
-	 \vspace*{\afterchapskip}
-	 \vspace*{-\baselineskip}
-	 {\noindent\scshape\raggedright\csname @title@\languagename\endcsname\if\@empty\csname @subtitle@\languagename\endcsname\relax\else:\space\csname @subtitle@\languagename\endcsname\fi\par}%
-	 \vspace{\baselineskip}}
+	 \if\relax#1\relax\else
+	 	\selectlanguage{#1}\vspace{2\baselineskip}\fi
+	 \vspace*{\addto@large}
+	 \vspace*{-2\baselineskip}
+	 \noindent{\large\scshape\raggedright\abstractname}\par%
+	 \vspace{\baselineskip}
+	}
 	{\if@restonecol\twocolumn\fi\egroup}
 
 %	Créer une commande <keywords>, qui peut être utilisée dans le résumé
-\newcommand{\keywords}[1]{%
-	\par\vspace{\baselineskip}
-	{\noindent\raggedright\scshape\keywordsname:\enskip}#1}
+\newcommand{\keywords}[2][]{%
+	\bgroup
+	\if@twocolumn\@restonecoltrue\onecolumn
+		\else\@restonecolfalse
+	\fi%
+	\if\relax#1\relax\else\selectlanguage{#1}\fi
+	\renewcommand*{\Large}{\fontsize{17}{29}\selectfont}
+	\vspace{\baselineskip}
+	{\noindent\scshape\raggedright\keywordsname:\enskip}{#2}\par%
+	\vspace{\baselineskip}
+	\egroup}
 
 
 
