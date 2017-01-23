@@ -77,10 +77,14 @@
 	\@paranametrue
 \newif\if@paratoc
 	\@paratocfalse
-\newif\if@indexparagraphs
-	\@indexparagraphstrue
 \newif\if@special@chapter					% Delete. Redzfine \xchapter to \chapter*
 	\@special@chapterfalse
+\newif\if@indexparagraphs
+	\@indexparagraphstrue
+%	Définir des commandesp pour switcher entre l'indexation par page et par paragraphe
+% Utilisé par l'option index=..., non utilisable après le chargement de classe
+\newcommand{\set@indexparagraphs}{\@indexparagraphstrue}
+\newcommand{\set@indexpages}{\@indexparagraphsfalse}
 
 %	GENERAL OPTIONS
 
@@ -137,6 +141,17 @@
 %	Define option for <marginal> layout
 \DeclareOptionX{marginal}{
 	\@marginaltrue
+}
+
+%	Define an option to change indexing (pages or paragraphs)
+\DeclareOptionX{index}[paragraphs]{
+	\ifcsname set@index#1\endcsname
+		\csname set@index#1\endcsname
+	\else
+		\AtEndDocument{\ClassWarningNoLine{frenchlaw}{%
+			Unknown option index=#1, \MessageBreak
+			Reverting to default: index=paragraphs}}%
+	\fi
 }
 
 %	Define an option to change line spacing
@@ -1800,9 +1815,6 @@
 	\sloppy
 	\begintheglossaryhook}%
 	{\atendtheglossaryhook\if@restonecol\onecolumn\else\twocolumn\fi}
-
-\newcommand{\indexparagraphs}{\@indexparagraphstrue}
-\newcommand{\indexpages}{\@indexparagraphsfalse}
 
 %	Faire en sorte que les index renvoient aux numéros de paragraphes
 %	TODO » Define lastpara and save it in .aux. Run twice before indexing. Ou en faire une option activée avec les types de documents...
