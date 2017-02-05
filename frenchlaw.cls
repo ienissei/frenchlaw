@@ -33,6 +33,8 @@
 	\@stockavifalse
 \newif\if@tenpoints
 	\@tenpointsfalse
+\newif\if@elevenpoints
+	\@elevenpointsfalse
 \newif\if@twelvepoints
 	\@twelvepointsfalse
 \newif\if@oneside							% Note: @twoside is already defined
@@ -57,7 +59,7 @@
 	\@summaryfalse
 \newif\if@outline
 	\@outlinefalse
-\newif\if@precis							% Delete or rewrite
+\newif\if@precis% TODO » Delete or rewrite
 	\@precisfalse
 \newif\if@backindex
 	\@backindexfalse
@@ -77,7 +79,7 @@
 	\@paranametrue
 \newif\if@paratoc
 	\@paratocfalse
-\newif\if@special@chapter					% Delete. Redzfine \xchapter to \chapter*
+\newif\if@special@chapter% TODO » Delete. Redefine \xchapter to \chapter*
 	\@special@chapterfalse
 \newif\if@indexparagraphs
 	\@indexparagraphstrue
@@ -169,9 +171,10 @@
 %	Define option for <CV> document style
 \DeclareOptionX{vitae}{
 	\@CVtrue
+	\@elevenpointstrue
 	\@marginaltrue
 	\@twosidefalse
-	\PassOptionsToClass{oneside}{memoir}
+	\PassOptionsToClass{11pt,oneside}{memoir}
 }
 
 %	Define option for <didactic> document style
@@ -267,7 +270,7 @@
 %	#####	PAGE LAYOUT	#####
 
 %	Define the size of the type bloc depending on the paper size
-% The bloc proportions follow the golden number, as in the medieval method
+% The block proportions follow the golden number, as in the medieval method
 \if@stockaiv
 	\settypeblocksize{*}{424pt}{1.618}% 43 lines size 12pt, 52 lines size 10pt
 \fi
@@ -276,6 +279,14 @@
 \fi
 \if@stockavi
 	\settypeblocksize{*}{212pt}{1.618}% 22 lines size 12pt, 26 lines size 10pt
+\fi
+
+% Block width is reduced while keeping the same height at font size 11pt
+% TODO » Remplcer par un autre test qui comprennent toutes les formes de correspondance, i.e. lettre, cv, mémo, etc. pour ne pas dépendre de la taille du texte
+\if@elevenpoints
+	\settypeblocksize{*}{400pt}{1.715}% 45 lines
+	% TODO » Adde quelque chose pour les lettres avec en-tête latérale, e.g.
+	%\settypeblocksize{*}{320pt}{2} % environ 1:3 marge 2:3 texte
 \fi
 
 %	Define the size and proportion of the margins depending on the layout options
@@ -300,16 +311,23 @@
 \fi
 
 %	Define the size of page headers & footers
-\setlength{\headsep}{\baselineskip}
-\setlength{\headheight}{2\baselineskip}
-\setlength{\footskip}{2\baselineskip}
 %	TODO » Utilité du \setheaderspaces. Vérifier la doc de <memoir>
 %\setheaderspaces{*}{\baselineskip}{*}
 
+\setlength{\headsep}{\baselineskip}
+\setlength{\headheight}{2\baselineskip}
+\setlength{\footskip}{2\baselineskip}
+
+% Can afford more room between header and text at font size 11pt
+% TODO » Remplcer par un autre test qui comprennent toutes les formes de correspondance, i.e. lettre, cv, mémo, etc. pour ne pas dépendre de la taille du texte
+\if@elevenpoints
+	\setlength{\headsep}{2\baselineskip}
+\fi
+
 %	Use larger headers & footers with <didactic>
+%	TODO » Vérifier l'utilité et/ou revoir intégralement le design...
 \if@didactic
 	\setlength{\headheight}{3\baselineskip}
-	\setlength{\headsep}{\baselineskip}
 	\setlength{\uppermargin}{4.5\baselineskip}
 \fi
 
@@ -350,7 +368,7 @@
 	\defaultfontfeatures{
 		Ligatures = {TeX},
 		Numbers = {OldStyle},%	TODO » Rendre les OSF conditionnelles (?)
-		SmallCapsFeatures = {WordSpace = 1.2, LetterSpace=3.0}}
+		SmallCapsFeatures = {WordSpace = 1.2, LetterSpace=3.0}}% WordSpace s'applique partout (?) ou que sur SmallCaps (vérif., mais garder)
 	%	TODO » Problème des accents > deux caractères sous Junicode (?)
 	\setmainfont[	Extension		= .ttf,
 					UprightFont		= *,
@@ -364,7 +382,9 @@
 					BoldFont		= *-bold,
 					BoldItalicFont	= *-boldoblique,
 					Scale			= MatchLowercase ]
-					{lmsans10}%	TODO » Changer… pour biolinum?
+					{lmsans10}
+	%	TODO » Changer: Biolinum, Concourse (?)
+	% \setmainfont[SmallCapsFont = Concourse C3]{Concourse T3}% Refaire le logo LaTeX
 	\setmonofont[	Extension		= .otf,
 					UprightFont		= *-regular,
 					ItalicFont		= *-italic,
@@ -433,6 +453,34 @@
 	\addto@HUGE=11pt
 \else
 %	Define font sizes and compensations for <12pt>
+\if@elevenpoints
+	% Define font sizes for <11pt>
+	\renewcommand*{\scriptsize}{\fontsize{9}{13.6}\selectfont}
+	\renewcommand*{\footnotesize}{\fontsize{9}{13.6}\selectfont}
+	\renewcommand*{\small}{\fontsize{10}{13.6}\selectfont}
+	\renewcommand*{\normalsize}{\fontsize{11}{13.6}\selectfont}
+	
+	\renewcommand*{\miniscule}{\fontsize{7}{8}\selectfont}
+	\renewcommand*{\tiny}{\fontsize{8}{9}\selectfont}
+	
+	\renewcommand*{\large}{\fontsize{13}{16}\selectfont}
+	\renewcommand*{\Large}{\fontsize{16}{19}\selectfont}
+	\renewcommand*{\LARGE}{\fontsize{19}{23}\selectfont}
+	\renewcommand*{\huge}{\fontsize{23}{28}\selectfont}
+	\renewcommand*{\Huge}{\fontsize{28}{34}\selectfont}
+	\renewcommand*{\HUGE}{\fontsize{34}{42}\selectfont}
+	
+	% Define compensations for <12pt>
+	\addto@miniscule=5.6pt
+	\addto@tiny=4.6pt
+	\addto@large=11.2pt
+	\addto@Large=8.2pt
+	\addto@LARGE=4.2pt
+	\addto@huge=12.8pt
+	\addto@Huge=6.8pt
+	\addto@HUGE=12.4pt
+\else
+%	Define font sizes and compensations for <12pt>
 \if@twelvepoints
 	% Define font sizes for <12pt>
 	\renewcommand*{\scriptsize}{\fontsize{9}{14.5}\selectfont}
@@ -459,7 +507,7 @@
 	\addto@huge=13.5pt
 	\addto@Huge=6.5pt
 	\addto@HUGE=13pt
-\fi\fi
+\fi\fi\fi
 
 %	#####	TYPESETTING RULES	#####
 
@@ -604,6 +652,11 @@
 		\renewcommand*{\Large}{\fontsize{15}{24}\selectfont}
 		\renewcommand*{\LARGE}{\fontsize{18}{24}\selectfont}
 	\fi
+	\if@elevenpoints
+		\renewcommand*{\large}{\fontsize{12}{13.6}\selectfont}
+		\renewcommand*{\Large}{\fontsize{15}{27.2}\selectfont}
+		\renewcommand*{\LARGE}{\fontsize{18}{27.2}\selectfont}
+	\fi
 	\if@twelvepoints
 		\renewcommand*{\large}{\fontsize{14}{14.5}\selectfont}
 		\renewcommand*{\Large}{\fontsize{17}{29}\selectfont}
@@ -612,62 +665,98 @@
 }
 
 %	Define new meta-data macros
+%	Document Info
 % The \title and \subtitle fields can be given in several languages, e.g. for abstracts
 \renewcommand{\title}[2][\languagename]{\expandafter\gdef\csname @title@#1\endcsname{#2}}
 	\expandafter\gdef\csname @title@\languagename\endcsname{\@empty}
 \newcommand{\subtitle}[2][\languagename]{\expandafter\gdef\csname @subtitle@#1\endcsname{#2}}
 	\expandafter\gdef\csname @subtitle@\languagename\endcsname{\@empty}
+\newcommand{\subject}[1]{\gdef\@subject{#1}}
+	\newcommand{\@subject}{\@empty}
+%	Indexation Info
 \newcommand{\institution}[1]{\gdef\@institution{#1}}
 	\newcommand{\@institution}{\@empty}
 \newcommand{\school}[1]{\gdef\@school{#1}}
 	\newcommand{\@school}{\@empty}
 \newcommand{\laboratory}[1]{\gdef\@laboratory{#1}}
 	\newcommand{\@laboratory}{\@empty}
-\newcommand{\subject}[1]{\gdef\@subject{#1}}
-	\newcommand{\@subject}{\@empty}
+%	Thesis Info
 \newcommand{\thesis}[1]{\gdef\@thesis{#1}}
 	\newcommand{\@thesis}{\@empty}
 \newcommand{\director}[1]{\gdef\@director{\bgroup#1\egroup}}
 	\newcommand{\@director}{\@empty}
 \newcommand{\jury}[1]{\gdef\@jury{\bgroup#1\egroup}}
 	\newcommand{\@jury}{\@empty}
+%	Publication Info
 \newcommand{\publisher}[1]{\gdef\@publisher{#1}}
 	\newcommand{\@publisher}{\@empty}
 \newcommand{\series}[1]{\gdef\@series{#1}}
 	\newcommand{\@series}{\@empty}
-\newcommand{\address}[1]{\gdef\@address{#1}}
-	\newcommand{\@address}{\@empty}
-\newcommand{\phone}[1]{\gdef\@phone{#1}}
-	\newcommand{\@phone}{\@empty}
-%	TODO » Sécuriser les emails si * et éviter qu'ils débordent du cadre (?)
-% Non documenté
-\newcommand{\email}[1]{\gdef\@email{#1}}
-	\newcommand{\@email}{\@empty}
-
+%	Licensing Info
 \newcommand{\licensing}[1]{\long\gdef\@licensing{#1}}
 	\newcommand{\@licensing}{\@empty}
 \newcommand{\printcopyright}{%
 	\if\@empty\@licensing\relax\else
 		\cleartoverso\vspace*{25\baselineskip}%
 		\bgroup\parindent=0pt\@licensing\egroup\fi}
+%	Author Info
+\newcommand{\address}[1]{\gdef\@address{#1}}
+	\newcommand{\@address}{\@empty}
+\newcommand{\location}[1]{\gdef\@location{#1}}
+	\newcommand{\@location}{\@empty}
+\newcommand{\phone}[1]{\gdef\@phone{#1}}
+	\newcommand{\@phone}{\@empty}
+\newcommand{\fax}[1]{\gdef\@fax{#1}}
+	\newcommand{\@fax}{\@empty}
+% TODO » Sécuriser les emails si * et éviter qu'ils débordent du cadre (?)
+\newcommand{\email}[1]{\gdef\@email{#1}}
+	\newcommand{\@email}{\@empty}
+\newcommand{\signature}[1]{\gdef\@signature{#1}}
+	\newcommand{\@signature}{\@empty}
+%	Letter Data
+\newcommand{\recipient}[1]{\gdef\@recipient{#1}}
+	\newcommand{\@recipient}{\@empty}
+\newcommand{\addressee}[1]{\gdef\@addressee{#1}}
+	\newcommand{\@addressee}{\@empty}
+\newcommand{\ourRef}[1]{\gdef\@ourRef{#1}}
+	\newcommand{\@ourRef}{\@empty}
+\newcommand{\yourRef}[1]{\gdef\@yourRef{#1}}
+	\newcommand{\@yourRef}{\@empty}
+\newcommand{\enclosed}[1]{\gdef\@enclosed{#1}}
+	\newcommand{\@enclosed}{\@empty}
+\newcommand{\cc}[1]{\gdef\@cc{#1}}
+	\newcommand{\@cc}{\@empty}
 
 %	TODO » Ajouter un mailto: crypté en UTF-8 (\@ifstar ?), mais uniquement si on crypte l'adresse
-\begingroup
-	\catcode`\@=\active
-	\catcode`\.=\active
-	\newcommand{\mailto}{%
-		\begingroup
-		\catcode`\@=\active
-		\catcode`\.=\active
-		\gdef@{$\,\langle\,$at$\,\rangle\,$}%
-		\gdef.{$\,\langle\,$dot$\,\rangle\,$}%
-		\obfuscate
-	}
-	\newcommand{\obfuscate}[1]{%
-		\endgroup
-		{\ttfamily#1}%
-	}
-\endgroup
+% \newcommand{\mailto}{%
+% 	\begingroup
+% 	\catcode`\@=\active
+% 	\catcode`\.=\active
+% 	\gdef@{$\,\langle\,$at$\,\rangle\,$}%
+% 	\gdef.{$\,\langle\,$dot$\,\rangle\,$}%
+% 	\obfuscate
+% }
+% \newcommand{\obfuscate}[1]{%
+% 	\endgroup
+% 	{\ttfamily#1}%
+% }
+
+%	Create a command for the signature block in letters and other documents
+\newcommand{\makesignature}{
+	\hfill%
+	\begin{minipage*}{.4\linewidth}
+	\centering%
+	\if\@empty\@signature\relax\else
+		\raisebox{0pt}[0pt][0pt]{%
+			\includegraphics[width=\linewidth,height=4\baselineskip,keepaspectratio]{\@signature}}\par
+	\fi
+	\@author
+	\end{minipage*}
+}
+
+%	TODO » Ajouter avec les clausiers
+% \newcommand{\nondisclosure}{%
+% 	\if\@empty\@clause@NDA\relax\else{\nondisclosurestyle\@clause@NDA}\fi}
 
 %	TODO » Ajouter \website et \linkedin (2 args, nom + url ?)
 %	TODO » Ajouter une commande pour le copyright + intégrer aux styles
@@ -890,22 +979,76 @@
 		\@latex@warning@no@line{No \noexpand\author given}\fi
 	% Use \parindent = 0 for the whole document
 	\setlength{\parindent}{0em}
+	\setlength{\parskip}{\baselineskip}
 	% Print the \maketitle
 	\bgroup
 	\reset@twocolumns%
 	\normalize@fontsize%
 	\vspace*{-\baselineskip}
-	{\Large\raggedright\@author}\par%
-	% Use carriage returns instead of \par to stay in control of line length
-	% E.g. spaces can be adjusted with \kern or other commands to make lines even
+	{\Large\raggedright\@author}\\%
 	\begin{minipage*}{.5\linewidth}
 		\@address\par
-		\phonename\@phone\par
-		\emailname\@email
+		\if\@empty\@phone\else\phonename\@phone\fi\par
+		\if\@empty\@fax\else\faxname\@fax\fi\par
+		\if\@empty\@email\else\emailname\@email\fi
 	\end{minipage*}\par%\href{\@email}{\@email}
 	\restore@twocolumns%
+	\egroup
+}
+
+%	Create a style for letters
+\newcommand{\maketitleLetter}{
+	\if\@empty\@address\relax
+		\@latex@warning@no@line{No \noexpand\address given}\fi
+	\if\@empty\@recipient\relax
+		\@latex@warning@no@line{No \noexpand\recipient given}
+	\else\if\@empty\@addressee\relax
+		\@latex@warning@no@line{No \noexpand\addressee given}
+	\fi\fi
+	\if\@empty\@location\relax
+		\@latex@warning@no@line{No \noexpand\location given}
+	\fi
+	\setlength{\parindent}{0em}
+	\setlength{\parskip}{\baselineskip}
+	\clearpage
+	\bgroup
+	\begin{minipage*}{.5\linewidth}
+		\@author\par
+		\@address\par
+		\if\@empty\@phone\else\phonename\@phone\fi\par
+		\if\@empty\@fax\else\faxname\@fax\fi\par
+		\if\@empty\@email\else\emailname\@email\fi
+	\end{minipage*}%
+	\hfill
+	\begin{minipage*}{.4\linewidth}
+		\if\@empty\@recipient\relax\else\@recipient\fi\par
+		\if\@empty\@addressee\relax\else\@addressee\fi\par
+		\vspace{\baselineskip}
+		\if\@empty\@location\relax\else\@location, \fi le \@date
+	\end{minipage*}
+	\vspace*{\baselineskip}
+	\if\@empty\@subject\relax\else\textsc{Objet:} \@subject\fi\par
+	\if\@empty\@ourRef\relax\else N./Réf.~: \@ourRef\fi\par
+	\if\@empty\@yourRef\relax\else V./Réf~: \@yourRef\fi\par
 	\vspace{\baselineskip}
 	\egroup
+}
+
+%	Créate a command for the closing remarks in a letter
+\newcommand{\closing}{
+	\addvspace{\baselineskip}
+	\if\@empty\@enclosed\relax\else%
+		\enclname:\hfill%
+		\begin{minipage*}{.85\linewidth}\@enclosed\end{minipage*}
+	\fi\par
+	\if\@empty\@cc\relax\else%
+		\ccname:\hfill%
+		\begin{minipage*}{.85\linewidth}\@cc\end{minipage*}%
+	\fi\par
+	\addvspace{2\baselineskip}
+	\makesignature\par
+	% TODO » Ajouter avec les clausiers
+	% \nondisclosure
 }
 
 %	Set the default styles to <Book> or <Article>
@@ -970,9 +1113,9 @@
 \makepagestyle{letterhead}
 	\makeevenhead{letterhead}{}{\if@CV\ifnum\value{page}>1\MakeLowercase{\scshape\@author~-- \csname @title@\languagename\endcsname}\fi\fi}{}
 	\makeoddhead{letterhead}{}{\if@CV\ifnum\value{page}>1\MakeLowercase{\scshape\@author~-- \csname @title@\languagename\endcsname}\fi\fi}{}
-	\makeevenfoot{letterhead}{\leftrightmark}{\ifnum\value{lastpage}>1\relax\raisebox{1ex}{\thepage}/\pageref{lastpage}\fi}{}
-	\makeoddfoot{letterhead}{\leftrightmark}{\ifnum\value{lastpage}>1\relax\raisebox{1ex}{\thepage}/\pageref{lastpage}\fi}{}
-	\AtEndDocument{\label{lastpage}}
+	\makeevenfoot{letterhead}{\leftrightmark}{\ifnum\value{lastpage}>1\relax\textsc{page \thepage\ sur \pageref{lastpage}}\fi}{}
+	\makeoddfoot{letterhead}{\leftrightmark}{\ifnum\value{lastpage}>1\relax\textsc{page \thepage\ sur \pageref{lastpage}}\fi}{}
+\AtEndDocument{\label{lastpage}}
 %	TODO » Appliquer automatiquement sur certains types de docs + Créer les autres formats
 
 \if@CV
@@ -1119,8 +1262,9 @@
 		\ifnum\value{book}=1	\ordinalstring{book}[m]%
 	\else						\Roman{book}%
 	\fi\fi}
+% TODO » Add if@eleventpoints
 \renewcommand{\beforebookskip}{\null\vspace{\baselinestretch\addto@Huge}%
-	\vspace{\if@tenpoints12\baselineskip\fi\if@twelvepoints10\baselineskip\fi}}
+	\vspace{\if@tenpoints 12\baselineskip\fi\if@twelvepoints 10\baselineskip\fi}}
 \renewcommand{\midbookskip}{\par\vspace{\baselinestretch\addto@Huge}}
 
 %	Définir le style des livres dans la table des matières
@@ -1140,7 +1284,7 @@
 \renewcommand{\beforepartskip}{\null\vspace{\baselinestretch\addto@LARGE}%
 	%	TODO » Si PhD ou Memoir (ou article?)
 	\vspace{\baselineskip}%
-	%	TODO » Sauf PhD ou Memoir (ou article?)
+	%	TODO » Sauf PhD ou Memoir (ou article?) + Add: if@elevenpoints
 %	\vspace{\if@tenpoints12\baselineskip\fi\if@twelvepoints10\baselineskip\fi}%
 	}
 \renewcommand{\midpartskip}{\par\vspace{\baselinestretch\addto@LARGE}}
