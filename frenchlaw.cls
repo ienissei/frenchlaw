@@ -1075,10 +1075,6 @@
 		\endgroup\leftmark
 	\fi}
 
-%	Create a counter that stores the number of the document's last page
-% Requries two runs
-\AtEndDocument{\label{lastpage}}
-
 %	Redefine <plain> so that it takes into accout the <twoside> option
 \makepagestyle{plain}
 	\makeevenfoot{plain}{\if@twoside\thepage\fi}{\if@oneside\thepage\fi}{}
