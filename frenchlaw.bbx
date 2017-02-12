@@ -46,7 +46,7 @@
 %	Execute bibliography options
 \ExecuteBibliographyOptions{isbn,url,doi,eprint,related,dashed,%
 	sorting=nymdt,useeditor=true,usetranslator=false,maxnames=5,language=auto}
-\ExecuteBibliographyOptions[reference]{useauthor=false}
+\ExecuteBibliographyOptions[reference]{useauthor=false,useeditor=false}
 
 % #####	SORTING	#####
 
@@ -107,14 +107,18 @@
 %	Define {title} fields
 \DeclareFieldFormat[reference]{title}{\mkbibemph{#1}\isdot}
 \DeclareFieldFormat[inreference]{title}{\biblcstring{\thefield{pagination}}#1\isdot}
-\DeclareFieldFormat[inbook,thesis]{title}{\mkbibemph{#1}\isdot}
+\DeclareFieldFormat[thesis]{title}{\mkbibemph{#1}\isdot}
 \DeclareFieldFormat[commentary]{title}{\mkbibquote{#1}\isdot}
 \DeclareFieldFormat[legislation]{title}{#1\isdot}
 \DeclareFieldFormat[shortjournal]{title}{\mkbibemph{#1}}
 
 % Define various numbering fields
-\DeclareFieldFormat{number}{\bibstring{number}\addnbthinspace#1}%
-\DeclareFieldFormat[article,periodical]{number}{\bibstring{number}\addnbthinspace#1}
+\DeclareFieldFormat{number}{%
+	\iffieldnum{number}
+		{\bibstring{number}}
+		{\bibstring{numbers}}%
+	\addnbthinspace#1}%
+%\DeclareFieldFormat[article,periodical]{number}{\bibstring{number}\addnbthinspace#1}
 \DeclareFieldFormat[article,periodical]{volume}{\bibstring{volume}~#1}
 
 %	TODO » Delete
@@ -153,10 +157,12 @@
 % #####	PUNCTUATION	#####
 
 %	Redefine punctuation
-\renewcommand*{\newunitpunct}{\adddot\space\bibsentence}% Avoid double spaces in English
-\renewcommand*{\subtitlepunct}{\addcolon\addspace}
+\renewcommand*{\newunitpunct}{\addcomma\space}
+\renewcommand*{\newblockpunct}{\addperiod\space}
+\renewcommand*{\labelnamepunct}{\addperiod\space}
+\renewcommand*{\subtitlepunct}{\addcolon\space}
 \renewcommand*{\intitlepunct}{\addspace}
-\renewcommand*{\textcitedelim}{\addsemicolon\addspace}
+\renewcommand*{\textcitedelim}{\addsemicolon\space}
 
 %	TODO » Create commands, e.g. for commas or colons
 
@@ -186,7 +192,7 @@
 \DeclareCiteCommand{\bbx@crossref}
 	{}
 	{\printnames[labelname]{labelname}%
-	 \setunit*{\addcomma\addspace}\newblock
+	 \newunit\newblock
 	 \printfield[title]{labeltitle}}
 	{}
 	{}
@@ -241,7 +247,10 @@
 		}%
 		\map[overwrite=false]{%
 			\pertype{mvbook}
-			\step[fieldset=editortype, fieldvalue={compiler}]
+			\pertype{collection}
+			\pertype{reference}
+			\step[%
+				fieldset=editortype, fieldvalue={compiler}]
 		}
 }}%
 
@@ -275,7 +284,7 @@
 	\usebibmacro{title}%
 	% \newunit
 	% \printlist{language}%
-	\setunit{\addcomma\addspace}\newblock
+	\newunit\newblock
 	\usebibmacro{byauthor}%
 	\newunit\newblock
 	\usebibmacro{bytranslator+others}%
@@ -283,12 +292,8 @@
 	\printfield{note}%
 	\newunit\newblock
 	\usebibmacro{journal+issue+date}%
-	\newunit\newblock
-	\iftoggle{bbx:isbn}
-		{\printfield{issn}}
-		{}%
-	\newunit\newblock
-	\usebibmacro{doi+eprint+url}%
+	\setunit{\newblockpunct}\newblock
+	\usebibmacro{isbn+doi+eprint+url}%
 	\newunit\newblock
 	\usebibmacro{addendum+pubstate}%
 	\setunit{\bibpagerefpunct}\newblock
@@ -303,36 +308,29 @@
 %	Define a driver for <book> entries
 \DeclareBibliographyDriver{book}{%
 	\usebibmacro{bibindex}%
-	% TODO	» Replace with biber (?)
-	\iffieldxref{endyear}{\clearfield{endyear}}{}% If mvbook defines an end date and book doesn't, clear it.
 	\usebibmacro{begentry}%
 	\usebibmacro{author/editor+others/translator+others}%
 	\setunit{\labelnamepunct}\newblock
 	\usebibmacro{maintitle+title}%
-	\setunit{\bibpagespunct}\newblock
-	\usebibmacro{volume+part}%
 	% \newunit%
 	% \printlist{language}%
-	\setunit{\addcomma\addspace}\newblock
+	\newunit\newblock
 	\usebibmacro{byauthor}%
 	\newunit\newblock
+	\usebibmacro{compiler}%
+	\setunit{\bibpagespunct}\newblock
+	\usebibmacro{volume+part}%
+	\setunit{\newblockpunct}\newblock
+	\usebibmacro{edition}%
 	\usebibmacro{byeditor+others}%
 	\newunit\newblock
-	\printfield{edition}%
-	\newunit\newblock
 	\printfield{note}%
-	\newunit\newblock
+	\setunit{\newblockpunct}\newblock
 	\usebibmacro{publisher+location+date}%
-	\setunit{\addspace}
-	\usebibmacro{series+number}%
 	\setunit{\bibpagespunct}\newblock
 	\usebibmacro{pagetotal/volumes}%
-	\newunit\newblock
-	\iftoggle{bbx:isbn}
-		{\printfield{isbn}}
-		{}%
-	\newunit\newblock
-	\usebibmacro{doi+eprint+url}%
+	\setunit{\newblockpunct}\newblock
+	\usebibmacro{isbn+doi+eprint+url}%
 	\newunit\newblock
 	\usebibmacro{addendum+pubstate}%
 	\setunit{\bibpagerefpunct}\newblock
@@ -350,39 +348,34 @@
 \DeclareBibliographyDriver{collection}{%
 	\usebibmacro{bibindex}%
 	\usebibmacro{begentry}%
-	\usebibmacro{author/translator+others}%
+	\usebibmacro{author/editor+others/translator+others}%
 	\setunit{\labelnamepunct}\newblock
 	\usebibmacro{maintitle+title}%
 	% \newunit%
 	% \printlist{language}%
-	\setunit{\addcomma\addspace}\newblock
+	\newunit\newblock
 	\usebibmacro{byauthor}%
 	\newunit\newblock
 	\usebibmacro{compiler}%
-	\newunit\newblock
-	\usebibmacro{bytranslator+others}%
-	\newunit\newblock
-	\printfield{edition}%
-	\newunit\newblock
-	\printfield{note}%
-	\newunit\newblock
-	\usebibmacro{publisher+location+date}%
-	\setunit{\addspace}
-	\usebibmacro{series+number}%
-	\setunit{\bibpagespunct}\newblock
-	\usebibmacro{pagetotal/volumes}%
 	\setunit{\bibpagespunct}\newblock
 	\usebibmacro{volume+part}%
+	\setunit{\newblockpunct}\newblock
+	\usebibmacro{edition}%
+	\usebibmacro{byeditor+others}%
 	\newunit\newblock
-	\iftoggle{bbx:isbn}
-		{\printfield{isbn}}
-		{}%
-	\newunit\newblock
-	\usebibmacro{doi+eprint+url}%
+	\printfield{note}%
+	\setunit{\newblockpunct}\newblock
+	\usebibmacro{publisher+location+date}%
+	\setunit{\bibpagespunct}\newblock
+	\usebibmacro{pagetotal/volumes}%
+	\setunit{\newblockpunct}\newblock
+	\usebibmacro{isbn+doi+eprint+url}%
 	\newunit\newblock
 	\usebibmacro{addendum+pubstate}%
 	\setunit{\bibpagerefpunct}\newblock
 	\usebibmacro{pageref}%
+	\newunit\newblock
+	\thefield{postnote}%
 	\newunit\newblock
 	\iftoggle{bbx:related}
 		{\usebibmacro{related:init}%
@@ -394,44 +387,38 @@
 \DeclareBibliographyDriver{proceedings}{%
 	\usebibmacro{bibindex}%
 	\usebibmacro{begentry}%
-	\usebibmacro{editor+others}%
+	\usebibmacro{author/editor+others/translator+others}%
 	\setunit{\labelnamepunct}\newblock
 	\usebibmacro{maintitle+title}%
 	% \newunit
 	% \printlist{language}%
 	\newunit\newblock
 	\usebibmacro{event+venue+date}%
-	\setunit{\addcomma\addspace}\newblock
+	\newunit\newblock
 	\usebibmacro{byauthor}%
 	\newunit\newblock
 	\usebibmacro{compiler}%
-	\newunit\newblock
-	\usebibmacro{bytranslator+others}%
-	\newunit\newblock
-	\printfield{edition}%
-	\newunit\newblock
-	\printfield{note}%
-	\newunit\newblock
-	\printlist{organization}%
-	\newunit
-	\usebibmacro{publisher+location+date}%
-	\setunit{\addspace}
-	\usebibmacro{series+number}%
-	\newunit
-	\setunit{\bibpagespunct}\newblock
-	\usebibmacro{pagetotal/volumes}%
 	\setunit{\bibpagespunct}\newblock
 	\usebibmacro{volume+part}%
+	\setunit{\newblockpunct}\newblock
+	\usebibmacro{edition}%
+	\usebibmacro{byeditor+others}%
 	\newunit\newblock
-	\iftoggle{bbx:isbn}
-		{\printfield{isbn}}
-		{}%
-	\newunit\newblock
-	\usebibmacro{doi+eprint+url}%
+	\printfield{note}%
+	\setunit{\newblockpunct}\newblock
+	\iflistundef{publisher}
+		{\usebibmacro{organization+location+date}}
+		{\usebibmacro{publisher+location+date}}%
+	\setunit{\bibpagespunct}\newblock
+	\usebibmacro{pagetotal/volumes}%
+	\setunit{\newblockpunct}\newblock
+	\usebibmacro{isbn+doi+eprint+url}%
 	\newunit\newblock
 	\usebibmacro{addendum+pubstate}%
 	\setunit{\bibpagerefpunct}\newblock
 	\usebibmacro{pageref}%
+	\newunit\newblock
+	\thefield{postnote}%
 	\newunit\newblock
 	\iftoggle{bbx:related}
 		{\usebibmacro{related:init}%
@@ -443,37 +430,34 @@
 \DeclareBibliographyDriver{reference}{%
 	\usebibmacro{bibindex}%
 	\usebibmacro{begentry}%
-	\usebibmacro{author/translator+others}%
+	\usebibmacro{author/editor+others/translator+others}%
 	\setunit{\labelnamepunct}\newblock
 	\usebibmacro{maintitle+title}%
 	% \newunit%
 	% \printlist{language}%
-	\setunit{\addcomma\addspace}\newblock
+	\newunit\newblock
 	\usebibmacro{byauthor}%
 	\newunit\newblock
-	\usebibmacro{compiler}%
-	\newunit\newblock
-	\usebibmacro{bytranslator+others}%
-	\newunit\newblock
-	\printfield{edition}%
+	\usebibmacro{bycompiler}%
+	\setunit{\bibpagespunct}\newblock
+	\usebibmacro{volume+part}%
+	\setunit{\newblockpunct}\newblock
+	\usebibmacro{edition}%
+	\usebibmacro{byeditor+others}%
 	\newunit\newblock
 	\printfield{note}%
-	\newunit\newblock
+	\setunit{\newblockpunct}\newblock
 	\usebibmacro{publisher+location+date}%
-	\setunit{\addspace}
-	\usebibmacro{series+number}%
 	\setunit{\bibpagespunct}\newblock
 	\usebibmacro{pagetotal/volumes}%
-	\newunit\newblock
-	\iftoggle{bbx:isbn}
-		{\printfield{isbn}}
-		{}%
-	\newunit\newblock
-	\usebibmacro{doi+eprint+url}%
+	\setunit{\newblockpunct}\newblock
+	\usebibmacro{isbn+doi+eprint+url}%
 	\newunit\newblock
 	\usebibmacro{addendum+pubstate}%
 	\setunit{\bibpagerefpunct}\newblock
 	\usebibmacro{pageref}%
+	\newunit\newblock
+	\thefield{postnote}%
 	\newunit\newblock
 	\iftoggle{bbx:related}
 		{\usebibmacro{related:init}%
@@ -490,53 +474,42 @@
 	\usebibmacro{title}%
 	% \newunit%
 	% \printlist{language}%
-	\setunit{\addcomma\addspace}\newblock
+	\newunit\newblock
 	\usebibmacro{byauthor}%
-	\iffieldundef{crossref}%
+	\iffieldundef{crossref}
 		{\newunit\newblock
 		 \usebibmacro{in:}%
-		 \ifnameundef{bookauthor}
-			{}
-		 	{\usebibmacro{bybookauthor}%
-			 \setunit{\addcomma\addspace}\newblock}%
+		 \usebibmacro{bybookauthor}%
 		 \usebibmacro{maintitle+booktitle}%
 		 \newunit\newblock
+		 \usebibmacro{compiler}%
+		 \setunit{\newblockpunct}\newblock
+		 \usebibmacro{edition}%
 		 \usebibmacro{byeditor+others}%
 		 \newunit\newblock
-		 \printfield{edition}%
-		 \newunit\newblock
 		 \printfield{note}%
-		 \newunit\newblock
+		 \setunit{\newblockpunct}\newblock
 		 \usebibmacro{publisher+location+date}%
-		 \setunit{\addspace}
-		 \usebibmacro{series+number}%
-		 \setunit{\bibpagespunct}\newblock
-		 \usebibmacro{volume+part}%
-		 \setunit{\bibpagespunct}\newblock
-		 \usebibmacro{chapter+pages}%
+		 \setunit{\newblockpunct}\newblock
+		 \usebibmacro{isbn+doi+eprint+url}%
 		 \newunit\newblock
-		 \iftoggle{bbx:isbn}
-			{\printfield{isbn}}
-			{}%
-		 \newunit\newblock
-		 \usebibmacro{doi+eprint+url}%
-		 \newunit\newblock
-		 \usebibmacro{addendum+pubstate}%
-		 \setunit{\bibpagerefpunct}\newblock
-		 \usebibmacro{pageref}%
-		 \newunit\newblock
-		 \iftoggle{bbx:related}
-			{\usebibmacro{related:init}%
-			 \usebibmacro{related}}
-			{}%
-		}%
+		 \usebibmacro{addendum+pubstate}}
 		{\newunit\newblock
 		 \usebibmacro{see:}%
-		 \bbx@crossref{\thefield{crossref}}%
-		 \setunit{\bibpagespunct}\newblock
-		 \usebibmacro{volume+part}%
-		 \setunit{\bibpagespunct}\newblock
-		 \usebibmacro{chapter+pages}}%
+		 \bbx@crossref{\thefield{crossref}}}%
+	\setunit{\bibpagespunct}\newblock
+	\usebibmacro{volume+part}%
+	\newunit\newblock
+	\usebibmacro{chapter+pages}%
+	\setunit{\bibpagerefpunct}\newblock
+	\usebibmacro{pageref}%
+	\newunit\newblock
+	\thefield{postnote}%
+	\newunit\newblock
+	\iftoggle{bbx:related}
+		{\usebibmacro{related:init}%
+		 \usebibmacro{related}}
+		{}%
 	\usebibmacro{finentry}}
 
 %	Define a driver for <incollection> entries
@@ -548,42 +521,34 @@
 	\usebibmacro{title}%
 	% \newunit
 	% \printlist{language}%
-	\setunit{\addcomma\addspace}\newblock
+	\newunit\newblock
 	\usebibmacro{byauthor}%
 	\iffieldundef{crossref}%
-		{\newunit\newblock
+		{\newunit
 		 \usebibmacro{in:}%
-		 \ifnameundef{bookauthor}
-			{}
-		 	{\usebibmacro{bybookauthor}%
-			 \setunit{\addcomma\addspace}\newblock}%
+		 \usebibmacro{bybookauthor}%
 		 \usebibmacro{maintitle+booktitle}%
 		 \newunit\newblock
 		 \usebibmacro{compiler}%
-		 \newunit\newblock
-		 \usebibmacro{bytranslator+others}%
-		 \newunit\newblock
-		 \printfield{edition}%
+		 \setunit{\newblockpunct}\newblock
+		 \usebibmacro{edition}%
+		 \usebibmacro{byeditor+others}%
 		 \newunit\newblock
 		 \printfield{note}%
-		 \newunit\newblock
+		 \setunit{\newblockpunct}\newblock
 		 \usebibmacro{publisher+location+date}%
-		 \setunit{\addspace}
-		 \usebibmacro{series+number}%
 		 \setunit{\bibpagespunct}\newblock
 		 \usebibmacro{volume+part}%
-		 \setunit{\bibpagespunct}\newblock
+		 \newunit\newblock
 		 \usebibmacro{chapter+pages}%
-		 \newunit\newblock
-		 \iftoggle{bbx:isbn}
-			{\printfield{isbn}}
-			{}%
-		 \newunit\newblock
-		 \usebibmacro{doi+eprint+url}%
+		 \setunit{\newblockpunct}\newblock
+		 \usebibmacro{isbn+doi+eprint+url}%
 		 \newunit\newblock
 		 \usebibmacro{addendum+pubstate}%
 		 \setunit{\bibpagerefpunct}\newblock
 		 \usebibmacro{pageref}%
+		 \newunit\newblock
+		 \thefield{postnote}%
 		 \newunit\newblock
 		 \iftoggle{bbx:related}
 			{\usebibmacro{related:init}%
@@ -593,9 +558,9 @@
 		{\newunit\newblock
 		 \usebibmacro{see:}%
 		 \bbx@crossref{\thefield{crossref}}%
-		 \setunit{\bibpagespunct}\newblock
+		 \newunit\newblock
 		 \usebibmacro{volume+part}%
-		 \setunit{\bibpagespunct}\newblock
+		 \newunit\newblock
 		 \usebibmacro{chapter+pages}}%
 	\usebibmacro{finentry}}
 
@@ -608,42 +573,38 @@
 	\usebibmacro{title}%
 	% \newunit
 	% \printlist{language}%
-	\setunit{\addcomma\addspace}\newblock
+	\newunit\newblock
 	\usebibmacro{byauthor}%
 	\iffieldundef{crossref}%
-		{\newunit\newblock
+		{\newunit
 		 \usebibmacro{in:}%
+		 \usebibmacro{bybookauthor}%
 		 \usebibmacro{maintitle+booktitle}%
 		 \newunit\newblock
 		 \usebibmacro{event+venue+date}%
 		 \newunit\newblock
 		 \usebibmacro{compiler}%
-		 \newunit\newblock
-		 \usebibmacro{bytranslator+others}%
-		 \newunit\newblock
-		 \printfield{edition}%
+		 \setunit{\newblockpunct}\newblock
+		 \usebibmacro{edition}%
+		 \usebibmacro{byeditor+others}%
 		 \newunit\newblock
 		 \printfield{note}%
-		 \newunit\newblock
-		 \printlist{organization}%
-		 \newunit
-		 \usebibmacro{publisher+location+date}%
-		 \setunit{\addspace}
-		 \usebibmacro{series+number}%
+		 \setunit{\newblockpunct}\newblock
+		 \iflistundef{publisher}
+			{\usebibmacro{organization+location+date}}
+			{\usebibmacro{publisher+location+date}}%
 		 \setunit{\bibpagespunct}\newblock
 		 \usebibmacro{volume+part}%
-		 \setunit{\bibpagespunct}\newblock
+		 \newunit\newblock
 		 \usebibmacro{chapter+pages}%
-		 \newunit\newblock
-		 \iftoggle{bbx:isbn}
-			{\printfield{isbn}}
-			{}%
-		 \newunit\newblock
-		 \usebibmacro{doi+eprint+url}%
+		 \setunit{\newblockpunct}\newblock
+		 \usebibmacro{isbn+doi+eprint+url}%
 		 \newunit\newblock
 		 \usebibmacro{addendum+pubstate}%
 		 \setunit{\bibpagerefpunct}\newblock
 		 \usebibmacro{pageref}%
+		 \newunit\newblock
+		 \thefield{postnote}%
 		 \newunit\newblock
 		 \iftoggle{bbx:related}
 			{\usebibmacro{related:init}%
@@ -653,9 +614,9 @@
 		{\newunit\newblock
 		 \usebibmacro{see:}%
 		 \bbx@crossref{\thefield{crossref}}%
-		 \setunit{\addcomma\addspace}\newblock
+		 \newunit\newblock
 		 \usebibmacro{volume+part}%
-		 \setunit{\bibpagespunct}\newblock
+		 \newunit\newblock
 		 \usebibmacro{chapter+pages}}%
 	\usebibmacro{finentry}}
 
@@ -665,40 +626,50 @@
 	\usebibmacro{begentry}%
 	\usebibmacro{author/translator+others}%
 	\setunit{\labelnamepunct}\newblock
-	\usebibmacro{maintitle+booktitle}%
-	\setunit{\addcomma\addspace}\newblock
 	\usebibmacro{title}%
 	% \newunit
 	% \printlist{language}%
-	\setunit{\addcomma\addspace}\newblock
+	\newunit\newblock
 	\usebibmacro{byauthor}%
-	\newunit\newblock
-	\usebibmacro{compiler}%
-	\newunit\newblock
-	\usebibmacro{bytranslator+others}%
-	\newunit\newblock
-	\printfield{edition}%
-	\newunit\newblock
-	\printfield{note}%
-	\newunit\newblock
-	\usebibmacro{publisher+location+date}%
-	\setunit{\addspace}
-	\usebibmacro{series+number}%
-	\newunit\newblock
-	\iftoggle{bbx:isbn}
-		{\printfield{isbn}}
-		{}%
-	\newunit\newblock
-	\usebibmacro{doi+eprint+url}%
-	\newunit\newblock
-	\usebibmacro{addendum+pubstate}%
-	\setunit{\bibpagerefpunct}\newblock
-	\usebibmacro{pageref}%
-	\newunit\newblock
-	\iftoggle{bbx:related}
-		{\usebibmacro{related:init}%
-		 \usebibmacro{related}}
-		{}%
+	\iffieldundef{crossref}%
+		{\newunit
+		 \usebibmacro{in:}%
+		 \usebibmacro{bybookauthor}%
+		 \usebibmacro{maintitle+booktitle}%
+		 \newunit\newblock
+		 \usebibmacro{compiler}%
+		 \setunit{\newblockpunct}\newblock
+		 \usebibmacro{edition}%
+		 \usebibmacro{byeditor+others}%
+		 \newunit\newblock
+		 \printfield{note}%
+		 \setunit{\newblockpunct}\newblock
+		 \usebibmacro{publisher+location+date}%
+		 \setunit{\bibpagespunct}\newblock
+		 \usebibmacro{volume+part}%
+		 \newunit\newblock
+		 \usebibmacro{chapter+pages}%
+		 \setunit{\newblockpunct}\newblock
+		 \usebibmacro{isbn+doi+eprint+url}%
+		 \newunit\newblock
+		 \usebibmacro{addendum+pubstate}%
+		 \setunit{\bibpagerefpunct}\newblock
+		 \usebibmacro{pageref}%
+		 \newunit\newblock
+		 \thefield{postnote}%
+		 \newunit\newblock
+		 \iftoggle{bbx:related}
+			{\usebibmacro{related:init}%
+			 \usebibmacro{related}}
+			{}%
+		}%
+		{\newunit\newblock
+		 \usebibmacro{see:}%
+		 \bbx@crossref{\thefield{crossref}}%
+		 \newunit\newblock
+		 \usebibmacro{volume+part}%
+		 \newunit\newblock
+		 \usebibmacro{chapter+pages}}%
 	\usebibmacro{finentry}}
 
 %	Define a driver for <thesis> entries
@@ -710,30 +681,22 @@
 	\usebibmacro{title}%
 	% \newunit
 	% \printlist{language}%
-	\setunit{\addcomma\addspace}\newblock
-	\usebibmacro{byauthor}%
-	\newunit\newblock
-	\printfield{type}%
-	\newunit\newblock
-	\usebibmacro{byeditor+others}%
-	\newunit\newblock
-	\printfield{edition}%
-	\newunit\newblock
-	\printfield{note}%
 	\newunit\newblock
 	\iflistundef{publisher}
-		{\usebibmacro{institution+location+date}}
-		{\usebibmacro{publisher+location+date}}%
-	\newunit\newblock
-	\printfield{pagetotal}%
-	\setunit{\addcomma\addspace}\newblock
-	\usebibmacro{chapter+pages}%
-	\newunit\newblock
-	\iftoggle{bbx:isbn}
-		{\printfield{isbn}}
-		{}%
-	\newunit\newblock
-	\usebibmacro{doi+eprint+url}%
+		{\printfield{type}%
+		 \newunit\newblock
+		 \usebibmacro{institution+location+date}}
+		{\setunit{\newblockpunct}\newblock
+		 \usebibmacro{edition}%
+		 \usebibmacro{byeditor+others}%
+		 \newunit\newblock
+		 \printfield{note}%
+		 \setunit{\newblockpunct}\newblock
+		 \usebibmacro{publisher+location+date}}%
+	\setunit{\bibpagespunct}\newblock
+	\usebibmacro{pagetotal/volumes}%
+	\setunit{\newblockpunct}\newblock
+	\usebibmacro{isbn+doi+eprint+url}%
 	\newunit\newblock
 	\usebibmacro{addendum+pubstate}%
 	\setunit{\bibpagerefpunct}\newblock
@@ -754,11 +717,11 @@
 	\usebibmacro{title}%
 	% \newunit
 	% \printlist{language}%
-	\setunit{\addcomma\addspace}\newblock
+	\newunit\newblock
 	\usebibmacro{byauthor}%
 	\newunit\newblock
 	\usebibmacro{byeditor+others}%
-	\newunit\newblock
+	\setunit{\newblockpunct}\newblock
 	\printfield{howpublished}%
 	\newunit\newblock
 	\printfield{type}%
@@ -766,10 +729,10 @@
 	\printfield{version}%
 	\newunit\newblock
 	\printfield{note}%
-	\newunit\newblock
+	\setunit{\newblockpunct}\newblock
 	\usebibmacro{organization+location+date}%
-	\newunit\newblock
-	\usebibmacro{doi+eprint+url}%
+	\setunit{\newblockpunct}\newblock
+	\usebibmacro{isbn+doi+eprint+url}%
 	\newunit\newblock
 	\usebibmacro{addendum+pubstate}%
 	\setunit{\bibpagerefpunct}\newblock
@@ -821,7 +784,7 @@
 			 \setunit{\addspace}}}%
 	% Primary citations and references print the series and commentaries
 	\iftoggle{bbx:related}
-		{\setunit{\addcomma\addspace}\newblock
+		{\newunit\newblock
 		 \printfield{series}%
 		 \newunit\newblock
 		 \printfield{note}%
@@ -838,7 +801,7 @@
 	\printlist{institution}%
 	\ifkeyword{CEDH}
 		% Define ECHR case citations
-		{\setunit{\addcomma\addspace}
+		{\newunit
 		 \printfield{title}%
 		 \iffieldundef{type}
 		 	{}
@@ -853,7 +816,7 @@
 		{\ifthenelse{	\ifkeyword{CC}\OR\ifkeyword{CConst}\OR
 						\ifkeyword{CJUE}\OR\ifkeyword{CJCE} }
 			% Define CJEU and Constitutional Court case citations
-			{\setunit{\addcomma\addspace}
+			{\newunit
 			 \printfield{type}%
 			 \setunit{\addspace\midsentence}
 			 \printfield{number}%
@@ -863,26 +826,26 @@
 			 \usebibmacro{date}%
 			 \iffieldundef{title}
 			 	{}
-			 	{\setunit{\addcomma\addspace}
+			 	{\newunit
 				 \printfield{title}}}%
 			% Define generic case citations
-			{\setunit{\addcomma\addspace}
+			{\newunit
 			 \printfield{type}%
-			 \setunit{\addcomma\addspace}
+			 \newunit
 			 \usebibmacro{date}%
 			 \iffieldundef{title}
 			 	{}
-			 	{\setunit{\addcomma\addspace}
+			 	{\newunit
 				 \printfield{title}}%
 			 \iffieldundef{number}
 			 	{}
-			 	{\setunit{\addcomma\addspace}
+			 	{\newunit
 			 	 \printfield{number}}}}%
 	% Primary citations and references print the series and commentaries
 	\iftoggle{bbx:related}
 		{\iffieldundef{series}
 			{}
-			{\setunit{\addcomma\addspace}
+			{\newunit
 			 \printfield{series}}%
 		 \setunit{\addcolon\addspace}\newblock
 		 \usebibmacro{related:init}%
@@ -899,9 +862,9 @@
 		{\usebibmacro{author}%
 		 \setunit{\labelnamepunct}\newblock
 		 \usebibmacro{title}%
-		 \setunit{\addcomma\addspace}\newblock
+		 \newunit\newblock
 		 \usebibmacro{journal+issue+date}%
-		 \setunit{\addcomma\addspace}\newblock
+		 \newunit\newblock
 		 \settoggle{bbx:related}{false}%
 		 \printfield{type}%
 		 \setunit{\addspace}
@@ -913,7 +876,7 @@
 		{\printfield{type}%
 		 \setunit{\addspace}%
 		 \usebibmacro{author}%
-		 \setunit{\addcomma\addspace}\newblock
+		 \newunit\newblock
 		 \usebibmacro{journal+issue+date}}%
 	\usebibmacro{finentry}}
 
@@ -921,13 +884,16 @@
 \DeclareBibliographyDriver{shortjournal}{%
 	\printfield[plain]{journaltitle}}
 
-\DeclareBibliographyDriver{shortauthor}{% TODO
+\DeclareBibliographyDriver{shorttitle}{%
+	\printfield[plain]{title}}
+
+\DeclareBibliographyDriver{shortauthor}{%
 	\usedriver{\clearfield{crossref}}{\thefield{entrytype}}%
-	\setunit{\addcomma\addspace}
+	\newunit
 	\printtext{\bibstring{citedas}}%
 	\setunit{\addspace}
 	\printnames{shortauthor}%
-	\setunit{\addcomma\addspace}
+	\newunit
 	\printfield{shorttitle}%
 	\usebibmacro{finentry}}
 
@@ -954,20 +920,20 @@
 
 %	Create a macro for collection/proceedings editors
 \newbibmacro*{compiler}{%
-	\ifnameundef{editor}
-		{}
+	\ifthenelse{\iffieldequalstr{editortype}{compiler}\AND\NOT\ifnameundef{editor}}
 		{\printnames[labelname]{editor}%
-		 \setunit{\addnbspace}%
+		 \clearname{editor}
+		 \setunit{\addnbspace}
 		 \ifthenelse{	\value{listcount} > 1 }
 			{\printtext[parens]{\bibstring{compilers}}}
 			{\printtext[parens]{\bibstring{compiler}}}%
-		 \clearname{editor}}}
+		 \newunit\newblock}%
+		{}}
 
 %	Create a macro for multi-volume book editors
 \newbibmacro*{bycompiler}{%
-	\iffieldequalstr{editortype}{compiler}
-		{\setunit{\addcomma\addspace}
-		 \printtext{\bibstring{bycompiler}}
+	\ifthenelse{\iffieldequalstr{editortype}{compiler}\AND\NOT\ifnameundef{editor}}
+		{\printtext{\bibstring{bycompiler}}
 		 \setunit{\addspace}
 		 \printnames[labelname]{editor}%
 		 \clearname{editor}}
@@ -977,25 +943,31 @@
 \renewbibmacro*{bybookauthor}{%
 	\ifnamesequal{author}{bookauthor}
 		{}
-		{\printnames[byauthor]{bookauthor}}}
+		{\printnames[byauthor]{bookauthor}%
+		 \setunit*{\newunitpunct}}}
+
+\newbibmacro*{edition}{%
+	\iffieldundef{edition}
+		{\ifnameundef{editor}
+		 	{\addperiod}% Mettre un point avant le premier éditeur, traducteur, etc. 
+		 	{\bibstring{edition}%
+			 \setunit{\addspace}}}
+		{\printfield{edition}
+		 \setunit{\addcomma\addspace}}}
 
 %	Create macros for printing title elements
 \newbibmacro*{maintitle+title}{%
 	\usebibmacro{title}%
+	% Ne pas imprimer le titleaddon du {mvbook}, etc. dans une autre entrée
+	\clearfield{maintitleaddon}
 	\iffieldsequal{maintitle}{title}
 		{\clearfield{maintitle}%
-		 \clearfield{mainsubtitle}%
-		 \clearfield{maintitleaddon}}
+		 \clearfield{mainsubtitle}}
 		{\iffieldundef{maintitle}
 			{}
-			{\setunit{\addcomma\addspace}
-			 \usebibmacro{in:}
-			 \iffieldundef{editor}
-			 	{}
-				{\ifnamesequal{author}{editor}
-			 		{\clearname{editor}}
-			 		{\usebibmacro{compiler}% Print mvbook editor
-			 		 \setunit{\addcomma\addspace}}}%
+			{\newunit\newblock
+			 \usebibmacro{in:}%
+			 \usebibmacro{compiler}%
 			 \usebibmacro{maintitle}}}}
 
 \newbibmacro*{maintitle+booktitle}{%
@@ -1006,8 +978,9 @@
 		 \clearfield{maintitleaddon}}
 		{\iffieldundef{maintitle}
 			{}
-			{\setunit{\addcomma\addspace}
-			 \usebibmacro{in:}
+			{\newunit\newblock
+			 \usebibmacro{in:}%
+			 \usebibmacro{bybookauthor}%
 			 \usebibmacro{maintitle}}}}
 
 %	Create a macro for journal titles + citation in French and English
@@ -1031,9 +1004,9 @@
 		{\usebibmacro{journal}}
 		{\printfield[journaltitle]{shortjournal}}%
 	\midsentence%
-	\setunit{\addcomma\addspace}
+	\newunit
 	\printfield{series}%
-	\setunit{\addcomma\addspace}
+	\newunit
 	\iffieldequalstr{langid}{french}%
 		% Revues en français
 		{\iffieldundef{part}
@@ -1050,19 +1023,19 @@
 				% Ex: Gaz. Pal., n°123, 5 janv. 2015, p. 123
 				% --- Arch. phil. dr., n°123, 2015/4, p. 123
 				{\usebibmacro{date}
-				 \setunit{\addcomma\addspace}
+				 \newunit
 				 \printfield{volume}
-				 \setunit{\addcomma\addspace}
+				 \newunit
 				 \printfield{number}}}%
 			% Ex: JCP 1950, I, 12345 -- JCP 2015, chron., 123
 			{\printfield{year}%
-			 \setunit{\addcomma\addspace}
+			 \newunit
 			 \printfield[plain]{part}%
-			 \setunit{\addcomma\addspace}
+			 \newunit
 			 \printfield[plain]{number}}}
 		% Revues dans d'autres langues
 		{\printfield{volume}%
-		 \setunit{\addcomma\addspace}
+		 \newunit
 		 \printfield{number}%
 		 \setunit{\addspace}
 		 \printtext[parens]{\usebibmacro{date}}}%
@@ -1086,7 +1059,7 @@
 					\iffieldundef{eventmonth} \OR
 					\iffieldundef{eventday} }
 		{}
-		{\setunit{\addcomma\addspace}
+		{\newunit
 		 \printeventdate}
 	\setunit{\addspace}
 	\iffieldundef{venue}
@@ -1095,32 +1068,50 @@
 
 %	Create macros for publication information
 \newbibmacro*{publisher+location+date}{%
+	% If parent entry defines an end date and current entry doesn't, clear it.
+	\iffieldxref{endyear}
+		{\clearfield{endyear}}
+		{}%
 	\printlist{location}%
-	\setunit*{\addcomma\space}%
+	\setunit*{\addcolon\addspace}\newblock
 	\printlist{publisher}%
-	\setunit*{\addcomma\space}%
-	\usebibmacro{date}}
+	\setunit*{\addcomma\addspace}\newblock
+	\usebibmacro{date}%
+	\setunit*{\addspace}
+	\usebibmacro{series+number}}
 
 \newbibmacro*{institution+location+date}{%
+	% If parent entry defines an end date and current entry doesn't, clear it.
+	\iffieldxref{endyear}
+		{\clearfield{endyear}}
+		{}%
 	\printlist{location}%
-	\setunit*{\addcomma\space}%
+	\setunit*{\addcolon\addspace}\newblock
 	\printlist{institution}%
-	\setunit*{\addcomma\space}%
-	\usebibmacro{date}}
+	\setunit*{\addcomma\addspace}\newblock
+	\usebibmacro{date}%
+	\setunit{\addspace}
+	\usebibmacro{series+number}}
 
 \newbibmacro*{organization+location+date}{%
+	% If parent entry defines an end date and current entry doesn't, clear it.
+	\iffieldxref{endyear}
+		{\clearfield{endyear}}
+		{}%
 	\printlist{location}%
-	\setunit*{\addcomma\space}%
+	\setunit*{\addcolon\addspace}\newblock
 	\printlist{organization}%
-	\setunit*{\addcomma\space}%
-	\usebibmacro{date}}
+	\setunit*{\addcomma\addspace}\newblock
+	\usebibmacro{date}%
+	\setunit{\addspace}
+	\usebibmacro{series+number}}
 
 \newbibmacro*{series+number}{%
 	\iffieldundef{series}
 		{}
 		{\printtext[parens]{%
 			\printfield{series}%
-			\setunit{\addcomma\addspace}%
+			\newunit\newblock
 			\printfield{number}}}}
 
 %	Create macros for pagination + volumes
@@ -1129,8 +1120,7 @@
 		{\printfield{pagetotal}}%
 		{\iffieldundef{volume}
 			{\printfield{volumes}}
-			{\printfield{pagetotal}}}%
-}
+			{\printfield{pagetotal}}}}
 
 \newbibmacro*{volume+part}{%
 	\printfield{volume}%
@@ -1138,25 +1128,32 @@
 
 \newbibmacro*{chapter+pages}{%
 	\printfield{chapter}%
+	\setunit{\bibpagespunct}
 	\usebibmacro{pages}}
 
 \newbibmacro*{pages}{%
-	\setunit{\bibpagespunct}
 	\printfield{pages}%
 	\iffieldint{pages}
-		{\addnbspace\bibstring{sequentes}}
+		{\setunit{\addnbspace}
+		 \bibstring{sequentes}}
 		{}}
 
 %	Create macros for standard book numbers
-\newbibmacro*{doi+eprint+url}{%
+\newbibmacro*{isbn+doi+eprint+url}{%
+	\iftoggle{bbx:isbn}
+		{\iffieldundef{isbn}
+			{\printfield{issn}}
+			{\printfield{isbn}}}%
+		{}%
+	\setunit{\newblockpunct}\newblock
 	\iftoggle{bbx:doi}
 		{\printfield{doi}}
 		{}%
-	\newunit\newblock
+	\setunit{\newblockpunct}\newblock
 	\iftoggle{bbx:eprint}
 		{\usebibmacro{eprint}}
 		{}%
-	\newunit\newblock
+	\setunit{\newblockpunct}\newblock
 	\iftoggle{bbx:url}
 		{\usebibmacro{url+urldate}}
 		{}}
@@ -1187,7 +1184,7 @@
 		{\usebibmacro{bbx:dashcheck}
 			{\bibnamedash}
 			{\printnames{author}%
-			 \setunit{\addcomma\space}%
+			 \newunit\newblock
 			 \usebibmacro{bbx:savehash}}%
 		 \usebibmacro{authorstrg}}
 		{\global\undef\bbx@lasthash}}
