@@ -1066,11 +1066,6 @@
 \aliaspagestyle{part}{plain}
 \aliaspagestyle{chapter}{plain}
 
-%	Redefine <plain> so that it takes into accout the <twoside> option
-\makepagestyle{plain}
-	\makeevenfoot{plain}{\if@twoside\thepage\fi}{\if@oneside\thepage\fi}{}
-	\makeoddfoot{plain}{}{\if@oneside\thepage\fi}{\if@twoside\thepage\fi}
-
 %	Create a command that uses \rightmark instead of \leftmark if empty
 \newcommand{\leftrightmark}{%
 	\begingroup\protected@edef\x{\leftmark}%
@@ -1079,6 +1074,15 @@
 	\else
 		\endgroup\leftmark
 	\fi}
+
+%	Create a counter that stores the number of the document's last page
+% Requries two runs
+\AtEndDocument{\label{lastpage}}
+
+%	Redefine <plain> so that it takes into accout the <twoside> option
+\makepagestyle{plain}
+	\makeevenfoot{plain}{\if@twoside\thepage\fi}{\if@oneside\thepage\fi}{}
+	\makeoddfoot{plain}{}{\if@oneside\thepage\fi}{\if@twoside\thepage\fi}
 
 %	Define the standard page style for the class
 %	TODO » Corriger pour \chapter* et \section* (définir \rightmark) -- difficile, on peut les laisser dans le \fontmatter ou \backmatter (à documenter)
@@ -1100,27 +1104,49 @@
 		\createplainmark{index}{both}{\indexname}
 		\createplainmark{glossary}{both}{\glossaryname}
 	}
-	\makeevenhead{frenchlaw}{}{\itshape\if@article\csname @title@\languagename\endcsname\else\leftrightmark\fi}{}
-	\makeoddhead{frenchlaw}{}{\itshape\if@article\@series\else\rightmark\fi}{}
-	\makeevenfoot{frenchlaw}{\if@twoside\thepage\fi}{\if@oneside\thepage\fi}{}
-	\makeoddfoot{frenchlaw}{}{\if@oneside\thepage\fi}{\if@twoside\thepage\fi}
-
-\pagestyle{frenchlaw}
+	\makeevenhead{frenchlaw}
+		{}
+		{\if@article\itshape\csname @title@\languagename\endcsname%
+		 \else\itshape\leftrightmark\fi}
+		{}
+	\makeoddhead{frenchlaw}
+		{}
+		{\if@article\itshape\@series%
+		 \else\rightmark\fi}
+		{}
+	\makeevenfoot{frenchlaw}
+		{\if@twoside\thepage\fi}
+		{\if@oneside\thepage\fi}
+		{}
+	\makeoddfoot{frenchlaw}
+		{}
+		{\if@oneside\thepage\fi}
+		{\if@twoside\thepage\fi}
 
 %	Define a style for letters, memos and resumés
 %	TODO » Regrouper au style frenchlaw?
 %	TODO » Documenter: Compiler deux fois
 \makepagestyle{letterhead}
-	\makeevenhead{letterhead}{}{\if@CV\ifnum\value{page}>1\MakeLowercase{\scshape\@author~-- \csname @title@\languagename\endcsname}\fi\fi}{}
-	\makeoddhead{letterhead}{}{\if@CV\ifnum\value{page}>1\MakeLowercase{\scshape\@author~-- \csname @title@\languagename\endcsname}\fi\fi}{}
-	\makeevenfoot{letterhead}{\leftrightmark}{\ifnum\value{lastpage}>1\relax\textsc{page \thepage\ sur \pageref{lastpage}}\fi}{}
-	\makeoddfoot{letterhead}{\leftrightmark}{\ifnum\value{lastpage}>1\relax\textsc{page \thepage\ sur \pageref{lastpage}}\fi}{}
-\AtEndDocument{\label{lastpage}}
-%	TODO » Appliquer automatiquement sur certains types de docs + Créer les autres formats
-
-\if@CV
-	\pagestyle{letterhead}
-\fi
+	\makeevenhead{letterhead}
+		{}
+		{\ifnum\value{page}>1%
+		 \if@CV\MakeLowercase{\scshape\@author~-- \cvname}\fi\fi}
+		{}
+	\makeoddhead{letterhead}
+		{}
+		{\ifnum\value{page}>1%
+		 \if@CV\MakeLowercase{\scshape\@author~-- \cvname}\fi\fi}
+		{}
+	\makeevenfoot{letterhead}
+		{}
+		{\ifnum\value{lastpage}>1\relax%
+		 \scshape page \thepage\ sur \thelastpage\fi}
+		{}
+	\makeoddfoot{letterhead}
+		{}
+		{\ifnum\value{lastpage}>1\relax%
+		 \scshape page \thepage\ sur \thelastpage\fi}
+		{}
 
 %	TODO » A reprendre pour didactic. Utiliser \leftmark et \rightmark en les redéfinissant (?)
 \makepagestyle{didactichead}
@@ -1153,6 +1179,19 @@
 			\ifx\relax\@date\relax\else, \@date.\fi}}
 		{}
 		{\thepage}
+
+%	Set Default header styles
+\pagestyle{frenchlaw}
+%
+%\if@letter\pagestyle{letterhead}\fi
+\newif\if@require@lastpage
+	\@require@lastpagefalse
+\if@CV\pagestyle{letterhead}\@require@lastpagetrue\fi
+
+\AtEndDocument{%
+	\if@require@lastpage\ifnum\value{page}>1\ifnum\value{lastpage}=0\relax%
+		\ClassWarningNoLine{frenchlaw}{Please rerun LaTeX on file: \MessageBreak \jobname.tex \MessageBreak to get correct page numbering}%
+	\fi\fi\fi}
 
 \if@didactic
 	\pagestyle{didactichead}
