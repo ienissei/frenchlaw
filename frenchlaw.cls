@@ -747,7 +747,7 @@
 	\begin{minipage*}{.4\linewidth}
 	\centering%
 	\if\@empty\@signature\relax\else
-		\raisebox{0pt}[0pt][0pt]{%
+		\raisebox{-\baselineskip}[0pt][0pt]{%
 			\includegraphics[width=\linewidth,height=4\baselineskip,keepaspectratio]{\@signature}}\par
 	\fi
 	\@author
@@ -997,6 +997,7 @@
 }
 
 %	Create a style for letters
+%	TODO » Internationaliser les textes
 \newcommand{\maketitleLetter}{
 	\if\@empty\@address\relax
 		\@latex@warning@no@line{No \noexpand\address given}\fi
@@ -1035,6 +1036,7 @@
 }
 
 %	Créate a command for the closing remarks in a letter
+%	TODO » Prévoir de pouvoir personnaliser la hauteur de la signature, idéalement pour qu'elle empiète un peu sur le texte (ou dans \makesignature)
 \newcommand{\closing}{
 	\addvspace{\baselineskip}
 	\if\@empty\@enclosed\relax\else%
@@ -1045,7 +1047,7 @@
 		\ccname:\hfill%
 		\begin{minipage*}{.85\linewidth}\@cc\end{minipage*}%
 	\fi\par
-	\addvspace{2\baselineskip}
+	\addvspace{\baselineskip}
 	\makesignature\par
 	% TODO » Ajouter avec les clausiers
 	% \nondisclosure
@@ -1108,7 +1110,7 @@
 	\makeoddhead{frenchlaw}
 		{}
 		{\if@article\itshape\@series%
-		 \else\rightmark\fi}
+		 \else\itshape\rightmark\fi}
 		{}
 	\makeevenfoot{frenchlaw}
 		{\if@twoside\thepage\fi}
