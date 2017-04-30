@@ -78,6 +78,7 @@
 	\def\tablerefname{Tableau}%
 	\def\proofname{{\scshape D{\'e}monstration}}%
 	\def\pagename{page}%
+	\def\pageofname{sur}%
 	\def\pagerefname{page}%
 	\def\seename{voir}%
 	\def\alsoname{voir aussi}%
@@ -87,10 +88,12 @@
 	\def\enclname{P.\thinspace J.}%
 	\def\centuryname{si{\`e}cle}%
 	\def\centuriesname{si{\`e}cles}%
+	\def\dateprefix{le~}
 	% Pages de titre
-	\def\emailname{Email:~}
-	\def\phonename{Tél.:~}
-	\def\faxname{Fax.:~}
+	\def\emailname{Email}
+	\def\phonename{Tél.}
+	\def\faxname{Fax.}
+	\def\subjectname{Objet}% Lettres
 	\def\subjecttext{Thèse pour le doctorat en}
 	\def\datetext{Présentée et soutenue publiquement le}
 	\def\directortext{Sous la direction de:}
@@ -100,12 +103,18 @@
 %	Configurer les noms des différents éléments en anglais
 %	TODO » Vérifier l'exhaustivité 
 \addto\captionsenglish{
+	\def\pagename{page}%
+	\def\pageofname{of}%
 	\def\headingname{}% TODO
 	\def\subheadingname{}%
 	\def\keywordsname{Keywords}
 	\def\centuryname{century}%
 	\def\centuriesname{centuries}%
-	\def\emailname{Contact:~}
+	\def\dateprefix{}
+	\def\emailname{Email}
+	\def\phonename{Phone}
+	\def\faxname{Fax.}
+	\def\subjectname{Subject}% Lettres
 }
 \let\captionsbritish=\captionsenglish
 
