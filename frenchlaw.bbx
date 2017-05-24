@@ -118,7 +118,8 @@
 		{\bibstring{number}}
 		{\bibstring{numbers}}%
 	\addnbthinspace#1}%
-%\DeclareFieldFormat[article,periodical]{number}{\bibstring{number}\addnbthinspace#1}
+\DeclareFieldFormat[jurisdiction,legislation]{number}{%
+	\bibstring{number}\addnbthinspace#1}
 \DeclareFieldFormat[article,periodical]{volume}{\bibstring{volume}~#1}
 
 %	TODO » Delete
@@ -248,6 +249,7 @@
 		\map[overwrite=false]{%
 			\pertype{mvbook}
 			\pertype{collection}
+			\pertype{proceeedings}
 			\pertype{reference}
 			\step[%
 				fieldset=editortype, fieldvalue={compiler}]
@@ -316,8 +318,6 @@
 	% \printlist{language}%
 	\newunit\newblock
 	\usebibmacro{byauthor}%
-	\newunit\newblock
-	\usebibmacro{compiler}%
 	\setunit{\bibpagespunct}\newblock
 	\usebibmacro{volume+part}%
 	\setunit{\newblockpunct}\newblock
@@ -355,8 +355,6 @@
 	% \printlist{language}%
 	\newunit\newblock
 	\usebibmacro{byauthor}%
-	\newunit\newblock
-	\usebibmacro{compiler}%
 	\setunit{\bibpagespunct}\newblock
 	\usebibmacro{volume+part}%
 	\setunit{\newblockpunct}\newblock
@@ -396,8 +394,6 @@
 	\usebibmacro{event+venue+date}%
 	\newunit\newblock
 	\usebibmacro{byauthor}%
-	\newunit\newblock
-	\usebibmacro{compiler}%
 	\setunit{\bibpagespunct}\newblock
 	\usebibmacro{volume+part}%
 	\setunit{\newblockpunct}\newblock
@@ -406,9 +402,7 @@
 	\newunit\newblock
 	\printfield{note}%
 	\setunit{\newblockpunct}\newblock
-	\iflistundef{publisher}
-		{\usebibmacro{organization+location+date}}
-		{\usebibmacro{publisher+location+date}}%
+	\usebibmacro{publisher+location+date}%
 	\setunit{\bibpagespunct}\newblock
 	\usebibmacro{pagetotal/volumes}%
 	\setunit{\newblockpunct}\newblock
@@ -479,10 +473,9 @@
 	\iffieldundef{crossref}
 		{\newunit\newblock
 		 \usebibmacro{in:}%
-		 \usebibmacro{bybookauthor}%
 		 \usebibmacro{maintitle+booktitle}%
 		 \newunit\newblock
-		 \usebibmacro{compiler}%
+		 \usebibmacro{bybookauthor}%
 		 \setunit{\newblockpunct}\newblock
 		 \usebibmacro{edition}%
 		 \usebibmacro{byeditor+others}%
@@ -526,10 +519,9 @@
 	\iffieldundef{crossref}%
 		{\newunit
 		 \usebibmacro{in:}%
-		 \usebibmacro{bybookauthor}%
 		 \usebibmacro{maintitle+booktitle}%
 		 \newunit\newblock
-		 \usebibmacro{compiler}%
+		 \usebibmacro{bybookauthor}%
 		 \setunit{\newblockpunct}\newblock
 		 \usebibmacro{edition}%
 		 \usebibmacro{byeditor+others}%
@@ -578,21 +570,18 @@
 	\iffieldundef{crossref}%
 		{\newunit
 		 \usebibmacro{in:}%
-		 \usebibmacro{bybookauthor}%
 		 \usebibmacro{maintitle+booktitle}%
 		 \newunit\newblock
 		 \usebibmacro{event+venue+date}%
 		 \newunit\newblock
-		 \usebibmacro{compiler}%
+		 \usebibmacro{bybookauthor}%
 		 \setunit{\newblockpunct}\newblock
 		 \usebibmacro{edition}%
 		 \usebibmacro{byeditor+others}%
 		 \newunit\newblock
 		 \printfield{note}%
 		 \setunit{\newblockpunct}\newblock
-		 \iflistundef{publisher}
-			{\usebibmacro{organization+location+date}}
-			{\usebibmacro{publisher+location+date}}%
+		 \usebibmacro{publisher+location+date}%
 		 \setunit{\bibpagespunct}\newblock
 		 \usebibmacro{volume+part}%
 		 \newunit\newblock
@@ -634,10 +623,9 @@
 	\iffieldundef{crossref}%
 		{\newunit
 		 \usebibmacro{in:}%
-		 \usebibmacro{bybookauthor}%
 		 \usebibmacro{maintitle+booktitle}%
 		 \newunit\newblock
-		 \usebibmacro{compiler}%
+		 \usebibmacro{bybookauthor}%
 		 \setunit{\newblockpunct}\newblock
 		 \usebibmacro{edition}%
 		 \usebibmacro{byeditor+others}%
@@ -683,16 +671,14 @@
 	% \printlist{language}%
 	\newunit\newblock
 	\iflistundef{publisher}
-		{\printfield{type}%
-		 \newunit\newblock
-		 \usebibmacro{institution+location+date}}
+		{\printfield{type}}
 		{\setunit{\newblockpunct}\newblock
 		 \usebibmacro{edition}%
-		 \usebibmacro{byeditor+others}%
-		 \newunit\newblock
-		 \printfield{note}%
-		 \setunit{\newblockpunct}\newblock
-		 \usebibmacro{publisher+location+date}}%
+		 \usebibmacro{byeditor+others}}%
+	\newunit\newblock
+	\printfield{note}%
+	\setunit{\newblockpunct}\newblock
+	\usebibmacro{publisher+location+date}%
 	\setunit{\bibpagespunct}\newblock
 	\usebibmacro{pagetotal/volumes}%
 	\setunit{\newblockpunct}\newblock
@@ -730,7 +716,7 @@
 	\newunit\newblock
 	\printfield{note}%
 	\setunit{\newblockpunct}\newblock
-	\usebibmacro{organization+location+date}%
+	\usebibmacro{publisher+location+date}%
 	\setunit{\newblockpunct}\newblock
 	\usebibmacro{isbn+doi+eprint+url}%
 	\newunit\newblock
@@ -971,6 +957,7 @@
 			 \usebibmacro{maintitle}}}}
 
 \newbibmacro*{maintitle+booktitle}{%
+	\usebibmacro{compiler}%
 	\usebibmacro{booktitle}%
 	\iffieldsequal{maintitle}{booktitle}
 		{\clearfield{maintitle}%
@@ -980,7 +967,7 @@
 			{}
 			{\newunit\newblock
 			 \usebibmacro{in:}%
-			 \usebibmacro{bybookauthor}%
+			 \usebibmacro{compiler}%
 			 \usebibmacro{maintitle}}}}
 
 %	Create a macro for journal titles + citation in French and English
@@ -1074,36 +1061,14 @@
 		{}%
 	\printlist{location}%
 	\setunit*{\addcolon\addspace}\newblock
-	\printlist{publisher}%
+	\iffieldundef{publisher}
+		{\printlist{institution}%
+		 \newunit\newblock
+		 \printlist{organization}}
+		{\printlist{publisher}}%
 	\setunit*{\addcomma\addspace}\newblock
 	\usebibmacro{date}%
 	\setunit*{\addspace}
-	\usebibmacro{series+number}}
-
-\newbibmacro*{institution+location+date}{%
-	% If parent entry defines an end date and current entry doesn't, clear it.
-	\iffieldxref{endyear}
-		{\clearfield{endyear}}
-		{}%
-	\printlist{location}%
-	\setunit*{\addcolon\addspace}\newblock
-	\printlist{institution}%
-	\setunit*{\addcomma\addspace}\newblock
-	\usebibmacro{date}%
-	\setunit{\addspace}
-	\usebibmacro{series+number}}
-
-\newbibmacro*{organization+location+date}{%
-	% If parent entry defines an end date and current entry doesn't, clear it.
-	\iffieldxref{endyear}
-		{\clearfield{endyear}}
-		{}%
-	\printlist{location}%
-	\setunit*{\addcolon\addspace}\newblock
-	\printlist{organization}%
-	\setunit*{\addcomma\addspace}\newblock
-	\usebibmacro{date}%
-	\setunit{\addspace}
 	\usebibmacro{series+number}}
 
 \newbibmacro*{series+number}{%
