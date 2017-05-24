@@ -50,6 +50,8 @@
 	\@articlefalse
 \newif\if@CV
 	\@CVfalse
+\newif\if@letter
+	\@letterfalse
 \newif\if@didactic
 	\@didacticfalse
 
@@ -166,6 +168,15 @@
 \DeclareOptionX{article}{
 	\@articletrue
 	\PassOptionsToClass{article}{memoir}
+}
+
+%	Define option for <letter> document style
+\DeclareOptionX{letter}{
+	\@lettertrue
+	\@elevenpointstrue
+%	\@marginaltrue% Only used to accompany CV, document it elsewhere or create a + option
+	\@twosidefalse
+	\PassOptionsToClass{11pt,oneside}{memoir}
 }
 
 %	Define option for <CV> document style
@@ -673,13 +684,18 @@
 	\expandafter\gdef\csname @subtitle@\languagename\endcsname{\@empty}
 \newcommand{\subject}[1]{\gdef\@subject{#1}}
 	\newcommand{\@subject}{\@empty}
-%	Indexation Info
+%	Affiliation Info
 \newcommand{\institution}[1]{\gdef\@institution{#1}}
 	\newcommand{\@institution}{\@empty}
 \newcommand{\school}[1]{\gdef\@school{#1}}
 	\newcommand{\@school}{\@empty}
 \newcommand{\laboratory}[1]{\gdef\@laboratory{#1}}
 	\newcommand{\@laboratory}{\@empty}
+%	TODO » Revoir
+%	Utilisé pour les lettres
+%	Permettre d'insérer plusieurs logos, e.g. en haut de page (commande incrémentale)
+\newcommand{\logo}[2][]{\gdef\@logo{#2}}
+	\newcommand{\@logo}{\@empty}
 %	Thesis Info
 \newcommand{\thesis}[1]{\gdef\@thesis{#1}}
 	\newcommand{\@thesis}{\@empty}
@@ -742,17 +758,18 @@
 % }
 
 %	Create a command for the signature block in letters and other documents
-\newcommand{\makesignature}{
+% The optional argument inserts some text right before the signature. If there are multiple signatures and the header is not used for all of them, leave whitespace in the argument. 
+\newcommand{\makesignature}[1][\@empty]{
 	\hfill%
-	\begin{minipage*}{.4\linewidth}
+	\begin{minipage}[t]{.4\textwidth}
 	\centering%
-	\if\@empty\@signature\relax\else
-		\raisebox{0pt}[0pt][0pt]{%
-			\includegraphics[width=\linewidth,height=4\baselineskip,keepaspectratio]{\@signature}}\par
+	\if\@empty#1\else#1\par\vspace{2\baselineskip}\fi
+	\if\@empty\@signature\relax\par\addvspace{\baselineskip}\else
+		\raisebox{-2\baselineskip}[0pt][0pt]{%
+			\includegraphics[width=\textwidth,height=4\baselineskip,keepaspectratio]{\@signature}}\\
 	\fi
 	\@author
-	\end{minipage*}
-}
+	\end{minipage}}
 
 %	TODO » Ajouter avec les clausiers
 % \newcommand{\nondisclosure}{%
@@ -914,7 +931,7 @@
 		 \large\raggedright\csname @subtitle@\languagename\endcsname\fi\par}%
 		\vspace{2\baselineskip}
 		{\if\@empty\@author\else\@author\par%
-		 \if\@empty\@email\else\emailname\@email\fi\fi\par}%
+		 \if\@empty\@email\else\emailname:~\@email\fi\fi\par}%
 		\vspace{\baselineskip}
 		{\@date\par}}
 	% Print the title page
@@ -943,8 +960,8 @@
 		{\Large\scshape\raggedright\csname @title@\languagename\endcsname\if\@empty\csname @subtitle@\languagename\endcsname\relax\else :\par\vspace{.25\baselineskip}\noindent\csname @subtitle@\languagename\endcsname\vspace{.25\baselineskip}\fi}\par%
 		{\if\@empty\@author\else\@author%
 		 \if\@empty\@institution\else, \@institution\fi\par%
-		 \if\@empty\@email\else\emailname\@email\fi\fi\par}%
-		\vspace{2\baselineskip}%
+		 \if\@empty\@email\else\emailname:~\@email\fi\fi\par}%
+		\vspace{2\baselineskip}% TODO » Faire une longueur absorbable s'il y a un skip ensuite
 		\restore@twocolumns%
 	\egroup
 }
@@ -964,7 +981,7 @@
 		\vspace*{0em}
 		{\Large\scshape\raggedright\csname @title@\languagename\endcsname\if\@empty\csname @subtitle@\languagename\endcsname\relax\else :\par\noindent\csname @subtitle@\languagename\endcsname\fi}\par%
 		{\@author~---\space\@date\par}%
-		{\if\@empty\@email\else\emailname\@email\fi\par}%
+		{\if\@empty\@email\else\emailname:~\@email\fi\par}%
 		\vspace{2\baselineskip}%
 		\restore@twocolumns%
 	\egroup
@@ -988,15 +1005,16 @@
 	{\Large\raggedright\@author}\\%
 	\begin{minipage*}{.5\linewidth}
 		\@address\par
-		\if\@empty\@phone\else\phonename\@phone\fi\par
-		\if\@empty\@fax\else\faxname\@fax\fi\par
-		\if\@empty\@email\else\emailname\@email\fi
+		\if\@empty\@phone\else\phonename:~\@phone\fi\par
+		\if\@empty\@fax\else\faxname:~\@fax\fi\par
+		\if\@empty\@email\else\emailname:~\@email\fi
 	\end{minipage*}\par%\href{\@email}{\@email}
 	\restore@twocolumns%
 	\egroup
 }
 
 %	Create a style for letters
+%	TODO » Internationaliser les textes
 \newcommand{\maketitleLetter}{
 	\if\@empty\@address\relax
 		\@latex@warning@no@line{No \noexpand\address given}\fi
@@ -1011,30 +1029,30 @@
 	\setlength{\parindent}{0em}
 	\setlength{\parskip}{\baselineskip}
 	\clearpage
-	\bgroup
+	\if\@empty\@logo\relax\else\includegraphics[width=.3\textwidth]{\@logo}\fi\par
 	\begin{minipage*}{.5\linewidth}
 		\@author\par
 		\@address\par
-		\if\@empty\@phone\else\phonename\@phone\fi\par
-		\if\@empty\@fax\else\faxname\@fax\fi\par
-		\if\@empty\@email\else\emailname\@email\fi
+		\if\@empty\@phone\else\phonename:~\@phone\fi\par
+		\if\@empty\@fax\else\faxname:~\@fax\fi\par
+		\if\@empty\@email\else\emailname:~\@email\fi
 	\end{minipage*}%
 	\hfill
 	\begin{minipage*}{.4\linewidth}
 		\if\@empty\@recipient\relax\else\@recipient\fi\par
 		\if\@empty\@addressee\relax\else\@addressee\fi\par
 		\vspace{\baselineskip}
-		\if\@empty\@location\relax\else\@location, \fi le \@date
+		\if\@empty\@location\relax\else\@location, \fi \dateprefix\@date
 	\end{minipage*}
 	\vspace*{\baselineskip}
-	\if\@empty\@subject\relax\else\textsc{Objet:} \@subject\fi\par
+	\if\@empty\@subject\relax\else\textsc{\subjectname}: \@subject\fi\par
 	\if\@empty\@ourRef\relax\else N./Réf.~: \@ourRef\fi\par
 	\if\@empty\@yourRef\relax\else V./Réf~: \@yourRef\fi\par
 	\vspace{\baselineskip}
-	\egroup
 }
 
 %	Créate a command for the closing remarks in a letter
+%	TODO » Prévoir de pouvoir personnaliser la hauteur de la signature, idéalement pour qu'elle empiète un peu sur le texte (ou dans \makesignature)
 \newcommand{\closing}{
 	\addvspace{\baselineskip}
 	\if\@empty\@enclosed\relax\else%
@@ -1051,12 +1069,13 @@
 	% \nondisclosure
 }
 
-%	Set the default styles to <Book> or <Article>
-\if@article\titlepagestyle{Article}\else
-\if@CV\titlepagestyle{CV}\else
-\if@didactic\titlepagestyle{Didactic}\else
-\titlepagestyle{Book}\fi\fi\fi
-
+%	Set the default title page styles
+\titlepagestyle{Book}
+\if@article\titlepagestyle{Article}\fi
+\if@CV\titlepagestyle{CV}\fi
+\if@letter\titlepagestyle{Letter}\fi
+\if@didactic\titlepagestyle{Didactic}\fi
+ 
 %	#####	HEADERS & FOOTERS	#####
 
 %	TODO » Documenté pour les livres, articles, lettres, CVs. Programmer et documenter les docs juridiques
@@ -1066,11 +1085,6 @@
 \aliaspagestyle{part}{plain}
 \aliaspagestyle{chapter}{plain}
 
-%	Redefine <plain> so that it takes into accout the <twoside> option
-\makepagestyle{plain}
-	\makeevenfoot{plain}{\if@twoside\thepage\fi}{\if@oneside\thepage\fi}{}
-	\makeoddfoot{plain}{}{\if@oneside\thepage\fi}{\if@twoside\thepage\fi}
-
 %	Create a command that uses \rightmark instead of \leftmark if empty
 \newcommand{\leftrightmark}{%
 	\begingroup\protected@edef\x{\leftmark}%
@@ -1079,6 +1093,11 @@
 	\else
 		\endgroup\leftmark
 	\fi}
+
+%	Redefine <plain> so that it takes into accout the <twoside> option
+\makepagestyle{plain}
+	\makeevenfoot{plain}{\if@twoside\thepage\fi}{\if@oneside\thepage\fi}{}
+	\makeoddfoot{plain}{}{\if@oneside\thepage\fi}{\if@twoside\thepage\fi}
 
 %	Define the standard page style for the class
 %	TODO » Corriger pour \chapter* et \section* (définir \rightmark) -- difficile, on peut les laisser dans le \fontmatter ou \backmatter (à documenter)
@@ -1100,27 +1119,49 @@
 		\createplainmark{index}{both}{\indexname}
 		\createplainmark{glossary}{both}{\glossaryname}
 	}
-	\makeevenhead{frenchlaw}{}{\itshape\if@article\csname @title@\languagename\endcsname\else\leftrightmark\fi}{}
-	\makeoddhead{frenchlaw}{}{\itshape\if@article\@series\else\rightmark\fi}{}
-	\makeevenfoot{frenchlaw}{\if@twoside\thepage\fi}{\if@oneside\thepage\fi}{}
-	\makeoddfoot{frenchlaw}{}{\if@oneside\thepage\fi}{\if@twoside\thepage\fi}
-
-\pagestyle{frenchlaw}
+	\makeevenhead{frenchlaw}
+		{}
+		{\if@article\itshape\csname @title@\languagename\endcsname%
+		 \else\itshape\leftrightmark\fi}
+		{}
+	\makeoddhead{frenchlaw}
+		{}
+		{\if@article\itshape\@series%
+		 \else\itshape\rightmark\fi}
+		{}
+	\makeevenfoot{frenchlaw}
+		{\if@twoside\thepage\fi}
+		{\if@oneside\thepage\fi}
+		{}
+	\makeoddfoot{frenchlaw}
+		{}
+		{\if@oneside\thepage\fi}
+		{\if@twoside\thepage\fi}
 
 %	Define a style for letters, memos and resumés
 %	TODO » Regrouper au style frenchlaw?
 %	TODO » Documenter: Compiler deux fois
 \makepagestyle{letterhead}
-	\makeevenhead{letterhead}{}{\if@CV\ifnum\value{page}>1\MakeLowercase{\scshape\@author~-- \csname @title@\languagename\endcsname}\fi\fi}{}
-	\makeoddhead{letterhead}{}{\if@CV\ifnum\value{page}>1\MakeLowercase{\scshape\@author~-- \csname @title@\languagename\endcsname}\fi\fi}{}
-	\makeevenfoot{letterhead}{\leftrightmark}{\ifnum\value{lastpage}>1\relax\textsc{page \thepage\ sur \pageref{lastpage}}\fi}{}
-	\makeoddfoot{letterhead}{\leftrightmark}{\ifnum\value{lastpage}>1\relax\textsc{page \thepage\ sur \pageref{lastpage}}\fi}{}
-\AtEndDocument{\label{lastpage}}
-%	TODO » Appliquer automatiquement sur certains types de docs + Créer les autres formats
-
-\if@CV
-	\pagestyle{letterhead}
-\fi
+	\makeevenhead{letterhead}
+		{}
+		{\ifnum\value{page}>1%
+		 \if@CV\MakeLowercase{\scshape\@author~-- \cvname}\fi\fi}
+		{}
+	\makeoddhead{letterhead}
+		{}
+		{\ifnum\value{page}>1%
+		 \if@CV\MakeLowercase{\scshape\@author~-- \cvname}\fi\fi}
+		{}
+	\makeevenfoot{letterhead}
+		{}
+		{\ifnum\value{lastpage}>1\relax%
+		 \scshape\pagename\space\thepage\space\pageofname\space\thelastpage\fi}
+		{}
+	\makeoddfoot{letterhead}
+		{}
+		{\ifnum\value{lastpage}>1\relax%
+		 \scshape\pagename\space\thepage\space\pageofname\space\thelastpage\fi}
+		{}
 
 %	TODO » A reprendre pour didactic. Utiliser \leftmark et \rightmark en les redéfinissant (?)
 \makepagestyle{didactichead}
@@ -1154,22 +1195,37 @@
 		{}
 		{\thepage}
 
+%	Set Default header styles
+\pagestyle{frenchlaw}
+%
+%\if@letter\pagestyle{letterhead}\fi
+\newif\if@require@lastpage
+	\@require@lastpagefalse
+\if@CV\pagestyle{letterhead}\@require@lastpagetrue\fi
+\if@letter\pagestyle{letterhead}\@require@lastpagetrue\fi
 \if@didactic
 	\pagestyle{didactichead}
 	\aliaspagestyle{chapter}{didactichead}
 \fi
 
+\AtEndDocument{%
+	\if@require@lastpage\ifnum\value{page}>1\ifnum\value{lastpage}=0\relax%
+		\ClassWarningNoLine{frenchlaw}{Please rerun LaTeX on file: \MessageBreak \jobname.tex \MessageBreak to get correct page numbering}%
+	\fi\fi\fi}
+
 
 %	####	TABLES DES MATIÈRES	####
 
 %	Définir la subdivision maximale pour la numérotation
+\maxsecnumdepth{subparagraph}
+\maxtocdepth{subparagraph}
+\setcounter{tocdepth}{6} % TODO » Needed? Check with <memoir>
 \if@CV
 	\maxsecnumdepth{chapter}
-\else
-	\maxsecnumdepth{subparagraph}
 \fi
-\maxtocdepth{subparagraph}
-\setcounter{tocdepth}{6}
+\if@didactic
+	\maxsecnumdepth{section}% Ou chapter (?)
+\fi
 
 %	Ne pas numéroter les pages des livres et parties (car centrés)
 \cftpagenumbersoff{book}
@@ -1205,7 +1261,7 @@
 %	Créer une commande pour définir la taille des labels
 \newlength{\toclabelwidth}
 \if@article
-	\setlength{\toclabelwidth}{-.3em}
+	\setlength{\toclabelwidth}{-.3em}% TODO » Why not 0em?
 \else
 	\settowidth{\toclabelwidth}{\cftchapterfont\space Chapitre\space}
 \fi
@@ -1380,25 +1436,29 @@
 %	Définir le style des chapitres dans le texte
 % Créer un style, pour pouvoir l'appliquer au mode <article>
 \makechapterstyle{frenchlaw}{
-\renewcommand{\thechapter}{\Roman{chapter}}
-\renewcommand{\chaptitlefont}{\Large\scshape\raggedright}
-\renewcommand{\chapnamefont}{\chaptitlefont}
-\renewcommand{\chapnumfont}{\chaptitlefont}
-\renewcommand{\chapternamenum}{\space}
-\renewcommand{\printchapternum}{%
-	\chapnumfont%
-	\ifanappendix					\Alph{chapter}%
-	\else\if@french%
-		\ifnum\value{chapter}=1		\ordinalstring{chapter}[m]%
-		\else						\Roman{chapter}\fi
-	\else							\Roman{chapter}%
-	\fi\fi}
-\renewcommand{\afterchapternum}{~:\par\nobreak\vskip\midchapskip}
-\newcommand{\afterxchapternum}{~:\\[\midchapskip]}% Used by \xchapter. No \par
-\setlength{\beforechapskip}{\baselinestretch\addto@Large}
-\addtolength{\beforechapskip}{\baselineskip}
-\setlength{\midchapskip}{\baselinestretch\addto@Large}
-\setlength{\afterchapskip}{2\baselineskip}}
+	\renewcommand{\thechapter}{\Roman{chapter}}
+	\renewcommand{\chaptitlefont}{\Large\scshape\raggedright}
+	\renewcommand{\chapnamefont}{\chaptitlefont}
+	\renewcommand{\chapnumfont}{\chaptitlefont}
+	\renewcommand{\chapternamenum}{\space}
+	\renewcommand{\printchapternum}{%
+		\chapnumfont%
+		\ifanappendix					\Alph{chapter}%
+		\else\if@french%
+			\ifnum\value{chapter}=1		\ordinalstring{chapter}[m]%
+			\else						\Roman{chapter}\fi
+		\else							\Roman{chapter}%
+		\fi\fi}
+	\renewcommand{\afterchapternum}{~:\par\nobreak\vskip\midchapskip}
+	\newcommand{\afterxchapternum}{~:\\[\midchapskip]}% Used by \xchapter. No \par
+	\setlength{\beforechapskip}{\baselinestretch\addto@Large}
+	\addtolength{\beforechapskip}{\baselineskip}
+	\setlength{\midchapskip}{\baselinestretch\addto@Large}
+	\setlength{\afterchapskip}{2\baselineskip}
+}
+%	Define additional elements for <article>-style chapters (new page, reduce spacing)
+\newcommand{\chapterblock}{%
+	\setlength{\afterchapskip}{\baselineskip}}
 % Appliquer le style de chapitre généralement (mode normal et mode <article>)
 \chapterstyle{frenchlaw}
 
@@ -1419,7 +1479,7 @@
   {}
   {\typeout{WARNING! Patching \noexpand\@chapter failed!}}
 
-\newcommand{\xchapter}[1][\@empty]{%
+\newcommand{\xchapter}[1][\@empty]{% Remplacer par \ifx\relax#1\relax (?)
 	\def\tmpch@ptoc{#1}% Capture first optional argument (ToC-name)
 	\@ifnextchar[{\@xchapter}{\@xchapter[]}}
 \def\@xchapter[#1]#2#3{%
@@ -2047,6 +2107,7 @@
 	\def\@division{#1}%
 	\refstepcounter{division}%
 	\setcounter{section}{0}
+	\addcontentsline{toc}{chapter}{\protect\numberline{\thedivision}#1}
 	{\Large\scshape\raggedright\thedivision. \@division}
 	 \par\addvspace{\baselineskip}
 }
