@@ -121,6 +121,7 @@
 \DeclareFieldFormat[jurisdiction,legislation]{number}{%
 	\bibstring{number}\addnbthinspace#1}
 \DeclareFieldFormat[article,periodical]{volume}{\bibstring{volume}~#1}
+\DeclareFieldFormat{roman}{\textsc{\Rn{#1}}}
 
 %	TODO » Delete
 \DeclareFieldFormat[customa]{title}{\mkbibemph{#1}}
@@ -253,6 +254,10 @@
 			\pertype{reference}
 			\step[%
 				fieldset=editortype, fieldvalue={compiler}]
+		}
+		\map[overwrite=false]{%
+			\step[%
+				fieldset=hyphenation, fieldvalue={french}]
 		}
 }}%
 
@@ -1001,6 +1006,7 @@
 						  \iffieldundef{volume}\AND
 						  \iffieldundef{month} }
 				% Ex: RTD civ. 2010.123
+				% TODO » Attrappe aussi le JCP N ou S avec des pages… supprimer et tout laisser en explicite ?
 				{\setunit{\nopunct\addspace}
 				 \printfield{year}%
 				 \setunit{\adddot}
@@ -1015,14 +1021,20 @@
 				 \newunit
 				 \printfield{number}}}%
 			% Ex: JCP 1950, I, 12345 -- JCP 2015, chron., 123
-			{\printfield{year}%
-			 \newunit
-			 \printfield[plain]{part}%
-			 \newunit
+			%	TODO = If part = integer, then D. 1900.I.138
+			{\setunit{\nopunct\addspace}
+			 \printfield{year}%
+			 \iffieldnum{part}
+				{\setunit{\adddot}
+				 \printfield[roman]{part}%
+				 \setunit{\adddot}}
+			 	{\newunit
+				 \printfield[plain]{part}%
+				 \isdot\newunit}%
 			 \printfield[plain]{number}}}
 		% Revues dans d'autres langues
 		{\printfield{volume}%
-		 \newunit
+		 \setunit{\addspace}
 		 \printfield{number}%
 		 \setunit{\addspace}
 		 \printtext[parens]{\usebibmacro{date}}}%
@@ -1032,7 +1044,7 @@
 		 \usebibmacro{issue}}%
 	\iffieldundef{pages}
 		{}
-		{\setunit{\addcolon\addspace}
+		{\newunit\newblock
 		 \usebibmacro{pages}}%
 	\newunit
 	\printfield{eid}}
