@@ -113,13 +113,12 @@
 \DeclareFieldFormat[shortjournal]{title}{\mkbibemph{#1}}
 
 % Define various numbering fields
-\DeclareFieldFormat{number}{%
-	\iffieldnum{number}
-		{\bibstring{number}}
-		{\bibstring{numbers}}%
-	\addnbthinspace#1}%
-\DeclareFieldFormat[jurisdiction,legislation]{number}{%
-	\bibstring{number}\addnbthinspace#1}
+	% \DeclareFieldFormat{number}{%
+	% 	\iffieldnum{number}
+	% 		{\bibstring{number}}
+	% 		{\bibstring{numbers}}%
+	% 	\addnbthinspace#1}%
+\DeclareFieldFormat[article,legislation,jurisdiction]{number}{\bibstring{number}\addnbthinspace#1}
 \DeclareFieldFormat[article,periodical]{volume}{\bibstring{volume}~#1}
 \DeclareFieldFormat{roman}{\textsc{\Rn{#1}}}
 
