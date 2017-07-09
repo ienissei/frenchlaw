@@ -106,11 +106,11 @@
 
 %	Define {title} fields
 \DeclareFieldFormat[reference]{title}{\mkbibemph{#1}\isdot}
-\DeclareFieldFormat[inreference]{title}{\biblcstring{\thefield{pagination}}#1\isdot}
 \DeclareFieldFormat[thesis]{title}{\mkbibemph{#1}\isdot}
 \DeclareFieldFormat[commentary]{title}{\mkbibquote{#1}\isdot}
 \DeclareFieldFormat[legislation]{title}{#1\isdot}
 \DeclareFieldFormat[shortjournal]{title}{\mkbibemph{#1}}
+\DeclareFieldFormat{titleaddon}{\isdot~#1\isdot}
 
 % Define various numbering fields
 	% \DeclareFieldFormat{number}{%
@@ -470,7 +470,7 @@
 	\usebibmacro{author/translator+others}%
 	\setunit{\labelnamepunct}\newblock
 	\usebibmacro{title}%
-	% \newunit%
+	% \newunit
 	% \printlist{language}%
 	\newunit\newblock
 	\usebibmacro{byauthor}%

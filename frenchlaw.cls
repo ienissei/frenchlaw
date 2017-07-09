@@ -2039,7 +2039,7 @@
 %	#####	CRÉATION DES BIBLIOGRAPHIES (BIBLATEX)	#####
 
 %	Charger <biblatex> avec les options
-\usepackage[mincrossrefs=2,autolang=other*,style=frenchlaw,backend=biber,indexing=cite]{biblatex}
+\usepackage[mincrossrefs=1,autolang=other*,style=frenchlaw,backend=biber,indexing=cite]{biblatex}
 
 %	Indexer automatiquement les noms des auteurs cités
 \DeclareIndexNameFormat{default}{%
