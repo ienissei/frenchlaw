@@ -818,24 +818,36 @@
 			 	{}
 			 	{\newunit
 				 \printfield{title}}}%
-			% Define generic case citations
-			{\newunit
-			 \printfield{type}%
-			 \newunit
-			 \usebibmacro{date}%
-			 \iffieldundef{title}
-			 	{}
-			 	{\newunit
-				 \printfield{title}}%
-			 \iffieldundef{number}
-			 	{}
-			 	{\newunit
-			 	 \printfield{number}}}}%
+			{\ifkeyword{UK}
+			 % Define UK case law citation (basic support)
+				% Use <title> and <date> (if not included in report reference)
+				% Use <series> to add the full report reference on first citation
+				{\newunit
+				 \printfield{title}%
+				 \setunit{\addspace}
+				 \iffieldundef{year}
+				 	{}
+				 	{\printtext[parens]{\usebibmacro{date}}}}
+				% Define generic case law citation (French)
+				{\newunit
+				 \printfield{type}%
+				 \newunit
+				 \usebibmacro{date}%
+				 \iffieldundef{title}
+				 	{}
+				 	{\newunit
+					 \printfield{title}}%
+				 \iffieldundef{number}
+				 	{}
+				 	{\newunit
+				 	 \printfield{number}}}}}%
 	% Primary citations and references print the series and commentaries
 	\iftoggle{bbx:related}
 		{\iffieldundef{series}
 			{}
-			{\newunit
+			{\ifkeyword{UK}
+				{}
+				{\newunit}
 			 \printfield{series}}%
 		 \setunit{\addcolon\addspace}\newblock
 		 \usebibmacro{related:init}%
