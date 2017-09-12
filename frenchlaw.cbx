@@ -64,8 +64,14 @@
 
 %	TODO
 \DeclareNameFormat{labelname}{%
-	\usebibmacro{name:first-last}{#1}{#4}{#5}{#7}%
-	\usebibmacro{name:andothers}}%
+	\usebibmacro{name:given-family}
+		{\namepartfamily}
+		{\namepartgiveni}
+		{\namepartprefix}
+		{\namepartsuffix}}%
+% \DeclareNameFormat{labelname}{%
+% 	\usebibmacro{name:first-last}{#1}{#4}{#5}{#7}%
+% 	\usebibmacro{name:andothers}}%
 % 	Hack: Imprimer seulement la première initiale
 % Biber sépare les initiales par \bibinitdelim + initiale + \bibinitpunct
 % Redéfinir \bibinitdelim pour prendre deux arguments et ne rien en faire

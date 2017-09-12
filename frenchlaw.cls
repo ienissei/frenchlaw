@@ -943,6 +943,7 @@
 		\restore@twocolumns%
 		\cleartooddpage\par
 	\egroup
+	\mainmatter
 }
 
 %	Define a default style for articles and other short documents
@@ -1108,8 +1109,6 @@
 		\nouppercaseheads
 		\createmark{book}{both}{nonumber}{}{}
 		\createmark{part}{both}{nonumber}{}{}
-		\createmark{heading}{right}{nonumber}{}{}
-		\createmark{subheading}{right}{nonumber}{}{}
 		\createmark{chapter}{right}{nonumber}{}{}
 		\clearmark{section}
 		\createplainmark{toc}{both}{\contentsname}
@@ -1390,6 +1389,7 @@
 			\printheadingtitle%
 		}
 		\chapter*{#1}
+		\chaptermark{#1}
 		\addcontentsline{toc}{heading}{\protect\numberline{\theheading}#1}
 	\endgroup
 }
@@ -1429,6 +1429,7 @@
 			\printsubheadingtitle%
 		}
 		\chapter*{#1}
+		\chaptermark{#1}
 		\addcontentsline{toc}{subheading}{\protect\numberline{\thesubheading}#1}
 	\endgroup
 }
@@ -1990,6 +1991,7 @@
 		\addcontentsline{toc}{chapter}{\indexname}%
 	\fi
 	\thispagestyle{indextitlepagestyle}
+	\setlength{\parindent}{0em}
 	\sloppy
 	\let\item\@idxitem}%
 	{\if@restonecol\onecolumn\else\twocolumn\fi}
@@ -2016,6 +2018,7 @@
 		\addcontentsline{toc}{chapter}{\glossaryname}
 	\fi
 	\thispagestyle{chapter}
+	\setlength{\parindent}{0em}
 	\sloppy
 	\begintheglossaryhook}%
 	{\atendtheglossaryhook\if@restonecol\onecolumn\else\twocolumn\fi}
@@ -2040,11 +2043,6 @@
 
 %	Charger <biblatex> avec les options
 \usepackage[mincrossrefs=1,autolang=other*,style=frenchlaw,backend=biber,indexing=cite]{biblatex}
-
-%	Indexer automatiquement les noms des auteurs cités
-\DeclareIndexNameFormat{default}{%
-	\usebibmacro{index:name}{\bibindex}{#1@\textsc{#1}}{#3}{#5}{#7}}
-% \DeclareIndexFieldFormat{default}{\lawindex{#1}}
 
 % Problèmes:
 %	- Sorting des postnotes (??)
