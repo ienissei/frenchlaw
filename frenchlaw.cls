@@ -582,6 +582,7 @@
 \newcommand{\symbolfootnote}[2][2]{%
 	\begingroup%
 	\renewcommand{\thefootnote}{\fnsymbol{footnote}}%
+%	\addtocounter{footnote}{-1}% Si nécessaire (vérifier, car on est dans un groupe…)
 %	\footnotemark[#1]%
 	\footnotetext[#1]{#2}%
 	\endgroup%
@@ -684,6 +685,10 @@
 	\expandafter\gdef\csname @subtitle@\languagename\endcsname{\@empty}
 \newcommand{\subject}[1]{\gdef\@subject{#1}}
 	\newcommand{\@subject}{\@empty}
+\newcommand{\lecture}[1]{\gdef\@lecture{\bgroup#1\egroup}}
+	\newcommand{\@lecture}{\@empty}
+\newcommand{\seminar}[1]{\gdef\@seminar{\bgroup#1\egroup}}
+	\newcommand{\@seminar}{\@empty}
 %	Affiliation Info
 \newcommand{\institution}[1]{\gdef\@institution{#1}}
 	\newcommand{\@institution}{\@empty}
@@ -928,10 +933,15 @@
 		{\large\scshape\raggedright\csname @title@\languagename\endcsname\par}%
 		\vspace{\baselineskip}%
 		{\if\@empty\csname @subtitle@\languagename\endcsname\relax\else
-		 \large\raggedright\csname @subtitle@\languagename\endcsname\fi\par}%
-		\vspace{2\baselineskip}
-		{\if\@empty\@author\else\@author\par%
-		 \if\@empty\@email\else\emailname:~\@email\fi\fi\par}%
+		 \large\raggedright\csname @subtitle@\languagename\endcsname\par\fi}%
+		{\if\@empty\@lecture\else
+		 \vspace{2\baselineskip}
+		 \lecturename:~\@lecture\par
+		 \if\@empty\@seminar\else\seminarname:~\@seminar\par\fi\fi}%
+		{\if\@empty\@author\else
+		 \vspace{2\baselineskip}
+		 \@author\par%
+		 \if\@empty\@email\else\emailname:~\@email\par\fi\fi}%
 		\vspace{\baselineskip}
 		{\@date\par}}
 	% Print the title page
@@ -1167,14 +1177,14 @@
 	\makeheadrule{didactichead}{\textwidth}{.2ex}
 	\makeevenhead{didactichead}
 		{\textit{\csname @title@\languagename\endcsname%
-		 \ifx\relax\csname @subtitle@\languagename\endcsname\relax\else: \csname @subtitle@\languagename\endcsname\fi}%
+		 \if\@empty\csname @subtitle@\languagename\endcsname\@empty\else: \csname @subtitle@\languagename\endcsname\fi}%
 		 \ifnum\value{division}>0\relax\par\thedivision\afterdivnum\@division\fi%
 		 \vspace*{0pt}}
 		{}
 		{}
 	\makeoddhead{didactichead}
 		{\textit{\csname @title@\languagename\endcsname%
-		 \ifx\relax\csname @subtitle@\languagename\endcsname\relax\else: \csname @subtitle@\languagename\endcsname\fi}%
+		 \if\@empty\csname @subtitle@\languagename\endcsname\@empty\else: \csname @subtitle@\languagename\endcsname\fi}%
 		 \ifnum\value{division}>0\relax\par\thedivision\afterdivnum\@division\fi%
 		 \vspace*{0pt}}
 		{}
@@ -2041,8 +2051,29 @@
 
 %	#####	CRÉATION DES BIBLIOGRAPHIES (BIBLATEX)	#####
 
+% Prévoir de charger le style <frenchlaw> dans les listes de publications des CV
+\if@CV
+	\newcommand*\publistbasestyle{frenchlaw}
+\fi
+
 %	Charger <biblatex> avec les options
-\usepackage[mincrossrefs=1,autolang=other*,style=frenchlaw,backend=biber,indexing=cite]{biblatex}
+\usepackage[
+	style=frenchlaw,
+	\if@CV
+		bibstyle=publist,
+	\fi
+	backend=biber,
+	indexing=cite,
+	mincrossrefs=1,
+	autolang=other*]{biblatex}
+
+\if@CV
+	\defbibheading{bibliography}[\refname]{%
+		\section*{#1}}
+	\defbibheading{subbibliography}[\refname]{%
+    	\subsection*{#1}}
+	\plauthorname[Flora]{Vern}
+\fi
 
 % Problèmes:
 %	- Sorting des postnotes (??)

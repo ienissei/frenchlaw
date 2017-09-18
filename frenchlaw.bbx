@@ -230,8 +230,10 @@
 %	Set up a citation command for cross-references
 \DeclareCiteCommand{\bbx@crossref}
 	{}
-	{\printnames[labelname]{labelname}%
-	 \newunit\newblock
+	{\ifnameundef{labelname}
+		{}
+		{\printnames[labelname]{labelname}%
+		 \newunit\newblock}%
 	 \printfield[title]{labeltitle}}
 	{}
 	{}
@@ -258,19 +260,18 @@
 % #####	BIBER PROCESSORS	#####
 
 %	Abbreviate first names that start with a sequence of consonants (Philip > Ph.)
-% Thanks @Yves-de-Saint-Pern
+% Format all names in .bib file as "Last, First and Last, First", as the comma is used to locate the first name
 \DeclareStyleSourcemap{%
 	\maps[datatype=bibtex]{%
 		\map{%
-			% @ Yves de Saint Pern, but using only "Last, First" name format
 			% Author Field
 			\step[fieldsource=author,%
-				match={\regexp{([^(and|,)]\s)\b(Chr|Ch|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))}},%
-				replace={\regexp{$1\{$2\}}}]% Protect last name in "Last, First" fields
+				match={\regexp{(,\s)\b(Chr|Ch|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))}},%
+				replace={\regexp{$1\{\\relax\{\}$2\}}}]
 			% Editor Field
 			\step[fieldsource=editor,%
-				match={\regexp{([^(and|,)]\s)\b(Chr|Ch|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))}},%
-				replace={\regexp{$1\{$2\}}}]% Protect last name in "Last, First" fields
+				match={\regexp{(,\s)\b(Chr|Ch|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))}},%
+				replace={\regexp{$1\{\\relax\{\}$2\}}}]
 		}
 		\map[overwrite=false]{%
 			\pertype{mvbook}
@@ -424,8 +425,6 @@
 	% \printlist{language}%
 	\newunit\newblock
 	\usebibmacro{event+venue+date}%
-	\newunit\newblock
-	\usebibmacro{byauthor}%
 	\setunit{\bibpagespunct}\newblock
 	\usebibmacro{volume+part}%
 	\setunit{\newblockpunct}\newblock
@@ -605,8 +604,6 @@
 		 \usebibmacro{maintitle+booktitle}%
 		 \newunit\newblock
 		 \usebibmacro{event+venue+date}%
-		 \newunit\newblock
-		 \usebibmacro{bybookauthor}%
 		 \setunit{\newblockpunct}\newblock
 		 \usebibmacro{edition}%
 		 \usebibmacro{byeditor+others}%
@@ -724,6 +721,38 @@
 		{\usebibmacro{related:init}%
 		 \usebibmacro{related}}
 		{}%
+	\usebibmacro{finentry}}
+
+%	Define a driver for <unpublished> entries
+\DeclareBibliographyDriver{unpublished}{%
+	\usebibmacro{bibindex}%
+	\usebibmacro{begentry}%
+	\if@CV\else
+		\usebibmacro{author}%
+		\setunit{\labelnamepunct}\newblock
+	\fi
+	\usebibmacro{title}%
+	% \newunit
+	% \printlist{language}%
+	\if@CV
+		\setunit{\addspace}
+		\usebibmacro{author}%
+	\fi
+	\newunit
+	\usebibmacro{event+venue+date}%
+	\newunit\newblock
+	\usebibmacro{byeditor+others}%
+	\newunit\newblock
+	\printfield{note}%
+	\setunit{\newblockpunct}\newblock
+	\usebibmacro{publisher+location+date}%
+	\setunit{\newblockpunct}\newblock
+	\usebibmacro{isbn+doi+eprint+url}%
+	\newunit\newblock
+	\iftoggle{bbx:related}
+		{\usebibmacro{related:init}%
+		 \usebibmacro{related}}
+	{}%
 	\usebibmacro{finentry}}
 
 %	Define a driver for <misc> entries
@@ -1102,7 +1131,10 @@
 	\setunit{\addspace}
 	\iffieldundef{venue}
 		{}
-		{\printtext[parens]{\printfield{venue}}}}
+		{\printtext[parens]{%
+			\printlist{organization}%
+			\newunit
+			\printfield{venue}}}}
 
 %	Create macros for publication information
 \newbibmacro*{publisher+location+date}{%
@@ -1113,9 +1145,7 @@
 	\printlist{location}%
 	\setunit*{\addcolon\addspace}\newblock
 	\iflistundef{publisher}
-		{\printlist{institution}%
-		 \newunit\newblock
-		 \printlist{organization}}
+		{\printlist{institution}}
 		{\printlist{publisher}}%
 	\setunit*{\addcomma\addspace}\newblock
 	\usebibmacro{date}%
