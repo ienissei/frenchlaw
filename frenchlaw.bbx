@@ -55,47 +55,47 @@
 \DeclareSortingScheme{nymdt}{
 	\sort{\field{presort}}
 	\sort[final]{\field{sortkey}}
-	\sort{	\name{sortname}
-			\name{author}
-			\name{editor}
-			\name{translator}}
+	\sort{\field{sortname}
+		  \field{author}
+		  \field{editor}
+		  \field{translator}}
 	\sort{\field{year}}
 	\sort{\field{month}}
 	\sort{\field{day}}
-	\sort{	\field{sorttitle}
-			\field{title}}
+	\sort{\field{sorttitle}
+		  \field{title}}
 }
 
 \DeclareSortingScheme{reference,collection,proceedings}{
 	\sort{\field{presort}}
 	\sort[final]{\field{sortkey}}
-	\sort{	\field{sorttitle}
-			\field{title}}
+	\sort{\field{sorttitle}
+		  \field{title}}
 }
 
 \DeclareSortingScheme{legislation}{
 	\sort{\field{presort}}
 	\sort[final]{\field{sortkey}}
 	\sort{\field{type}}
-	\sort{\list{institution}}
+	\sort{\field{institution}}
 	\sort{\field{year}}
 	\sort{\field{month}}
 	\sort{\field{day}}
 	\sort{\field{number}}
-	\sort{	\field{sorttitle}
-			\field{title}}
+	\sort{\field{sorttitle}
+		  \field{title}}
 }
 
 \DeclareSortingScheme{jurisdiction}{
 	\sort{\field{presort}}
 	\sort[final]{\field{sortkey}}
-	\sort{\list{institution}}
+	\sort{\field{institution}}
 	\sort{\field{year}}
 	\sort{\field{month}}
 	\sort{\field{day}}
 	\sort{\field{number}}
-	\sort{	\field{sorttitle}
-			\field{title}}
+	\sort{\field{sorttitle}
+		  \field{title}}
 }
 
 \DeclareSortingScheme{shortjournal}{
@@ -134,7 +134,7 @@
 % #####	NAME FORMATS	#####
 
 %	Use French formatting for all last names
-\protect\def\mkbibnamelast#1{\textsc{\textnohyphenation{#1}}}
+\protect\def\mkbibnamefamily#1{\textsc{\textnohyphenation{#1}}}
 
 \DeclareIndexNameFormat{default}{%
   \usebibmacro{index:name}
@@ -323,8 +323,8 @@
 	\usebibmacro{byauthor}%
 	\newunit\newblock
 	\usebibmacro{bytranslator+others}%
-	\newunit\newblock
-	\printfield{note}%
+	% \newunit\newblock
+	% \printfield{note}%
 	\newunit\newblock
 	\usebibmacro{journal+issue+date}%
 	\setunit{\newblockpunct}\newblock
@@ -356,8 +356,8 @@
 	\setunit{\newblockpunct}\newblock
 	\usebibmacro{edition}%
 	\usebibmacro{byeditor+others}%
-	\newunit\newblock
-	\printfield{note}%
+	% \newunit\newblock
+	% \printfield{note}%
 	\setunit{\newblockpunct}\newblock
 	\usebibmacro{publisher+location+date}%
 	\setunit{\bibpagespunct}\newblock
@@ -393,8 +393,8 @@
 	\setunit{\newblockpunct}\newblock
 	\usebibmacro{edition}%
 	\usebibmacro{byeditor+others}%
-	\newunit\newblock
-	\printfield{note}%
+	% \newunit\newblock
+	% \printfield{note}%
 	\setunit{\newblockpunct}\newblock
 	\usebibmacro{publisher+location+date}%
 	\setunit{\bibpagespunct}\newblock
@@ -430,8 +430,8 @@
 	\setunit{\newblockpunct}\newblock
 	\usebibmacro{edition}%
 	\usebibmacro{byeditor+others}%
-	\newunit\newblock
-	\printfield{note}%
+	% \newunit\newblock
+	% \printfield{note}%
 	\setunit{\newblockpunct}\newblock
 	\usebibmacro{publisher+location+date}%
 	\setunit{\bibpagespunct}\newblock
@@ -469,8 +469,8 @@
 	\setunit{\newblockpunct}\newblock
 	\usebibmacro{edition}%
 	\usebibmacro{byeditor+others}%
-	\newunit\newblock
-	\printfield{note}%
+	% \newunit\newblock
+	% \printfield{note}%
 	\setunit{\newblockpunct}\newblock
 	\usebibmacro{publisher+location+date}%
 	\setunit{\bibpagespunct}\newblock
@@ -510,8 +510,8 @@
 		 \setunit{\newblockpunct}\newblock
 		 \usebibmacro{edition}%
 		 \usebibmacro{byeditor+others}%
-		 \newunit\newblock
-		 \printfield{note}%
+		 % \newunit\newblock
+		 % \printfield{note}%
 		 \setunit{\newblockpunct}\newblock
 		 \usebibmacro{publisher+location+date}%
 		 \setunit{\newblockpunct}\newblock
@@ -556,8 +556,8 @@
 		 \setunit{\newblockpunct}\newblock
 		 \usebibmacro{edition}%
 		 \usebibmacro{byeditor+others}%
-		 \newunit\newblock
-		 \printfield{note}%
+		 % \newunit\newblock
+		 % \printfield{note}%
 		 \setunit{\newblockpunct}\newblock
 		 \usebibmacro{publisher+location+date}%
 		 \setunit{\bibpagespunct}\newblock
@@ -607,8 +607,8 @@
 		 \setunit{\newblockpunct}\newblock
 		 \usebibmacro{edition}%
 		 \usebibmacro{byeditor+others}%
-		 \newunit\newblock
-		 \printfield{note}%
+		 % \newunit\newblock
+		 % \printfield{note}%
 		 \setunit{\newblockpunct}\newblock
 		 \usebibmacro{publisher+location+date}%
 		 \setunit{\bibpagespunct}\newblock
@@ -658,8 +658,8 @@
 		 \setunit{\newblockpunct}\newblock
 		 \usebibmacro{edition}%
 		 \usebibmacro{byeditor+others}%
-		 \newunit\newblock
-		 \printfield{note}%
+		 % \newunit\newblock
+		 % \printfield{note}%
 		 \setunit{\newblockpunct}\newblock
 		 \usebibmacro{publisher+location+date}%
 		 \setunit{\bibpagespunct}\newblock
@@ -700,13 +700,14 @@
 	% \printlist{language}%
 	\newunit\newblock
 	\iflistundef{publisher}
-		{\printfield{type}}
+		{\printfield{type}%
+		 \setunit{\addcomma\addspace}\newblock}
 		{\setunit{\newblockpunct}\newblock
 		 \usebibmacro{edition}%
-		 \usebibmacro{byeditor+others}}%
-	\newunit\newblock
-	\printfield{note}%
-	\setunit{\newblockpunct}\newblock
+		 \usebibmacro{byeditor+others}%
+		 \setunit{\newblockpunct}\newblock}%
+	% \newunit\newblock
+	% \printfield{note}%
 	\usebibmacro{publisher+location+date}%
 	\setunit{\bibpagespunct}\newblock
 	\usebibmacro{pagetotal/volumes}%
@@ -742,8 +743,8 @@
 	\usebibmacro{event+venue+date}%
 	\newunit\newblock
 	\usebibmacro{byeditor+others}%
-	\newunit\newblock
-	\printfield{note}%
+	% \newunit\newblock
+	% \printfield{note}%
 	\setunit{\newblockpunct}\newblock
 	\usebibmacro{publisher+location+date}%
 	\setunit{\newblockpunct}\newblock
@@ -810,7 +811,10 @@
 	\iflistundef{location}
 		{\ifthenelse{\iffieldundef{day}\AND\iffieldundef{month}\AND\iffieldundef{year}}
 			{}
-			{\bibstring{fromdate}%
+			{\iffieldundef{day}
+				{\bibstring{fromyear}%
+				 \clearfield{month}}
+				{\bibstring{fromdate}}%
 			 \setunit{\addspace}
 			 \usebibmacro{date}%
 			 \setunit{\addspace}}}
@@ -833,8 +837,8 @@
 	\iftoggle{bbx:related}
 		{\newunit\newblock
 		 \printfield{series}%
-		 \newunit\newblock
-		 \printfield{note}%
+		 % \newunit\newblock
+		 % \printfield{note}%
 		 \newunit\newblock
 		 \usebibmacro{related:init}%
 		 \usebibmacro{related}}
@@ -1012,7 +1016,7 @@
 		 	{\bibstring{edition}%
 			 \setunit{\addspace}}}
 		{\printfield{edition}
-		 \setunit{\addcomma\addspace}}}
+		 \newunit\newblock}}
 
 %	Create macros for printing title elements
 \newbibmacro*{maintitle+title}{%
@@ -1149,8 +1153,10 @@
 		{\printlist{publisher}}%
 	\setunit*{\addcomma\addspace}\newblock
 	\usebibmacro{date}%
-	\setunit*{\addspace}
-	\usebibmacro{series+number}}
+	\iffieldundef{series}
+		{}
+		{\setunit{\addspace}
+		 \usebibmacro{series+number}}}
 
 \newbibmacro*{series+number}{%
 	\iffieldundef{series}

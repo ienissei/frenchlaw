@@ -240,9 +240,9 @@
 	\@englishtrue
 	\@frenchfalse
 	\@britishfalse
-	\PassOptionsToPackage{english}{babel}
-	\PassOptionsToPackage{english}{fmtcount}
-	\AtEndOfClass{\main@language{english}}
+	\PassOptionsToPackage{british}{babel}
+	\PassOptionsToPackage{british}{fmtcount}
+	\AtEndOfClass{\main@language{british}}
 }
 \DeclareOptionX{french}{
 	\@frenchtrue
@@ -266,9 +266,9 @@
 \ExecuteOptionsX{a4paper,12pt,french,linespacing=1.1}
 \ProcessOptionsX\relax
 
-%	Load the main dependencies: <memoir>, <fixltx2e>, <environ>
+%	Load the main dependencies: <memoir>, <environ>
 \LoadClass{memoir}
-\RequirePackage{fixltx2e,environ,pdfpages}
+\RequirePackage{environ,pdfpages}
 
 %	Deactivate incompatible options
 % Option <twocolumn> always defeats option <marginal>
@@ -380,22 +380,19 @@
 		Ligatures = {TeX},
 		Numbers = {OldStyle},%	TODO » Rendre les OSF conditionnelles (?)
 		SmallCapsFeatures = {WordSpace = 1.2, LetterSpace=3.0}}% WordSpace s'applique partout (?) ou que sur SmallCaps (vérif., mais garder)
-	%	TODO » Problème des accents > deux caractères sous Junicode (?)
+	%	TODO » Problème de OSX des accents (copier coller)
+	%	TODO » problème avec les OldStyle figures sous Junicode (option ?)
+	%	TODO » Problème avec les Superscript sous Concourse (changer? fake?)
 	\setmainfont[	Extension		= .ttf,
 					UprightFont		= *,
 					ItalicFont		= *-Italic,
 					BoldFont		= *-Bold,
 					BoldItalicFont	= *-BoldItalic ]
 					{Junicode}
-	\setsansfont[	Extension		= .otf,
-					UprightFont		= *-regular,
-					ItalicFont		= *-oblique,
-					BoldFont		= *-bold,
-					BoldItalicFont	= *-boldoblique,
+	\setsansfont[	SmallCapsFont	= Concourse C3,
 					Scale			= MatchLowercase ]
-					{lmsans10}
+					{Concourse T3}
 	%	TODO » Changer: Biolinum, Concourse (?)
-	% \setmainfont[SmallCapsFont = Concourse C3]{Concourse T3}% Refaire le logo LaTeX
 	\setmonofont[	Extension		= .otf,
 					UprightFont		= *-regular,
 					ItalicFont		= *-italic,
@@ -411,8 +408,19 @@
 	\RequirePackage[tracking,letterspace=30]{microtype}
 \fi
 
+%	TODO » Use a boolean switch common to all options that use sans font
+%	+ Create a serif|sans option to override it
+% \if@CV
+	% \renewcommand{\familydefault}{\sfdefault}
+	% \usepackage{xltxtra}
+	% \setlogokern{La}{-0.165em}
+	% \setlogokern{aT}{-0.0485em}
+	% \setlogokern{eX}{-0.022em}
+% \fi
+
 %	Load language and number packages and fixes
 %	TODO » Implémenter {csquotes} et le documenter
+%	TODO » Suppr. la langue <english> après avoir converti automatiquement via biber
 \RequirePackage[greek,latin,english,british,french]{babel}
 \RequirePackage[autostyle=true]{csquotes}
 \DeclareQuoteAlias[american]{english}{british}% Use double quotes in British english
@@ -970,8 +978,9 @@
 		\vspace*{0em}% Orig. = 3\baselineskip
 		{\Large\scshape\raggedright\csname @title@\languagename\endcsname\if\@empty\csname @subtitle@\languagename\endcsname\relax\else :\par\vspace{.25\baselineskip}\noindent\csname @subtitle@\languagename\endcsname\vspace{.25\baselineskip}\fi}\par%
 		{\if\@empty\@author\else\@author%
-		 \if\@empty\@institution\else, \@institution\fi\par%
-		 \if\@empty\@email\else\emailname:~\@email\fi\fi\par}%
+		 \if\@empty\@institution\else, \@institution\fi%
+		 \if\@empty\@email\else~(\@email)\fi\fi
+		 \if\@empty\@date\else~--- \@date\fi\par}%
 		\vspace{2\baselineskip}% TODO » Faire une longueur absorbable s'il y a un skip ensuite
 		\restore@twocolumns%
 	\egroup

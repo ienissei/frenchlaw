@@ -209,38 +209,31 @@
 \newbibmacro*{cite:title}{%
 	\ifentrytype{inreference}
 		{\usebibmacro{maintitle+booktitle}%
-		 \setunit{\addcomma\addspace}\newblock}
+		 \newunit\newblock}
 	 	{}%
 	\iffieldundef{labeltitle}
 		{}
 		{\printtext[bibhyperref]{\printfield[title]{labeltitle}}%
-		 \setunit{\addcomma\addspace}\newblock}%
+		 \newunit\newblock}%
 	\ifciteseen
 		{}
-		{\ifthenelse{	\ifentryinbib{\thefield{crossref}}\AND\NOT\ifentrytype{inreference} }
-			{\setunit{\addcomma\addspace}\newblock
-			 \usebibmacro{in:}%
-			 \setunit{\addspace}
-			 \bbx@crossref{\thefield{crossref}}%
-			 \setunit{\bibpagespunct}\newblock
-			 \usebibmacro{volume+part}%
-			 \setunit{\bibpagespunct}\newblock
-			 \usebibmacro{chapter+pages}}
+		{\ifthenelse{	\iffieldundef{crossref} }
 			{\ifthenelse{	\ifentrytype{article}\OR
 			 				\ifentrytype{commentary} }
 				{\usebibmacro{journal+issue+date}}
 				{}%
+			 \clearfield{series}%
 			 \ifthenelse{	\ifentrytype{book}\OR
 			 				\ifentrytype{collection}\OR
 			 				\ifentrytype{proceedings} }
 			 	{\iffieldundef{eventtitle}
 			 		{}
 			 		{\usebibmacro{event+venue+date}%
-					 \setunit{\addcomma\addspace}\newblock}%
+					 \newunit\newblock}%
 				 \iffieldundef{edition}
 				 	{}
 				 	{\printfield{edition}%
-					 \setunit{\addcomma\addspace}\newblock}%
+					 \newunit\newblock}%
 				 \usebibmacro{publisher+location+date}}
 			 	{}%
 			 \ifthenelse{	\ifentrytype{inbook}\OR
@@ -251,29 +244,37 @@
 			 	 \ifnameundef{bybookauthor}
 			 	 	{}
 			 	 	{\usebibmacro{bybookauthor}%
-					 \setunit{\addcomma\addspace}\newblock}%
+					 \newunit\newblock}%
 				 \usebibmacro{maintitle+booktitle}%
-				 \setunit{\addcomma\addspace}\newblock
+				 \newunit\newblock
 				 \usebibmacro{event+venue+date}%
-				 \setunit{\addcomma\addspace}\newblock
+				 \newunit\newblock
 			 	 \printfield{edition}%
-				 \setunit{\addcomma\addspace}\newblock
+				 \newunit\newblock
 				 \usebibmacro{publisher+location+date}}
 			 	{}%
 			 \ifentrytype{thesis}
 			 	{\printfield{type}%
-				 \setunit{\addcomma\addspace}\newblock
+				 \newunit\newblock
 				 \usebibmacro{publisher+location+date}}
 			 	{}%
 			 \ifentrytype{misc}
 			 	{\printfield{howpublished}%
-				 \setunit{\addcomma\addspace}\newblock
+				 \newunit\newblock
 				 \printfield{type}%
-				 \setunit{\addcomma\addspace}\newblock
+				 \newunit\newblock
 				 \printfield{version}%
-				 \setunit{\addcomma\addspace}\newblock
+				 \newunit\newblock
 			 	 \usebibmacro{publisher+location+date}}
-			 	{}}}}
+			 	{}}
+			{\newunit\newblock
+			 \usebibmacro{in:}%
+			 \setunit{\addspace}
+			 \bbx@crossref{\thefield{crossref}}%
+			 \setunit{\bibpagespunct}\newblock
+			 \usebibmacro{volume+part}%
+			 \setunit{\bibpagespunct}\newblock
+			 \usebibmacro{chapter+pages}}}}
 
 \newbibmacro*{cite:related}{%
 	\ifentrytype{commentary}
