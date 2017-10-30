@@ -207,9 +207,13 @@
 		{\usebibmacro{shorthandintro}}}
 
 \newbibmacro*{cite:title}{%
-	\ifentrytype{inreference}
-		{\usebibmacro{maintitle+booktitle}%
-		 \newunit\newblock}
+	\ifthenelse{	\ifentrytype{inreference} \AND\NOT \ifnameundef{author} }
+		{\usebibmacro{relax:}%
+		 \bbx@crossref{\thefield{crossref}}%
+		 \newunit\newblock
+		 \bibstring{\thefield{pagination}}%
+		 \printtext[bibhyperref]{\printfield[title]{labeltitle}}%
+		 \clearfield{labeltitle}}
 	 	{}%
 	\iffieldundef{labeltitle}
 		{}
@@ -217,7 +221,7 @@
 		 \newunit\newblock}%
 	\ifciteseen
 		{}
-		{\ifthenelse{	\iffieldundef{crossref} }
+		{\ifthenelse{	\iffieldundef{crossref} \OR \ifentrytype{inreference} }
 			{\ifthenelse{	\ifentrytype{article}\OR
 			 				\ifentrytype{commentary} }
 				{\usebibmacro{journal+issue+date}}
@@ -241,10 +245,11 @@
 			 				\ifentrytype{inproceedings} }
 			 	{\usebibmacro{in:}%
 			 	 \setunit{\addspace}
-			 	 \ifnameundef{bybookauthor}
-			 	 	{}
-			 	 	{\usebibmacro{bybookauthor}%
-					 \newunit\newblock}%
+			 	 %	--- Inutile, car il sera égal à {author}
+			 	 % \ifnameundef{bybookauthor}
+			 	 % 	{}
+			 	 % 	{\usebibmacro{bybookauthor}%
+					 % \newunit\newblock}%
 				 \usebibmacro{maintitle+booktitle}%
 				 \newunit\newblock
 				 \usebibmacro{event+venue+date}%

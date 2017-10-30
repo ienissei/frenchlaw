@@ -107,6 +107,7 @@
 
 %	Define {title} fields
 \DeclareFieldFormat[reference]{title}{\mkbibemph{#1}\isdot}
+\DeclareFieldFormat[inreference]{title}{\ifnameundef{author}{\mkbibemph{#1}}{#1}\isdot}
 \DeclareFieldFormat[thesis]{title}{\mkbibemph{#1}\isdot}
 \DeclareFieldFormat[commentary]{title}{\mkbibquote{#1}\isdot}
 \DeclareFieldFormat[legislation]{title}{#1\isdot}
@@ -979,6 +980,10 @@
 
 \newbibmacro*{see:}{%
 	\bibstring{see}%
+	\setunit{\addspace}}
+
+\newbibmacro*{relax:}{%
+	\bibstring{relax}%
 	\setunit{\addspace}}
 
 %	Create a macro for collection/proceedings editors
