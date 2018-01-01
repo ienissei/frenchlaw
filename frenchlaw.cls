@@ -369,6 +369,13 @@
 %	Create a command that just prints its argument. Some macros \let it to \@gobble
 \newcommand{\sanitize}[1]{#1}
 
+%	TODO » Unused (so far)
+%	Checks if a counter exists; if not, create it.
+\newcommand\checkcounter[1]{%
+  \@ifundefined{c@#1}
+    {\newcounter{#1}}
+    {}}
+
 %	#####	TYPOGRAPHY	#####
 
 %	Load the relevant fonts and packages for LaTeX and XeLaTeX
@@ -408,15 +415,20 @@
 	\RequirePackage[tracking,letterspace=30]{microtype}
 \fi
 
+%	Use sans font as default with some document styles (CV)
+\if@CV
+	\renewcommand{\familydefault}{\sfdefault}
+\fi
+
 %	TODO » Use a boolean switch common to all options that use sans font
 %	+ Create a serif|sans option to override it
-% \if@CV
-	% \renewcommand{\familydefault}{\sfdefault}
-	% \usepackage{xltxtra}
-	% \setlogokern{La}{-0.165em}
-	% \setlogokern{aT}{-0.0485em}
-	% \setlogokern{eX}{-0.022em}
-% \fi
+\if@CV
+	\renewcommand{\familydefault}{\sfdefault}
+	\usepackage{metalogo}
+	\setlogokern{La}{-0.165em}
+	\setlogokern{aT}{-0.0485em}
+	\setlogokern{eX}{-0.022em}
+\fi
 
 %	Load language and number packages and fixes
 %	TODO » Implémenter {csquotes} et le documenter
@@ -429,6 +441,9 @@
 
 %	TODO » Reprendre les documents pour intégrer le package + Renommer {frenchlaw-typo}
 \RequirePackage{typographie}
+
+%	Use the superscript macro from Babel-French
+\let\textsuperscript=\fup
 
 %	#####	FONT SIZE AND LEADING	#####
 
@@ -1039,10 +1054,7 @@
 	\if\@empty\@address\relax
 		\@latex@warning@no@line{No \noexpand\address given}\fi
 	\if\@empty\@recipient\relax
-		\@latex@warning@no@line{No \noexpand\recipient given}
-	\else\if\@empty\@addressee\relax
-		\@latex@warning@no@line{No \noexpand\addressee given}
-	\fi\fi
+		\@latex@warning@no@line{No \noexpand\recipient given}\fi
 	\if\@empty\@location\relax
 		\@latex@warning@no@line{No \noexpand\location given}
 	\fi
@@ -1352,9 +1364,9 @@
 %	Définir le style des parties dans le texte
 % Babel French gère la numérotation en toutes lettres des parties
 \renewcommand*{\thepart}{\Roman{part}}
-\renewcommand{\parttitlefont}{\LARGE\scshape}
-\renewcommand{\partnamefont}{\parttitlefont}
-\renewcommand{\partnumfont}{\parttitlefont}
+\renewcommand*{\parttitlefont}{\LARGE\scshape}
+\renewcommand*{\partnamefont}{\parttitlefont}
+\renewcommand*{\partnumfont}{\parttitlefont}
 \renewcommand{\beforepartskip}{\null\vspace{\baselinestretch\addto@LARGE}%
 	%	TODO » Si PhD ou Memoir (ou article?)
 	\vspace{\baselineskip}%
@@ -1364,6 +1376,35 @@
 \renewcommand{\midpartskip}{\par\vspace{\baselinestretch\addto@LARGE}}
 %	TODO » Seulement si PhD ou Memoir (ou article?), utiliser des options
 \renewcommand{\afterpartskip}{\vspace{2\baselineskip}}
+
+%	TODO » Essayer d'automatiser la création de compteur, à chaque Partie I
+\newcounter{lastpart@I}
+\newcounter{lastpart@II}
+\newcounter{lastpart@III}
+\newcounter{lastpart@IV}
+\newcounter{lastpart@V}
+\newcounter{lastpart@VI}
+\newcounter{lastpart@VII}
+\newcounter{lastpart@VIII}
+\newcounter{lastpart@IX}
+\newcounter{lastpart@X}
+
+\renewcommand{\printpartnum}{%
+	% If last part > 2, write it in the .aux file for numbrring purposes
+	\ifnum\value{part}>2%
+		\immediate\write\@auxout%
+    		{\string\setcounter{lastpart@\thebook}{\the\c@part}}
+    \fi}
+
+ %	TODO » Coder proprement \printpartname. Supprimer les modifs de babel (option?)
+ % Utiliser le test:
+%  \ifnum\value{part}=2
+% 	\ifnum\value{part}<\value{lastpart@\thebook}
+% 		Définir l'ordinal == Deuxième%
+% 	\else
+% 		Définir l'ordinal ==  Seconde%
+% \fi\fi
+% Puis imprimer le numéro ordinal et le \partname
 
 %	Définir le style des parties dans la table des matières
 \renewcommand*{\cftpartpresnum}{\space}
@@ -2060,28 +2101,62 @@
 
 %	#####	CRÉATION DES BIBLIOGRAPHIES (BIBLATEX)	#####
 
+%	Create macros in case we want to use package <publist> (in CV style)
 % Prévoir de charger le style <frenchlaw> dans les listes de publications des CV
-\if@CV
-	\newcommand*\publistbasestyle{frenchlaw}
-\fi
+\newcommand*{\publistbasestyle}{frenchlaw}
+% Create a switch for <marginyear> option
+\newif\if@marginyear\@marginyearfalse
 
 %	Charger <biblatex> avec les options
 \usepackage[
 	style=frenchlaw,
 	\if@CV
 		bibstyle=publist,
+		marginyear=true,
 	\fi
 	backend=biber,
 	indexing=cite,
 	mincrossrefs=1,
 	autolang=other*]{biblatex}
 
+%	TODO » Sortir tout ce qu'on peut du \if@CV
 \if@CV
 	\defbibheading{bibliography}[\refname]{%
 		\section*{#1}}
 	\defbibheading{subbibliography}[\refname]{%
-    	\subsection*{#1}}
-	\plauthorname[Flora]{Vern}
+    	\paragraph*{#1}}
+	\plauthorname{Vern}% [Flora]{Vern} (mais bug)
+
+	% Use own style for book reviews
+	\DeclareBibliographyAlias{review}{article}
+
+	%	Number CV items by section and in reverse order
+	% Count total number of entries in each refsection
+	% Thanks @ Audrey <https://tex.stackexchange.com/a/22770/10119>
+	\AtDataInput{%
+		\csnumgdef{entrycount:\therefsection}{%
+			\csuse{entrycount:\therefsection}+1}}
+	% Print the labelnumber as the total number of entries in the current refsection, minus the actual labelnumber, plus one
+	\DeclareFieldFormat{labelnumber}{\mkbibdesc{#1}}    
+	\renewcommand*{\mkbibdesc}[1]{%
+		\number\numexpr\csuse{entrycount:\therefsection}+1-#1\relax}
+
+	% Print the publication {year} in the margin if it is different from the previouw entry, subsidiarily, print the {eventyear} or the {pubstate}.
+	\renewbibmacro*{marginyear}{%
+		\if@marginyear
+			\iffieldundef{year}
+				{\ifthenelse{	\iffieldundef{eventyear} \OR
+								\iffieldequals{eventyear}{\bbx@lasthash} }
+					{\ifthenelse{	\iffieldundef{pubstate} \OR
+									\iffieldequals{pubstate}{\bbx@lasthash} }
+						{}
+						{\marginpar{\nopunct\vitaelabel{\printfield{pubstate}}}}}
+					{\marginpar{\nopunct\vitaelabel{\printfield{eventyear}}}}}
+				{\marginpar{\nopunct\vitaelabel{\printfield{year}}}}%
+		\fi}
+
+	% Do not print the label year, since it is in the margin already
+	\renewbibmacro*{year+labelyear}{}
 \fi
 
 % Problèmes:
@@ -2103,13 +2178,6 @@
 % 		 \mkbibindexsubentry{\thefield{postnote}}{\textbf{\thefield{postnote}}}}}
 
 \renewbibmacro{bibindex}{\ifbibindex{\indexnames{labelname}}{}}% TODO » Sert apparemment à supprimer le bibindex (qui indexe les entrées de la bib finale) >> Turn it off without redefining
-
-\renewbibmacro{citeindex}{%
-	\ifciteindex
-		{\indexnames{labelname}%
-		% \indexfield{indextitle}%
-		}
-		{}}
 
 %	#####	CRÉATION DU SYSTÈME D'ABRÉVIATIONS (BIBLATEX)	#####
 

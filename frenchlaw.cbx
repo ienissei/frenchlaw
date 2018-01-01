@@ -207,6 +207,7 @@
 		{\usebibmacro{shorthandintro}}}
 
 \newbibmacro*{cite:title}{%
+	%	Driver for inreference entries with an author (encyclopédies / classeurs)
 	\ifthenelse{	\ifentrytype{inreference} \AND\NOT \ifnameundef{author} }
 		{\usebibmacro{relax:}%
 		 \bbx@crossref{\thefield{crossref}}%
@@ -215,41 +216,37 @@
 		 \printtext[bibhyperref]{\printfield[title]{labeltitle}}%
 		 \clearfield{labeltitle}}
 	 	{}%
+	%	Driver for printing the title of the work
 	\iffieldundef{labeltitle}
 		{}
 		{\printtext[bibhyperref]{\printfield[title]{labeltitle}}%
 		 \newunit\newblock}%
+	% If the work has already been cited, stop there. Else, print verbose citation.
 	\ifciteseen
-		{}
+		{\newunit\newblock
+		 \bibstring{citeseen}}
 		{\ifthenelse{	\iffieldundef{crossref} \OR \ifentrytype{inreference} }
-			{\ifthenelse{	\ifentrytype{article}\OR
+			{\clearfield{series}%
+			 %	Driver for article type entries
+			 \ifthenelse{	\ifentrytype{article} \OR
 			 				\ifentrytype{commentary} }
 				{\usebibmacro{journal+issue+date}}
 				{}%
-			 \clearfield{series}%
-			 \ifthenelse{	\ifentrytype{book}\OR
-			 				\ifentrytype{collection}\OR
+			 %	Driver for book / collection / proceedings entries
+			 \ifthenelse{	\ifentrytype{book} \OR
+			 				\ifentrytype{collection} \OR
 			 				\ifentrytype{proceedings} }
-			 	{\iffieldundef{eventtitle}
-			 		{}
-			 		{\usebibmacro{event+venue+date}%
-					 \newunit\newblock}%
-				 \iffieldundef{edition}
-				 	{}
-				 	{\printfield{edition}%
-					 \newunit\newblock}%
+			 	{\usebibmacro{event+venue+date}%
+				 \newunit\newblock%
+				 \printfield{edition}%
+				 \newunit\newblock%
 				 \usebibmacro{publisher+location+date}}
 			 	{}%
-			 \ifthenelse{	\ifentrytype{inbook}\OR
-			 				\ifentrytype{incollection}\OR
+			 \ifthenelse{	\ifentrytype{inbook} \OR
+			 				\ifentrytype{incollection} \OR
 			 				\ifentrytype{inproceedings} }
 			 	{\usebibmacro{in:}%
 			 	 \setunit{\addspace}
-			 	 %	--- Inutile, car il sera égal à {author}
-			 	 % \ifnameundef{bybookauthor}
-			 	 % 	{}
-			 	 % 	{\usebibmacro{bybookauthor}%
-					 % \newunit\newblock}%
 				 \usebibmacro{maintitle+booktitle}%
 				 \newunit\newblock
 				 \usebibmacro{event+venue+date}%
@@ -275,7 +272,15 @@
 			{\newunit\newblock
 			 \usebibmacro{in:}%
 			 \setunit{\addspace}
-			 \bbx@crossref{\thefield{crossref}}%
+			 \ifentryseen{\thefield{crossref}}
+				{\bbx@crossref{\thefield{crossref}}}
+				{\bbx@crossref{\thefield{crossref}}%
+				 \newunit\newblock
+				 \usebibmacro{event+venue+date}%
+				 \newunit\newblock
+				 \printfield{edition}%
+				 \newunit\newblock
+				 \usebibmacro{publisher+location+date}}%
 			 \setunit{\bibpagespunct}\newblock
 			 \usebibmacro{volume+part}%
 			 \setunit{\bibpagespunct}\newblock
@@ -341,8 +346,7 @@
 	 	 	{\bibstring{legistype-n}}
 	 	 	{\iffieldequalstr{gender}{sf}
 	 	 		{\bibstring{legistype-f}}
-	 	 		{\bibstring{legistype-m}}}%
-		 \setunit{\addspace}}
+	 	 		{\bibstring{legistype-m}}}}
 		{}}
 
 \newbibmacro*{cite:postnote}{%
@@ -350,6 +354,16 @@
 		{}
 		{\setunit*{\postnotedelim}%
 		 \printfield{postnote}}}% Enforce abbreviative dot just in case (?)
+
+%	Index author or editor names (full), even if using short(author|editor)
+\renewbibmacro*{citeindex}{%
+	\ifciteindex
+		{\iffieldequalstr{labelnamesource}{shortauthor}
+			{\indexnames{author}}
+			{\iffieldequalstr{labelnamesource}{shorteditor}
+				{\indexnames{editor}}
+				{\indexnames{labelname}}}}
+		{}}
 
 % Citation commands
 
@@ -436,9 +450,7 @@
 
 \DeclareCiteCommand{\citeauthor}[\boolfalse{citetracker}\boolfalse{pagetracker}]
 	{\usebibmacro{cite:init}}
-	{\ifciteindex%
-		{\indexnames{labelname}}
-		{}%
+	{\usebibmacro{citeindex}%
 	 \ifnameundef{author}
 		{\printtext[bold]{???}}
 	 	{\ifnameundef{author}
@@ -449,9 +461,7 @@
 
 \DeclareCiteCommand{\citetitle}[\boolfalse{citetracker}\boolfalse{pagetracker}]
 	{\usebibmacro{cite:init}}
-	{\ifciteindex
-		{\indexnames{labelname}}
-		{}%
+	{\usebibmacro{citeindex}%
 	 \iffieldundef{title}
 		{\printtext[bold]{???}}
 	 	{\ifthenelse{	\ifentrytype{legislation}\AND\NOT\iffieldundef{type} }

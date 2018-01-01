@@ -105,10 +105,26 @@
 
 % #####	FIELD FORMATS	#####
 
+%	Define aliases for bibliography drivers
+\DeclareBibliographyAlias{review}{article}
+\DeclareBibliographyAlias{periodical}{article}
+\DeclareBibliographyAlias{suppperiodical}{article}
+\DeclareBibliographyAlias{mvbook}{book}
+\DeclareBibliographyAlias{bookinbook}{inbook}
+\DeclareBibliographyAlias{suppbook}{inbook}
+\DeclareBibliographyAlias{mvcollection}{collection}
+\DeclareBibliographyAlias{suppcollection}{incollection}
+\DeclareBibliographyAlias{mvproceedings}{proceedings}
+\DeclareBibliographyAlias{mvreference}{reference}
+\DeclareBibliographyAlias{suppreference}{inreference}
+\DeclareBibliographyAlias{*}{misc}
+
 %	Define {title} fields
+\DeclareFieldFormat[bookinbook]{title}{\mkbibemph{#1}}
 \DeclareFieldFormat[reference]{title}{\mkbibemph{#1}\isdot}
 \DeclareFieldFormat[inreference]{title}{\ifnameundef{author}{\mkbibemph{#1}}{#1}\isdot}
 \DeclareFieldFormat[thesis]{title}{\mkbibemph{#1}\isdot}
+\DeclareFieldFormat[review]{title}{#1}
 \DeclareFieldFormat[commentary]{title}{\mkbibquote{#1}\isdot}
 \DeclareFieldFormat[legislation]{title}{#1\isdot}
 \DeclareFieldFormat[shortjournal]{title}{\mkbibemph{#1}}
@@ -120,7 +136,7 @@
 	% 		{\bibstring{number}}
 	% 		{\bibstring{numbers}}%
 	% 	\addnbthinspace#1}%
-\DeclareFieldFormat[article,legislation,jurisdiction]{number}{\bibstring{number}\addnbthinspace#1}
+\DeclareFieldFormat[article,review,legislation,jurisdiction]{number}{\bibstring{number}\addnbthinspace#1}
 \DeclareFieldFormat[article,periodical]{volume}{\bibstring{volume}~#1}
 \DeclareFieldFormat{roman}{\textsc{\Rn{#1}}}
 
@@ -229,9 +245,11 @@
 % #####	CITATION PROCESSORS	#####
 
 %	Set up a citation command for cross-references
+% TODO: Supprime aussi le nom de la crossref s'il est différent du nom de l'auteur => Utilsier un authortype si besoin (et intégrer ça dans le code)
 \DeclareCiteCommand{\bbx@crossref}
 	{}
-	{\ifnameundef{labelname}
+	{\ifthenelse{	\ifnameundef{labelname} \OR
+					\ifnamesequal{labelname}{author} }
 		{}
 		{\printnames[labelname]{labelname}%
 		 \newunit\newblock}%
@@ -264,16 +282,17 @@
 % Format all names in .bib file as "Last, First and Last, First", as the comma is used to locate the first name
 \DeclareStyleSourcemap{%
 	\maps[datatype=bibtex]{%
+		% Replace the initial of people's first names with the first consonnants of the name, as per the French typographic rules.
+		% Requires name fields to be in the "Last, First" format
 		\map{%
-			% Author Field
 			\step[fieldsource=author,%
 				match={\regexp{(,\s)\b(Chr|Ch|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))}},%
 				replace={\regexp{$1\{\\relax\{\}$2\}}}]
-			% Editor Field
 			\step[fieldsource=editor,%
 				match={\regexp{(,\s)\b(Chr|Ch|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))}},%
 				replace={\regexp{$1\{\\relax\{\}$2\}}}]
 		}
+		% When citing a collective/reference work, set the <editor> to <compiler> by default
 		\map[overwrite=false]{%
 			\pertype{mvbook}
 			\pertype{collection}
@@ -281,9 +300,16 @@
 			\pertype{reference}
 			\step[fieldset=editortype, fieldvalue={compiler}]
 		}
+		% Set hyphenation to French by default
 		\map[overwrite=false]{%
 			\step[fieldset=hyphenation, fieldvalue={french}]
 		}
+		% When citing a <commentary> entry, make sure the related entry (upon which the commentary is made) is in the bibliography.
+		\map[overwrite=false]{%
+			\pertype{commentary}
+			\step[fieldset=relatedoptions, fieldvalue={skipbiblist=false}]
+		}
+		% Overwrite <abstract> and <annotation> fields, to prevent overflowing TeX capacity.
 		\map[overwrite=true]{%
 			\step[fieldset=abstract, null]
 			\step[fieldset=note, null]
@@ -297,29 +323,19 @@
 \newbibmacro*{begentry}{}
 \newbibmacro*{finentry}{\finentry}
 
-%	Define aliases for bibliography drivers
-\DeclareBibliographyAlias{review}{article}
-\DeclareBibliographyAlias{periodical}{article}
-\DeclareBibliographyAlias{suppperiodical}{article}
-\DeclareBibliographyAlias{mvbook}{book}
-\DeclareBibliographyAlias{bookinbook}{inbook}
-\DeclareBibliographyAlias{suppbook}{inbook}
-\DeclareBibliographyAlias{mvcollection}{collection}
-\DeclareBibliographyAlias{suppcollection}{incollection}
-\DeclareBibliographyAlias{mvproceedings}{proceedings}
-\DeclareBibliographyAlias{mvreference}{reference}
-\DeclareBibliographyAlias{suppreference}{inreference}
-\DeclareBibliographyAlias{*}{misc}
-
 %	Define a driver for <article> entries
 \DeclareBibliographyDriver{article}{%
 	\usebibmacro{bibindex}%
 	\usebibmacro{begentry}%
-	\usebibmacro{author/translator+others}%
+	% In CV mode, additional author names come after the title
+	\ifdefined\bpl@osurname\else
+		\usebibmacro{author/translator+others}\fi%
 	\setunit{\labelnamepunct}\newblock
 	\usebibmacro{title}%
 	% \newunit
 	% \printlist{language}%
+	\ifdefined\bpl@osurname
+		\usebibmacro{author/translator+others}\fi%
 	\newunit\newblock
 	\usebibmacro{byauthor}%
 	\newunit\newblock
@@ -345,11 +361,16 @@
 \DeclareBibliographyDriver{book}{%
 	\usebibmacro{bibindex}%
 	\usebibmacro{begentry}%
-	\usebibmacro{author/editor+others/translator+others}%
+	% In CV mode, additional author names come after the title
+	\ifdefined\bpl@osurname\else
+		\usebibmacro{author/editor+others/translator+others}\fi%
 	\setunit{\labelnamepunct}\newblock
 	\usebibmacro{maintitle+title}%
 	% \newunit%
 	% \printlist{language}%
+	% In CV mode, additional author names come after the title
+	\ifdefined\bpl@osurname
+		\usebibmacro{author/editor+others/translator+others}\fi%
 	\newunit\newblock
 	\usebibmacro{byauthor}%
 	\setunit{\bibpagespunct}\newblock
@@ -382,11 +403,15 @@
 \DeclareBibliographyDriver{collection}{%
 	\usebibmacro{bibindex}%
 	\usebibmacro{begentry}%
-	\usebibmacro{author/editor+others/translator+others}%
+	% In CV mode, additional author names come after the title
+	\ifdefined\bpl@osurname\else
+		\usebibmacro{author/editor+others/translator+others}\fi%
 	\setunit{\labelnamepunct}\newblock
 	\usebibmacro{maintitle+title}%
 	% \newunit%
 	% \printlist{language}%
+	\ifdefined\bpl@osurname
+		\usebibmacro{author/editor+others/translator+others}\fi%
 	\newunit\newblock
 	\usebibmacro{byauthor}%
 	\setunit{\bibpagespunct}\newblock
@@ -419,11 +444,15 @@
 \DeclareBibliographyDriver{proceedings}{%
 	\usebibmacro{bibindex}%
 	\usebibmacro{begentry}%
-	\usebibmacro{author/editor+others/translator+others}%
+	% In CV mode, additional author names come after the title
+	\ifdefined\bpl@osurname\else
+		\usebibmacro{author/editor+others/translator+others}\fi%
 	\setunit{\labelnamepunct}\newblock
 	\usebibmacro{maintitle+title}%
 	% \newunit
 	% \printlist{language}%
+	\ifdefined\bpl@osurname
+		\usebibmacro{author/editor+others/translator+others}\fi%
 	\newunit\newblock
 	\usebibmacro{event+venue+date}%
 	\setunit{\bibpagespunct}\newblock
@@ -456,11 +485,15 @@
 \DeclareBibliographyDriver{reference}{%
 	\usebibmacro{bibindex}%
 	\usebibmacro{begentry}%
-	\usebibmacro{author/editor+others/translator+others}%
+	% In CV mode, additional author names come after the title
+	\ifdefined\bpl@osurname\else
+		\usebibmacro{author/editor+others/translator+others}\fi%
 	\setunit{\labelnamepunct}\newblock
 	\usebibmacro{maintitle+title}%
 	% \newunit%
 	% \printlist{language}%
+	\ifdefined\bpl@osurname
+		\usebibmacro{author/editor+others/translator+others}\fi%
 	\newunit\newblock
 	\usebibmacro{byauthor}%
 	\newunit\newblock
@@ -495,11 +528,15 @@
 \DeclareBibliographyDriver{inbook}{%
 	\usebibmacro{bibindex}%
 	\usebibmacro{begentry}%
-	\usebibmacro{author/translator+others}%
+	% In CV mode, additional author names come after the title
+	\ifdefined\bpl@osurname\else
+		\usebibmacro{author/translator+others}\fi%
 	\setunit{\labelnamepunct}\newblock
 	\usebibmacro{title}%
 	% \newunit
 	% \printlist{language}%
+	\ifdefined\bpl@osurname
+		\usebibmacro{author/translator+others}\fi%
 	\newunit\newblock
 	\usebibmacro{byauthor}%
 	\iffieldundef{crossref}
@@ -541,11 +578,15 @@
 \DeclareBibliographyDriver{incollection}{%
 	\usebibmacro{bibindex}%
 	\usebibmacro{begentry}%
-	\usebibmacro{author/translator+others}%
+	% In CV mode, additional author names come after the title
+	\ifdefined\bpl@osurname\else
+		\usebibmacro{author/translator+others}\fi%
 	\setunit{\labelnamepunct}\newblock
 	\usebibmacro{title}%
 	% \newunit
 	% \printlist{language}%
+	\ifdefined\bpl@osurname
+		\usebibmacro{author/translator+others}\fi%
 	\newunit\newblock
 	\usebibmacro{byauthor}%
 	\iffieldundef{crossref}%
@@ -592,11 +633,15 @@
 \DeclareBibliographyDriver{inproceedings}{%
 	\usebibmacro{bibindex}%
 	\usebibmacro{begentry}%
-	\usebibmacro{author/translator+others}%
+	% In CV mode, additional author names come after the title
+	\ifdefined\bpl@osurname\else
+		\usebibmacro{author/translator+others}\fi%
 	\setunit{\labelnamepunct}\newblock
 	\usebibmacro{title}%
 	% \newunit
 	% \printlist{language}%
+	\ifdefined\bpl@osurname
+		\usebibmacro{author/translator+others}\fi%
 	\newunit\newblock
 	\usebibmacro{byauthor}%
 	\iffieldundef{crossref}%
@@ -643,9 +688,13 @@
 \DeclareBibliographyDriver{inreference}{%
 	\usebibmacro{bibindex}%
 	\usebibmacro{begentry}%
-	\usebibmacro{author/translator+others}%
-	\setunit{\labelnamepunct}\newblock
-	\usebibmacro{title}%
+	% If author is defined, cite as an article from that author
+	\ifnameundef{author}
+		{\usebibmacro{title}}
+		{% In CV mode, additional author names come after the title
+		 \ifdefined\bpl@osurname\else
+			\usebibmacro{author/translator+others}\fi%
+		 \setunit{\labelnamepunct}\newblock}%
 	% \newunit
 	% \printlist{language}%
 	\newunit\newblock
@@ -654,6 +703,8 @@
 		{\newunit
 		 \usebibmacro{in:}%
 		 \usebibmacro{maintitle+booktitle}%
+		 \ifdefined\bpl@osurname
+			\usebibmacro{author/translator+others}\fi%
 		 \newunit\newblock
 		 \usebibmacro{bybookauthor}%
 		 \setunit{\newblockpunct}\newblock
@@ -682,23 +733,33 @@
 			{}%
 		}%
 		{\newunit\newblock
-		 \usebibmacro{see:}%
-		 \bbx@crossref{\thefield{crossref}}%
-		 \newunit\newblock
-		 \usebibmacro{volume+part}%
-		 \newunit\newblock
-		 \usebibmacro{chapter+pages}}%
+		 % If author is defined, cite as an article from that author
+		 \ifnameundef{author}
+			{\usebibmacro{see:}%
+			 \bbx@crossref{\thefield{crossref}}%
+			 \newunit\newblock
+			 \usebibmacro{volume+part}%
+			 \newunit\newblock
+			 \usebibmacro{chapter+pages}}
+			{\bbx@crossref{\thefield{crossref}}%
+			 \newunit\newblock
+			 \bibstring{\thefield{pagination}}%
+			 \printfield{title}}}%
 	\usebibmacro{finentry}}
 
 %	Define a driver for <thesis> entries
 \DeclareBibliographyDriver{thesis}{%
 	\usebibmacro{bibindex}%
 	\usebibmacro{begentry}%
-	\usebibmacro{author}%
+	% In CV mode, additional author names come after the title
+	\ifdefined\bpl@osurname\else
+		\usebibmacro{author}\fi%
 	\setunit{\labelnamepunct}\newblock
 	\usebibmacro{title}%
 	% \newunit
 	% \printlist{language}%
+	\ifdefined\bpl@osurname
+		\usebibmacro{author}\fi%
 	\newunit\newblock
 	\iflistundef{publisher}
 		{\printfield{type}%
@@ -729,18 +790,16 @@
 \DeclareBibliographyDriver{unpublished}{%
 	\usebibmacro{bibindex}%
 	\usebibmacro{begentry}%
-	\if@CV\else
-		\usebibmacro{author}%
-		\setunit{\labelnamepunct}\newblock
-	\fi
+	% In CV mode, additional author names come after the title
+	\ifdefined\bpl@osurname\else
+		\usebibmacro{author}\fi%
+	\setunit{\labelnamepunct}\newblock
 	\usebibmacro{title}%
 	% \newunit
 	% \printlist{language}%
-	\if@CV
-		\setunit{\addspace}
-		\usebibmacro{author}%
-	\fi
-	\newunit
+	\ifdefined\bpl@osurname
+		\usebibmacro{author}\fi%
+	\newunit\newblock
 	\usebibmacro{event+venue+date}%
 	\newunit\newblock
 	\usebibmacro{byeditor+others}%
@@ -761,11 +820,15 @@
 \DeclareBibliographyDriver{misc}{%
 	\usebibmacro{bibindex}%
 	\usebibmacro{begentry}%
-	\usebibmacro{author/editor+others/translator+others}%
+	% In CV mode, additional author names come after the title
+	\ifdefined\bpl@osurname\else
+		\usebibmacro{author/editor+others/translator+others}\fi%
 	\setunit{\labelnamepunct}\newblock
 	\usebibmacro{title}%
 	% \newunit
 	% \printlist{language}%
+	\ifdefined\bpl@osurname
+		\usebibmacro{author/editor+others/translator+others}\fi%
 	\newunit\newblock
 	\usebibmacro{byauthor}%
 	\newunit\newblock
@@ -923,9 +986,13 @@
 	\usebibmacro{begentry}%
 	\ifrelatedloop
 		% Long citation for stand-alone references
-		{\usebibmacro{author}%
+		{% In CV mode, additional author names come after the title
+		 \ifdefined\bpl@osurname\else
+			\usebibmacro{author}\fi%
 		 \setunit{\labelnamepunct}\newblock
 		 \usebibmacro{title}%
+		 \ifdefined\bpl@osurname
+			\usebibmacro{author}\fi%
 		 \newunit\newblock
 		 \usebibmacro{journal+issue+date}%
 		 \newunit\newblock
