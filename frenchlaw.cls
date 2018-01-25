@@ -85,6 +85,17 @@
 	\@special@chapterfalse
 \newif\if@indexparagraphs
 	\@indexparagraphstrue
+
+%	INTERNAL SWITCHES
+
+% Used for turning off bibliographies in short ToC
+\newif\if@maintoc
+	\@maintoctrue
+
+% Used for printing "page 1/3" in letters, CV, etc.
+\newif\if@require@lastpage
+	\@require@lastpagefalse
+
 %	Définir des commandesp pour switcher entre l'indexation par page et par paragraphe
 % Utilisé par l'option index=..., non utilisable après le chargement de classe
 \newcommand{\set@indexparagraphs}{\@indexparagraphstrue}
@@ -138,7 +149,6 @@
 \DeclareOptionX{draft}{
 	\@drafttrue
 	\@marginaltrue
-	\@precistrue
 	\PassOptionsToClass{draft}{memoir}
 }
 
@@ -431,11 +441,23 @@
 \fi
 
 %	Load language and number packages and fixes
+
 %	TODO » Implémenter {csquotes} et le documenter
 %	TODO » Suppr. la langue <english> après avoir converti automatiquement via biber
 \RequirePackage[greek,latin,english,british,french]{babel}
+
+% Load {csquotes} and implement styles for foreign language quotations
 \RequirePackage[autostyle=true]{csquotes}
 \DeclareQuoteAlias[american]{english}{british}% Use double quotes in British english
+\DeclareQuoteStyle[american]{english}% verified
+	{\textquotedblleft\em}{\em\kern.1em\textquotedblright}[0.05em]
+	{\textquoteleft}{\textquoteright}
+\DeclareQuoteStyle{latin}
+  {\mkfrenchopenquote{\guillemotleft}\em}
+  {\em\mkfrenchclosequote{\guillemotright}}
+  {\textquotedblleft}
+  {\textquotedblright}
+
 \RequirePackage{fmtcount}% 	TODO » Ou autre? {engord} pour l'anglais + babel FR
 \RequirePackage{fixltxhyph}
 
@@ -611,11 +633,11 @@
 	\endgroup%
 }
 
-%	Create a counter that resets the footnote counter on each page
-% By default, the counter is reset with every new chapter
-\newcommand{\resetfootnotes}{
-	\usepackage{perpage}
-	\MakePerPage{footnote}}
+%	Create a command to reset the footnote counter on every page.
+% By default, the counter is reset at every chapter
+\newcommand{\footnotebypage}
+	{\usepackage{perpage}
+	 \MakePerPage{footnote}}
 
 %	Style margin notes (\marginpar)
 % Use a ragged-right, smaller sized text
@@ -725,12 +747,22 @@
 \newcommand{\logo}[2][]{\gdef\@logo{#2}}
 	\newcommand{\@logo}{\@empty}
 %	Thesis Info
-\newcommand{\thesis}[1]{\gdef\@thesis{#1}}
+\newcommand{\thesis}[1]{\gdef\@thesis{#1}}% TODO » Sert pour les masters
 	\newcommand{\@thesis}{\@empty}
-\newcommand{\director}[1]{\gdef\@director{\bgroup#1\egroup}}
-	\newcommand{\@director}{\@empty}
-\newcommand{\jury}[1]{\gdef\@jury{\bgroup#1\egroup}}
-	\newcommand{\@jury}{\@empty}
+% \newcommand{\director}[1]{\gdef\@director{\bgroup#1\egroup}}
+% 	\newcommand{\@director}{\@empty}
+\def\@advisors{\relax}
+\def\@jury{\relax}
+\newcommand{\advisor}{\@ifstar{\s@advisor}{\@advisor}}
+	\newcommand{\@advisor}[4][]{\appto\@advisors{\bgroup#2 \textsc{#3}, #4\egroup\par}}
+	\newcommand{\s@advisor}[4][]{%
+		\appto\@advisors{\bgroup#2 \textsc{#3}, #4\egroup\par}%
+		\appto\@jury{\bgroup#1#2 \textsc{#3}, #4\egroup\par}}
+\newcommand{\@thesisadvisors}{\@advisors}
+\newcommand{\referee}[4][]{\appto\@jury{\bgroup#1#2 \textsc{#3}, #4~(rapporteur)\egroup\par}}
+\newcommand{\president}[4][]{\appto\@jury{\bgroup#1#2 \textsc{#3}, #4~(président)\egroup\par}}
+\newcommand{\examiner}[4][]{\appto\@jury{\bgroup#1#2 \textsc{#3}, #4\egroup\par}}
+\newcommand{\@jurymembers}{\@jury}
 %	Publication Info
 \newcommand{\publisher}[1]{\gdef\@publisher{#1}}
 	\newcommand{\@publisher}{\@empty}
@@ -854,34 +886,38 @@
 		\@latex@warning@no@line{No \noexpand\subject given}\fi
 	\if\@empty\@author\relax
 		\@latex@warning@no@line{No \noexpand\author given}\fi
-	\if\@empty\@director\relax
-		\@latex@warning@no@line{No \noexpand\director given}\fi
+	\if\@empty\@advisors\relax
+		\@latex@warning@no@line{No \noexpand\advisor given}\fi
 	\if\@empty\@jury\relax
-		\@latex@warning@no@line{No \noexpand\jury given}\fi
+		\@latex@warning@no@line{No \noexpand\examiner, \noexpand\referee or \noexpand\president given}\fi
 	% Create the \maketitle
 	\newcommand{\printtitle}{%
 		\normalize@fontsize%
+		\bgroup
 		\centering%
 		{\Large\scshape\@institution\par}
 		\vspace{\baselineskip}
-		{\large\@school\par\@laboratory\par}
+		{\large\scshape\@school\par}
+		\vspace{\baselineskip}
+		{\large\@laboratory\par}
+		\vspace{3\baselineskip}% TODO » Réduire à 2, voire 1 pour la classe
+		{\large\subjecttext\space\@subject\par}
 		\vspace{4\baselineskip}
 		{\LARGE\csname @title@\languagename\endcsname\par}
 		{\Large\csname @subtitle@\languagename\endcsname\par}
-		\vspace{4\baselineskip}
-		{\large\subjecttext\space\@subject\par}
-		\vspace{\baselineskip}
-		{\large\datetext\space\@date\space\par}
-		\vspace{4\baselineskip}
+		\vspace{3\baselineskip}
 		{\Large\@author\par}
 		\vspace{4\baselineskip}
-		{\directortext\par}
+		{\large\advisortext\par}
 		\vspace{\baselineskip}
-		{\large\@director\par}
+		{\large\@advisors\par}
 		\vspace{2\baselineskip}
-		{\jurytext\par}
+		{\large\datetext\space\@date\space\par}
+		\vspace{2\baselineskip}
+		\egroup
+		{\large\jurytext\par}
 		\vspace{\baselineskip}
-		{\large\@jury\par}}
+		{\large\@jurymembers\par}}
 	% Begin \frontmatter and print the title page twice, use arabic numbers throughout
 	\frontmatter*
 	\bgroup
@@ -1229,8 +1265,7 @@
 \pagestyle{frenchlaw}
 %
 %\if@letter\pagestyle{letterhead}\fi
-\newif\if@require@lastpage
-	\@require@lastpagefalse
+
 \if@CV\pagestyle{letterhead}\@require@lastpagetrue\fi
 \if@letter\pagestyle{letterhead}\@require@lastpagetrue\fi
 \if@didactic
@@ -1261,7 +1296,6 @@
 \cftpagenumbersoff{book}
 \cftpagenumbersoff{part}
 
-
 %	Create a command for short table of contents
 \newcommand{\shortcontents}[1][0]{%
 	\bgroup
@@ -1276,9 +1310,11 @@
 		\setcounter{save@tocdepth}{\value{tocdepth}}
 		\setcounter{tocdepth}{#1}
 		% Print the table of contents and restore tocdepth
+		\@maintocfalse
 		\tableofcontents*
 		\thispagestyle{empty}
 		\setcounter{tocdepth}{\value{save@tocdepth}}
+		\@maintoctrue
 		\clearpage
 	\egroup
 }
@@ -1450,6 +1486,7 @@
 		}
 		\chapter*{#1}
 		\chaptermark{#1}
+		\phantomsection
 		\addcontentsline{toc}{heading}{\protect\numberline{\theheading}#1}
 	\endgroup
 }
@@ -1490,6 +1527,7 @@
 		}
 		\chapter*{#1}
 		\chaptermark{#1}
+		\phantomsection
 		\addcontentsline{toc}{subheading}{\protect\numberline{\thesubheading}#1}
 	\endgroup
 }
@@ -1931,7 +1969,6 @@
 		\addtocontents{toc}{%
 			\ifx\relax\BODY\relax\else%
 				\vskip-\lastskip\vskip\baselineskip%
-				\protect\nopagebreak%
 				\textsc{\summaryname}: \BODY\vskip\baselineskip\par\fi}%
 	\egroup\fi%
 	\list{}{\vskip\baselineskip%
@@ -1974,13 +2011,11 @@
 %	TODO » Documenter les minipages, utiliser \footnotemark et \footnotetext pour des notes
 %	Définir le format de la citation de l'épigraphe
 \renewcommand{\@epitext}[1]{%
-	\begin{minipage*}\epigraphwidth#1\end{minipage*}
-}
+	\begin{minipage*}\epigraphwidth#1\end{minipage*}}
 
 %	Redéfinir le format de la source de l'épigraphe
 \renewcommand{\@episource}[1]{%
-	\begin{minipage*}\epigraphwidth\begin{\sourceflush}---~#1\end{\sourceflush}\end{minipage*}
-}
+	\begin{minipage*}\epigraphwidth\begin{\sourceflush}---~#1\end{\sourceflush}\end{minipage*}}
 
 %	Redéfinir la commande des épigraphes simples
 \renewcommand{\epigraph}[2]{
@@ -1992,13 +2027,24 @@
 	\end{\epigraphflush}}
 	\vspace*{\afterepigraphskip}}
 
+%	Définir un format pour les dédicaces, basé sur celui des épigraphes
+\newenvironment{dedication}
+	{\clearpage\vspace*{0pt}\vfill%
+	 \begin{\epigraphflush}%
+	 \minipage{\epigraphwidth}%
+	 \setlength{\parskip}{\baselineskip}%
+	 \epigraphsize\raggedleft}
+	{\endminipage%
+	 \end{\epigraphflush}%
+	 \vfill\vfill\clearpage}
+
 %	Redéfinir les commandes des épigraphes multiples
 
 %	Appliquer à l'environnement <epigraphs>
 \renewenvironment{epigraphs}{%
 	\list	{}
-		{\vspace*{\beforeepigraphskip}}}%
-	{\vspace*{\afterepigraphskip}\endlist}
+			{\vspace*{\beforeepigraphskip}}}%
+			{\vspace*{\afterepigraphskip}\endlist}
 
 %	Redéfinir les commandes des épigraphes multiples
 % Redéfinir \qitem (ajout d'un espace entre deux épigraphes successifs)
@@ -2013,6 +2059,7 @@
 %	#####	CRÉATION DES INDEX ET GLOSSAIRES	#####
 
 %	Préparer les index
+\xindyindex
 \makeindex
 \makeindex[\jobname-bib]
 \makeindex[\jobname-law]
@@ -2020,6 +2067,10 @@
 	\makeindex[\jobname-ref]
 	\makeindex[\jobname-par]
 \fi
+
+
+%	Use the same styling for letter groups with xindy and makeindex
+\newcommand{\lettergroup}[1]{{\centering#1\par}\nopagebreak}
 
 %	Définir le style des index
 \setlength{\indexcolsep}{1em}
@@ -2029,6 +2080,7 @@
 \renewcommand{\subsubitem}{\par\hangindent 40\p@ \hspace*{20\p@}}
 
 %	Appliquer à l'environnement des index
+% + Exlude indixes from short ToC
 \renewenvironment{theindex}{%
 	\clearforchapter
 	\if@twocolumn
@@ -2048,7 +2100,7 @@
 	\indexmark
 	\ifnoindexintoc\else
 		\phantomsection
-		\addcontentsline{toc}{chapter}{\indexname}%
+		\addcontentsline{toc}{section}{\if@maintoc\indexname\fi}%
 	\fi
 	\thispagestyle{indextitlepagestyle}
 	\setlength{\parindent}{0em}
@@ -2057,6 +2109,7 @@
 	{\if@restonecol\onecolumn\else\twocolumn\fi}
 
 %	Appliquer à l'environnement des glossaires
+% + Exlude glossaries from short ToC
 \renewenvironment{theglossary}{%
 	\if@twocolumn
 		\@restonecolfalse
@@ -2075,7 +2128,7 @@
 	\glossarymark
 	\ifnoglossaryintoc\else
 		\phantomsection
-		\addcontentsline{toc}{chapter}{\glossaryname}
+		\addcontentsline{toc}{section}{\if@maintoc\glossaryname\fi}
 	\fi
 	\thispagestyle{chapter}
 	\setlength{\parindent}{0em}
@@ -2092,10 +2145,12 @@
 		\newcommand{\paraindex}[1]{\specialindex{\jobname}{para}{#1}}
 		\newcommand{\bibindex}[1]{\specialindex{\jobname-bib}{para}{#1}}
 		\newcommand{\lawindex}[1]{\specialindex{\jobname-law}{para}{#1}}
+		\newcommand{\refindex}[1]{\specialindex{\jobname-ref}{para}{#1}}
 		\AtBeginDocument{\let\index\paraindex}
 	\else
 		\newcommand{\bibindex}[1]{\index{\jobname-bib}{#1}}
 		\newcommand{\lawindex}[1]{\index{\jobname-law}{#1}}
+		\newcommand{\refindex}[1]{\index{\jobname-ref}{#1}}
 	\fi
 %\fi
 
@@ -2103,9 +2158,8 @@
 
 %	Create macros in case we want to use package <publist> (in CV style)
 % Prévoir de charger le style <frenchlaw> dans les listes de publications des CV
+% Ou le mettre par défaut et virer le switchç
 \newcommand*{\publistbasestyle}{frenchlaw}
-% Create a switch for <marginyear> option
-\newif\if@marginyear\@marginyearfalse
 
 %	Charger <biblatex> avec les options
 \usepackage[
@@ -2119,12 +2173,30 @@
 	mincrossrefs=1,
 	autolang=other*]{biblatex}
 
+%	Exclude bibliographies from the short table of contents
+% Do no automatically print subbibliographies in the ToC (use "subbibintoc" heading for that purpose)
+\defbibheading{bibliography}[\bibname]{%
+	\chapter*{#1}
+    \ifmemoirbibintoc
+		{\phantomsection
+		 \addcontentsline{toc}{section}{\if@maintoc#1\fi}}
+		{}}
+\defbibheading{biblist}[\biblistname]{%
+	\chapter*{#1}
+	\ifmemoirbibintoc
+		{\phantomsection
+		 \addcontentsline{toc}{section}{\if@maintoc#1\fi}}
+		{}}
+\defbibheading{subbibliography}[\refname]{%
+	\section*{#1}}%
+
+
 %	TODO » Sortir tout ce qu'on peut du \if@CV
 \if@CV
-	\defbibheading{bibliography}[\refname]{%
-		\section*{#1}}
-	\defbibheading{subbibliography}[\refname]{%
-    	\paragraph*{#1}}
+	%	Use bibliography headings that fit the rest of the CV
+	\defbibheading{bibliography}[\refname]{\section*{#1}}
+	\defbibheading{subbibliography}[\refname]{\paragraph*{#1}}
+
 	\plauthorname{Vern}% [Flora]{Vern} (mais bug)
 
 	% Use own style for book reviews
@@ -2143,17 +2215,15 @@
 
 	% Print the publication {year} in the margin if it is different from the previouw entry, subsidiarily, print the {eventyear} or the {pubstate}.
 	\renewbibmacro*{marginyear}{%
-		\if@marginyear
-			\iffieldundef{year}
-				{\ifthenelse{	\iffieldundef{eventyear} \OR
-								\iffieldequals{eventyear}{\bbx@lasthash} }
-					{\ifthenelse{	\iffieldundef{pubstate} \OR
-									\iffieldequals{pubstate}{\bbx@lasthash} }
-						{}
-						{\marginpar{\nopunct\vitaelabel{\printfield{pubstate}}}}}
-					{\marginpar{\nopunct\vitaelabel{\printfield{eventyear}}}}}
-				{\marginpar{\nopunct\vitaelabel{\printfield{year}}}}%
-		\fi}
+		\iffieldundef{year}
+			{\ifthenelse{	\iffieldundef{eventyear} \OR
+							\iffieldequals{eventyear}{\bbx@lasthash} }
+				{\ifthenelse{	\iffieldundef{pubstate} \OR
+								\iffieldequals{pubstate}{\bbx@lasthash} }
+					{}
+					{\marginpar{\nopunct\vitaelabel{\printfield{pubstate}}}}}
+				{\marginpar{\nopunct\vitaelabel{\printfield{eventyear}}}}}
+			{\marginpar{\nopunct\vitaelabel{\printfield{year}}}}}
 
 	% Do not print the label year, since it is in the margin already
 	\renewbibmacro*{year+labelyear}{}
@@ -2213,14 +2283,13 @@
 	\def\@division{#1}%
 	\refstepcounter{division}%
 	\setcounter{section}{0}
+	\phantomsection
 	\addcontentsline{toc}{chapter}{\protect\numberline{\thedivision}#1}
 	{\Large\scshape\raggedright\thedivision. \@division}
 	 \par\addvspace{\baselineskip}
 }
 \renewcommand{\thedivision}{\arabic{division}}
 \newcommand{\afterdivnum}{.~}
-
-
 
 %	TODO » Exception en mode article: imprimer Résumé et le texte dans une minipage inspirée de quotation
 %	TODO » Pour les thèses, imprimer en bas le nom et l'adresse du laboratoire / école
@@ -2282,6 +2351,7 @@
 
 
 %	Définir les éléments du <frontmatter>
+% Ajouter un \addtocontents{toc}{\vspace{\baselineskip}} pour ajouter de l'espace avant le corps du texte
 \newcommand{\makefrontmatter}{
 	%\maketitle
 	% Abstract / Keywords (FR+EN), Dedication, Acknowledgements / Foreword
@@ -2299,6 +2369,7 @@
 %	TODO » Idem pour les annexes > \makeappendix == \appendixpage + \appendix, cf. memoir
 %	TODO » Adde une ligne vierge en ToC
 %	Définir les éléments du <backmatter>
+% Ajouter un \addtocontents{toc}{\vspace{\baselineskip}} pour ajouter de l'espace avant les bilios
 \newcommand{\makebackmatter}{
 	\backmatter
 	\setlength{\emergencystretch}{2em}
@@ -2342,23 +2413,20 @@
 
 %	#####	GESTION DU MODE DRAFT	#####
 
+%	TODO » Pour les notes
+\usepackage{xcolor}
+
 %	TODO » A reprendre
 %	Si on est en mode <draft>, afficher le cadre et marquer les overfull hbox
-\ifdraftdoc
-	%\usepackage{showframe}
+\if@draft
+	% \usepackage{showframe}
 	%	Imprimer les marques de changement de la classe Memoir
 	% Les commandes sont: \added{} \deleted{} \changed{}
 	\changemarks
-	%	Imprimer les labels
-	\let\old@label\label
-	\renewcommand{\label}[1]{\marginpar{#1}\old@label{#1}}
 	%	Imprimer les indexes
-	\let\old@index\index
-	\renewcommand{\index}[1]{\llap{\raisebox{1.8ex}[0em]{\color{orange}{\tiny#1}}}\old@index{#1}}
+	\let\old@index=\index
+	\AtBeginDocument{\renewcommand{\index}[1]{{\color{orange}{#1}}\old@index{#1}\\}}
 \fi
-
-%	TODO » Pour les notes
-\usepackage{xcolor}
 
 %	TODO » Implémenter <hyperref>
 %\RequirePackage{hyperref}% Mais crée des bugs avec les références type \supra

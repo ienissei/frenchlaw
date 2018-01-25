@@ -45,10 +45,6 @@
 \renewcommand{\bibnamedelimd}{\addnbspace}% Non-breaking space between initials and name
 \renewcommand{\bibnamedelimi}{\addnbspace}% Non-breaking space between initials and name
 
-% Corriger les spurrious spaces
-\renewcommand*{\postnotedelim}{\addcomma\ifpunct{\addspace}{}}
-\renewcommand*{\multicitedelim}{\setunit{\addsemicolon\addspace}}
-
 \providecommand*{\mkibid}[1]{\emph{#1}}
 
 %	TODO » Needed?
@@ -93,6 +89,7 @@
 \DeclareFieldFormat[customb]{citetitle}{#1}
 \DeclareFieldFormat[customb]{citeshorthand}{#1}%
 \DeclareFieldFormat[customc]{citetitle}{#1}%
+
 \DeclareFieldFormat{editortype}{\mkbibparens{#1}}%
 
 \DeclareFieldAlias{title}{citetitle}
@@ -104,7 +101,7 @@
 
 \newbibmacro*{cite:init}{%
 	% Backref to all citation keys (TODO » Rename to backindex)
-	\lawindex{%
+	\refindex{%
 		{{\color{violet}\ttfamily[\thefield{entrykey}]}}%
 		\iffieldundef{title}{}{\space\thefield{title}}%
 		\iffieldundef{postnote}{}{!{\color{cyan}\thefield{postnote}}}}%
@@ -122,7 +119,8 @@
 		{\usebibmacro{cite:shorthand}%
 		 \global\undef\cbx@lasthash}
 		{\ifthenelse{	\ifentrytype{jurisdiction}\OR
-						\ifentrytype{legislation} }
+						\ifentrytype{legislation}\OR
+						\ifentrytype{legal} }
 			{\usebibmacro{cite:legal}}
 			{\ifciteibid
 				{\usebibmacro{cite:ibid}}
@@ -148,7 +146,8 @@
 		{\usebibmacro{cite:shorthand}%
 		 \global\undef\cbx@lasthash}
 		{\ifthenelse{	\ifentrytype{jurisdiction}\OR
-						\ifentrytype{legislation} }
+						\ifentrytype{legislation}\OR
+						\ifentrytype{legal} }
 			{\usebibmacro{cite:legal:reverse}}
 			{\ifciteibid
 				{\usebibmacro{cite:ibid}}
@@ -186,7 +185,8 @@
 		{\usebibmacro{cite:shorthand}%
 		 \global\undef\cbx@lasthash}
 		{\ifthenelse{	\ifentrytype{jurisdiction}\OR
-						\ifentrytype{legislation} }
+						\ifentrytype{legislation}\OR
+						\ifentrytype{legal} }
 			{\usebibmacro{cite:legal:reverse}}
 			{\ifciteibid
 				{\usebibmacro{cite:ibid}}
@@ -212,7 +212,9 @@
 		{\usebibmacro{relax:}%
 		 \bbx@crossref{\thefield{crossref}}%
 		 \newunit\newblock
-		 \bibstring{\thefield{pagination}}%
+		 \iffieldundef{pagination}
+		 	{}
+		 	{\bibstring{\thefield{pagination}}}%
 		 \printtext[bibhyperref]{\printfield[title]{labeltitle}}%
 		 \clearfield{labeltitle}}
 	 	{}%
@@ -223,10 +225,10 @@
 		 \newunit\newblock}%
 	% If the work has already been cited, stop there. Else, print verbose citation.
 	\ifciteseen
-		{\newunit\newblock
-		 \bibstring{citeseen}}
+		{}
 		{\ifthenelse{	\iffieldundef{crossref} \OR \ifentrytype{inreference} }
 			{\clearfield{series}%
+			 \clearlist{organization}%
 			 %	Driver for article type entries
 			 \ifthenelse{	\ifentrytype{article} \OR
 			 				\ifentrytype{commentary} }
@@ -269,7 +271,9 @@
 				 \newunit\newblock
 			 	 \usebibmacro{publisher+location+date}}
 			 	{}}
-			{\newunit\newblock
+			{\clearfield{series}%
+			 \clearlist{organization}%
+			 \newunit\newblock
 			 \usebibmacro{in:}%
 			 \setunit{\addspace}
 			 \ifentryseen{\thefield{crossref}}
@@ -302,11 +306,15 @@
 		{\ifthenelse{	\iffootnote\AND\NOT
 						\iffieldundef{shorttitle} }
 			{\printtext[bibhyperref]{\printfield{shorttitle}}}
-			{\usedriver{}{\thefield{entrytype}}}}
+			{\usedriver{}{\thefield{entrytype}}}}%
 		{\ifciteseen
 			{\togglefalse{bbx:related}}
 			{}%
-		 \usedriver{}{\thefield{entrytype}}}}
+		 \usedriver{}{\thefield{entrytype}}%
+		 \ifciteseen
+		 	{\newunit\newblock
+			 \bibstring{citeseen}}}%
+		 	{}}
 
 \newbibmacro*{cite:legal:reverse}{%
 	\usedriver{\DeclareNameAlias{institution}{default}}{\thefield{entrytype}}}
@@ -352,7 +360,7 @@
 \newbibmacro*{cite:postnote}{%
 	\ifbool{cbx:loccit}
 		{}
-		{\setunit*{\postnotedelim}%
+		{\setunit{\postnotedelim}%
 		 \printfield{postnote}}}% Enforce abbreviative dot just in case (?)
 
 %	Index author or editor names (full), even if using short(author|editor)
@@ -372,7 +380,7 @@
 	 \usebibmacro{citeindex}%
 	 \usebibmacro{cite:prenote}}
 	{\usebibmacro{cite}}
-	{\multicitedelim}
+	{\setunit{\multicitedelim}}
 	{\usebibmacro{cite:postnote}}
 
 \DeclareCiteCommand*{\cite}[\bibsentence]
@@ -380,7 +388,7 @@
 	 \usebibmacro{citeindex}%
 	 \usebibmacro{cite:prenote}}
 	{\usebibmacro{citetitle}}
-	{\multicitedelim}
+	{\setunit{\multicitedelim}}
 	{\usebibmacro{cite:postnote}}
 
 \DeclareCiteCommand{\parencite}[\unskip~\mkbibparens]
@@ -388,7 +396,7 @@
 	 \usebibmacro{citeindex}%
 	 \usebibmacro{cite:prenote}}
 	{\usebibmacro{cite}}
-	{\multicitedelim}
+	{\setunit{\multicitedelim}}
 	{\usebibmacro{cite:postnote}}
 
 \DeclareCiteCommand*{\parencite}[\unskip~\mkbibparens]
@@ -396,7 +404,7 @@
 	 \usebibmacro{citeindex}%
 	 \usebibmacro{cite:prenote}}
 	{\usebibmacro{citetitle}}
-	{\multicitedelim}
+	{\setunit{\multicitedelim}}
 	{\usebibmacro{cite:postnote}}
 
 \DeclareCiteCommand{\footcite}[\mkbibfootnote]
@@ -404,7 +412,7 @@
 	 \usebibmacro{citeindex}%
 	 \usebibmacro{cite:prenote}}
 	{\usebibmacro{cite}}
-	{\multicitedelim}
+	{\setunit{\multicitedelim}}
 	{\usebibmacro{cite:postnote}}
 
 \DeclareCiteCommand*{\footcite}[\mkbibfootnote]
@@ -412,7 +420,7 @@
 	 \usebibmacro{citeindex}%
 	 \usebibmacro{cite:prenote}}
 	{\usebibmacro{citetitle}}
-	{\multicitedelim}
+	{\setunit{\multicitedelim}}
 	{\usebibmacro{cite:postnote}}
 
 \DeclareCiteCommand{\smartcite}[\iffootnote\mkbibparens\mkbibfootnote]
@@ -420,7 +428,7 @@
 	 \usebibmacro{citeindex}%
 	 \usebibmacro{cite:prenote}}
 	{\usebibmacro{cite}}
-	{\multicitedelim}
+	{\setunit{\multicitedelim}}
 	{\usebibmacro{cite:postnote}}
 
 \DeclareCiteCommand*{\smartcite}[\iffootnote\mkbibparens\mkbibfootnote]
@@ -428,7 +436,7 @@
 	 \usebibmacro{citeindex}%
 	 \usebibmacro{cite:prenote}}
 	{\usebibmacro{citetitle}}
-	{\multicitedelim}
+	{\setunit{\multicitedelim}}
 	{\usebibmacro{cite:postnote}}
 
 %	TODO » Reprendre sur authortitle-icomp avec toutes les macros associées
@@ -437,7 +445,7 @@
 	{\usebibmacro{cite:init}%
 	 \usebibmacro{citeindex}}
 	{\usebibmacro{textcite}}
-	{\multicitedelim}
+	{\setunit{\multicitedelim}}
 	{\ifbool{cbx:parens}
 		{\global\boolfalse{cbx:parens}\bibcloseparen}
 		{}}
@@ -446,7 +454,7 @@
 	% Switch back to the main language due to different spacing in French punctuation
 	%\expandafter\selectlanguage\expandafter{\bbl@main@language}%
 
-\DeclareMultiCiteCommand{\textcites}{\textcite}{\multicitedelim}
+%\DeclareMultiCiteCommand{\textcites}{\textcite}{\multicitedelim}
 
 \DeclareCiteCommand{\citeauthor}[\boolfalse{citetracker}\boolfalse{pagetracker}]
 	{\usebibmacro{cite:init}}
@@ -456,7 +464,7 @@
 	 	{\ifnameundef{author}
 	 		{\printtext[bold]{???}}
 	 		{\printnames[first-last]{author}}}}%
-	{\multicitedelim}
+	{\setunit{\multicitedelim}}
 	{}%
 
 \DeclareCiteCommand{\citetitle}[\boolfalse{citetracker}\boolfalse{pagetracker}]
@@ -469,35 +477,11 @@
 		 	 \setunit{\addspace}}}
 		 	{}%
 	 	 \printtext[bibhyperlink]{\printfield{title}}}}%
-	{\multicitedelim}
+	{\setunit{\multicitedelim}}
 	{}
-
-% \DeclareCiteCommand{\code}
-% 	{\usebibmacro{cite:init}%
-% 	 \usebibmacro{cite:prenote}}
-% 	{\usebibmacro{citeindex}%
-% 	 \usebibmacro{cite}}
-% 	{\multicitedelim}
-% 	{\usebibmacro{cite:postnote}}
-
-% \DeclareCiteCommand*{\code}
-% 	{\usebibmacro{cite:init}%
-% 	 \usebibmacro{cite:prenote}}
-% 	{\usebibmacro{citeindex}%
-% 	 \usebibmacro{citetitle}}
-% 	{\multicitedelim}
-% 	{\usebibmacro{cite:postnote}}
-
-\let\code=\cite
 
 %	Définir les raccourcis de citation
 \let\citep=\parencite
 \let\citet=\textcite
-
-\let\parencode=\parencite
-\let\textcode=\textcite
-\let\codep=\parencite
-\let\codet=\textcite
-\let\case=\cite % LEGACY
 
 \endinput

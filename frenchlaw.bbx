@@ -45,63 +45,61 @@
 
 %	Execute bibliography options
 \ExecuteBibliographyOptions{isbn,url,doi,eprint,related,dashed,%
-	sorting=nymdt,useeditor=true,usetranslator=false,maxnames=5,language=auto}
+	sorting=nty,useeditor=true,usetranslator=false,maxnames=5,language=auto}
 \ExecuteBibliographyOptions[collection]{useeditor=false}
 \ExecuteBibliographyOptions[reference,proceedings]{useauthor=false,useeditor=false}
 
 % #####	SORTING	#####
 
 %	Sort entries by {name/institution} + year + day + month + title
-\DeclareSortingScheme{nymdt}{
+\DeclareSortingScheme{nty}{
 	\sort{\field{presort}}
 	\sort[final]{\field{sortkey}}
 	\sort{\field{sortname}
 		  \field{author}
 		  \field{editor}
-		  \field{translator}}
-	\sort{\field{year}}
+		  \field{translator}
+		  \field{institution}}
+	\sort{\field{sorttitle}
+		  \field{title}}
+	\sort{\field{sortyear}
+		  \field{year}}
 	\sort{\field{month}}
 	\sort{\field{day}}
-	\sort{\field{sorttitle}
-		  \field{title}}
+	\sort{\field{volume}
+		  \literal{0}}
 }
 
-\DeclareSortingScheme{reference,collection,proceedings}{
-	\sort{\field{presort}}
-	\sort[final]{\field{sortkey}}
-	\sort{\field{sorttitle}
-		  \field{title}}
-}
-
-\DeclareSortingScheme{legislation}{
-	\sort{\field{presort}}
-	\sort[final]{\field{sortkey}}
-	\sort{\field{type}}
-	\sort{\field{institution}}
-	\sort{\field{year}}
-	\sort{\field{month}}
-	\sort{\field{day}}
-	\sort{\field{number}}
-	\sort{\field{sorttitle}
-		  \field{title}}
-}
-
-\DeclareSortingScheme{jurisdiction}{
-	\sort{\field{presort}}
-	\sort[final]{\field{sortkey}}
-	\sort{\field{institution}}
-	\sort{\field{year}}
-	\sort{\field{month}}
-	\sort{\field{day}}
-	\sort{\field{number}}
-	\sort{\field{sorttitle}
-		  \field{title}}
-}
+% \DeclareSortingScheme{nyt}{
+% 	\sort{\field{presort}}
+% 	\sort[final]{\field{sortkey}}
+% 	\sort{\field{institution}
+% 		  \field{shortjournal}}
+% %	\sort{\field{type}}
+% 	\sort{\field{sortyear}
+% 		  \field{year}}
+% 	\sort{\field{month}}
+% 	\sort{\field{day}}
+% 	\sort{\field{number}
+% 		  \literal{0}}
+% 	\sort{\field{sorttitle}
+% 		  \field{title}}
+% }
 
 \DeclareSortingScheme{shortjournal}{
 	\sort{\field{shortjournal}}
+	\sort[direction=descending]{
+		\field{year}}
 	\sort{\field{journal}}
 }
+
+% \DeclareSortingScheme{shortauthor}{
+% 	\sort{\field{shortauthor}}
+% 	\sort{\field{sorttitle}
+% 		  \field{title}}
+% 	\sort{\field{sortyear}
+% 		  \field{year}}
+% }
 
 % #####	FIELD FORMATS	#####
 
@@ -119,16 +117,26 @@
 \DeclareBibliographyAlias{suppreference}{inreference}
 \DeclareBibliographyAlias{*}{misc}
 
+%	Define a [plain] field format
+\DeclareFieldAlias{plain}{noformat}
+
+% Define [roman] field format (lowercase roman numbers from integer)
+\DeclareFieldFormat{roman}{\textsc{\Rn{#1}}}
+
 %	Define {title} fields
+% TODO » \isdot à la fin de tous les titres (?)
 \DeclareFieldFormat[bookinbook]{title}{\mkbibemph{#1}}
-\DeclareFieldFormat[reference]{title}{\mkbibemph{#1}\isdot}
-\DeclareFieldFormat[inreference]{title}{\ifnameundef{author}{\mkbibemph{#1}}{#1}\isdot}
-\DeclareFieldFormat[thesis]{title}{\mkbibemph{#1}\isdot}
+\DeclareFieldFormat[reference]{title}{\mkbibemph{#1}}
+\DeclareFieldFormat[inreference]{title}{\ifnameundef{author}{\mkbibemph{#1}}{#1\isdot}}
+\DeclareFieldFormat[thesis]{title}{\mkbibemph{#1}}
 \DeclareFieldFormat[review]{title}{#1}
-\DeclareFieldFormat[commentary]{title}{\mkbibquote{#1}\isdot}
-\DeclareFieldFormat[legislation]{title}{#1\isdot}
-\DeclareFieldFormat[shortjournal]{title}{\mkbibemph{#1}}
-\DeclareFieldFormat{titleaddon}{\isdot~#1\isdot}
+\DeclareFieldFormat[article]{title}{\mkbibquote{#1}}
+\DeclareFieldFormat[commentary]{title}{\mkbibquote{#1}}
+\DeclareFieldFormat[legal]{title}{#1}
+\DeclareFieldFormat[legislation]{title}{#1}
+\DeclareFieldFormat[jurisdiction]{title}{#1}
+\DeclareFieldFormat[shortjournal]{title}{\mkbibemph{#1}\isdot}
+\DeclareFieldFormat{titleaddon}{#1}
 
 % Define various numbering fields
 	% \DeclareFieldFormat{number}{%
@@ -136,27 +144,48 @@
 	% 		{\bibstring{number}}
 	% 		{\bibstring{numbers}}%
 	% 	\addnbthinspace#1}%
-\DeclareFieldFormat[article,review,legislation,jurisdiction]{number}{\bibstring{number}\addnbthinspace#1}
-\DeclareFieldFormat[article,periodical]{volume}{\bibstring{volume}~#1}
-\DeclareFieldFormat{roman}{\textsc{\Rn{#1}}}
+
+\setcounter{mincomprange}{1000}
+
+\DeclareFieldFormat*{number}{%
+	\iffieldnums{number}
+		{\iffieldnum{number}
+			{\bibstring{number}\addnbthinspace#1}
+			{\bibstring{numbers}\addnbthinspace\mkcomprange{#1}}}
+		{#1\isdot}}
+% TODO » For adding a plural form, check with biber if the field contains a comma, then add a keyword or whatever
+\DeclareFieldFormat[legal,legislation,jurisdiction]{number}{%
+	\bibstring{number}\addnbthinspace#1}
+
+\DeclareFieldFormat*{volume}{%
+	\bibstring{volume}~\mkcomprange{#1}}
+
+% The <pages> field should only print the first page
+\DeclareFieldFormat[article,commentary]{pages}{\mkfirstpage*[\mkpageprefix]{#1}}
+\DeclareFieldFormat{noprefix}{\mkfirstpage*{#1}}
 
 %	TODO » Delete
 \DeclareFieldFormat[customa]{title}{\mkbibemph{#1}}
 \DeclareFieldFormat[customb]{title}{{#1}}
 \DeclareFieldFormat[customc]{title}{{#1}}
 
-%	Define a [plain] field format
-\DeclareFieldAlias{plain}{noformat}
-
 % #####	NAME FORMATS	#####
 
 %	Use French formatting for all last names
-\protect\def\mkbibnamefamily#1{\textsc{\textnohyphenation{#1}}}
+%\protect\def\mkbibnamefamily#1{\textsc{\textnohyphenation{#1}}}
+
+% \renewbibmacro*{index:name}[5]{%
+%   \usebibmacro{index:entry}{#1}{%
+%   	\iffieldundef{usera}
+%   		{\namepartfamily, \namepartgiven}
+%   		{\thefield{usera}}%
+%   	\actualoperator%
+%   	\mkbibindexname{\textsc{#2}}{#3}{#4}{#5}}}
 
 \DeclareIndexNameFormat{default}{%
   \usebibmacro{index:name}
     {\bibindex}
-    {\namepartfamily @\textsc{\namepartfamily}}
+    {\namepartfamily\actualoperator\textsc{\namepartfamily}}
     {\namepartgiven}
     {\namepartprefix}
     {\namepartsuffix}}
@@ -218,6 +247,9 @@
 \renewcommand*{\labelnamepunct}{\addperiod\space}
 \renewcommand*{\subtitlepunct}{\addcolon\space}
 \renewcommand*{\intitlepunct}{\addspace}
+\renewcommand*{\relatedpunct}{\addsemicolon\addspace}
+
+\renewcommand*{\relateddelim}{\addsemicolon\addspace}
 \renewcommand*{\textcitedelim}{\addsemicolon\space}
 
 %	TODO » Create commands, e.g. for commas or colons
@@ -229,18 +261,19 @@
 \setlength{\bibinitsep}{0pt}
 \setlength{\bibparsep}{0pt}
 
-\defbibheading{subbibliography}[\refname]{%
-	\setlength{\beforesecskip}{2\baselineskip}
-	\renewcommand*{\large}{\fontsize{14}{14.5}\selectfont}
-	\section*{#1}%
-	\if@twoside\markright{\MakeUppercase{#1}}\fi}
+%	TODO » Utilité ? Alignement vertical ?
+% \defbibheading{subbibliography}[\refname]{%
+% 	\setlength{\beforesecskip}{2\baselineskip}
+% 	\renewcommand*{\large}{\fontsize{14}{14.5}\selectfont}
+% 	\section*{#1}%
+% 	\if@twoside\markright{\MakeUppercase{#1}}\fi}
 
-\defbibheading{subbibintoc}[\refname]{%
-	\setlength{\beforesecskip}{2\baselineskip}
-	\renewcommand*{\large}{\fontsize{14}{14.5}\selectfont}
-	\section*{#1}%
-	\addcontentsline{toc}{section}{#1}%
-	\if@twoside\markright{\MakeUppercase{#1}}\fi}
+% \defbibheading{subbibintoc}[\refname]{%
+% 	\setlength{\beforesecskip}{2\baselineskip}
+% 	\renewcommand*{\large}{\fontsize{14}{14.5}\selectfont}
+% 	\section*{#1}%
+% 	\addcontentsline{toc}{section}{#1}%
+% 	\if@twoside\markright{\MakeUppercase{#1}}\fi}
 
 % #####	CITATION PROCESSORS	#####
 
@@ -258,14 +291,31 @@
 	{}
 
 \defbibenvironment{shortauthor}
-	{\list{}{%
-	 \leftmargin=\z@
-	 \parsep=\baselineskip}}
+	{\list
+		{}
+		{\setlength{\leftmargin}{\z@}%
+		 \setlength{\parsep}{\baselineskip}}}
+	{\endlist}
+	{\item}
+
+\defbibenvironment{shortjournal}
+	{\list
+		{\iffieldequalcs{shortjournal}{lastjournal}
+			{}
+			{\printfield[shortjournalwidth]{shortjournal}}%
+			 \global\xdef\lastjournal{\thefield{shortjournal}}}
+		{\setlength{\labelwidth}{\shortjournalwidth}%
+		 \setlength{\leftmargin}{\labelwidth}%
+		 \setlength{\labelsep}{\biblabelsep}%
+		 \addtolength{\leftmargin}{\labelsep}%
+		 \setlength{\itemsep}{\bibitemsep}%
+		 \setlength{\parsep}{\bibparsep}%
+		 \renewcommand*{\makelabel}[1]{\mkbibemph{##1\hss}}}}
 	{\endlist}
 	{\item}
 
 %	TODO » Copier les defbibfilter et catégories ici
-%	Set up a bibliography check that removes duplicate journal titles
+%	Set up a bibliography check that removes duplicate journal titles from the shortjournal list
 \defbibcheck{shortjournal}{%
 	\iffieldundef{shortjournal}
 		{\skipentry}
@@ -282,37 +332,62 @@
 % Format all names in .bib file as "Last, First and Last, First", as the comma is used to locate the first name
 \DeclareStyleSourcemap{%
 	\maps[datatype=bibtex]{%
-		% Replace the initial of people's first names with the first consonnants of the name, as per the French typographic rules.
+		% Replace the initial of people's first names with the first consonnants of the name, as per the French typographic rules. Including composite given names (Jean-Pierre)
 		% Requires name fields to be in the "Last, First" format
 		\map{%
 			\step[fieldsource=author,%
-				match={\regexp{(,\s)\b(Chr|Ch|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))}},%
+				match={\regexp{(,\s|-)\b(Chr|Ch|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))}},%
 				replace={\regexp{$1\{\\relax\{\}$2\}}}]
 			\step[fieldsource=editor,%
-				match={\regexp{(,\s)\b(Chr|Ch|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))}},%
+				match={\regexp{(,\s|-)\b(Chr|Ch|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))}},%
 				replace={\regexp{$1\{\\relax\{\}$2\}}}]
 		}
 		% When citing a collective/reference work, set the <editor> to <compiler> by default
 		\map[overwrite=false]{%
 			\pertype{mvbook}
 			\pertype{collection}
-			\pertype{proceeedings}
+			\pertype{proceedings}
 			\pertype{reference}
 			\step[fieldset=editortype, fieldvalue={compiler}]
 		}
-		% Set hyphenation to French by default
+		% When citing a <legislation> entry, define a gender field based on the first word of the <type> field.
 		\map[overwrite=false]{%
-			\step[fieldset=hyphenation, fieldvalue={french}]
+			\step[fieldsource=type,%
+				match={\regexp{^(Code|Contrat|Décret(-loi)?|Préambule|Projet|Rapport|R(é|è)glement|Traité)}},
+				fieldset=gender, fieldvalue={sm}]
+			\step[fieldsource=type,%
+				match={\regexp{^(Charte|Circulaire|Constitution|Convention|Coutume|Décision|Directive|Déclaration|Délibération|Loi|Norme|Note|Proposition|Protocole|Question|Recommandation|Réponse)}},
+				fieldset=gender, fieldvalue={sf}]
+			\step[fieldsource=type,%
+				match={\regexp{^(Accord|Acte|Annexe|Arrêté|Avis|(E|É)dit|Information|Ordonnance|Usage)}},
+				fieldset=gender, fieldvalue={sn}]
 		}
-		% When citing a <commentary> entry, make sure the related entry (upon which the commentary is made) is in the bibliography.
+		% Tweak the sorting of <jurisdiction>, <legislation> and  fields without using a different sortscheme. Used for saving TeX memory on large .bib files
+		\map[overwrite=true]{%
+			\pertype{jurisdiction}
+			\step[fieldsource=date, fieldset=sortname, origfieldval]
+		}
+		\map[overwrite=true]{%
+			\pertype{legislation}
+			\step[fieldsource=type,
+				match={\regexp{^(\w+)}}, fieldset=sortname, fieldvalue={$1}]
+			\step[fieldsource=date, fieldset=sorttitle, origfieldval]
+		}
+		% When citing a judicial decision or commentary with a <related> field, make sure both entries are in the bibliography.
 		\map[overwrite=false]{%
 			\pertype{commentary}
+			\pertype{jurisdiction}
+			\pertype{legislation}
 			\step[fieldset=relatedoptions, fieldvalue={skipbiblist=false}]
 		}
+		% Set hyphenation to French by default
+		% \map[overwrite=false]{%
+		% 	\step[fieldset=hyphenation, fieldvalue={french}]
+		% }
 		% Overwrite <abstract> and <annotation> fields, to prevent overflowing TeX capacity.
 		\map[overwrite=true]{%
-			\step[fieldset=abstract, null]
-			\step[fieldset=note, null]
+			\step[fieldset=abstract, fieldvalue={}]
+			\step[fieldset=annotation, fieldvalue={}]
 		}
 }}%
 
@@ -350,9 +425,9 @@
 	\usebibmacro{addendum+pubstate}%
 	\setunit{\bibpagerefpunct}\newblock
 	\usebibmacro{pageref}%
-	\newunit\newblock
 	\iftoggle{bbx:related}
-		{\usebibmacro{related:init}%
+		{\setunit{\relatedpunct}\newblock
+		 \usebibmacro{related:init}%
 		 \usebibmacro{related}}
 		{}%
 	\usebibmacro{finentry}}
@@ -392,9 +467,9 @@
 	\usebibmacro{pageref}%
 	\newunit\newblock
 	\thefield{postnote}%
-	\newunit\newblock
 	\iftoggle{bbx:related}
-		{\usebibmacro{related:init}%
+		{\setunit{\relatedpunct}\newblock
+		 \usebibmacro{related:init}%
 		 \usebibmacro{related}}
 		{}%
 	\usebibmacro{finentry}}
@@ -433,9 +508,9 @@
 	\usebibmacro{pageref}%
 	\newunit\newblock
 	\thefield{postnote}%
-	\newunit\newblock
 	\iftoggle{bbx:related}
-		{\usebibmacro{related:init}%
+		{\setunit{\relatedpunct}\newblock
+		 \usebibmacro{related:init}%
 		 \usebibmacro{related}}
 		{}%
 	\usebibmacro{finentry}}
@@ -474,9 +549,9 @@
 	\usebibmacro{pageref}%
 	\newunit\newblock
 	\thefield{postnote}%
-	\newunit\newblock
 	\iftoggle{bbx:related}
-		{\usebibmacro{related:init}%
+		{\setunit{\relatedpunct}\newblock
+		 \usebibmacro{related:init}%
 		 \usebibmacro{related}}
 		{}%
 	\usebibmacro{finentry}}
@@ -517,9 +592,9 @@
 	\usebibmacro{pageref}%
 	\newunit\newblock
 	\thefield{postnote}%
-	\newunit\newblock
 	\iftoggle{bbx:related}
-		{\usebibmacro{related:init}%
+		{\setunit{\relatedpunct}\newblock
+		 \usebibmacro{related:init}%
 		 \usebibmacro{related}}
 		{}%
 	\usebibmacro{finentry}}
@@ -567,9 +642,9 @@
 	\usebibmacro{pageref}%
 	\newunit\newblock
 	\thefield{postnote}%
-	\newunit\newblock
 	\iftoggle{bbx:related}
-		{\usebibmacro{related:init}%
+		{\setunit{\relatedpunct}\newblock
+		 \usebibmacro{related:init}%
 		 \usebibmacro{related}}
 		{}%
 	\usebibmacro{finentry}}
@@ -614,9 +689,9 @@
 		 \usebibmacro{pageref}%
 		 \newunit\newblock
 		 \thefield{postnote}%
-		 \newunit\newblock
 		 \iftoggle{bbx:related}
-			{\usebibmacro{related:init}%
+			{\setunit{\relatedpunct}
+			 \newblock\usebibmacro{related:init}%
 			 \usebibmacro{related}}
 			{}%
 		}%
@@ -669,9 +744,9 @@
 		 \usebibmacro{pageref}%
 		 \newunit\newblock
 		 \thefield{postnote}%
-		 \newunit\newblock
 		 \iftoggle{bbx:related}
-			{\usebibmacro{related:init}%
+			{\setunit{\relatedpunct}\newblock
+			 \usebibmacro{related:init}%
 			 \usebibmacro{related}}
 			{}%
 		}%
@@ -726,12 +801,11 @@
 		 \usebibmacro{pageref}%
 		 \newunit\newblock
 		 \thefield{postnote}%
-		 \newunit\newblock
 		 \iftoggle{bbx:related}
-			{\usebibmacro{related:init}%
+			{\setunit{\relatedpunct}\newblock
+			 \usebibmacro{related:init}%
 			 \usebibmacro{related}}
-			{}%
-		}%
+			{}}%
 		{\newunit\newblock
 		 % If author is defined, cite as an article from that author
 		 \ifnameundef{author}
@@ -743,7 +817,7 @@
 			 \usebibmacro{chapter+pages}}
 			{\bbx@crossref{\thefield{crossref}}%
 			 \newunit\newblock
-			 \bibstring{\thefield{pagination}}%
+			 % \bibstring{\thefield{pagination}}%
 			 \printfield{title}}}%
 	\usebibmacro{finentry}}
 
@@ -779,9 +853,9 @@
 	\usebibmacro{addendum+pubstate}%
 	\setunit{\bibpagerefpunct}\newblock
 	\usebibmacro{pageref}%
-	\newunit\newblock
 	\iftoggle{bbx:related}
-		{\usebibmacro{related:init}%
+		{\setunit{\relatedpunct}\newblock
+		 \usebibmacro{related:init}%
 		 \usebibmacro{related}}
 		{}%
 	\usebibmacro{finentry}}
@@ -809,9 +883,9 @@
 	\usebibmacro{publisher+location+date}%
 	\setunit{\newblockpunct}\newblock
 	\usebibmacro{isbn+doi+eprint+url}%
-	\newunit\newblock
 	\iftoggle{bbx:related}
-		{\usebibmacro{related:init}%
+		{\setunit{\relatedpunct}\newblock
+		 \usebibmacro{related:init}%
 		 \usebibmacro{related}}
 	{}%
 	\usebibmacro{finentry}}
@@ -849,9 +923,49 @@
 	\usebibmacro{addendum+pubstate}%
 	\setunit{\bibpagerefpunct}\newblock
 	\usebibmacro{pageref}%
-	\newunit\newblock
 	\iftoggle{bbx:related}
-		{\usebibmacro{related:init}%
+		{\setunit{\relatedpunct}\newblock
+		 \usebibmacro{related:init}%
+		 \usebibmacro{related}}
+		{}%
+	\usebibmacro{finentry}}
+
+%	Define a driveer for <legal> entries
+\DeclareBibliographyDriver{legal}{%
+	\usebibmacro{bibindex}%
+	\usebibmacro{begentry}%
+	\printlist{institution}%
+	\newunit
+	\iffieldundef{type}
+		{}
+		{\midsentence\printfield{type}%
+		 \setunit{\addnbspace}}%
+	\iffieldundef{number}
+		{}
+		{\printfield{number}%
+		 \setunit{\addspace}}%
+	\iflistundef{location}
+		{\ifthenelse{\iffieldundef{day}\AND\iffieldundef{month}\AND\iffieldundef{year}}
+			{}
+			{\iffieldundef{day}
+				{\bibstring{fromyear}%
+				 \clearfield{month}}
+				{\iffieldundef{endday}
+					{\bibstring{fromdate}}
+					{\bibstring{fromdates}}}%
+			 \setunit{\addspace}
+			 \usebibmacro{date}%
+			 \setunit{\addspace}}}
+		{}%
+	\printfield{title}%
+	% Primary citations and references print the series and commentaries
+	\iftoggle{bbx:related}
+		{\newunit\newblock
+		 \printfield{series}%
+		 % \newunit\newblock
+		 % \printfield{note}%
+		 \setunit{\relatedpunct}\newblock
+		 \usebibmacro{related:init}%
 		 \usebibmacro{related}}
 		{}%
 	\usebibmacro{finentry}}
@@ -878,7 +992,9 @@
 			{\iffieldundef{day}
 				{\bibstring{fromyear}%
 				 \clearfield{month}}
-				{\bibstring{fromdate}}%
+				{\iffieldundef{endday}
+					{\bibstring{fromdate}}
+					{\bibstring{fromdates}}}%
 			 \setunit{\addspace}
 			 \usebibmacro{date}%
 			 \setunit{\addspace}}}
@@ -903,7 +1019,7 @@
 		 \printfield{series}%
 		 % \newunit\newblock
 		 % \printfield{note}%
-		 \newunit\newblock
+		 \setunit{\addspace}\newblock
 		 \usebibmacro{related:init}%
 		 \usebibmacro{related}}
 		{}%
@@ -936,7 +1052,9 @@
 			 \setunit{\addspace\midsentence}
 			 \printfield{number}%
 			 \setunit{\addspace}
-			 \bibstring{fromdate}%
+			 \iffieldundef{endday}
+				{\bibstring{fromdate}}
+				{\bibstring{fromdates}}%
 			 \setunit{\addspace}
 			 \usebibmacro{date}%
 			 \iffieldundef{title}
@@ -968,13 +1086,12 @@
 				 	 \printfield{number}}}}}%
 	% Primary citations and references print the series and commentaries
 	\iftoggle{bbx:related}
-		{\iffieldundef{series}
+		{\ifthenelse{	\iffieldundef{series} \OR
+						\ifkeyword{UK} }
 			{}
-			{\ifkeyword{UK}
-				{}
-				{\newunit}
-			 \printfield{series}}%
-		 \setunit{\addcolon\addspace}\newblock
+			{\setunit{\addcolon\addspace}\newblock
+			 \printfield{series}%
+			 \setunit{\relateddelim}\newblock}%
 		 \usebibmacro{related:init}%
 		 \usebibmacro{related}}
 		{}%
@@ -996,11 +1113,11 @@
 		 \newunit\newblock
 		 \usebibmacro{journal+issue+date}%
 		 \newunit\newblock
-		 \settoggle{bbx:related}{false}%
 		 \printfield{type}%
 		 \setunit{\addspace}
 		 \bibstring{under}%
 		 \setunit{\addspace}
+		 \settoggle{bbx:related}{false}%
 		 \usebibmacro{related:init}%
 		 \usebibmacro{related}}
 		% Short citation -- after the case citation
@@ -1019,7 +1136,10 @@
 	\printfield[plain]{title}}
 
 \DeclareBibliographyDriver{shortauthor}{%
-	\usedriver{\clearfield{crossref}}{\thefield{entrytype}}%
+	\usedriver
+		{\clearfield{crossref}%
+		 \clearfield{series}}
+		{\thefield{entrytype}}%
 	\newunit
 	\printtext{\bibstring{citedas}}%
 	\setunit{\addspace}
@@ -1055,7 +1175,8 @@
 
 %	Create a macro for collection/proceedings editors
 \newbibmacro*{compiler}{%
-	\ifthenelse{\iffieldequalstr{editortype}{compiler}\AND\NOT\ifnameundef{editor}}
+	\ifthenelse{	\iffieldequalstr{editortype}{compiler}\AND\NOT
+					\ifnameundef{editor}}
 		{\printnames[labelname]{editor}%
 		 \clearname{editor}
 		 \setunit{\addnbspace}
@@ -1084,17 +1205,20 @@
 \newbibmacro*{edition}{%
 	\iffieldundef{edition}
 		{\ifnameundef{editor}
-		 	{\addperiod}% Mettre un point avant le premier éditeur, traducteur, etc. 
-		 	{\bibstring{edition}%
-			 \setunit{\addspace}}}
-		{\printfield{edition}
+		 	{\addperiod}% Mettre un point avant le premier éditeur, traducteur, etc.  -- Pas implémenté en anglais, car la bibstring ne s'y prête pas
+		 	{\ifthenelse{	\iffieldequalstr{langid}{french} \OR
+		 					\iffieldundef{langid}	}
+			 	{\bibstring{edition}%
+				 \setunit{\addspace}}
+				{}}}
+		{\printfield{edition}%
 		 \newunit\newblock}}
 
 %	Create macros for printing title elements
 \newbibmacro*{maintitle+title}{%
 	\usebibmacro{title}%
 	% Ne pas imprimer le titleaddon du {mvbook}, etc. dans une autre entrée
-	\clearfield{maintitleaddon}
+	\clearfield{maintitleaddon}%
 	\iffieldsequal{maintitle}{title}
 		{\clearfield{maintitle}%
 		 \clearfield{mainsubtitle}}
@@ -1119,77 +1243,102 @@
 			 \usebibmacro{compiler}%
 			 \usebibmacro{maintitle}}}}
 
+\renewbibmacro*{title}{%
+	\iffieldundef{title}
+		{}
+		{\printtext[title]{%
+			\printfield[titlecase]{title}%
+			\setunit{\subtitlepunct}%
+			\printfield[titlecase]{subtitle}}%
+		 \setunit{\newblockpunct}}%
+	\printfield{titleaddon}}
+
+\renewbibmacro*{booktitle}{%
+	\iffieldundef{booktitle}
+		{}
+		{\printtext[title]{%
+			\printfield[titlecase]{booktitle}%
+			\setunit{\subtitlepunct}%
+			\printfield[titlecase]{booksubtitle}}%
+		 \setunit{\newblockpunct}}%
+	\printfield{booktitleaddon}}
+
 %	Create a macro for journal titles + citation in French and English
 \newbibmacro*{journal+issue+date}{%
 	\iffieldequalstr{langid}{english}
-		% Champ "volume" des revues en anglais
-		{\ifthenelse{ \iffieldundef{number}\AND
-					  \iffieldundef{volume}\AND
-					  \iffieldundef{month} }
-			{\printfield{year}%
-			 \clearfield{date}%
-			 \setunit{\addspace}}
-			{\printfield[plain]{volume}%
-			 \clearfield{volume}%
-			 \iffieldsequal{year}{volume}
-			 	{\clearfield{year}}
-			 	{}
-			 \setunit{\addspace}}}
+		%	For english language journals, print volume first
+		{\printfield[plain]{volume}%
+		 \iffieldsequal{year}{volume}
+			 {\clearfield{year}}
+			 {}%
+		 \setunit{\addspace}}
 		{}%
 	\iffieldundef{shortjournal}
 		{\usebibmacro{journal}}
 		{\printfield[journaltitle]{shortjournal}}%
 	\midsentence%
 	\newunit
-	\printfield{series}%
-	\newunit
-	\iffieldequalstr{langid}{french}%
-		% Revues en français
-		{\iffieldundef{part}
-			{\ifthenelse{ \iffieldundef{number}\AND
-						  \iffieldundef{volume}\AND
-						  \iffieldundef{month} }
-				% Ex: RTD civ. 2010.123
-				% TODO » Attrappe aussi le JCP N ou S avec des pages… supprimer et tout laisser en explicite ?
-				{\setunit{\nopunct\addspace}
-				 \printfield{year}%
-				 \setunit{\adddot}
-				 \printfield[plain]{pages}%
-				 \clearfield{pages}%
-				 \clearfield{issue}}
-				% Ex: Gaz. Pal., n°123, 5 janv. 2015, p. 123
-				% --- Arch. phil. dr., n°123, 2015/4, p. 123
-				{\usebibmacro{date}
-				 \newunit
-				 \printfield{volume}
-				 \newunit
-				 \printfield{number}}}%
-			% Ex: JCP 1950, I, 12345 -- JCP 2015, chron., 123
-			%	TODO = If part = integer, then D. 1900.I.138
+	% \printfield{series}%
+	% \newunit
+	\ifthenelse{	\iffieldequalstr{langid}{french} \OR
+					\iffieldundef{langid} \AND\NOT
+					\iffieldundef{part} }%
+		%	For French language entries that have a <part> field
+		% Ex: JCP 1950, I, 12345 -- JCP 2015, chron., 123
+		{\setunit{\nopunct\addspace}
+		 \printfield{year}%
+		 \iffieldnum{part}
+			{\setunit{\adddot}
+			 \printfield[roman]{part}%
+			 \setunit{\adddot}}
+			{\newunit
+			 \printfield[plain]{part}%
+			 \isdot\newunit}%
+		 \printfield[plain]{number}}
+		%	For entries that are either not in French or have no <part> field
+		{\ifthenelse{	\iffieldundef{number} \AND
+						\iffieldundef{volume} \AND
+						\iffieldundef{month} }
+			%	If there is no <volume>, <number> or <month> defined, use short reference
+			% Ex: RTD civ. 2010.123
+			% TODO » Attrappe aussi le JCP N ou S avec des pages… supprimer et tout laisser en explicite ?
 			{\setunit{\nopunct\addspace}
 			 \printfield{year}%
-			 \iffieldnum{part}
-				{\setunit{\adddot}
-				 \printfield[roman]{part}%
-				 \setunit{\adddot}}
-			 	{\newunit
-				 \printfield[plain]{part}%
-				 \isdot\newunit}%
-			 \printfield[plain]{number}}}
-		% Revues dans d'autres langues
-		{\printfield{volume}%
-		 \setunit{\addspace}
-		 \printfield{number}%
-		 \setunit{\addspace}
-		 \printtext[parens]{\usebibmacro{date}}}%
-	\iffieldundef{issue}
-		{}
-		{\setunit{\addcolon\addspace}
-		 \usebibmacro{issue}}%
-	\iffieldundef{pages}
-		{}
-		{\newunit\newblock
-		 \usebibmacro{pages}}%
+			 \setunit{\adddot}
+			 \printfield[noprefix]{pages}%
+			 \clearfield{pages}%
+			 \clearfield{issue}}
+			%	If a <volume>, <number> or <month> is specified
+			{\iffieldequalstr{langid}{english}
+				%	For english language journals, print date at the end
+				% Ex: 123 Harv. L.J. 12 (2015)
+				{\setunit{\addspace}
+				 \printfield[noprefix]{pages}%
+				 \ifthenelse{	\iffieldundef{year} \AND
+								\iffieldundef{number} \AND
+								\iffieldundef{issue} }
+					{}
+				 	{\setunit{\addspace}
+				 	 \printtext[parens]{%
+					 \usebibmacro{date}%
+					 \newunit
+					 \printfield{number}%
+					 \newunit
+					 \usebibmacro{issue}}}}
+				%	For all other languages, use verbose style reference
+				% Ex: Gaz. Pal., n°123, 5 janv. 2015, p. 123
+				% --- Arch. phil. dr., n°123, 2015/4, p. 123
+				{\usebibmacro{date}%
+				 \newunit
+				 \printfield{volume}%
+				 \newunit
+				 \printfield{number}%
+				 \iffieldundef{issue}
+				 	{}
+					{\setunit{\addspace}
+					 \printtext[parens]{\usebibmacro{issue}}}%
+				 \newunit\newblock
+				 \usebibmacro{pages}}}}%
 	\newunit
 	\printfield{eid}}
 
@@ -1202,7 +1351,10 @@
 					\iffieldundef{eventmonth} \OR
 					\iffieldundef{eventday} }
 		{}
-		{\newunit
+		{\iffieldundef{eventendday}
+			{\bibstring{fromdate}}
+			{\bibstring{fromdates}}%
+		 \setunit{\addspace}%
 		 \printeventdate}
 	\setunit{\addspace}
 	\iffieldundef{venue}
@@ -1257,10 +1409,11 @@
 
 \newbibmacro*{pages}{%
 	\printfield{pages}%
-	\iffieldint{pages}
-		{\setunit{\addnbspace}
-		 \bibstring{sequentes}}
-		{}}
+	% \iffieldint{pages}% TODO » \if(field)pages (?)
+	% 	{\setunit{\addnbspace}
+	% 	 \bibstring{sequentes}}
+	% 	{}%
+	}
 
 %	Create macros for standard book numbers
 \newbibmacro*{isbn+doi+eprint+url}{%
@@ -1358,8 +1511,6 @@
 
 % #####	RELATED FIELD LOOP	#####
 
-\renewcommand*{\relateddelim}{\addsemicolon\addspace}
-
 \newcounter{bbx:relatedcount}
 \newcounter{bbx:relatedtotal}
 
@@ -1374,6 +1525,46 @@
 \newbibmacro*{endrelatedloop}{}
 
 \newbibmacro*{related:init}{\csundef{bbx:relatedloop}}
+
+%	Print the related entry using the proper driver, after clearing duplicate fields.
+\renewbibmacro*{related:default}[1]{%
+	\entrydata*{#1}{%
+	 	\usedriver
+	 		{% Add related entires to the index (not useful as default)
+	 		 %	TODO » Add as an option?
+	 		 % \ifbibliography
+	 			% {\usebibmacro{bibindex}}
+	 			% {\usebibmacro{citeindex}}%
+	 		 \ifnameundef{savedauthor}
+	 			{\ifthenelse{	\ifnameundef{savededitor} \AND
+				 				\ifnamesequal{editor}{savededitor}	}
+	 					{\clearname{editor}}
+	 					{}}
+	 			{\ifnamesequal{author}{savedauthor}
+	 				{\clearname{author}}
+	 				{}}%
+	 		 \iffieldsequal{title}{savedtitle}
+	 		 	{\clearfield{title}}
+	 		 	{}%
+	 		 % If a <jurisdiction> is related to another <jurisdiction>, use "and"
+	 		 \ifthenelse{	\ifentrytype{jurisdiction} \AND
+	 		 				\ifnameundef{savedauthor} }
+	 		 	{\setunit{\addspace}
+	 		 	 \bibstring{and}\nopunct%
+	 		 	 \clearlist{institution}%
+	 		 	 \clearfield{year}}
+	 		 	{}%
+	 		 \ifentrytype{commentary}
+	 		 	{\ifpunct{}{\setunit{\addcolon\addspace}\newblock}}
+	 		 	{}%
+	 		 \renewbibmacro*{related:init}{}%
+	 		 \DeclareNameAlias{sortname}{default}%
+	 		 \ifbibmacroundef{date+extrayear}%	TODO » ???
+	 			{}
+	 			{\renewbibmacro*{date+extrayear}{}%
+	 			 \renewbibmacro*{date}{\printdate}}%
+	 		 \renewbibmacro*{pageref}{}}
+	 		{\thefield{entrytype}}}}
 
 \newbibmacro*{related}{%
 	\ifboolexpr{	test {\iffieldundef{related}}

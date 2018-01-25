@@ -1,0 +1,773 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"begin",
+				"begin{env}<options>"
+			],
+			[
+				"split",
+				"splitdiscards"
+			],
+			[
+				"saving",
+				"savinghyphcodes"
+			],
+			[
+				"widow",
+				"widowpenalties"
+			],
+			[
+				"club",
+				"clubpenalties"
+			],
+			[
+				"parsh",
+				"parshape"
+			],
+			[
+				"inter",
+				"interlinepenalties"
+			],
+			[
+				"shrink",
+				"glueshrinkorder"
+			],
+			[
+				"glue",
+				"gluestretchorder"
+			],
+			[
+				"expr",
+				"glueexpr"
+			],
+			[
+				"parsha",
+				"parshapelength"
+			],
+			[
+				"fontch",
+				"fontcharic"
+			],
+			[
+				"font",
+				"fontcharwd"
+			],
+			[
+				"currentif",
+				"currentifbranch"
+			],
+			[
+				"curr",
+				"currentgrouptype"
+			],
+			[
+				"eTe",
+				"eTeXversion"
+			],
+			[
+				"def",
+				"defaultskewchar"
+			],
+			[
+				"small",
+				"smallskipamount"
+			],
+			[
+				"ragg",
+				"raggedright"
+			],
+			[
+				"obey",
+				"obeylines"
+			],
+			[
+				"normalline",
+				"normallineskiplimit"
+			],
+			[
+				"normalb",
+				"normalbottom"
+			],
+			[
+				"normal",
+				"normalbaselineskip"
+			],
+			[
+				"medsk",
+				"medskipamount"
+			],
+			[
+				"left",
+				"leftline"
+			],
+			[
+				"bigsk",
+				"bigskipamount"
+			],
+			[
+				"vtop",
+				"vtop spread"
+			],
+			[
+				"vbox",
+				"vbox spread"
+			],
+			[
+				"va",
+				"vbadness"
+			],
+			[
+				"tracingpa",
+				"tracingparagraphs"
+			],
+			[
+				"showbox",
+				"showboxdepth"
+			],
+			[
+				"pagefil",
+				"pagefilstretch"
+			],
+			[
+				"pagefill",
+				"pagefillstretch"
+			],
+			[
+				"pagefi",
+				"pagefillstretch"
+			],
+			[
+				"pagef",
+				"pagefilllstretch"
+			],
+			[
+				"open",
+				"openin"
+			],
+			[
+				"mathch",
+				"mathchardef"
+			],
+			[
+				"linesk",
+				"lineskiplimit"
+			],
+			[
+				"input",
+				"inputlineno"
+			],
+			[
+				"ifv",
+				"ifvoid"
+			],
+			[
+				"ifca",
+				"ifcat"
+			],
+			[
+				"hyphen",
+				"hyphenchar"
+			],
+			[
+				"hfil",
+				"hfilneg"
+			],
+			[
+				"hbo",
+				"hbox spread"
+			],
+			[
+				"hbox",
+				"hbox to"
+			],
+			[
+				"hb",
+				"hbox to"
+			],
+			[
+				"global",
+				"globaldefs"
+			],
+			[
+				"glob",
+				"global"
+			],
+			[
+				"every",
+				"everypar"
+			],
+			[
+				"error",
+				"errorcontextlines"
+			],
+			[
+				"ba",
+				"badness"
+			],
+			[
+				"after",
+				"aftergroup"
+			],
+			[
+				"if",
+				"ifdim"
+			],
+			[
+				"musk",
+				"muskip"
+			],
+			[
+				"cont",
+				"control-sequence"
+			],
+			[
+				"medskip",
+				"medskipamount"
+			],
+			[
+				"big",
+				"bigskip"
+			],
+			[
+				"cat",
+				"catcode"
+			],
+			[
+				"u",
+				"uppercase"
+			],
+			[
+				"control",
+				"control-sequences"
+			],
+			[
+				"t",
+				"textbf"
+			],
+			[
+				"\\",
+				"\\begin"
+			],
+			[
+				"tr",
+				"true"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 159.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"texd",
+				"Set Syntax: TeXdown"
+			],
+			[
+				"markd",
+				"Set Syntax: Markdown"
+			],
+			[
+				"mark",
+				"Set Syntax: MultiMarkdown"
+			],
+			[
+				"markdon",
+				"Set Syntax: Markdown"
+			],
+			[
+				"package",
+				"Package Control: Install Package"
+			],
+			[
+				"packa",
+				"Package Control: List Packages"
+			],
+			[
+				"TeXd",
+				"Set Syntax: TeXdown"
+			],
+			[
+				"tex",
+				"Set Syntax: TeXdown"
+			],
+			[
+				"diff",
+				"FileDiffs: Menu"
+			],
+			[
+				"filefi",
+				"FileDiffs: Menu"
+			],
+			[
+				"texdown",
+				"Set Syntax: TeXdown"
+			],
+			[
+				"text",
+				"Set Syntax: Textile"
+			],
+			[
+				"todo",
+				"Set Syntax: TODO"
+			],
+			[
+				"tasks",
+				"Set Syntax: Tasks"
+			],
+			[
+				"plain",
+				"Set Syntax: Plain Text"
+			],
+			[
+				"task",
+				"Set Syntax: Tasks"
+			],
+			[
+				"markdown",
+				"Set Syntax: Markdown"
+			],
+			[
+				"md",
+				"Set Syntax: Markdown"
+			],
+			[
+				"mmd",
+				"Set Syntax: MultiMarkdown"
+			],
+			[
+				"latex",
+				"Set Syntax: LaTeX"
+			],
+			[
+				"lat",
+				"Set Syntax: LaTeX"
+			],
+			[
+				"te",
+				"Set Syntax: TeX"
+			],
+			[
+				"snipp",
+				"Snippet: Conditionals"
+			],
+			[
+				"php",
+				"Set Syntax: PHP"
+			],
+			[
+				"html",
+				"Set Syntax: HTML"
+			],
+			[
+				"Snippet: ",
+				"Snippet: Sub Section"
+			],
+			[
+				"late",
+				"Set Syntax: LaTeX"
+			],
+			[
+				"tlatex",
+				"Set Syntax: LaTeX"
+			],
+			[
+				"latexing",
+				"Set Syntax: LaTeXing"
+			],
+			[
+				"lateing",
+				"Set Syntax: LaTeXing"
+			],
+			[
+				"TeX",
+				"Set Syntax: TeX"
+			],
+			[
+				"La",
+				"Set Syntax: LaTeX"
+			],
+			[
+				"Latex",
+				"Set Syntax: LaTeX"
+			],
+			[
+				"syntax latex",
+				"Set Syntax: LaTeX"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"Insta",
+				"Package Control: Install Package"
+			],
+			[
+				"Lat",
+				"Set Syntax: LaTeX"
+			],
+			[
+				"css",
+				"Set Syntax: CSS"
+			],
+			[
+				"Tex",
+				"Set Syntax: LaTeX"
+			],
+			[
+				"Ja",
+				"Set Syntax: JavaScript"
+			],
+			[
+				"Package Control: ",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 442.0
+	},
+	"console":
+	{
+		"height": 139.0,
+		"history":
+		[
+			"import urllib.request,os; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); open(os.path.join(ipp, pf), 'wb').write(urllib.request.urlopen( 'http://sublime.wbond.net/' + pf.replace(' ','%20')).read())",
+			"Package Control: Install Package LaTeXing",
+			"Package Control: Install Package Latexing",
+			"Package Control: Install Package",
+			"import urllib.request,os; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); open(os.path.join(ipp, pf), 'wb').write(urllib.request.urlopen( 'http://sublime.wbond.net/' + pf.replace(' ','%20')).read())"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/Epistine/Documents/LaTeX/Thèse/Thèse.sublime-project",
+		"/Users/Epistine/Documents/To-do Lists/To-do/Général.td",
+		"/Volumes/Elements/Ebooks/J/Josserand, Louis/Cours de droit civil positif français. vol. 2.pdf",
+		"/Users/Epistine/Documents/To-do Lists/Todo Lists.sublime-project",
+		"/Users/Epistine/Documents/To-do Lists/To-do/Business Plan.td",
+		"/Users/Epistine/Documents/To-do Lists/To-do/Career Plan.td",
+		"/Users/Epistine/Documents/To-do Lists/To-do/Professional Project.td",
+		"/Users/Epistine/Documents/To-do Lists/To-do/LaTeX (Todo).td",
+		"/Users/Epistine/Documents/To-do Lists/To-do/Revues et fusions (Todo).td",
+		"/Users/Epistine/Documents/To-do Lists/To-do/BibLaTeX (Todo).td",
+		"/Users/Epistine/Documents/To-do Lists/To-do/Kayak (Todo).td",
+		"/Users/Epistine/Documents/To-do Lists/To-do/Abréviations juridiques (Todo).td",
+		"/Users/Epistine/Documents/To-do Lists/To-do/Films.td",
+		"/Users/Epistine/Documents/To-do Lists/To-do/Films.td.mdown",
+		"/Users/Epistine/Documents/To-do Lists/To-do/Déménagement.td",
+		"/Users/Epistine/Documents/To-do Lists/To-do/untitled.mdown",
+		"/Users/Epistine/Documents/To-do Lists/To-do/Mudic.td",
+		"/Users/Epistine/Documents/To-do Lists/To-do/Police politique",
+		"/usr/local/texlive/2015/texmf-dist/tex/latex/memoir/mem11.clo",
+		"/Users/Epistine/Documents/To-do Lists/Todo Lists.sublime-workspace",
+		"/Users/Epistine/Documents/To-do Lists/To-do/Business Strategy.td",
+		"/Users/Epistine/Documents/To-do Lists/To-do/Career Plan.td.mdown",
+		"/Users/Epistine/Documents/To-do Lists/To-do/Web Optimisation.td.mdown",
+		"/Users/Epistine/Documents/To-do Lists/To-do/Musculation.td",
+		"/Users/Epistine/Documents/To-do Lists/To-do/Recettes (Todo).td",
+		"/Users/Epistine/Documents/To-do Lists/To-do/Musculation (Todo).td",
+		"/Users/Epistine/Documents/To-do Lists/To-do/.afpDeleted10313403",
+		"/Users/Epistine/Documents/To-do Lists/To-do/General.td",
+		"/Users/Epistine/Documents/To-do Lists/To-do/Kayak.td",
+		"/Users/Epistine/Documents/To-do Lists/To-do/General.todo",
+		"/Users/Epistine/Documents/To-do Lists/To-do/LaTeX.td",
+		"/Users/Epistine/Documents/LaTeX/Foundations of Law/Lecture 5.tex",
+		"/Users/Epistine/Documents/LaTeX/Kayak/Documents de bord.tex",
+		"/Users/Epistine/Documents/To-do Lists/To-do/Liste des tâches.td",
+		"/Users/Epistine/Documents/To-do Lists/To-do/Liste des tâches.ft",
+		"/Users/Epistine/Documents/To-do Lists/To-do/TeX To-do.td",
+		"/Users/Epistine/Documents/To-do Lists/To-do/Baldur's Gate.td",
+		"/Users/Epistine/Documents/To-do Lists/Formats bibliographiques.td",
+		"/Users/Epistine/Documents/To-do Lists/Formules de politesse.td",
+		"/Users/Epistine/Documents/To-do Lists/Baldur's Gate.td",
+		"/Users/Epistine/Documents/To-do Lists/TeX To-do.td",
+		"/Users/Epistine/Documents/Thèse/Thèse.sublime-project",
+		"/Users/Epistine/Documents/Formats bibliographiques.td",
+		"/Users/Epistine/Documents/Formats bibliographiques.td copie",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/Users/Epistine/Library/texmf/tex/latex/biblatex/bbx/Formats bibliographiques.td",
+		"/Users/Epistine/Library/texmf/bibtex/bib/local/Abbrv.bib",
+		"/usr/local/texlive/2013/texmf-dist/tex/latex/biblatex/lbx/french.lbx",
+		"/Users/Epistine/Documents/Thèse/Thèse.sublime-workspace",
+		"/Users/Epistine/Documents/Thèse/Notes de travail/Notes » Property.td",
+		"/Users/Epistine/Documents/Thèse/Bibliographies/Bibliography » Thesis.td",
+		"/Users/Epistine/Documents/Thèse/Notes de travail/Memoir Outline.td",
+		"/Users/Epistine/Documents/Thèse/Notes de travail/Thesis Outline.td",
+		"/Users/Epistine/Documents/Thèse/Notes de travail/Notes » Money.td",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/Default/Preferences.sublime-settings",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/User/Distraction Free.sublime-settings",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/User/JSON.sublime-settings",
+		"/Users/Epistine/Documents/Thèse/Notes de travail/Notes » Legislation.td",
+		"/Users/Epistine/Documents/Thèse/Bibliographies/Jurisprudence.td",
+		"/Users/Epistine/Documents/Thèse/Bibliographies/Bibliography » Money.td",
+		"/Users/Epistine/Documents/Thèse/Notes de travail/Definitions.td",
+		"/Users/Epistine/Documents/Thèse/Notes de travail/Notes » Code Articles.td",
+		"/Users/Epistine/Documents/Thèse/Notes de travail/Notes » Choses, biens, droits.td",
+		"/Users/Epistine/Documents/Thèse/Notes de travail/Notes » Choses, biens, droits",
+		"/Users/Epistine/Documents/Thèse/Notes de travail/Thesis Outline.mdown",
+		"/Users/Epistine/Documents/Thèse/Bibliographies/Arrêts à rechercher.td",
+		"/Users/Epistine/Downloads/gridly.css",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Cache/Markdown/Markdown.tmLanguage.cache",
+		"/Users/Epistine/Documents/Thèse/Notes de travail/Notes sur la propriété",
+		"/Users/Epistine/Documents/Thèse/Notes de travail/Notes sur la propriété",
+		"/Users/Epistine/Documents/Thèse/Bibliographies/Bibliographie générale.td",
+		"/Users/Epistine/Documents/Thèse/Bibliographies/Bibliographie sur la monnaie.td",
+		"/Users/Epistine/Documents/Thèse/Bibliographies/Bibliographie générale.t",
+		"/Users/Epistine/Documents/Thèse/Bibliographies/Arrêts à rechercher.td",
+		"/Users/Epistine/Documents/Thèse/Bibliographies/Bibliographie sur la monnaie",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/TeXdown.tmLanguage",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/Todo/Syntaxes/TODO.tmLanguage",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/Todo/README.mdown",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/PlainTasksOF/Default (OSX).sublime-keymap",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/PlainTasksOF/Default (Linux).sublime-keymap",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/PlainTasksOF/Default.sublime-commands",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/PlainTasksOF/PlainTasks (OSX).sublime-settings",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/PlainTasksOF/Default (Windows).sublime-keymap",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/PlainTasksOF/messages/Tutorial.todo",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/PlainTasksOF/Default (OSX).sublime-mousemap",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/PlainTasksOF/Symbol List.tmPreferences",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/PlainTasksOF/PlainTasks.py",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/PlainTasksOF/Main.sublime-menu",
+		"/Users/Epistine/Documents/Thèse.sublime-project",
+		"/Users/Epistine/Documents/@ Fichiers Thèse/A lire.rtf",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/User/Solarized (Light).tmTheme",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/PlainTasks/test/test.todo",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/SmartMarkdown/smart_list.py",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/SmartMarkdown/headline_level.py",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/SmartMarkdown/Main.sublime-menu",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/SmartMarkdown/Default.sublime-keymap",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/SmartMarkdown/utilities.py",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/SmartMarkdown/SmartMarkdown.sublime-settings",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/SmartMarkdown/readme.md",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/PlainTasks/PlainTasks.tmLanguage",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/Bullet/README.md",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/Markdown/MultiMarkdown.tmLanguage",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/LaTeX/TeX.tmLanguage",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/LaTeX/LaTeX.sublime-completions",
+		"/Users/Epistine/Library/Application Support/Espresso/Plug-Ins/TeXdown.espressoplugin/Syntaxes/TeX.xml",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Default/Preferences.sublime-settings",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/LaTeX/Else.sublime-completions",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/LaTeX/If.sublime-snippet",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/LaTeXTools/LaTeX math.sublime-completions",
+		"/Users/Epistine/Documents/LaTeX/homo kayakus.tex",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/LaTeX/TeX.sublime-completions",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/PHP/PHP.sublime-completions",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/LaTeX/Description.sublime-snippet",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/PHP/if(-).sublime-snippet",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/LaTeX/TeX.sublime-settings",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/LaTeX/Conditionals.sublime-snippet",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/LaTeXTools/LaTeX.sublime-build",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/LaTeXTools/LaTeX.sublime-commands",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/LaTeXTools/LaTeXTools Preferences.sublime-settings",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/LaTeXTools/Symbol List - Sections.tmPreferences",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/LaTeXTools/toggle_auto.py",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/PHP/PHP.tmLanguage",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/PHP/php.sublime-snippet",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/LaTeXTools/LaTeX.sublime-completions",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/LaTeX/LaTeX.sublime-settings",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/LaTeX/Table.sublime-snippet",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/LaTeX/Listing.sublime-snippet",
+		"/Users/Epistine/Library/Application Support/Sublime Text 3/Packages/PHP/if(-)-else(-).sublime-snippet"
+	],
+	"find":
+	{
+		"height": 37.0
+	},
+	"find_in_files":
+	{
+		"height": 101.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": false,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 27.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.unsaved_changes":
+	{
+		"height": 120.0
+	},
+	"pinned_build_system": "",
+	"project": "frenchlaw.sublime-project",
+	"replace":
+	{
+		"height": 50.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"Todo Lists/Général.td"
+			],
+			[
+				"pw",
+				"Todo Lists/PW.td"
+			],
+			[
+				"polite",
+				"Todo Lists/Formules de politesse.td"
+			],
+			[
+				"tex",
+				"Todo Lists/LaTeX.td"
+			],
+			[
+				"late",
+				"Todo Lists/LaTeX.td"
+			],
+			[
+				"muscu",
+				"Musculation.td"
+			],
+			[
+				"todo",
+				"Kayak (Todo).td"
+			],
+			[
+				"ab",
+				"Abréviations juridiques (Todo).td"
+			],
+			[
+				"latex",
+				"LaTeX.td"
+			],
+			[
+				"musc",
+				"Musculation.td"
+			],
+			[
+				"rec",
+				"Recettes.td"
+			],
+			[
+				"poli",
+				"Police politique"
+			],
+			[
+				"snipp",
+				"~/Library/Application Support/Sublime Text 3/Packages/LaTeX/begin{}-end{}.sublime-snippet"
+			],
+			[
+				"title",
+				"untitled"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": false,
+	"show_open_files": true,
+	"show_tabs": false,
+	"side_bar_visible": false,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

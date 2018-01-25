@@ -96,10 +96,10 @@
 	\def\lecturename{Cours magistral}
 	\def\seminarname{Travaux dirigés}
 	\def\subjectname{Objet}% Lettres
-	\def\subjecttext{Thèse pour le doctorat en}
-	\def\datetext{Présentée et soutenue publiquement le}
-	\def\directortext{Sous la direction de:}
-	\def\jurytext{Membres du jury:}
+	\def\subjecttext{Doctorat en}% Thèse pour le doctorat en
+	\def\datetext{soutenue le}% Présentée et soutenue publiquement le
+	\def\advisortext{Thèse dirigée par:}% Sous la direction de
+	\def\jurytext{Jury:}% Membres du jury
 }
 
 %	Configurer les noms des différents éléments en anglais
@@ -208,14 +208,14 @@
 \newcommand{\@heure}[2]{%
 	\ifnum#1=0						minuit%
 		\ifnum#2=0					%
-		\else\ifnum#2=15				\space et quart%
-		\else\ifnum#2=30				\space et demi%
+		\else\ifnum#2=15			\space et quart%
+		\else\ifnum#2=30			\space et demi%
 		\else						\space\numberstringnum{#2}%
 		\fi\fi\fi%
-	\else\ifnum#1=12					midi%
+	\else\ifnum#1=12				midi%
 		\ifnum#2=0					%
-		\else\ifnum#2=15				\space et quart%
-		\else\ifnum#2=30				\space et demi%
+		\else\ifnum#2=15			\space et quart%
+		\else\ifnum#2=30			\space et demi%
 		\else						\space\numberstringnum{#2}%
 		\fi\fi\fi%
 	\else#1\,h\ifnum#2=0\else\,#2\fi%
@@ -275,57 +275,71 @@
 %	Create a command for "sic"
 \newcommand{\sic}{\unskip~[\latin{sic}]\xspace}
 
+% Modify {babel}'s \primo, \secundo, etc. to use \xspace istead of a kern
+% Used for printing (art. 123, \primo) without an extra space at the end
+\renewcommand*{\FrenchEnumerate}[1]{#1\up{o}\xspace}
+
 %	Définir les abréviations spéciales
 
 % Expressions latines
-\newcommand{\adde}{\latin{adde}\xspace}% Ajouter
+\newcommand{\adde}{\latin{adde}\xspace}% ajouter
 \newcommand{\Adde}{\latin{Adde}\xspace}
-\newcommand{\cf}{\latin{cf.\xspace}}% Se reporter à
-\newcommand{\Cf}{\latin{Cf.\xspace}}
 \newcommand{\contra}{\latin{contra}\xspace}% en sens contraire
 \newcommand{\Contra}{\latin{Contra}\xspace}
-\newcommand{\passim}{\latin{passim}}% À différents endroits
+
+\newcommand{\passim}{\latin{passim}}% à divers endroits
+%
+\newcommand{\adnotam}{\latin{ad notam}~}% à la note
+\newcommand{\Adnotam}{\latin{Ad notam}~}
 \newcommand{\verbo}{\latin{v\textsuperscript{o}~}}% au mot …
 \newcommand{\verbis}{\latin{v\textsuperscript{is}~}}
+\renewcommand{\ss}{\latin{sb}\xspace}% sous (un article, arrêt, etc.)
 %
-\newcommand{\ie}{\latin{i.\thinspace e.}\xdot}% Id est, c'est-à-dire
-\newcommand{\Ie}{\latin{I.\thinspace e.}\xdot}% Id est, c'est-à-dire
-\newcommand{\eg}{\latin{e.\thinspace g.}\xdot}% Exempli gratia, par exemple
-\newcommand{\Eg}{\latin{E.\thinspace g.}\xdot}% Exempli gratia, par exemple
+\newcommand{\bis}{\latin{bis}\xspace}% bis
+\newcommand{\ter}{\latin{ter}\xspace}% ter
 %
+\newcommand{\cf}{\latin{cf.\@\xspace}}% se reporter à
+\newcommand{\Cf}{\latin{Cf.\@\xspace}}
+\newcommand{\ie}{\latin{i.\thinspace e.}\@\xspace}% id est
+\newcommand{\Ie}{\latin{I.\thinspace e.}\@\xspace}
+\newcommand{\eg}{\latin{e.\thinspace g.}\@\xspace}% exempli gratia
+\newcommand{\Eg}{\latin{E.\thinspace g.}\@\xspace}
 
 % Expressions françaises
 %	TODO » Adde: art., al., § (?) comme pour les \no et \vol
 %	TODO » Adde: documents juridiques (dont romains (?)), tribunaux, chambres
-\newcommand{\anc}{anc.\xdot}% Ancien
-\newcommand{\Anc}{Anc.\xdot}
-\newcommand{\comp}{comp.\xdot}% Comparer
-\newcommand{\Comp}{Comp.\xdot}
-\newcommand{\rappr}{rappr.\xdot}% Rapprocher
-\newcommand{\Rappr}{Rappr.\xdot}% Rapprocher
-\renewcommand{\v}{voir\xdot}% Voir (abréger ?)
-\newcommand{\V}{Voir\xdot}
+
+\newcommand{\al}{al.~}% alinéa
+\newcommand{\anc}{anc.\@\xspace}% ancien --- utilité?
+\newcommand{\Anc}{Anc.\@\xspace}
+\newcommand{\comp}{comp.\@\xspace}% comparer
+\newcommand{\Comp}{Comp.\@\xspace}
+\newcommand{\egal}{égal.~}% également
+\newcommand{\Egal}{Égal.~}
+\newcommand{\spec}{spéc.~}% spécialement
+\newcommand{\Spec}{Spéc.~}
+\newcommand{\rappr}{rappr.\@\xspace}% rapprocher
+\newcommand{\Rappr}{Rappr.\@\xspace}
+\renewcommand{\v}{voir\xspace}% Vvoir (abréger ?)
+\newcommand{\V}{Voir\xspace}
 %
-\newcommand{\vs}{c.\xdot}% Contre // TODO \c ou \vs (?)
-\newcommand{\n}{n.\xdot}% Note, en note
-\newcommand{\obs}{obs.\xdot}
-\newcommand{\chron}{chron.\xdot}
-\newcommand{\concl}{concl.\xdot}
-\newcommand{\pan}{pan.\xdot}
-\newcommand{\rapp}{rapp.\xdot}
+\newcommand{\vs}{c.\@\xspace}% versus ou contra // TODO \c ou \vs (?)
+\newcommand{\n}{n.\@\xspace}% note de jurisprudence
+\newcommand{\obs}{obs.\@\xspace}% observations
+\newcommand{\chron}{chron.\@\xspace}% chronique
+\newcommand{\concl}{concl.\@\xspace}% conclusions
+\newcommand{\pan}{pan.\@\xspace}% panorama
+\newcommand{\rapp}{rapp.\@\xspace}% rapport
 %
-\renewcommand{\ss}{ss\xspace}% TODO » Utile ?
-\newcommand{\vol}{vol.~}% Volume
-%
-\newcommand{\BO}{B.O.\xdot}% Bulletin officiel
-\newcommand{\JO}{\emph{J.O.}\xdot}% Journal officiel
+\newcommand{\BO}{B.O.\@\sxpace}% Bulletin officiel
+\newcommand{\JO}{\emph{J.O.}\@\sxpace}% Journal officiel
 %
 % Thanks @egreg pour le test \ifnum (qui détecte les nombres positifs vs. tout le reste)
 \newcommand{\Bull}[1]{%
 	Bull.~\ifnum0<0#1\relax\uppercase\expandafter{\romannumeral#1}\else#1\fi\xspace}
 
 
-%	TODO » Sort
+%	TODO » Revoir // Essayer de trouver queluqe chose sans \xdot ou virer les points abréviatifs pour supprimer le problème
 
 % Créer les commandes des abréviations juridiques et les indexer via BibLaTeX. Elles doivent être inscrites dans le fichier bibtex (forme longue et forme courte).
 \newcommand{\abbrv}[2][\xdot]{%
@@ -334,38 +348,37 @@
 	{\cite{#2}#1}
 	{\citetitle{#2}\@\xspace}}
 %
-%
+
+
+\newcommand{\GAJC}{G.A.J.C.\@\xspace}
+\newcommand{\D}{D.\@\xspace}% Recueil Dalloz: Jurisprudence générale (1825--1902)
+\newcommand{\DP}{D.\@\xspace}% Recueil Dalloz périodique (1903--1944)
+\renewcommand{\DH}{D.H.\@\xspace}% Replace un genre de D polonais
+\newcommand{\Sirey}{S.\@\xspace}% Recueil Sirey des lois et arrêts (1791--1954)
+
 % Commandes des juridictions
-\newcommand{\CC}{C.C.}
-\newcommand{\TC}{T.C.}
-\newcommand{\CE}{C.E.}
-\newcommand{\Cass}{Cass.}
 
-\newcommand{\CA}[1]{C.A. #1}
-\newcommand{\CAA}[1]{C.A.A. #1}
+\newcommand{\CIJ}{C.I.J.\@\xspace}
+\newcommand{\CJCE}{C.J.C.E.\@\xspace}
+\newcommand{\CJUE}{C.J.U.E.\@\xspace}
+\newcommand{\CEDH}{C.E.D.H.\@\xspace}
 
-\newcommand{\TGI}[1]{T.G.I. #1}
-\newcommand{\TI}[1]{T.I. #1}
-\newcommand{\TA}[1]{T.A. #1}
-\newcommand{\Tcomm}[1]{T.~comm. #1}
-\newcommand{\Tcorr}[1]{T.~corr. #1}
-\newcommand{\Tpol}[1]{T. pol. #1}
+\newcommand{\CC}{Cons.~const.\@}
+\newcommand{\TC}{T.~Confl.\@}
+\newcommand{\CE}{C.E.\@}
+\newcommand{\Cass}{Cass.\@}
 
-\newcommand{\CIJ}{C.I.J}
-\newcommand{\CJCE}{C.J.C.E.}
-\newcommand{\CJUE}{C.J.U.E.}
-\newcommand{\CEDH}{C.E.D.H.}
+\newcommand{\CA}{}
+\newcommand{\CAA}{C.A.A.\@\xspace}
+
+% \newcommand{\TGI}{T.G.I.\@\xspace}
+% \newcommand{\TI}{T.I.\@\xspace}
+% \newcommand{\TA}{T.A.\@\xspace}
+% \newcommand{\Tcomm}{T.~comm.\@\xspace}
+% \newcommand{\Tcorr}{T.~corr.\@\xspace}
+% \newcommand{\Tpol}{T. pol.\@\xspace}
 %
-\newcommand{\BCE}{\abbrv{BCE}}
-\newcommand{\JOUE}{\abbrv{JOUE}}
-\newcommand{\SEBC}{\abbrv{SEBC}}
-\newcommand{\ONU}{\abbrv[\@\xspace]{ONU}}
-%
-% Commandes pour les Codes
-\newcommand{\Cciv}{\abbrv{Cciv}}
-\newcommand{\Ccom}{\abbrv{Ccom}}
-\newcommand{\CDE}{\abbrv{CDE}}
-\newcommand{\CGI}{\abbrv{CGI}}
-\newcommand{\CGPPP}{\abbrv{CGPPP}}
-\newcommand{\CMF}{\abbrv{CMF}}
-\newcommand{\CPen}{\abbrv{CPen}}
+% \newcommand{\BCE}{\abbrv{BCE}}
+% \newcommand{\JOUE}{\abbrv{JOUE}}
+% \newcommand{\SEBC}{\abbrv{SEBC}}
+% \newcommand{\ONU}{\abbrv[\@\xspace]{ONU}}
