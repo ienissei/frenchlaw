@@ -24,6 +24,9 @@ The work `frenchlaw` comprises the following files:
 - `frenchlaw-dev.sty`
 - `frenchlaw.bbx`
 - `frenchlaw.cbx`
+- `frenchlaw-en.lbx`
+- `frenchlaw-fr.lbx`
+- `frenchlaw.dbx`
 - `typographie.sty`
 - `README.MD`
 
@@ -48,6 +51,9 @@ Le logiciel `frenchlaw` comprend les fichiers suivants :
 - `frenchlaw-dev.sty`
 - `frenchlaw.bbx`
 - `frenchlaw.cbx`
+- `frenchlaw-en.lbx`
+- `frenchlaw-fr.lbx`
+- `frenchlaw.dbx`
 - `typographie.sty`
 - `README.MD`
 

@@ -1,6 +1,6 @@
 %%
 %%   This is file "frenchlaw.cls", which is part of the "frenchlaw" package
-%%   Copyright 2009--2014: Fora VERN -- ienissei (at) gmail (dot) com
+%%   Copyright 2009--2018: Fora VERN -- ienissei (at) gmail (dot) com
 %% 
 %%   This work may be distributed and/or modified under the conditions of the
 %%   LaTeX Project Public License, either version 1.3 of this license or, at your
