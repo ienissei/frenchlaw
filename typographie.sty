@@ -298,8 +298,8 @@
 \newcommand{\bis}{\latin{bis}\xspace}% bis
 \newcommand{\ter}{\latin{ter}\xspace}% ter
 %
-\newcommand{\cf}{\latin{cf.\@\xspace}}% se reporter à
-\newcommand{\Cf}{\latin{Cf.\@\xspace}}
+\newcommand{\cf}{\latin{cf.\@~}}% se reporter à
+\newcommand{\Cf}{\latin{Cf.\@~}}
 \newcommand{\ie}{\latin{i.\thinspace e.}\@\xspace}% id est
 \newcommand{\Ie}{\latin{I.\thinspace e.}\@\xspace}
 \newcommand{\eg}{\latin{e.\thinspace g.}\@\xspace}% exempli gratia
@@ -309,15 +309,15 @@
 %	TODO » Adde: art., al., § (?) comme pour les \no et \vol
 %	TODO » Adde: documents juridiques (dont romains (?)), tribunaux, chambres
 
-\newcommand{\al}{al.~}% alinéa
+\newcommand{\al}{al.\@~}% alinéa
 \newcommand{\anc}{anc.\@\xspace}% ancien --- utilité?
 \newcommand{\Anc}{Anc.\@\xspace}
 \newcommand{\comp}{comp.\@\xspace}% comparer
 \newcommand{\Comp}{Comp.\@\xspace}
-\newcommand{\egal}{égal.~}% également
-\newcommand{\Egal}{Égal.~}
-\newcommand{\spec}{spéc.~}% spécialement
-\newcommand{\Spec}{Spéc.~}
+\newcommand{\egal}{égal.\@~}% également
+\newcommand{\Egal}{Égal.\@~}
+\newcommand{\spec}{spéc.\@~}% spécialement
+\newcommand{\Spec}{Spéc.\@~}
 \newcommand{\rappr}{rappr.\@\xspace}% rapprocher
 \newcommand{\Rappr}{Rappr.\@\xspace}
 \renewcommand{\v}{voir\xspace}% Vvoir (abréger ?)
@@ -350,11 +350,15 @@
 %
 
 
-\newcommand{\GAJC}{G.A.J.C.\@\xspace}
-\newcommand{\D}{D.\@\xspace}% Recueil Dalloz: Jurisprudence générale (1825--1902)
-\newcommand{\DP}{D.\@\xspace}% Recueil Dalloz périodique (1903--1944)
-\renewcommand{\DH}{D.H.\@\xspace}% Replace un genre de D polonais
-\newcommand{\Sirey}{S.\@\xspace}% Recueil Sirey des lois et arrêts (1791--1954)
+\newcommand{\GAJC}{\cite{GAJC}}
+\newcommand{\D}{\citejournal{D}}% Recueil Dalloz: Jurisprudence générale (1825--1902)
+\newcommand{\DP}{\citejournal{DP}}% Recueil Dalloz périodique (1903--1944)
+\newcommand{\DA}{\citejournal{DA}}% Recueil Dalloz anlytique et critique (1945--1955)
+\renewcommand{\DH}{\citejournal{DH}}% Recueil Dalloz hebdomadaire --- Remplace un genre de D polonais
+\newcommand{\Sirey}{\citejournal{S}}% Recueil Sirey des lois et arrêts (1791--1954)
+\newcommand{\GP}{\citejournal{GazPal}}
+\newcommand{\JCP}{\citejournal{JCP}}
+\newcommand{\JCPN}{\citejournal{JCPN}}
 
 % Commandes des juridictions
 

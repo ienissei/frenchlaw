@@ -57,6 +57,8 @@
 
 %	VARIOUS OPTION SWITCHES
 
+\newif\if@sansserif
+	\@sansseriffalse
 \newif\if@summary
 	\@summaryfalse
 \newif\if@outline
@@ -183,6 +185,7 @@
 %	Define option for <letter> document style
 \DeclareOptionX{letter}{
 	\@lettertrue
+	\@sansseriftrue
 	\@elevenpointstrue
 %	\@marginaltrue% Only used to accompany CV, document it elsewhere or create a + option
 	\@twosidefalse
@@ -192,6 +195,7 @@
 %	Define option for <CV> document style
 \DeclareOptionX{vitae}{
 	\@CVtrue
+	\@sansseriftrue
 	\@elevenpointstrue
 	\@marginaltrue
 	\@twosidefalse
@@ -368,7 +372,13 @@
 %	TODO » Bug si on met la page en <landscape> => Résoudre (?)
 \checkandfixthelayout
 
-%	#####	UTILITIES	#####
+%	#####	HELPER MACROS	#####
+
+%	Provide a list of greek numbers for internal counters
+\def\@greek#1{%
+	\ifcase#1\or\ensuremath{\alpha}\or\ensuremath{\beta}\or\ensuremath{\gamma}\or\ensuremath{\delta}\or\ensuremath{\varepsilon}\or\ensuremath{\zeta}\or\ensuremath{\eta}\or\ensuremath{\theta}\or\ensuremath{\iota}\or\ensuremath{\kappa}\or\ensuremath{\lambda}\or\ensuremath{\mu}\or\ensuremath{\nu}\or\ensuremath{\xi}\or\ensuremath{ o}\or\ensuremath{\pi}\or\ensuremath{\varrho}\or\ensuremath{\sigma}\or\ensuremath{\tau}\or\ensuremath{\upsilon}\or\ensuremath{\phi}\or\ensuremath{\chi}\or\ensuremath{\psi}\or\ensuremath{\omega}\else\@ctrerr\fi}
+\def\@Greek#1{%
+	\ifcase#1\or\ensuremath{\Alpha}\or\ensuremath{\Beta}\or\ensuremath{\Gamma}\or\ensuremath{\Delta}\or\ensuremath{\Epsilon}\or\ensuremath{\Zeta}\or\ensuremath{\Eta}\or\ensuremath{\Theta}\or\ensuremath{\Iota}\or\ensuremath{\Kappa}\or\ensuremath{\Lambda}\or\ensuremath{\Mu}\or\ensuremath{\Nu}\or\ensuremath{\Xi}\or\ensuremath{\Omicron}\or\ensuremath{\Pi}\or\ensuremath{\Rho}\or\ensuremath{\Sigma}\or\ensuremath{\Tau}\or\ensuremath{\Upsilon}\or\ensuremath{\Phi}\or\ensuremath{\Chi}\or\ensuremath{\Psi}\or\ensuremath{\Omega}\else\@ctrerr\fi}
 
 %	TODO » A documenter
 %	Create a command that gobbles all whitespace until the next paragraph
@@ -385,6 +395,13 @@
   \@ifundefined{c@#1}
     {\newcounter{#1}}
     {}}
+
+%	Create a command that sets a lengths to the greater of two values
+% Set length #1 to the value of #2, but only if #2 is greater than #1
+\newcommand{\setmaxlength}[2]{%
+	\ifdim\dimexpr#2>\dimexpr#1
+		\global\setlength{#1}{#2}%
+	\fi}
 
 %	#####	TYPOGRAPHY	#####
 
@@ -425,14 +442,9 @@
 	\RequirePackage[tracking,letterspace=30]{microtype}
 \fi
 
-%	Use sans font as default with some document styles (CV)
-\if@CV
-	\renewcommand{\familydefault}{\sfdefault}
-\fi
-
 %	TODO » Use a boolean switch common to all options that use sans font
 %	+ Create a serif|sans option to override it
-\if@CV
+\if@sansserif
 	\renewcommand{\familydefault}{\sfdefault}
 	\usepackage{metalogo}
 	\setlogokern{La}{-0.165em}
@@ -1229,7 +1241,7 @@
 		 \scshape\pagename\space\thepage\space\pageofname\space\thelastpage\fi}
 		{}
 
-%	TODO » A reprendre pour didactic. Utiliser \leftmark et \rightmark en les redéfinissant (?)
+%	TODO » A reprendre pour didactic. Utiliser \leftmark et \rightmark en les redéfinissant (?) -- Tester avec des éléments manquats (email, etc.). Utiliser \relax plutôt que \@empty comme test (également en pages de titre)
 \makepagestyle{didactichead}
 	\makeheadrule{didactichead}{\textwidth}{.2ex}
 	\makeevenhead{didactichead}
@@ -1249,15 +1261,15 @@
 	\makeevenfoot{didactichead}
 		{\footnotesize{%
 			\@author%
-			\ifx\relax\@email\relax\else~(\@email)\fi%
-			\ifx\relax\@date\relax\else, \@date.\fi}}
+			\ifx\@empty\@email\@empty\else~(\@email), \fi%
+			\@date.}}
 		{}
 		{\thepage}
 	\makeoddfoot{didactichead}
 		{\footnotesize{%
 			\@author%
-			\ifx\relax\@email\relax\else~(\@email)\fi%
-			\ifx\relax\@date\relax\else, \@date.\fi}}
+			\ifx\@empty\@email\@empty\else~(\@email), \fi%
+			\@date.}}
 		{}
 		{\thepage}
 
@@ -1773,6 +1785,7 @@
 \newcommand{\para}[1][]{%
 	\refstepcounter{para}%
 	\refstepcounter{precis}%
+	\def\@currentlabel{\thepara}%
 	{\paranumstyle\thepara\ifx\relax#1\relax\label{para:\thepara}\else\label{para:#1}\paranumsep\fi}%
 	\if@paraname%
 		\if@backindex\specialindex{\jobname-par}{para}{#1}\fi
@@ -1794,6 +1807,10 @@
 			}%
 	\fi%
 	\@ifnextchar\par{\@gobblepar\relax}{\relax}}
+
+%	Créer les commandes pour faire référence à un numéro
+\newcommand{\infra}[1]{\emph{infra} \no\ref{para:#1}}
+\newcommand{\supra}[1]{\emph{supra} \no\ref{para:#1}}
 
 %	Créer une commande \precis{} pour indiquer un résumé du paragraphe.
 %	TODO » Truver un moyen de supprimer toutes les espaces horizontales / verticales et éventuellement le saut de paragraphe. Placer en début de \para avec des % en fin de ligne, ou en fin de \para (mais tester un \unskip au début du \para)
@@ -1831,10 +1848,6 @@
 % 	\@ifnextchar\par{\@gobblepar}{\relax}}
 
 %	TODO » Créer une commande unique, type \para[<para>][<précis>], avec un ToC \par implicite si #2 est inexistant, sinon on est obligé de mettre un \precis{} avant toute nouvelle section qui requiert un \par dans la ToC
-
-%	Créer les commandes pour faire référence à un numéro
-\newcommand{\infra}[1]{Cf.~\emph{infra} \no\ref{para:#1}}
-\newcommand{\supra}[1]{Cf.~\emph{supra} \no\ref{para:#1}}
 
 %	TODO » A déplacer + documenter
 %	Créer une commande pour indiquer que le sujet est traité en note
@@ -1934,32 +1947,38 @@
 \frenchlawlists
 
 %	TODO » Enumerate numbering
-% Enumerate > 1. a) i. A.
-
+%	Définir le style des labels dans les enumerate
+\renewcommand{\labelenumii}{\theenumii).}
+\renewcommand{\labelenumiii}{\textit{\theenumiii}.}
+\renewcommand{\theenumiv}{\@greek\c@enumiv}
 
 %	Définir le style des labels des descriptions
-\renewcommand{\descriptionlabel}[1]{\scshape{\hfill#1:}}
-\renewcommand{\blockdescriptionlabel}[1]{\scshape{\hfill#1:}}
+\renewcommand{\descriptionlabel}[1]{\scshape{#1:\enspace}}
+\renewcommand{\blockdescriptionlabel}[1]{\scshape{#1:\enspace}}
 \newcommand{\summarylabel}[1]{\scshape{\hfill\summaryname:}}
 \newcommand{\vitaelabel}[1]{\footnotesize\itshape{\hfill\strut#1:\strut}}
-
-%	TODO » Placer avec les commandes babel +  Défaut == "En résumé"
-\newcommand{\summaryname}{Pour l'essentiel}
 
 %	TODO » Revoir les espacements horizontaux des descriptions
 %	Modifier l'environnement <description>
 \renewenvironment{description}
-	{\list{}{\let\makelabel\descriptionlabel
-			 \setlength{\leftmargin}{2\parindent}}}
-	{\endlist}
+	{\list{}{\vskip\baselineskip
+			 \let\makelabel\descriptionlabel
+			 \setlength{\labelwidth}{\z@}
+			 \setlength{\labelsep}{\z@}
+			 \setlength{\leftmargin}{\z@}}}
+	{\vskip\baselineskip\endlist}
 
 %	Modifier l'environnement <blockdescription>
 \renewenvironment{blockdescription}%
 	{\list{}{\vskip\baselineskip
 			 \let\makelabel\blockdescriptionlabel
-			 \setlength{\itemsep}{\baselineskip}
-			 \setlength{\leftmargin}{2\parindent}}}%
+			 \setlength{\labelwidth}{\z@}
+			 \setlength{\labelsep}{\z@}
+			 \setlength{\leftmargin}{\z@}}}%
 	{\vskip\baselineskip\endlist}
+
+%	TODO » Placer avec les commandes babel +  Défaut == "En résumé"
+\newcommand{\summaryname}{Pour l'essentiel}
 
 %	Créer un environnement <summmary> pour des conclusions avec un label prédéfini
 \NewEnviron{summary}
@@ -2100,7 +2119,7 @@
 	\indexmark
 	\ifnoindexintoc\else
 		\phantomsection
-		\addcontentsline{toc}{section}{\if@maintoc\indexname\fi}%
+		\addcontentsline{toc}{chapter}{\protect\if@maintoc\indexname\protect\fi}%
 	\fi
 	\thispagestyle{indextitlepagestyle}
 	\setlength{\parindent}{0em}
@@ -2128,7 +2147,7 @@
 	\glossarymark
 	\ifnoglossaryintoc\else
 		\phantomsection
-		\addcontentsline{toc}{section}{\if@maintoc\glossaryname\fi}
+		\addcontentsline{toc}{chapter}{\protect\if@maintoc\glossaryname\protect\fi}
 	\fi
 	\thispagestyle{chapter}
 	\setlength{\parindent}{0em}
@@ -2170,7 +2189,8 @@
 	\fi
 	backend=biber,
 	indexing=cite,
-	mincrossrefs=1,
+	% citereset=chapter,
+	mincrossrefs=2,
 	autolang=other*]{biblatex}
 
 %	Exclude bibliographies from the short table of contents
@@ -2179,13 +2199,13 @@
 	\chapter*{#1}
     \ifmemoirbibintoc
 		{\phantomsection
-		 \addcontentsline{toc}{section}{\if@maintoc#1\fi}}
+		 \addcontentsline{toc}{chapter}{\protect\if@maintoc#1\protect\fi}}
 		{}}
 \defbibheading{biblist}[\biblistname]{%
 	\chapter*{#1}
 	\ifmemoirbibintoc
 		{\phantomsection
-		 \addcontentsline{toc}{section}{\if@maintoc#1\fi}}
+		 \addcontentsline{toc}{section}{#1}}
 		{}}
 \defbibheading{subbibliography}[\refname]{%
 	\section*{#1}}%
@@ -2246,8 +2266,6 @@
 % 		{%\mkbibindexfield{\thefield{labelname}!}{\thefield{labelname}}%
 % 		 \mkbibindexsubentry{\thefield{indexsorttitle}}{#1}%
 % 		 \mkbibindexsubentry{\thefield{postnote}}{\textbf{\thefield{postnote}}}}}
-
-\renewbibmacro{bibindex}{\ifbibindex{\indexnames{labelname}}{}}% TODO » Sert apparemment à supprimer le bibindex (qui indexe les entrées de la bib finale) >> Turn it off without redefining
 
 %	#####	CRÉATION DU SYSTÈME D'ABRÉVIATIONS (BIBLATEX)	#####
 

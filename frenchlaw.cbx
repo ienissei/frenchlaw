@@ -93,9 +93,9 @@
 \DeclareFieldFormat{editortype}{\mkbibparens{#1}}%
 
 \DeclareFieldAlias{title}{citetitle}
-\DeclareFieldAlias{shorttitle}{citetitle}
-\DeclareFieldAlias{shorthand}{citetitle}
 \DeclareFieldAlias{labeltitle}{citetitle}
+\DeclareFieldAlias{shorttitle}{citetitle}
+\DeclareFieldAlias{shorthand}{plain}
 
 \DeclareFieldFormat[legislation]{shorttitle}{#1\isdot}%
 
@@ -106,7 +106,7 @@
 		\iffieldundef{title}{}{\space\thefield{title}}%
 		\iffieldundef{postnote}{}{!{\color{cyan}\thefield{postnote}}}}%
 	\global\boolfalse{cbx:loccit}%
-	\ifentrytype{reference}
+	\ifthenelse{	\ifentrytype{reference} \AND\NOT \iffieldundef{shorttitle}	}
 		{\boolfalse{citetracker}}
 		{}%
 	\ifnumless{\value{multicitecount}}{2}
@@ -122,13 +122,17 @@
 						\ifentrytype{legislation}\OR
 						\ifentrytype{legal} }
 			{\usebibmacro{cite:legal}}
-			{\ifciteibid
+			{\ifthenelse{	\ifciteibid \AND\NOT \ifentrytype{reference}	}
 				{\usebibmacro{cite:ibid}}
 				{\iffieldequals{namehash}{\cbx@lasthash}
 					{}% \unspace, mais causait un problème avec la prénote
 					{\ifnameundef{labelname}
 						{}
 						{\printnames{labelname}%
+						 \ifthenelse{	\value{collaborator}=1	}
+						 	{\space\bibstring{and}\space}
+						 	{\newunit}%
+						 \printnames[labelname]{collaborator}%
 						 \setunit{\nametitledelim}}%
 					 \savefield{namehash}{\cbx@lasthash}}%
 				 \ifnameundef{shortauthor}
@@ -136,10 +140,12 @@
 						{\usebibmacro{cite:opcit}}
 					 	{\usebibmacro{cite:title}%
 					 	 \usebibmacro{cite:related}}}
-					{\printfield{shorttitle}}}}}%
-	\iffieldundef{shorthand}
-		{}
-		{\usebibmacro{shorthandintro}}}
+					{\printfield{shorttitle}%
+					 \ifuseauthor
+					 	{}
+					 	{\setunit{\addnbspace}
+					 	\printnames{shortauthor}}}}}}%
+	\usebibmacro{shorthandintro}}
 
 \newbibmacro*{citetitle}{%
 	\ifthenelse{	\ifciteseen\AND\NOT\iffieldundef{shorthand} }
@@ -149,19 +155,17 @@
 						\ifentrytype{legislation}\OR
 						\ifentrytype{legal} }
 			{\usebibmacro{cite:legal:reverse}}
-			{\ifciteibid
+			{\ifthenelse{	\ifciteibid \AND\NOT \ifentrytype{reference}	}
 				{\usebibmacro{cite:ibid}}
 				{\usebibmacro{cite:title}%
 				 	 \usebibmacro{cite:related}}}}%
-	\iffieldundef{shorthand}
-		{}
-		{\usebibmacro[\mkparens]{shorthandintro}}}
+	\usebibmacro{shorthandintro}}
 
 \newbibmacro*{textcite}{%
 	\iffieldequals{namehash}{\cbx@lasthash}
 		{\textcitedelim}
 		{\ifbool{cbx:parens}
-			{\global\booltrue{cbx:parens}\bibcloseparen}
+			{\global\boolfalse{cbx:parens}\bibcloseparen}
 			{}%
 		 \ifnameundef{labelname}
 			{\iffieldundef{labeltitle}
@@ -171,14 +175,18 @@
 					 \setunit{\addnbspace}}
 					{}%
 				 \printtext[bibhyperref]{\printfield{title}}%
-				 \clearfield{labeltitle}
+				 \clearfield{labeltitle}%
 				 \clearfield{title}}}
-			{\printnames[first-last]{labelname}}%
+			{\printnames[first-last]{labelname}%
+			 \ifthenelse{	\value{collaborator}=1	}
+				{\space\bibstring{and}\space}
+				{\newunit}%
+			 \printnames[labelname]{collaborator}}%
 		 \stepcounter{textcitecount}%
 		 \savefield{namehash}{\cbx@lasthash}}%
 	\ifbool{cbx:parens}
 		{}
-		{\setunit{\global\booltrue{cbx:parens}\addspace\bibopenparen}}%
+		{\setunit{\global\booltrue{cbx:parens}\addnbspace\bibopenparen}}%
 	% 	{\usebibmacro{prenote}}
 	% 	{}%
 	\ifthenelse{	\ifciteseen\AND\NOT\iffieldundef{shorthand} }
@@ -188,35 +196,41 @@
 						\ifentrytype{legislation}\OR
 						\ifentrytype{legal} }
 			{\usebibmacro{cite:legal:reverse}}
-			{\ifciteibid
+			{\ifthenelse{	\ifciteibid \AND\NOT \ifentrytype{reference}	}
 				{\usebibmacro{cite:ibid}}
 				{\ifnameundef{shortauthor}
 					{\ifopcit
 						{\usebibmacro{cite:opcit}}
 						{\usebibmacro{cite:title}%
 						 \usebibmacro{cite:related}}}
-					{\printfield{shorttitle}}}}}%
+					{\printfield{labeltitle}%
+					 \ifuseauthor
+					 	{}
+					 	{\setunit{\addnbspace}
+						 \printnames{shortauthor}}}}}}%
 	\ifbool{cbx:parens}
 		{}
-		{\setunit{\global\booltrue{cbx:parens}\addspace\bibopenparen}}% \setunit le tout
+		{\setunit{\global\booltrue{cbx:parens}\addnbspace\bibopenparen}}%
 	\ifentrytype{legislation}
 		{\usebibmacro{cite:prenote}}
 		{\usebibmacro{cite:postnote}}%
-	\iffieldundef{shorthand}
-		{}
-		{\usebibmacro{shorthandintro}}}
+	\usebibmacro{shorthandintro}}
 
 \newbibmacro*{cite:title}{%
 	%	Driver for inreference entries with an author (encyclopédies / classeurs)
 	\ifthenelse{	\ifentrytype{inreference} \AND\NOT \ifnameundef{author} }
-		{\usebibmacro{relax:}%
-		 \bbx@crossref{\thefield{crossref}}%
+		{\iffieldundef{shortjournal}
+			{\iffieldundef{crossref}
+				{\usebibmacro{maintitle+booktitle}}
+				{% \bibstring{relax}M ?
+				 \bbx@crossref{\thefield{crossref}}}}
+			{\printfield{shortjournal}}%
 		 \newunit\newblock
-		 \iffieldundef{pagination}
+		 \bibstring{\thefield{pagination}}%
+		 \iffieldundef{number}
 		 	{}
-		 	{\bibstring{\thefield{pagination}}}%
-		 \printtext[bibhyperref]{\printfield[title]{labeltitle}}%
-		 \clearfield{labeltitle}}
+		 	{\printfield{number}%
+		 	 \setunit{\addcolon\addspace}}}
 	 	{}%
 	%	Driver for printing the title of the work
 	\iffieldundef{labeltitle}
@@ -224,11 +238,12 @@
 		{\printtext[bibhyperref]{\printfield[title]{labeltitle}}%
 		 \newunit\newblock}%
 	% If the work has already been cited, stop there. Else, print verbose citation.
-	\ifciteseen
-		{}
+	\ifthenelse{	\ifciteseen \AND\NOT \ifentrytype{inreference}	}
+		{\newunit\newblock
+		 \bibstring[\mainlang]{citeseen}}
 		{\ifthenelse{	\iffieldundef{crossref} \OR \ifentrytype{inreference} }
 			{\clearfield{series}%
-			 \clearlist{organization}%
+			 \clearname{editor}%
 			 %	Driver for article type entries
 			 \ifthenelse{	\ifentrytype{article} \OR
 			 				\ifentrytype{commentary} }
@@ -237,9 +252,15 @@
 			 %	Driver for book / collection / proceedings entries
 			 \ifthenelse{	\ifentrytype{book} \OR
 			 				\ifentrytype{collection} \OR
-			 				\ifentrytype{proceedings} }
-			 	{\usebibmacro{event+venue+date}%
+			 				\ifentrytype{proceedings} \OR
+			 				\ifentrytype{reference} \AND
+			 				\iffieldundef{shorttitle} }
+			 	{\usebibmacro{byauthor}%
 				 \newunit\newblock%
+			 	 \usebibmacro{event+venue+date}%
+				 \newunit\newblock%
+				 \usebibmacro{organization}%
+				 \newunit\newblock
 				 \printfield{edition}%
 				 \newunit\newblock%
 				 \usebibmacro{publisher+location+date}}
@@ -252,6 +273,8 @@
 				 \usebibmacro{maintitle+booktitle}%
 				 \newunit\newblock
 				 \usebibmacro{event+venue+date}%
+				 \newunit\newblock
+				 \usebibmacro{organization}%
 				 \newunit\newblock
 			 	 \printfield{edition}%
 				 \newunit\newblock
@@ -270,9 +293,17 @@
 				 \printfield{version}%
 				 \newunit\newblock
 			 	 \usebibmacro{publisher+location+date}}
-			 	{}}
+			 	{}%
+			 %	For everything except articles
+			 \ifthenelse{	\ifentrytype{article} \OR
+			 				\ifentrytype{commentary} }
+				{}
+				{\newunit\newblock
+				 \usebibmacro{volume+part}%
+				 \newunit\newblock
+				 \usebibmacro{chapter+pages}}}
 			{\clearfield{series}%
-			 \clearlist{organization}%
+			 \clearname{editor}%
 			 \newunit\newblock
 			 \usebibmacro{in:}%
 			 \setunit{\addspace}
@@ -282,12 +313,14 @@
 				 \newunit\newblock
 				 \usebibmacro{event+venue+date}%
 				 \newunit\newblock
+				 \usebibmacro{organization}%
+				 \newunit\newblock
 				 \printfield{edition}%
 				 \newunit\newblock
 				 \usebibmacro{publisher+location+date}}%
 			 \setunit{\bibpagespunct}\newblock
 			 \usebibmacro{volume+part}%
-			 \setunit{\bibpagespunct}\newblock
+			 \newunit\newblock
 			 \usebibmacro{chapter+pages}}}}
 
 \newbibmacro*{cite:related}{%
@@ -313,7 +346,7 @@
 		 \usedriver{}{\thefield{entrytype}}%
 		 \ifciteseen
 		 	{\newunit\newblock
-			 \bibstring{citeseen}}}%
+			 \bibstring[\mainlang]{citeseen}}}%
 		 	{}}
 
 \newbibmacro*{cite:legal:reverse}{%
@@ -321,6 +354,17 @@
 
 \newbibmacro*{cite:shorthand}{%
 	\printtext[bibhyperref]{\printfield{shorthand}}}
+
+\renewbibmacro*{shorthandintro}{%
+	\ifciteseen
+		{}
+		{\iffieldundef{shorthandintro}
+			{\iffieldundef{shorthand}
+				{}
+				{\setunit{\addnbspace}%
+				 \printtext[parens]{\bibstring{citedas}\space\printfield{shorthand}}}}
+			{\setunit{\addnbspace}%
+			 \printtext[parens]{\printfield{shorthandintro}}}}}
 
 \newbibmacro*{cite:ibid}{%
 	\ifthenelse{	\ifloccit\AND\NOT\iffirstonpage }
@@ -360,7 +404,7 @@
 \newbibmacro*{cite:postnote}{%
 	\ifbool{cbx:loccit}
 		{}
-		{\setunit{\postnotedelim}%
+		{\setunit*{\postnotedelim}%
 		 \printfield{postnote}}}% Enforce abbreviative dot just in case (?)
 
 %	Index author or editor names (full), even if using short(author|editor)
@@ -370,7 +414,8 @@
 			{\indexnames{author}}
 			{\iffieldequalstr{labelnamesource}{shorteditor}
 				{\indexnames{editor}}
-				{\indexnames{labelname}}}}
+				{\indexnames{labelname}}}%
+		 \indexnames{collaborator}}
 		{}}
 
 % Citation commands
@@ -461,9 +506,7 @@
 	{\usebibmacro{citeindex}%
 	 \ifnameundef{author}
 		{\printtext[bold]{???}}
-	 	{\ifnameundef{author}
-	 		{\printtext[bold]{???}}
-	 		{\printnames[first-last]{author}}}}%
+	 	{\printnames[first-last]{author}}}%
 	{\setunit{\multicitedelim}}
 	{}%
 
@@ -480,8 +523,18 @@
 	{\setunit{\multicitedelim}}
 	{}
 
+\DeclareCiteCommand{\citejournal}[\boolfalse{citetracker}\boolfalse{pagetracker}]
+	{\usebibmacro{cite:init}}
+	{\iffieldundef{shortjournal}
+		{\usebibmacro{journal}}
+		{\printfield[journal]{shortjournal}\isdot\addnbspace}}%
+	{\setunit{\multicitedelim}}
+	{}
+
 %	Définir les raccourcis de citation
 \let\citep=\parencite
 \let\citet=\textcite
+
+\DeclareMultiCiteCommand{\cites}{\cite}{\setunit{\multicitedelim}}
 
 \endinput

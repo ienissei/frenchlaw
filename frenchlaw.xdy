@@ -1,5 +1,1 @@
-
-(markup-range :length 1)
-
-(define-crossref-class "see")
-(markup-crossref-list :open "\see{" :close "}{}" :class "see")
+/Users/Epistine/Library/texmf/xindy/modules/styles/frenchlaw.xdy

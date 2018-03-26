@@ -1,0 +1,140 @@
+%%
+%%   This is file "frenchlaw-fr.lbx", which is part of the "frenchlaw" package
+%%   Copyright 2009--2014: Fora VERN -- ienissei (at) gmail (dot) com
+%% 
+%%   This work may be distributed and/or modified under the conditions of the
+%%   LaTeX Project Public License, either version 1.3 of this license or, at your
+%%   option, any later version.
+%%
+%%   The latest version of the license can be found at:
+%%      http://www.latex-project.org/lppl.txt
+%%   and version 1.3 or later is part of all distributions of LaTeX, 2005/12/01 or later.
+%% 
+%%   This work has the LPPL maintenance status "author-maintained".
+%%   This work consists of the files listed in the README file.
+%%
+
+%	WARNING: Please note that this is a BibLaTeX style file for "frenchlaw.cls"
+
+\InheritBibliographyExtras{french}
+\InheritBibliographyStrings{french}
+
+\NewBibliographyString{
+	article, fasc, verbo,
+	legistype-f, legistype-m, legistype-n, signedat, under,
+	fromdate, fromdates, fromyear, ondate,
+	citeseen, numbers, relax,
+}
+
+\DeclareBibliographyStrings{
+	% HEADINGS
+	shorthands		= {{Liste des abréviations}{Abréviations}},
+	% PAGINATION STRINGS
+	article			= {{article}{art\adddotspace}},
+	fasc			= {{fascicule\addspace num\'ero}{fasc\adddotspace n\textsuperscript{o}}},
+	verbo			= {{\emph{verbo}\addspace}{\emph{v\textsuperscript{o}}\addnbspace}},
+	% LEGISLATION / JURISDICTION STRINGS
+	legistype-f		= {{de la\addspace}{de la\addspace}},
+	legistype-m		= {{du\addspace}{du\addspace}},
+	legistype-n		= {{de l'}{de l'}},
+	signedat		= {{sign\'e \`a}{sign\'e \`a}},
+	under			= {{sous}{sous}},
+	% DATE STRINGS
+	fromdate		= {{du}{du}},
+	fromdates		= {{des}{des}},
+	fromyear		= {{de}{de}},
+	ondate			= {{le}{le}},
+	% VARIOUS NEW STRINGS
+	citeseen		= {{pr\'ecit\'e}{pr\'ecit\'e}},
+	numbers			= {{num\'eros}{n\textsuperscript{os}}},
+	relax			= {{\relax}{\relax}},
+	% MODIFIED ABBREVIATIONS
+	sequens			= {{sq\adddot}{s\adddot}},
+	sequentes		= {{sqq\adddot}{s\adddot}},
+	page			= {{page}{p\adddotspace\addnbspace}},
+	pages			= {{pages}{p\adddotspace\addnbspace}},
+	see				= {{voir}{voir}},
+	seealso			= {{voir aussi}{voir aussi}},
+	january			= {{janvier}{janv\adddot}},
+	february		= {{f\'evrier}{f\'evr\adddot}},
+	march			= {{mars}{mars}},
+	july			= {{juillet}{juill\adddot}},
+	% AUTHOR / EDITOR FONCTIONS
+	compiler		= {{directeur}{dir\adddot}},
+	compilers		= {{directeurs}{dir\adddot}},
+	bycollaborator	= {{avec la collaboration \smartof}{avec}},
+	bycompiler		= {{sous la direction \smartof}{sous la dir\adddotspace \smartof}},
+	byreviser		= {{\'edition revue et augment\'ee par}{rev\adddotspace et augm\adddotspace par}},
+	bycontinuator	= {{continu\'e et compl\'et\'e par}{cont\adddotspace et compl\adddotspace par}},
+	byeditor		= {{\'edition \'etablie par}{\'etablie par}},
+	byeditortr		=
+		{{\'edition \'etablie et traduite \lbx@lfromlang\ par}
+		{\'etablie et trad\adddotspace \lbx@sfromlang\ par}},
+	byeditorco		=
+		{{\'edition \'etablie et comment\'ee par}
+		{\'etablie et comm\adddotspace par}},
+	byeditoran		=
+		{{\'edition \'etablie et annot\'ee par}
+		{\'etablie et annot\adddotspace par}},
+	byeditorin		=
+		{{\'edition \'etablie et introduite par}
+		{\'etablie et introd\adddotspace par}},
+	byeditorfo		=
+		{{\'edition \'etablie et pr\'efac\'ee par}
+		{\'etablie et pr\'ef\adddotspace par}},
+	byeditoraf		=
+		{{\'edition \'etablie et postfac\'ee par}
+		{\'etablie et postf\adddotspace par}},
+	byeditortrco	=
+		{{\'edition \'etablie, traduite \lbx@lfromlang\ et comment\'ee par}
+		{\'etablie, trad\adddotspace \lbx@sfromlang\ et comm\adddotspace par}},
+	byeditortran	=
+		{{\'edition \'etablie, traduite \lbx@lfromlang\ et annot\'ee par}
+		{\'etablie, trad\adddotspace \lbx@sfromlang\ et annot\adddotspace par}},
+	byeditortrin	=
+		{{\'edition \'etablie, traduite \lbx@lfromlang\ et introduite par}
+		{\'etablie, trad\adddotspace \lbx@sfromlang\ et introd\adddotspace par}},
+	byeditortrfo	=
+		{{\'edition \'etablie, traduite \lbx@lfromlang\ et pr\'efac\'ee par}
+		{\'etablie, trad\adddotspace \lbx@sfromlang\ et pr\'ef\adddotspace par}},
+	byeditortraf	=
+		{{\'edition \'etablie, traduite \lbx@lfromlang\ et postfac\'ee par}
+		{\'etablie, trad\adddotspace \lbx@sfromlang\ et postf\adddotspace par}},
+	byeditorcoin	=
+		{{\'edition \'etablie, comment\'ee et introduite par}
+		{\'etablie, comm\adddotspace et introd\adddotspace par}},
+	byeditorcofo	=
+		{{\'edition \'etablie, comment\'ee et pr\'efac\'ee par}
+		{\'etablie, comm\adddotspace et pr\'ef\adddotspace par}},
+	byeditorcoaf	=
+		{{\'edition \'etablie, comment\'ee et postfac\'ee par}
+		{\'etablie, comm\adddotspace et postf\adddotspace par}},
+	byeditoranin	=
+		{{\'edition \'etablie, annot\'ee et introduite par}
+		{\'etablie, annot\adddotspace et introd\adddotspace par}},
+	byeditoranfo	=
+		{{\'edition \'etablie, annot\'ee et pr\'efac\'ee par}
+		{\'etablie, annot\adddotspace et pr\'ef\adddotspace par}},
+	byeditoranaf	=
+		{{\'edition \'etablie, annot\'ee et postfac\'ee par}
+		{\'etablie, annot\adddotspace et postf\adddotspace par}},
+	byeditortrcoin	=
+		{{\'edition \'etablie, traduite \lbx@lfromlang, comment\'ee et introduite par}
+		{\'etablie, trad\adddotspace \lbx@sfromlang, comm\adddotspace et introd\adddotspace par}},
+	byeditortrcofo	=
+		{{\'edition \'etablie, traduite \lbx@lfromlang, comment\'ee et pr\'efac\'ee par}
+		{\'etablie, trad\adddotspace \lbx@sfromlang, comm\adddotspace et pr\'ef\adddotspace par}},
+	byeditortrcoaf	=
+		{{\'edition \'etablie, traduite \lbx@lfromlang, comment\'ee et postfac\'ee par}
+		{\'etablie, trad\adddotspace \lbx@sfromlang, comm\adddotspace et postf\adddotspace par}},
+	byeditortranin	=
+		{{\'edition \'etablie, traduite \lbx@lfromlang, annot\'ee et introduite par}
+		{\'etablie, trad\adddotspace \lbx@sfromlang, annot\adddotspace et introd\adddotspace par}},
+	byeditortranfo	=
+		{{\'edition \'etablie, traduite \lbx@lfromlang, annot\'ee et pr\'efac\'ee par}
+		{\'etablie, trad\adddotspace \lbx@sfromlang, annot\adddotspace et pr\'ef\adddotspace par}},
+	byeditortranaf	=
+		{{\'edition \'etablie, traduite \lbx@lfromlang, annot\'ee et postfac\'ee par}
+		{\'etablie, trad\adddotspace \lbx@sfromlang, annot\adddotspace et postf\adddotspace par}},
+  opcit            = {{op\adddotspace\addnbspace cit\adddot}{op\adddotspace\addnbspace cit\adddot}},
+}

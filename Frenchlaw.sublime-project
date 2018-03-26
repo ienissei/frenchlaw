@@ -6,7 +6,7 @@
 			"path": ".",
 			"folder_include_patterns": ["/"],
 			"file_exclude_patterns": ["*.sublime-*", ".gitignore"],
-			"follow_symlinks": false
+			"follow_symlinks": true
 		}
 	]
 }
