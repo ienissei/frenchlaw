@@ -25,6 +25,9 @@
 
 %	GENERAL OPTION SWITCHES
 
+%	TODO » Créer un switch \if@frontmatter  pour remplacer \@memfront
+%		Idem, pour remplacer \@memmain@floats => \if@mainmatter (?)
+
 \newif\if@stockaiv
 	\@stockaivfalse
 \newif\if@stockav
@@ -83,8 +86,6 @@
 	\@paranametrue
 \newif\if@paratoc
 	\@paratocfalse
-\newif\if@special@chapter% TODO » Delete. Redefine \xchapter to \chapter*
-	\@special@chapterfalse
 \newif\if@indexparagraphs
 	\@indexparagraphstrue
 
@@ -98,7 +99,7 @@
 \newif\if@require@lastpage
 	\@require@lastpagefalse
 
-%	Définir des commandesp pour switcher entre l'indexation par page et par paragraphe
+%	Définir des commandes pour switcher entre l'indexation par page et par paragraphe
 % Utilisé par l'option index=..., non utilisable après le chargement de classe
 \newcommand{\set@indexparagraphs}{\@indexparagraphstrue}
 \newcommand{\set@indexpages}{\@indexparagraphsfalse}
@@ -150,8 +151,10 @@
 }
 \DeclareOptionX{draft}{
 	\@drafttrue
-	\@marginaltrue
 	\PassOptionsToClass{draft}{memoir}
+}
+\DeclareOptionX{draft+}{
+	\@drafttrue
 }
 
 %	Define option for <marginal> layout
@@ -166,6 +169,7 @@
 	\else
 		\AtEndDocument{\ClassWarningNoLine{frenchlaw}{%
 			Unknown option index=#1, \MessageBreak
+			Valid arguments are: "pages", "paragraphs"
 			Reverting to default: index=paragraphs}}%
 	\fi
 }
@@ -188,7 +192,7 @@
 	\@sansseriftrue
 	\@elevenpointstrue
 %	\@marginaltrue% Only used to accompany CV, document it elsewhere or create a + option
-	\@twosidefalse
+	\@twosidefalse\@onesidetrue
 	\PassOptionsToClass{11pt,oneside}{memoir}
 }
 
@@ -198,7 +202,7 @@
 	\@sansseriftrue
 	\@elevenpointstrue
 	\@marginaltrue
-	\@twosidefalse
+	\@twosidefalse\@onesidetrue
 	\PassOptionsToClass{11pt,oneside}{memoir}
 }
 
@@ -206,14 +210,14 @@
 \DeclareOptionX{didactic}{
 	\@didactictrue
 	\@tenpointstrue
-	\@twosidefalse
+	\@twosidefalse\@onesidetrue
 	\PassOptionsToClass{10pt,article,twocolumn,oneside}{memoir}
 }
 \DeclareOptionX{didactic+}{
 	\@didactictrue
 	\@stockavtrue
 	\@tenpointstrue
-	\@twosidefalse
+	\@twosidefalse\@onesidetrue
 	\PassOptionsToClass{a5paper,10pt,article,oneside}{memoir}
 }
 
@@ -277,7 +281,7 @@
 \DeclareOptionX*{\PassOptionsToClass{\CurrentOption}{memoir}}
 
 %	Execute and process options
-\ExecuteOptionsX{a4paper,12pt,french,linespacing=1.1}
+\ExecuteOptionsX{a4paper,twoside,12pt,french,linespacing=1.1}
 \ProcessOptionsX\relax
 
 %	Load the main dependencies: <memoir>, <environ>
@@ -322,13 +326,14 @@
 		% Asymmetrical margins, 2:1 ratio with <marginal>
 		\setlrmargins{*}{*}{2}
 	\else
-		% Asymmetrical margins, 2:1 ratio with <marginal>, inverted if <oneside>
+		% Asymmetrical margins, 2:1 ratio with <marginal>
+		% Set margin on the left if <oneside> (inverted)
 		\setlrmargins{*}{*}{.5}
 	\fi
 \else
 	\if@twoside
-		% Asymmetrical margins, 1.5:1 ratio in normal mode
-		\setlrmargins{*}{*}{1.5}
+		% Asymmetrical margins, 1.33:1 ratio in normal mode
+		\setlrmargins{*}{*}{1.33}
 	\else
 		% Symmetrical margins, 1:1 ratio in normal mode, with <oneside>
 		\setlrmargins{*}{*}{1}
@@ -594,6 +599,9 @@
 \exhyphenpenalty=500 % Discourage hyphens in compound nouns [Orig. 50]
 \brokenpenalty=10000 % Discourage hyphens at the end of pages [Orig. 100]
 
+% Use raggedbottom even when <twoside> is on (removes underfull \vbox warnings)
+\raggedbottom
+
 %\linepenalty=10% Discourage the creation of new lines within paragraphs
 %\interlinepenalty=100 % Discourage page breaks within paragraphs
 %\interlinepenalties <number> <numbers 1...n>
@@ -645,8 +653,9 @@
 	\endgroup%
 }
 
-%	Create a command to reset the footnote counter on every page.
 % By default, the counter is reset at every chapter
+\counterwithout*{footnote}{chapter}
+%	Create a command to reset the footnote counter on every page.
 \newcommand{\footnotebypage}
 	{\usepackage{perpage}
 	 \MakePerPage{footnote}}
@@ -668,7 +677,7 @@
 	\setmarginnotes{.05\marginwidth}{.35\marginwidth}{0pt}
 \fi\fi
 
-%	Define a style for side paragraphs (\sidebar)
+%	Use the same style for side paragraphs (\sidebar)
 \setsidebars{\marginparsep}{\marginparwidth}{\baselineskip}{0pt}{\footnotesize}{\textheight}
 
 %	Margin and side notes are set in the widest margin
@@ -735,6 +744,7 @@
 
 %	Define new meta-data macros
 %	Document Info
+%	TODO » Replacer les \@empty par des \relax (dans la déf. des macros)
 % The \title and \subtitle fields can be given in several languages, e.g. for abstracts
 \renewcommand{\title}[2][\languagename]{\expandafter\gdef\csname @title@#1\endcsname{#2}}
 	\expandafter\gdef\csname @title@\languagename\endcsname{\@empty}
@@ -758,6 +768,9 @@
 %	Permettre d'insérer plusieurs logos, e.g. en haut de page (commande incrémentale)
 \newcommand{\logo}[2][]{\gdef\@logo{#2}}
 	\newcommand{\@logo}{\@empty}
+%	Volume Info
+\newcommand{\volume}[1]{\gdef\@volume{#1}}% TODO » Sert pour les thèses en plusieurs volumes
+	\newcommand{\@volume}{\@empty}
 %	Thesis Info
 \newcommand{\thesis}[1]{\gdef\@thesis{#1}}% TODO » Sert pour les masters
 	\newcommand{\@thesis}{\@empty}
@@ -770,10 +783,10 @@
 	\newcommand{\s@advisor}[4][]{%
 		\appto\@advisors{\bgroup#2 \textsc{#3}, #4\egroup\par}%
 		\appto\@jury{\bgroup#1#2 \textsc{#3}, #4\egroup\par}}
-\newcommand{\@thesisadvisors}{\@advisors}
 \newcommand{\referee}[4][]{\appto\@jury{\bgroup#1#2 \textsc{#3}, #4~(rapporteur)\egroup\par}}
 \newcommand{\president}[4][]{\appto\@jury{\bgroup#1#2 \textsc{#3}, #4~(président)\egroup\par}}
 \newcommand{\examiner}[4][]{\appto\@jury{\bgroup#1#2 \textsc{#3}, #4\egroup\par}}
+\newcommand{\@thesisadvisors}{\@advisors}
 \newcommand{\@jurymembers}{\@jury}
 %	Publication Info
 \newcommand{\publisher}[1]{\gdef\@publisher{#1}}
@@ -858,7 +871,7 @@
 	% Change the numbering in \frontmatter to \Roman
 	\renewcommand{\@memfront}{\@smemfront\pagenumbering{Roman}}
 	% Create the \maketitle
-	\newcommand{\printtitle}{%
+	\long\def\printtitle{%
 		\normalize@fontsize%
 		\centering%	TODO » Tout aligner à gauche pour les livres
 		{\large\scshape\@institution\par}
@@ -877,15 +890,17 @@
 		\reset@twocolumns%
 		\printtitle%
 		\restore@twocolumns%
-		\cleartooddpage
+		\cleartorecto
 		\printtitle%
 		\printcopyright%
-		\cleartooddpage
+		\cleartorecto
 	\egroup
 }
 
 %	Create a style for PhD theses / Dissertations
-%	TODO » Adde \lab
+%	TODO » Adde labo + COMUE + Logos
+%	TODO » Éventuellement, créer des compteurs avec le nombre de lignes blanches possibles, et incrémenter de 1 pour chaque champ vide (ou réduire pour chaque champ renseigné), pour calculer automatiquement le nombre de lignes à sauter
+%	TODO » Vérifier si un \vfill pour les membres du jury peut fonctionner
 \newcommand{\maketitlePhD}{%
 	% Send out warnings on empty fields
 	\if\expandafter\@empty\csname @title@\languagename\endcsname\relax
@@ -903,43 +918,71 @@
 	\if\@empty\@jury\relax
 		\@latex@warning@no@line{No \noexpand\examiner, \noexpand\referee or \noexpand\president given}\fi
 	% Create the \maketitle
-	\newcommand{\printtitle}{%
+	\long\def\printtitle{%
+		\pagestyle{empty}
 		\normalize@fontsize%
 		\bgroup
 		\centering%
-		{\Large\scshape\@institution\par}
-		\vspace{\baselineskip}
-		{\large\scshape\@school\par}
-		\vspace{\baselineskip}
-		{\large\@laboratory\par}
-		\vspace{3\baselineskip}% TODO » Réduire à 2, voire 1 pour la classe
-		{\large\subjecttext\space\@subject\par}
-		\vspace{4\baselineskip}
+		\vspace*{-2\baselineskip}
+		\if@draft
+			\vspace{5\baselineskip}
+		\else
+			{\Large\scshape\@institution\par}
+			\vspace{\baselineskip}
+			{\large\scshape\@school\par}
+			\vspace{\baselineskip}
+			{\large\@laboratory\par}
+			\vspace{3\baselineskip}
+			\if\@empty\@subject\relax\else
+				{\large\subjecttext\space\@subject\par}
+		\fi\fi
+		\vspace{3\baselineskip}
 		{\LARGE\csname @title@\languagename\endcsname\par}
 		{\Large\csname @subtitle@\languagename\endcsname\par}
+		\if\@empty\@volume\relax
+			\vspace{4\baselineskip}
+			{\Large\@author\par}
+			\vspace{4\baselineskip}
+			\if\@empty\@advisors\relax\else
+				{\large\advisortext\par
+				 \vspace{\baselineskip}
+				 \@advisors\par}
+			\fi
+			\vspace{3\baselineskip}
+		\else
+			\vspace{2\baselineskip}
+			{\Large\@author\par}
+			\vspace{3\baselineskip}
+			{\large\volumetext\space\RN{\@volume}\par}
+			\vspace{3\baselineskip}
+			\if\@empty\@advisors\relax\else
+				{\large\advisortext\par
+				 \vspace{\baselineskip}
+				 \@advisors\par}
+			\fi
+			\vspace{2\baselineskip}
+		\fi
+		{\large\if@draft\drafttext\else\datetext\fi\space\@date\space\par}
 		\vspace{3\baselineskip}
-		{\Large\@author\par}
-		\vspace{4\baselineskip}
-		{\large\advisortext\par}
-		\vspace{\baselineskip}
-		{\large\@advisors\par}
-		\vspace{2\baselineskip}
-		{\large\datetext\space\@date\space\par}
-		\vspace{2\baselineskip}
 		\egroup
-		{\large\jurytext\par}
-		\vspace{\baselineskip}
-		{\large\@jurymembers\par}}
+		\if@draft\else
+			{\large\jurytext\par}
+			\vspace{\baselineskip}
+			{\@jurymembers\par}
+		\fi}
 	% Begin \frontmatter and print the title page twice, use arabic numbers throughout
 	\frontmatter*
 	\bgroup
-		\pagestyle{empty}
-		\reset@twocolumns%
-		\printtitle%
-		\cleartooddpage
-		\restore@twocolumns%
-		\printtitle%
-		\cleartooddpage\par
+	\reset@twocolumns%
+	\setlrmargins{*}{*}{1}
+	\checkandfixthelayout
+	\cleartorecto
+	\printtitle%
+	\cleartorecto
+	\setcounter{page}{1}
+	\printtitle%
+	\cleartorecto
+	\restore@twocolumns\par
 	\egroup
 	\let\mainmatter=\@smemmain% == \let\mainmater=\mainmatter*
 }
@@ -958,7 +1001,7 @@
 	\if\@empty\@director\relax
 		\@latex@warning@no@line{No \noexpand\director given}\fi
 	% Create the \maketitle
-	\newcommand{\printtitle}{%
+	\long\def\printtitle{%
 		\normalize@fontsize%
 		\centering%
 		{\large\scshape\@institution\par}
@@ -983,10 +1026,10 @@
 		\pagestyle{empty}
 		\reset@twocolumns%
 		\printtitle%
-		\cleartooddpage
+		\cleartorecto
 		\printtitle%
 		\restore@twocolumns%
-		\cleartooddpage\par
+		\cleartorecto\par
 	\egroup
 	\let\mainmatter=\@smemmain% == \let\mainmater=\mainmatter*
 }
@@ -997,7 +1040,7 @@
 	\if\expandafter\@empty\csname @title@\languagename\endcsname\relax
 		\@latex@warning@no@line{No \noexpand\title given}\fi
 	% Create the title page
-	\newcommand{\printtitle}{
+	\long\def\printtitle{
 		\reset@twocolumns%
 		\normalize@fontsize%
 		\vspace*{3\baselineskip}
@@ -1022,7 +1065,7 @@
 		\reset@twocolumns%
 		\printtitle%
 		\restore@twocolumns%
-		\cleartooddpage\par
+		\cleartorecto\par
 	\egroup
 	\mainmatter
 }
@@ -1168,11 +1211,13 @@
 %	Create a command that uses \rightmark instead of \leftmark if empty
 \newcommand{\leftrightmark}{%
 	\begingroup\protected@edef\x{\leftmark}%
-	\ifx\x\@empty
+	\ifx\@empty\x\relax
 		\endgroup\rightmark
 	\else
 		\endgroup\leftmark
 	\fi}
+\def\clearleftmark{\let\leftmark\@empty}
+\def\clearrightmark{\let\rightmark\@empty}
 
 %	Redefine <plain> so that it takes into accout the <twoside> option
 \makepagestyle{plain}
@@ -1189,13 +1234,13 @@
 		\createmark{book}{both}{nonumber}{}{}
 		\createmark{part}{both}{nonumber}{}{}
 		\createmark{chapter}{right}{nonumber}{}{}
+		\createplainmark{toc}{right}{\contentsname}
+		\createplainmark{lof}{right}{\listfigurename}
+		\createplainmark{lot}{right}{\listtablename}
+		\createplainmark{bib}{right}{\bibname}
+		\createplainmark{index}{right}{\indexname}
+		\createplainmark{glossary}{right}{\glossaryname}
 		\clearmark{section}
-		\createplainmark{toc}{both}{\contentsname}
-		\createplainmark{lof}{both}{\listfigurename}
-		\createplainmark{lot}{both}{\listtablename}
-		\createplainmark{bib}{both}{\bibname}
-		\createplainmark{index}{both}{\indexname}
-		\createplainmark{glossary}{both}{\glossaryname}
 	}
 	\makeevenhead{frenchlaw}
 		{}
@@ -1324,12 +1369,15 @@
 		% Print the table of contents and restore tocdepth
 		\@maintocfalse
 		\tableofcontents*
-		\thispagestyle{empty}
 		\setcounter{tocdepth}{\value{save@tocdepth}}
 		\@maintoctrue
 		\clearpage
 	\egroup
 }
+
+\if@article\else
+	\pretocmd{\tableofcontents}{\clearforchapter}{}{}
+\fi
 
 
 %	Créer de nouvelles divisions logiques: <heading> et <subheading>
@@ -1359,7 +1407,8 @@
 \counterwithin*{chapter}{heading}
 \counterwithin*{chapter}{subheading}
 \counterwithin*{section}{chapter}
-\counterwithin*{subsection}{section}
+\counterwithin*{paragraph}{chapter}
+\counterwithin*{paragraph}{section}
 
 %	Définir l'espacement des différentes divisions dans la table des matières
 \renewcommand*{\cftdotsep}{2}
@@ -1379,7 +1428,7 @@
 % The first entry (book, part, heading, chapter) has an extra \baselineskip
 %	TODO » Adde + +.5\baselineskip sous le titre du Sommaire
 %		   Ou supprimer automatiquement les intro / ccl (mais pas les ch. prélim.), auquel cas on peut garder le \cftbefroechapterskip dans le sommaire
-\AtBeginDocument{\addtocontents{toc}{\vspace{-\baselineskip}}}
+\AtBeginDocument{\addtocontents{toc}{\protect\if@maintoc\protect\else\vspace{-\baselineskip}\protect\fi}}
 % S'assurer que la table des matières termine bien le dernier paragraphe
 \AtEndDocument{\addtocontents{toc}{\par}}
 
@@ -1424,6 +1473,8 @@
 \renewcommand{\midpartskip}{\par\vspace{\baselinestretch\addto@LARGE}}
 %	TODO » Seulement si PhD ou Memoir (ou article?), utiliser des options
 \renewcommand{\afterpartskip}{\vspace{2\baselineskip}}
+% Test can be printed after the part title, on the same page
+\nopartblankpage
 
 %	TODO » Essayer d'automatiser la création de compteur, à chaque Partie I
 \newcounter{lastpart@I}
@@ -1496,7 +1547,9 @@
 			\afterheadingnum%
 			\printheadingtitle%
 		}
-		\chapter*{#1}
+		\clearforchapter
+		\thispagestyle{chapter}
+		\@schapter{#1}
 		\chaptermark{#1}
 		\phantomsection
 		\addcontentsline{toc}{heading}{\protect\numberline{\theheading}#1}
@@ -1537,7 +1590,9 @@
 			\aftersubheadingnum%
 			\printsubheadingtitle%
 		}
-		\chapter*{#1}
+		\clearforchapter
+		\thispagestyle{chapter}
+		\@schapter{#1}
 		\chaptermark{#1}
 		\phantomsection
 		\addcontentsline{toc}{subheading}{\protect\numberline{\thesubheading}#1}
@@ -1560,8 +1615,7 @@
 			\else						\Roman{chapter}\fi
 		\else							\Roman{chapter}%
 		\fi\fi}
-	\renewcommand{\afterchapternum}{~:\par\nobreak\vskip\midchapskip}
-	\newcommand{\afterxchapternum}{~:\\[\midchapskip]}% Used by \xchapter. No \par
+	\renewcommand{\afterchapternum}{:\par\nobreak\vskip\midchapskip}
 	\setlength{\beforechapskip}{\baselinestretch\addto@Large}
 	\addtolength{\beforechapskip}{\baselineskip}
 	\setlength{\midchapskip}{\baselinestretch\addto@Large}
@@ -1583,30 +1637,54 @@
 
 %	TODO » Clean-up. Ajouter un hook dans la commande \@chapter
 % Utilisé par \xchapter (pour simuler un chapitre du \frontmatter, i.e. avec toutes les informations sauf le numéro du chapitre)
-\patchcmd{\@chapter}
-  {\ifm@m@And}
-  {\if@special@chapter\m@m@Andfalse\fi%
-   \ifm@m@And}
-  {}
-  {\typeout{WARNING! Patching \noexpand\@chapter failed!}}
 
-\newcommand{\xchapter}[1][\@empty]{% Remplacer par \ifx\relax#1\relax (?)
-	\def\tmpch@ptoc{#1}% Capture first optional argument (ToC-name)
+% \patchcmd{\@chapter}
+%   {\ifm@m@And}
+%   {\if@special@chapter\m@m@Andfalse\fi%
+%    \ifm@m@And}
+%   {}
+%   {\typeout{WARNING! Patching \noexpand\@chapter failed!}}
+
+% \newcommand{\xchapter}[1][\@empty]{% Remplacer par \ifx\relax#1\relax (?)
+% 	\def\tmpch@ptoc{#1}% Capture first optional argument (ToC-name)
+% 	\@ifnextchar[{\@xchapter}{\@xchapter[]}}
+% \def\@xchapter[#1]#2#3{%
+% 	\@special@chaptertrue
+% 	\def\ch@phead{% If #1 (header-name) undefined, use #3 (regular title)
+% 		\ifx\relax#1\relax#3\else#1\fi}
+% 	\def\ch@ptoc{%
+% 		#2\ifx\relax#2\relax\else\ifx\relax#3\relax\else\cftchapteraftersnum\cftchapteraftersnumb~\fi\fi#3}% If both #2 and #3 are defined, add ToC separators between them
+% 	\if\@empty\tmpch@ptoc\relax\else\def\ch@ptoc{\tmpch@ptoc}\fi
+% 	\def\ch@pname{%
+% 		\ifx\relax#2\relax\else#2\afterxchapternum\fi#3}
+% 	\chapter[\ch@ptoc][\ch@phead]{\ch@pname}
+% 	\markboth{\ch@phead}{\ch@phead}
+% 	% Increase, then decrease chapter counter (to reset all sub-counters)
+% 	\refstepcounter{chapter}
+% 	\addtocounter{chapter}{-1}
+% 	\@special@chapterfalse
+% }
+
+\renewcommand{\chapter}{%
+	\if@article\par\@nameuse{chapterblock}\else
+		\clearforchapter
+		\thispagestyle{chapter}
+		\global\@topnum\z@
+	\fi
+	\m@mindentafterchapter
+	\@ifstar{\xchapter}{\@m@mchapter}}
+\newcommand{\xchapter}[1][]{%
+	\def\ch@pprefix{#1}% Capture first optional argument (title-prefix)
 	\@ifnextchar[{\@xchapter}{\@xchapter[]}}
-\def\@xchapter[#1]#2#3{%
-	\@special@chaptertrue
-	\def\ch@phead{% If #1 (header-name) undefined, use #3 (regular title)
-		\ifx\relax#1\relax#3\else#1\fi}
-	\def\ch@ptoc{%
-		#2\ifx\relax#2\relax\else\ifx\relax#3\relax\else\cftchapteraftersnum\cftchapteraftersnumb~\fi\fi#3}% If both #2 and #3 are defined, add ToC separators between them
-	\if\@empty\tmpch@ptoc\relax\else\def\ch@ptoc{\tmpch@ptoc}\fi
-	\def\ch@pname{%
-		\ifx\relax#2\relax\else#2\afterxchapternum\fi#3}
-	\chapter[\ch@ptoc][\ch@phead]{\ch@pname}
+\def\@xchapter[#1]#2{%
+	\@schapter{\if\relax\ch@pprefix\relax\else\ch@pprefix\afterchapternum\fi#2}
+	\chaptermark{\if\relax#1\relax#2\else#1\fi}
+	\phantomsection
+	\addcontentsline{toc}{chapter}{%
+		\if\relax\ch@pprefix\relax\else\ch@pprefix\cftchapteraftersnum\cftchapteraftersnumb~\fi#2}
 	% Increase, then decrease chapter counter (to reset all sub-counters)
-	\refstepcounter{chapter}
 	\addtocounter{chapter}{-1}
-	\@special@chapterfalse
+	\refstepcounter{chapter}
 }
 
 %	Définir le mode de numérotation des sections et paragraphes
@@ -1912,6 +1990,7 @@
 \hangcaption
 
 %	Définir un environnement <minipage> qui respecte l'alignement vertical
+% Thanks @ egreg <http://tex.stackexchange.com/a/34982/10119>
 \newenvironment{minipage*}[2][t]
 	{\minipage[#1]{#2}}
 	{\par\xdef\tpd{\the\prevdepth}\endminipage\par\prevdepth\tpd}
@@ -2048,7 +2127,9 @@
 
 %	Définir un format pour les dédicaces, basé sur celui des épigraphes
 \newenvironment{dedication}
-	{\clearpage\vspace*{0pt}\vfill%
+	{\clearpage
+	 \vspace*{0pt}\vfill%
+	 \thispagestyle{empty}
 	 \begin{\epigraphflush}%
 	 \minipage{\epigraphwidth}%
 	 \setlength{\parskip}{\baselineskip}%
@@ -2109,7 +2190,7 @@
 	\fi
 	\ifonecolindex
 		\onecolumn
-		\chapter*{\indexname}
+		\@schapter{\indexname}
 		\preindexhook
 	\else
 		\setlength{\columnseprule}{\indexrule}%
@@ -2119,9 +2200,9 @@
 	\indexmark
 	\ifnoindexintoc\else
 		\phantomsection
-		\addcontentsline{toc}{chapter}{\protect\if@maintoc\indexname\protect\fi}%
+		\addcontentsline{toc}{section}{\protect\if@maintoc\indexname\protect\fi}%
 	\fi
-	\thispagestyle{indextitlepagestyle}
+	\thispagestyle{chapter}% indextitlepagestyle
 	\setlength{\parindent}{0em}
 	\sloppy
 	\let\item\@idxitem}%
@@ -2137,7 +2218,7 @@
 	\fi
 	\ifonecolglossary
 		\onecolumn
-		\chapter*{\glossaryname}
+		\@schapter{\glossaryname}
 		\preglossaryhook
 	\else
 		\setlength{\columnseprule}{\glossaryrule}
@@ -2147,7 +2228,7 @@
 	\glossarymark
 	\ifnoglossaryintoc\else
 		\phantomsection
-		\addcontentsline{toc}{chapter}{\protect\if@maintoc\glossaryname\protect\fi}
+		\addcontentsline{toc}{section}{\protect\if@maintoc\glossaryname\protect\fi}
 	\fi
 	\thispagestyle{chapter}
 	\setlength{\parindent}{0em}
@@ -2193,22 +2274,34 @@
 	mincrossrefs=2,
 	autolang=other*]{biblatex}
 
+% BibLaTeX specific penalties
+\setcounter{abbrvpenalty}{9000}% Discourage line breaking within abbreviations [Orig. 100]
+
 %	Exclude bibliographies from the short table of contents
 % Do no automatically print subbibliographies in the ToC (use "subbibintoc" heading for that purpose)
 \defbibheading{bibliography}[\bibname]{%
-	\chapter*{#1}
+	\clearforchapter
+	\thispagestyle{chapter}
+	\@schapter{#1}
+	\chaptermark{#1}
     \ifmemoirbibintoc
 		{\phantomsection
-		 \addcontentsline{toc}{chapter}{\protect\if@maintoc#1\protect\fi}}
+		 \addcontentsline{toc}{section}{\protect\if@maintoc#1\protect\fi}}
 		{}}
 \defbibheading{biblist}[\biblistname]{%
-	\chapter*{#1}
+	\clearforchapter
+	\thispagestyle{chapter}
+	\@schapter{#1}
+	\chaptermark{#1}
 	\ifmemoirbibintoc
 		{\phantomsection
-		 \addcontentsline{toc}{section}{#1}}
+		 \addcontentsline{toc}{section}{\protect\if@maintoc#1\protect\fi}}
 		{}}
 \defbibheading{subbibliography}[\refname]{%
-	\section*{#1}}%
+	\bgroup
+	\normalize@fontsize
+	\section*{#1}
+	\egroup}%
 
 
 %	TODO » Sortir tout ce qu'on peut du \if@CV
@@ -2317,31 +2410,29 @@
 % L'argument optionnel est celui de la langue (par défaut, celle du texte)
 \renewenvironment{abstract}[1][]
 	{\bgroup
-	 \if@twocolumn\@restonecoltrue\onecolumn
-		\else\@restonecolfalse
-	 \fi%
-	 \renewcommand*{\Large}{\fontsize{17}{29}\selectfont}
-	 \if\relax#1\relax\else
-	 	\selectlanguage{#1}\vspace{2\baselineskip}\fi
-	 \vspace*{\addto@large}
-	 \vspace*{-2\baselineskip}
-	 \noindent{\large\scshape\raggedright\abstractname}\par%
-	 \vspace{\baselineskip}
-	}
-	{\if@restonecol\twocolumn\fi\egroup}
+	 \reset@twocolumns
+	 \if\relax#1\relax\else\selectlanguage{#1}\vspace{\baselineskip}\fi
+	 \if@article
+		{\noindent\large\scshape\raggedright\abstractname:\space}
+	 \else
+		\normalize@fontsize
+		{\noindent\large\scshape\raggedright\csname @title@\languagename\endcsname:\space
+		 \csname @subtitle@\languagename\endcsname}\par
+		\setlength{\parindent}{1.5em}
+		\vspace{\baselineskip}
+	 \fi}
+	{\restore@twocolumns\egroup}
 
 %	Créer une commande <keywords>, qui peut être utilisée dans le résumé
 \newcommand{\keywords}[2][]{%
 	\bgroup
-	\if@twocolumn\@restonecoltrue\onecolumn
-		\else\@restonecolfalse
-	\fi%
+	\reset@twocolumns
 	\if\relax#1\relax\else\selectlanguage{#1}\fi
-	\renewcommand*{\Large}{\fontsize{17}{29}\selectfont}
-	\vspace{\baselineskip}
+	\normalize@fontsize
+	\addvspace{\baselineskip}
 	{\noindent\scshape\raggedright\keywordsname:\enskip}{#2}\par%
 	\vspace{\baselineskip}
-	\egroup}
+	\restore@twocolumns\egroup}
 
 
 
@@ -2414,6 +2505,12 @@
 		% nottype=book,nottype=collection,nottype=proceedings,nottype=reference,nottype=inbook,nottype=thesis]
 }
 
+\newcommand{\makebackcover}[1]{%
+	\cleartorecto\cleartoverso
+	\setlrmargins{*}{*}{1}
+	\checkandfixthelayout
+	\include{#1}}
+
 
 %	TODO » Ranger. Fleuron pour séparer les sections + harmoniser avec celui utilisé pour la doc
 
@@ -2434,16 +2531,53 @@
 %	TODO » Pour les notes
 \usepackage{xcolor}
 
+% TODO » Requires two runs of LaTeX in order to place the marks correctly.
+\usepackage{marginnote}
+
+%	TODO » On utilise \ifdraftdoc (de memoir) pour exclure le \if@draft (version pré-inale du manuscrit, qui ne doit pas avoir de coquilles)
+%	==> Créer deux options:
+%		[draft] == afficher les motifs colorées + les marques dans la marge.
+%		[draft+] == afficher la version consolidée + les marques dans la marge.
+%	TODO » Ajouter toutes les modifs à une liste de todo, e.g. Ajouter: --- p. X (auteur)
+\renewcommand{\added}[2][]{%
+	\ifdraftdoc
+		\marginnote
+			[\raggedright\textcolor{teal}{\small #1 $\bigoplus$}]
+			{\raggedleft\textcolor{teal}{\small #1 $\bigoplus$}}%
+		\textcolor{teal}{#2}%
+	\else#2\fi}
+\renewcommand{\changed}[3][]{%
+	\ifdraftdoc
+		\marginnote
+			[\raggedright\textcolor{cyan}{\small #1 $\Leftrightarrow$}]
+			{\raggedleft\textcolor{cyan}{\small #1 $\Leftrightarrow$}}%
+		\textcolor{cyan}{#3}%
+	\else#3\fi}
+\renewcommand{\deleted}[2][]{%
+	\ifdraftdoc
+		\marginnote
+			[\raggedright\textcolor{purple}{\small #1 $/\kern-1ex/$}]
+			{\raggedleft\textcolor{purple}{\small #1 $/\kern-1ex/$}}%
+		\textcolor{purple}{\kern-.25ex$/$\kern-.4ex #2$/$\kern-.25ex}%
+	\else\unskip\fi}
+\newcommand{\todo}[2][]{%
+	\ifdraftdoc
+		\marginnote
+			[\raggedright\textcolor{violet}{\small #1 $\bigodot$}]
+			{\raggedleft\textcolor{violet}{\small #1 $\bigodot$}}%
+		\unskip~\textcolor{violet}{$\bigodot$\kern1ex#2}%
+	\else\unskip\fi}
+
 %	TODO » A reprendre
 %	Si on est en mode <draft>, afficher le cadre et marquer les overfull hbox
 \if@draft
+	% Imprimer une marque pour les lignes qui dépassent du cadre
+	\overfullrule=5pt
 	% \usepackage{showframe}
-	%	Imprimer les marques de changement de la classe Memoir
-	% Les commandes sont: \added{} \deleted{} \changed{}
-	\changemarks
+	% \showtrimson
 	%	Imprimer les indexes
-	\let\old@index=\index
-	\AtBeginDocument{\renewcommand{\index}[1]{{\color{orange}{#1}}\old@index{#1}\\}}
+	% \let\old@index=\index
+	% \AtBeginDocument{\renewcommand{\index}[1]{\marginpar{\color{orange}{#1}}\old@index{#1}}}
 \fi
 
 %	TODO » Implémenter <hyperref>

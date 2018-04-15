@@ -182,10 +182,10 @@
 	\mkfirstpage*{#1}}
 
 %\NumCheckSetup{\def\&{\psq\addspace\bibstring{and}\addspace\mkpageprefix}}
-\DeclareRangeCommands*{\bibrangeslast \sq}
+\DeclareRangeCommands*{\bibrangeslast}
 \newrobustcmd{\bibrangeslast}{%
 	\psq\addspace\bibstring{and}\addspace\mkpageprefix}
-\newrobustcmd{\sq}{\psq}
+\newrobustcmd{\sq}{\addnbspace\bibstring{sequens}\addspace}
 
 \renewcommand{\bibrangessep}{%
 	\ifthenelse{	\iffieldequalstr{langid}{french} \OR
@@ -480,6 +480,37 @@
 			\step[fieldset=annotation, fieldvalue={}]
 		}
 }}%
+
+% TODO » Problèmes:
+% Biber ne parse pas les lettres accentuées données comme initiales. Le regexp en exclut une partie, mais pas celles dans les noms composés:
+% Charles-Édouard ou Étienne-Marie perdent leur accent (uniquement si initiales).
+
+% Cf. http://tex.stackexchange.com/a/423534/10119
+
+% Ajouter les lettres manuellement, séparées par |, avant le \w (qui n'a plus besoin de lookahead):
+% ÁÀÂÄÃÅÆÇŠÉÈÊËÍÌÎÏÐÑÓÒÔÖÕØÚÙÛÜÝŸŒ
+
+% \def\do#1{%
+%   \ifcsundef{blx@csv@datamodel@names}
+%     {\csdef{blx@csv@datamodel@names}{#1}}
+%     {\csappto{blx@csv@datamodel@names}{,#1}}}
+% \dolistcsloop{blx@datamodel@names}
+
+% \DeclareSourcemap{
+%   \maps[datatype=bibtex]{
+%     \map[foreach=\blx@csv@datamodel@names]{
+%       \step[fieldsource=\regexp{$MAPLOOP}, 
+%             match=\regexp{(\A|\s+and\s+)([a-z'\s]+)?\s*(.+?)\,\s+(Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](?:l|r)|\w(?=\w+-))([\w\s]+)(?:(-)(Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](?:l|r)|\w)([\w\s]+))?(?=\Z|\s+and\s+)},
+%             replace=\regexp{$1 family=$3, prefix=$2, given=$4$5$6$7$8, given-i=\{$4$6$7\}}]
+%       \step[fieldsource=\regexp{$MAPLOOP},
+%       		match=\regexp{(prefix=\,)},
+%             replace=\regexp{}]
+%     }
+%   }
+% }
+
+% WORKS:
+% match=\regexp{(\A|\s+and\s+)([a-z'\s]+)?\s*(.+?)\,\s+(Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](?:l|r)|\w(?=\w+-))([\w\s]+)(?:(-)(Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](?:l|r)|\w)([\w\s]+))?(?=\Z|\s+and\s+)},
 
 
 % #####	BIBLIOGRAPHY DRIVERS	#####
@@ -1362,7 +1393,7 @@
 					\iffieldundef{part}}%
 		%	For French language entries that have a <part> field
 		% Ex: JCP 1950, I, 12345 -- JCP 2015, chron., 123
-		{\setunit{\nopunct\addspace}
+		{\setunit{\nopunct\adddotspace}
 		 \printfield{year}%
 		 \iffieldnum{part}
 			{\setunit{\adddot}
@@ -1380,7 +1411,7 @@
 						\iffieldundef{month} }
 			%	If there is no <volume>, <number> or <month> defined, use short reference
 			% Ex: RTD civ. 2010.123
-			{\setunit{\nopunct\addspace}
+			{\setunit{\nopunct\adddotspace}
 			 \printfield{year}%
 			 \setunit{\adddot}
 			 \printfield[noprefix]{pages}%
@@ -1390,7 +1421,7 @@
 			{\iffieldequalstr{langid}{english}
 				%	For english language journals, print date at the end
 				% Ex: 123 Harv. L.J. 12 (2015)
-				{\setunit{\addspace}
+				{\setunit{\adddotspace}
 				 \printfield[noprefix]{pages}%
 				 \ifthenelse{	\iffieldundef{year} \AND
 								\iffieldundef{number} \AND

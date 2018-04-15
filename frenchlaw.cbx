@@ -101,11 +101,6 @@
 \DeclareFieldFormat[legislation]{shorttitle}{#1\isdot}%
 
 \newbibmacro*{cite:init}{%
-	% Backref to all citation keys (TODO » Rename to backindex)
-	\refindex{%
-		{{\color{violet}\ttfamily[\thefield{entrykey}]}}%
-		\iffieldundef{title}{}{\space\thefield{title}}%
-		\iffieldundef{postnote}{}{!{\color{cyan}\thefield{postnote}}}}%
 	\global\boolfalse{cbx:loccit}%
 	\ifthenelse{	\ifentrytype{reference} \AND\NOT \iffieldundef{shorttitle}	}
 		{\boolfalse{citetracker}}
@@ -204,7 +199,7 @@
 						{\usebibmacro{cite:opcit}}
 						{\usebibmacro{cite:title}%
 						 \usebibmacro{cite:related}}}
-					{\printfield{labeltitle}%
+					{\printfield{shorttitle}%
 					 \ifuseauthor
 					 	{}
 					 	{\setunit{\addnbspace}
@@ -252,6 +247,7 @@
 				{}%
 			 %	Driver for book / collection / proceedings entries
 			 \ifthenelse{	\ifentrytype{book} \OR
+			 				\ifentrytype{bookinbook} \OR
 			 				\ifentrytype{collection} \OR
 			 				\ifentrytype{proceedings} \OR
 			 				\ifentrytype{reference} \AND
@@ -406,12 +402,20 @@
 	\ifbool{cbx:loccit}
 		{}
 		{\setunit*{\postnotedelim}%
-		 \printfield{postnote}}}% Enforce abbreviative dot just in case (?)
+		 \printfield{postnote}\isdot\unspace}}% Enforce abbreviative dot just in case (?)
 
 %	Index author or editor names (full), even if using short(author|editor)
 \renewbibmacro*{citeindex}{%
 	\ifciteindex
-		{\iffieldequalstr{labelnamesource}{shortauthor}
+		{% \ifentrytype{legislation}
+		 % 	{\lawindex{%
+		 % 		\thefield{indexsorttitle}%
+		 % 		\iffieldundef{postnote}{}{!\strfield{postnote}}}}
+		 % 	{\refindex{%
+			% 	{{\color{violet}\ttfamily[\thefield{entrykey}]}}%
+			% 	\iffieldundef{title}{}{\space\thefield{title}}%
+			% 	\iffieldundef{postnote}{}{!{\color{cyan}\thefield{postnote}}}}}%
+		\iffieldequalstr{labelnamesource}{shortauthor}
 			{\indexnames{author}}
 			{\iffieldequalstr{labelnamesource}{shorteditor}
 				{\indexnames{editor}}
