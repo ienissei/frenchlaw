@@ -78,23 +78,7 @@
 		  \literal{0}}
 }
 
-% \DeclareSortingScheme{nyt}{
-% 	\sort{\field{presort}}
-% 	\sort[final]{\field{sortkey}}
-% 	\sort{\field{institution}
-% 		  \field{shortjournal}}
-% %	\sort{\field{type}}
-% 	\sort{\field{sortyear}
-% 		  \field{year}}
-% 	\sort{\field{month}}
-% 	\sort{\field{day}}
-% 	\sort{\field{number}
-% 		  \literal{0}}
-% 	\sort{\field{sorttitle}
-% 		  \field{title}}
-% }
-
-\DeclareSortingScheme{abbreviations}{
+\DeclareSortingScheme{shortjournal}{
 	\sort{\field{shortjournal}
 		  \field{shorttitle}}
 	\sort[direction=descending]{
@@ -103,13 +87,14 @@
 		  \field{title}}
 }
 
-% \DeclareSortingScheme{shortauthor}{
-% 	\sort{\field{shortauthor}}
-% 	\sort{\field{sorttitle}
-% 		  \field{title}}
-% 	\sort{\field{sortyear}
-% 		  \field{year}}
-% }
+\DeclareSortingScheme{shortauthor}{
+	\sort{\field{labelname}
+		  \literal{ZZ}}
+	\sort{\field{sorttitle}
+		  \field{title}}
+	\sort{\field{sortyear}
+		  \field{year}}
+}
 
 % #####	FIELD FORMATS	#####
 
@@ -185,7 +170,7 @@
 \DeclareRangeCommands*{\bibrangeslast}
 \newrobustcmd{\bibrangeslast}{%
 	\psq\addspace\bibstring{and}\addspace\mkpageprefix}
-\newrobustcmd{\sq}{\addnbspace\bibstring{sequens}\addspace}
+\newrobustcmd{\sq}{\addnbspace\bibstring{sequens}\xspace}
 
 \renewcommand{\bibrangessep}{%
 	\ifthenelse{	\iffieldequalstr{langid}{french} \OR
@@ -242,11 +227,6 @@
 				{\namepartprefix}
 				{\namepartsuffix}
 		 \fi}}
-% % \DeclareNameFormat{commentator}{%
-% % 	\ifrelatedloop
-% % 		{\usebibmacro{name:last-first}{#1}{#3}{#5}{#7}}
-% % 		{\usebibmacro{name:first-last}{#1}{}{#5}{#7}}}
-% % Avec le nouveau format de noms, ajouter un \ifnum\value{uniquename}=1 (== nom de famille non unique), cf. TeX-SX
 
 \DeclareNameFormat{shortauthor}{%
 	\usebibmacro{name:family}
@@ -254,8 +234,6 @@
 			{\namepartgiven}
 			{\namepartprefix}
 			{\namepartsuffix}}
-% \DeclareNameFormat{shortauthor}{%
-% 	{\usebibmacro{name:last-first}{#1}{}{}{#7}}}
 
 %	Use last-name only for the first author in the entry.
 \DeclareNameAlias{author}{family-given/given-family}
@@ -330,7 +308,7 @@
 	{\endlist}
 	{\item}
 
-\defbibenvironment{abbreviations}
+\defbibenvironment{shortjournal}
 	{\list
 		{\iffieldequalcs{shortjournal}{lastjournal}
 			{}
@@ -348,13 +326,19 @@
 		 \addtolength{\leftmargin}{\labelsep}%
 		 \setlength{\itemsep}{\bibitemsep}%
 		 \setlength{\parsep}{\bibparsep}%
+		 \raggedright%
 		 \renewcommand*{\makelabel}[1]{\mkbibemph{##1\hss}}}}
 	{\endlist}
 	{\item}
 
+\defbibcheck{shortauthor}{%
+	\ifnameundef{shortauthor}
+		{\skipentry}
+		{}}
+
 %	TODO » Copier les defbibfilter et catégories ici
 %	Set up a bibliography check that removes duplicate journal titles from the shortjournal list
-\defbibcheck{abbreviations}{%
+\defbibcheck{shortjournal}{%
 	\iffieldundef{shortjournal}
 		% {\iffieldundef{shorttitle}
 		% 	{\skipentry}
@@ -1242,13 +1226,10 @@
 	\usebibmacro{finentry}}
 
 %	Define a driver for <shortjournal> abreviations
-\DeclareBibliographyDriver{abbreviations}{%
+\DeclareBibliographyDriver{shortjournal}{%
   \iffieldundef{shortjournal}{}{\printfield[plain]{journaltitle}}%
   %\iffieldundef{shorttitle}{}{\printfield[plain]{title}}
   }
-
-\DeclareBibliographyDriver{shortjournal}{%
-	\printfield[plain]{journaltitle}}
 
 \DeclareBibliographyDriver{shorttitle}{%
 	\printfield[plain]{title}}

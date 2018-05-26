@@ -2175,9 +2175,9 @@
 %	Définir le style des index
 \setlength{\indexcolsep}{1em}
 \renewcommand{\indexspace}{\par\vspace{\baselineskip}\relax}
-\renewcommand{\@idxitem}{\par\goodbreak\hangindent 40\p@}
-\renewcommand{\subitem}{\par\hangindent 40\p@ \hspace*{10\p@}}
-\renewcommand{\subsubitem}{\par\hangindent 40\p@ \hspace*{20\p@}}
+\renewcommand{\@idxitem}{\par\goodbreak\hangindent 1em}
+\renewcommand{\subitem}{\par\hangindent 2em \hspace*{1em}}
+\renewcommand{\subsubitem}{\par\hangindent 3em \hspace*{2em}}
 
 %	Appliquer à l'environnement des index
 % + Exlude indixes from short ToC

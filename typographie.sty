@@ -67,6 +67,7 @@
 	\fi%
 	\def\appendixname{Annexe}%
 	\def\cftappendixname{Annexe}%
+	\def\appendixpagename{Annexe}%
 	\def\appendixrefname{\toclabelbox{Annexe}}%
 	\def\bibname{Bibliographie}%
 	\def\refname{R{\'e}f{\'e}rences}%
@@ -291,8 +292,7 @@
 
 \newcommand{\passim}{\latin{passim}}% à divers endroits
 %
-\newcommand{\adnotam}{\latin{ad notam}~}% à la note
-\newcommand{\Adnotam}{\latin{Ad notam}~}
+\newcommand{\adnotam}{\latin{ad notam}\xspace}% à la note
 \newcommand{\verbo}{\latin{v\textsuperscript{o}~}}% au mot …
 \newcommand{\verbis}{\latin{v\textsuperscript{is}~}}
 %
@@ -331,6 +331,7 @@
 \newcommand{\concl}{concl.\@\xspace}% conclusions
 \newcommand{\pan}{pan.\@\xspace}% panorama
 \newcommand{\rapp}{rapp.\@\xspace}% rapport
+\newcommand{\sub}{ss.~}% Sous (article / arrêt)
 %
 \newcommand{\BO}{B.O.\@\sxpace}% Bulletin officiel
 \newcommand{\JO}{\emph{J.O.}\@\sxpace}% Journal officiel
@@ -351,7 +352,7 @@
 %
 
 
-\newcommand{\GAJC}{\cite{GAJC}}
+\newcommand{\GAJC}{\emph{G.A.J.C.}}
 \newcommand{\JACC}{\citejournal{JACC}}% Journal des audiences de la Cour de cassation (1791--1824) [= Dalloz]
 \newcommand{\D}{\citejournal{D}}% Recueil Dalloz: Jurisprudence générale (1825--1902)
 \newcommand{\DP}{\citejournal{DP}}% Recueil Dalloz périodique (1903--1944)
@@ -361,6 +362,7 @@
 \newcommand{\GP}{\citejournal{GazPal}}
 \newcommand{\JCP}{\citejournal{JCP}}
 \newcommand{\JCPN}{\citejournal{JCPN}}
+\newcommand{\CJEG}{\citejournal{CJEG}}
 
 % Commandes des juridictions
 

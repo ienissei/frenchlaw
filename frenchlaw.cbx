@@ -61,14 +61,20 @@
 
 %	TODO
 \DeclareNameFormat{labelname}{%
-	\usebibmacro{name:given-family}
-		{\namepartfamily}
-		{\namepartgiveni}
-		{\namepartprefix}
-		{\namepartsuffix}}%
-% \DeclareNameFormat{labelname}{%
-% 	\usebibmacro{name:first-last}{#1}{#4}{#5}{#7}%
-% 	\usebibmacro{name:andothers}}%
+	\ifnum\value{uniquename}=0
+		\usebibmacro{name:given-family}
+			{\namepartfamily}
+			{\namepartgiveni}
+			{\namepartprefix}
+			{\namepartsuffix}
+	\else
+		\usebibmacro{name:given-family}
+			{\namepartfamily}
+			{\namepartgiven}
+			{\namepartprefix}
+			{\namepartsuffix}
+	\fi}%
+
 % 	Hack: Imprimer seulement la première initiale
 % Biber sépare les initiales par \bibinitdelim + initiale + \bibinitpunct
 % Redéfinir \bibinitdelim pour prendre deux arguments et ne rien en faire
@@ -234,7 +240,9 @@
 		{\printtext[bibhyperref]{\printfield[title]{labeltitle}}%
 		 \newunit\newblock}%
 	% If the work has already been cited, stop there. Else, print verbose citation.
-	\ifthenelse{	\ifciteseen \AND\NOT \ifentrytype{inreference}	}
+	\ifthenelse{	\ifciteseen \AND\NOT
+					\ifentrytype{inreference} \AND\NOT
+					\ifentrytype{commentary}	}
 		{\newunit\newblock
 		 \bibstring[\mainlang]{citeseen}}
 		{\ifthenelse{	\iffieldundef{crossref} \OR \ifentrytype{inreference} }
