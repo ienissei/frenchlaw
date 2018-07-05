@@ -66,13 +66,13 @@
 			{\namepartfamily}
 			{\namepartgiveni}
 			{\namepartprefix}
-			{\namepartsuffix}
+			{\namepartsuffix}%
 	\else
 		\usebibmacro{name:given-family}
 			{\namepartfamily}
 			{\namepartgiven}
 			{\namepartprefix}
-			{\namepartsuffix}
+			{\namepartsuffix}%
 	\fi}%
 
 % 	Hack: Imprimer seulement la première initiale
@@ -91,6 +91,7 @@
 
 \DeclareFieldFormat{postnote}{#1\isdot}
 
+% Needed?
 \DeclareFieldFormat[customa]{citetitle}{\mkbibemph{#1}}
 \DeclareFieldFormat[customa]{citeshorthand}{\mkbibemph{#1}}
 \DeclareFieldFormat[customb]{citetitle}{#1}
@@ -104,13 +105,14 @@
 \DeclareFieldAlias{shorttitle}{citetitle}
 \DeclareFieldAlias{shorthand}{plain}
 
-\DeclareFieldFormat[legislation]{shorttitle}{#1\isdot}%
-
 \newbibmacro*{cite:init}{%
 	\global\boolfalse{cbx:loccit}%
 	\ifthenelse{	\ifentrytype{reference} \AND\NOT \iffieldundef{shorttitle}	}
 		{\boolfalse{citetracker}}
 		{}%
+	\ifnameundef{shortauthor}
+		{}
+		{\boolfalse{citetracker}}%
 	\ifnumless{\value{multicitecount}}{2}
 		{\global\boolfalse{cbx:parens}%
 		 \global\undef\cbx@lasthash}
@@ -130,11 +132,13 @@
 					{}% \unspace, mais causait un problème avec la prénote
 					{\ifnameundef{labelname}
 						{}
-						{\printnames{labelname}%
-						 \ifthenelse{	\value{collaborator}=1	}
-						 	{\space\bibstring{and}\space}
-						 	{\newunit}%
-						 \printnames[labelname]{collaborator}%
+						{\ifnameundef{shortauthor}
+						 	{\printnames{labelname}
+						 	 \ifthenelse{	\value{collaborator}=1	}
+							 	{\bibstring{and}\space}
+							 	{\newunit}%
+							 \printnames[labelname]{collaborator}}
+							{\printtext[bibhyperref]{\printnames{labelname}}}%
 						 \setunit{\nametitledelim}}%
 					 \savefield{namehash}{\cbx@lasthash}}%
 				 \ifnameundef{shortauthor}
@@ -142,11 +146,14 @@
 						{\usebibmacro{cite:opcit}}
 					 	{\usebibmacro{cite:title}%
 					 	 \usebibmacro{cite:related}}}
-					{\printfield{shorttitle}%
-					 \ifuseauthor
-					 	{}
-					 	{\setunit{\addnbspace}
-					 	\printnames{shortauthor}}}}}}%
+					{\iffieldundef{shorttitle}
+						{}
+						{\printtext[bibhyperref]{%
+							\printfield{shorttitle}%
+							\ifuseauthor
+							 	{}
+							 	{\setunit{\addnbspace}
+							 	 \printnames{shortauthor}}}}}}}}%
 	\usebibmacro{shorthandintro}}
 
 \newbibmacro*{citetitle}{%
@@ -156,11 +163,18 @@
 		{\ifthenelse{	\ifentrytype{jurisdiction}\OR
 						\ifentrytype{legislation}\OR
 						\ifentrytype{legal} }
-			{\usebibmacro{cite:legal:reverse}}
+			{\clearfield{related}% Don't use related field, esp. for <jurisdiction>
+			 \usebibmacro{cite:legal:reverse}}
 			{\ifthenelse{	\ifciteibid \AND\NOT \ifentrytype{reference}	}
 				{\usebibmacro{cite:ibid}}
-				{\usebibmacro{cite:title}%
-				 	 \usebibmacro{cite:related}}}}%
+				{\savefield{namehash}{\cbx@lasthash}% Pretend author was already cited
+				 \clearname{author}% Clear author name
+				 \ifnameundef{shortauthor}
+					{\ifopcit
+						{\usebibmacro{cite:opcit}}
+					 	{\usebibmacro{cite:title}%
+					 	 \usebibmacro{cite:related}}}
+					{\printtext[bibhyperref]{\printfield{shorttitle}}}}}}%
 	\usebibmacro{shorthandintro}}
 
 \newbibmacro*{textcite}{%
@@ -176,14 +190,16 @@
 					{\printfield{type}%
 					 \setunit{\addnbspace}}
 					{}%
-				 \printtext[bibhyperref]{\printfield{title}}%
+				 \printfield{title}%
 				 \clearfield{labeltitle}%
 				 \clearfield{title}}}
-			{\printnames[first-last]{labelname}%
-			 \ifthenelse{	\value{collaborator}=1	}
-				{\space\bibstring{and}\space}
-				{\newunit}%
-			 \printnames[labelname]{collaborator}}%
+			{\ifnameundef{shortauthor}
+				{\printnames[first-last]{labelname}%
+				 \ifthenelse{	\value{collaborator}=1	}
+					{\bibstring{and}\space}
+					{\newunit}%
+				 \printnames[labelname]{collaborator}}
+				{\printtext[bibhyperref]{\printnames[first-last]{labelname}}}}%
 		 \stepcounter{textcitecount}%
 		 \savefield{namehash}{\cbx@lasthash}}%
 	\ifbool{cbx:parens}
@@ -205,11 +221,12 @@
 						{\usebibmacro{cite:opcit}}
 						{\usebibmacro{cite:title}%
 						 \usebibmacro{cite:related}}}
-					{\printfield{shorttitle}%
-					 \ifuseauthor
-					 	{}
-					 	{\setunit{\addnbspace}
-						 \printnames{shortauthor}}}}}}%
+					{\printtext[bibhyperref]{%
+						\printfield{shorttitle}%
+						\ifuseauthor
+						 	{}
+						 	{\setunit{\addnbspace}
+							 \printnames{shortauthor}}}}}}}%
 	\ifbool{cbx:parens}
 		{}
 		{\setunit{\global\booltrue{cbx:parens}\addnbspace\bibopenparen}}%
@@ -263,8 +280,6 @@
 			 	{\usebibmacro{byauthor}%
 				 \newunit\newblock%
 			 	 \usebibmacro{event+venue+date}%
-				 \newunit\newblock%
-				 \usebibmacro{organization}%
 				 \newunit\newblock
 				 \printfield{edition}%
 				 \newunit\newblock%
@@ -278,8 +293,6 @@
 				 \usebibmacro{maintitle+booktitle}%
 				 \newunit\newblock
 				 \usebibmacro{event+venue+date}%
-				 \newunit\newblock
-				 \usebibmacro{organization}%
 				 \newunit\newblock
 			 	 \printfield{edition}%
 				 \newunit\newblock
@@ -318,15 +331,20 @@
 				 \newunit\newblock
 				 \usebibmacro{event+venue+date}%
 				 \newunit\newblock
-				 \usebibmacro{organization}%
-				 \newunit\newblock
 				 \printfield{edition}%
 				 \newunit\newblock
 				 \usebibmacro{publisher+location+date}}%
 			 \setunit{\bibpagespunct}\newblock
 			 \usebibmacro{volume+part}%
 			 \newunit\newblock
-			 \usebibmacro{chapter+pages}}}}
+			 \usebibmacro{chapter+pages}}%
+		\ifentrytype{article}
+			{\iftoggle{bbx:related}
+				{\setunit{\relatedpunct}\newblock
+				 \usebibmacro{related:init}%
+				 \usebibmacro{related}}
+				{}}
+			{}}}
 
 \newbibmacro*{cite:related}{%
 	\ifentrytype{commentary}
@@ -343,12 +361,12 @@
 	\ifentrytype{legislation}
 		{\ifthenelse{	\iffootnote\AND\NOT
 						\iffieldundef{shorttitle} }
-			{\printtext[bibhyperref]{\printfield{shorttitle}}}
+			{\printfield{shorttitle}}
 			{\usedriver{}{\thefield{entrytype}}}}%
 		{\ifciteseen
 			{\togglefalse{bbx:related}}
 			{}%
-		 \usedriver{}{\thefield{entrytype}}%
+		 \printtext[bibhyperref]{\usedriver{}{\thefield{entrytype}}}%
 		 \ifciteseen
 		 	{\newunit\newblock
 			 \bibstring[\mainlang]{citeseen}}}%
@@ -373,15 +391,15 @@
 
 \newbibmacro*{cite:ibid}{%
 	\ifthenelse{	\ifloccit\AND\NOT\iffirstonpage }
-		{\bibstring[\mkibid]{ibidem}%
+		{\printtext[bibhyperref]{\bibstring[\mkibid]{ibidem}}%
 		 \global\booltrue{cbx:loccit}}
 		{\usebibmacro{cite:opcit}}}
 
 \newbibmacro*{cite:opcit}{%
 	\ifloccit
-		{\bibstring[\mkibid]{loccit}%
+		{\printtext[bibhyperref]{\bibstring[\mkibid]{loccit}}%
 		 \global\booltrue{cbx:loccit}}
-		{\bibstring[\mkibid]{opcit}}}
+		{\printtext[bibhyperref]{\bibstring[\mkibid]{opcit}}}}
 
 % TODO » Nettoyer les {cite:prenote}
 %	Nettoyer -- ne laisser que le code de {prenote}
@@ -409,7 +427,7 @@
 \newbibmacro*{cite:postnote}{%
 	\ifbool{cbx:loccit}
 		{}
-		{\setunit*{\postnotedelim}%
+		{\setunit{\postnotedelim}%
 		 \printfield{postnote}\isdot\unspace}}% Enforce abbreviative dot just in case (?)
 
 %	Index author or editor names (full), even if using short(author|editor)
@@ -528,11 +546,12 @@
 	{\usebibmacro{citeindex}%
 	 \iffieldundef{title}
 		{\printtext[bold]{???}}
-	 	{\ifthenelse{	\ifentrytype{legislation}\AND\NOT\iffieldundef{type} }
-		 	{\printtext{\printfield{type}%
-		 	 \setunit{\addspace}}}
-		 	{}%
-	 	 \printtext[bibhyperlink]{\printfield{title}}}}%
+	 	{\printtext[bibhyperref]{%
+		 	\ifthenelse{	\ifentrytype{legislation}\AND\NOT\iffieldundef{type} }
+			 	{\printtext{\printfield{type}%
+			 	 \setunit{\addspace}}}
+			 	{}%
+		 	\printfield{title}}}}%
 	{\setunit{\multicitedelim}}
 	{}
 
@@ -541,6 +560,12 @@
 	{\iffieldundef{shortjournal}
 		{\usebibmacro{journal}}
 		{\printfield[journal]{shortjournal}\isdot\addnbspace}}%
+	{\setunit{\multicitedelim}}
+	{}
+
+\DeclareCiteCommand{\citeshorttitle}[\boolfalse{citetracker}\boolfalse{pagetracker}]
+	{\usebibmacro{cite:init}}
+	{\printfield[title]{shorttitle}\isdot\addnbspace}%
 	{\setunit{\multicitedelim}}
 	{}
 

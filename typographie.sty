@@ -34,6 +34,7 @@
 	\def\shortcontentsname{Sommaire}%
 	\def\listfigurename{Figures}%
 	\def\listtablename{Tableaux}%
+	\def\listabbreviationname{Abréviations infrapaginales}%
 	\def\prefacename{Pr{\'e}face}%
 	\def\bookname{Livre}%
 	\def\cftbookname{Livre}%
@@ -122,6 +123,9 @@
 	\def\subjectname{Subject}% Lettres
 }
 \let\captionsbritish=\captionsenglish
+
+%	Créer une commande pour les noms de famille (petites-capitales, pas de césure)
+\let\lastname=\bsc% Commande <babel>
 
 %	Créer des commandes rapides pour les citations dans d'autres langues
 \newcommand{\british}[1]{\foreignlanguage{british}{\emph{#1}}}
@@ -311,17 +315,19 @@
 %	TODO » Adde: documents juridiques (dont romains (?)), tribunaux, chambres
 
 \newcommand{\al}{al.\@~}% alinéa
-\newcommand{\anc}{anc.\@\xspace}% ancien --- utilité?
+\newcommand{\anc}{anc.\@\xspace}% ancien
 \newcommand{\Anc}{Anc.\@\xspace}
+\newcommand{\art}{art.\@\xspace}% article
+\newcommand{\Art}{Art.\@\xspace}
 \newcommand{\comp}{comp.\@\xspace}% comparer
 \newcommand{\Comp}{Comp.\@\xspace}
-\newcommand{\egal}{égal.\@~}% également
-\newcommand{\Egal}{Égal.\@~}
-\newcommand{\spec}{spéc.\@~}% spécialement
-\newcommand{\Spec}{Spéc.\@~}
+\newcommand{\egal}{égal.\@\xspace}% également
+\newcommand{\Egal}{Égal.\@\xspace}
+\newcommand{\spec}{spéc.\@\xspace}% spécialement
+\newcommand{\Spec}{Spéc.\@\xspace}
 \newcommand{\rappr}{rappr.\@\xspace}% rapprocher
 \newcommand{\Rappr}{Rappr.\@\xspace}
-\renewcommand{\v}{voir\xspace}% Vvoir (abréger ?)
+\renewcommand{\v}{voir\xspace}% Voir (abréger ?)
 \newcommand{\V}{Voir\xspace}
 %
 \newcommand{\vs}{c.\@\xspace}% versus ou contra // TODO \c ou \vs (?)
@@ -333,9 +339,17 @@
 \newcommand{\rapp}{rapp.\@\xspace}% rapport
 \newcommand{\sub}{ss.~}% Sous (article / arrêt)
 %
-\newcommand{\BO}{B.O.\@\sxpace}% Bulletin officiel
-\newcommand{\JO}{\emph{J.O.}\@\sxpace}% Journal officiel
-%
+\newcommand{\BO}{\acronym{BO}\@\xspace}% Bulletin officiel
+\newcommand{\JO}{\acronym{\emph{JO}}\@\xspace}% Journal officiel
+
+\newcommand{\GAJC}{\acronym{\emph{GAJC}}}
+\newcommand{\PUF}{\acronym{PUF}}
+\newcommand{\QPC}{\acronym{QPC}}
+\newcommand{\DC}{\acronym{DC}}
+\newcommand{\SSR}{\relax\acronym{SSR}}% Don't swallow preceding space
+\newcommand{\LGDJ}{\acronym{LGDJ}}
+\newcommand{\HS}{\textsc{hs}}
+
 % Thanks @egreg pour le test \ifnum (qui détecte les nombres positifs vs. tout le reste)
 \newcommand{\Bull}[1]{%
 	Bull.~\ifnum0<0#1\relax\uppercase\expandafter{\romannumeral#1}\else#1\fi\xspace}
@@ -349,10 +363,7 @@
 	\@ifstar%
 	{\cite{#2}#1}
 	{\citetitle{#2}\@\xspace}}
-%
 
-
-\newcommand{\GAJC}{\emph{G.A.J.C.}}
 \newcommand{\JACC}{\citejournal{JACC}}% Journal des audiences de la Cour de cassation (1791--1824) [= Dalloz]
 \newcommand{\D}{\citejournal{D}}% Recueil Dalloz: Jurisprudence générale (1825--1902)
 \newcommand{\DP}{\citejournal{DP}}% Recueil Dalloz périodique (1903--1944)
@@ -366,27 +377,27 @@
 
 % Commandes des juridictions
 
-\newcommand{\CIJ}{C.I.J.\@\xspace}
-\newcommand{\CJCE}{C.J.C.E.\@\xspace}
-\newcommand{\CJUE}{C.J.U.E.\@\xspace}
-\newcommand{\CEDH}{C.E.D.H.\@\xspace}
+\newcommand{\CIJ}{\acronym{CIJ}\xspace}
+\newcommand{\CJCE}{\acronym{CJCE}\xspace}
+\newcommand{\CJUE}{\acronym{CJUE}\xspace}
+\newcommand{\CEDH}{\acronym{CEDH}\xspace}
 
 \newcommand{\CC}{Cons.~const.\@}
-\newcommand{\TC}{T.~Confl.\@}
-\newcommand{\CE}{C.E.\@}
+\newcommand{\TC}{Trib.~Confl.\@}
+\newcommand{\CE}{\acronym{CE}\@}
 \newcommand{\Cass}{Cass.\@}
 
 \newcommand{\CA}{}
-\newcommand{\CAA}{C.A.A.\@\xspace}
+\newcommand{\CAA}{\acronym{CAA}\xspace}
 
-% \newcommand{\TGI}{T.G.I.\@\xspace}
-% \newcommand{\TI}{T.I.\@\xspace}
-% \newcommand{\TA}{T.A.\@\xspace}
-% \newcommand{\Tcomm}{T.~comm.\@\xspace}
-% \newcommand{\Tcorr}{T.~corr.\@\xspace}
-% \newcommand{\Tpol}{T. pol.\@\xspace}
+\newcommand{\TGI}{\acronym{TGI}\xspace}
+\newcommand{\TI}{\acronym{TI}\xspace}
+\newcommand{\TA}{\acronym{TA}\xspace}
+\newcommand{\Tcomm}{T.~comm.\@\xspace}
+\newcommand{\Tcorr}{T.~corr.\@\xspace}
+\newcommand{\Tpol}{T. pol.\@\xspace}
 %
-% \newcommand{\BCE}{\abbrv{BCE}}
-% \newcommand{\JOUE}{\abbrv{JOUE}}
-% \newcommand{\SEBC}{\abbrv{SEBC}}
-% \newcommand{\ONU}{\abbrv[\@\xspace]{ONU}}
+\newcommand{\BCE}{\acronym{BCE}\xspace}
+\newcommand{\JOUE}{\acronym{JOUE}\xspace}
+\newcommand{\SEBC}{\acronym{SEBC}\xspace}
+\newcommand{\ONU}{\acronym{ONU}\xspace}

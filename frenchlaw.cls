@@ -438,12 +438,15 @@
 					Numbers			= Lining,
 					Scale			= MatchLowercase ]
 					{lmmono10}
+	% Create a command for acronyms (adds same inter-letter spacing as with small-caps)
+	\newcommand{\acronym}[1]{{\addfontfeatures{LetterSpace=3.0} #1}}
 	\RequirePackage{microtype}
 \else
 	\RequirePackage[utf8]{inputenc}% OLD: \AtEndOfClass{\usepackage[utf8]{inputenc}} (?)
 	\RequirePackage[T1]{fontenc}
 	\RequirePackage{lmodern,libertine}
 	\renewcommand*{\ttdefault}{lmtt}
+	\newcommand{\acronym}[1]{#1}
 	\RequirePackage[tracking,letterspace=30]{microtype}
 \fi
 
@@ -711,7 +714,7 @@
 \def\and{\par}%\unskip\enskip\emph{\&}\enskip\ignorespaces
 
 %	Create a command for people's first & last names
-\newcommand{\name}[2]{#1~\textsc{#2}}
+\newcommand{\name}[2]{#1~\bsc{#2}}% TODO » Revoir...
 \newcommand{\affiliation}[1]{{\normalsize\unskip~(#1)}}
 
 %	Create a command to switch off and on layout elements
@@ -779,13 +782,13 @@
 \def\@advisors{\relax}
 \def\@jury{\relax}
 \newcommand{\advisor}{\@ifstar{\s@advisor}{\@advisor}}
-	\newcommand{\@advisor}[4][]{\appto\@advisors{\bgroup#2 \textsc{#3}, #4\egroup\par}}
+	\newcommand{\@advisor}[4][]{\appto\@advisors{\bgroup#2 \bsc{#3}, #4\egroup\par}}
 	\newcommand{\s@advisor}[4][]{%
-		\appto\@advisors{\bgroup#2 \textsc{#3}, #4\egroup\par}%
-		\appto\@jury{\bgroup#1#2 \textsc{#3}, #4\egroup\par}}
-\newcommand{\referee}[4][]{\appto\@jury{\bgroup#1#2 \textsc{#3}, #4~(rapporteur)\egroup\par}}
-\newcommand{\president}[4][]{\appto\@jury{\bgroup#1#2 \textsc{#3}, #4~(président)\egroup\par}}
-\newcommand{\examiner}[4][]{\appto\@jury{\bgroup#1#2 \textsc{#3}, #4\egroup\par}}
+		\appto\@advisors{\bgroup#2 \bsc{#3}, #4\egroup\par}%
+		\appto\@jury{\bgroup#1#2 \bsc{#3}, #4\egroup\par}}
+\newcommand{\referee}[4][]{\appto\@jury{\bgroup#1#2 \bsc{#3}, #4~(rapporteur)\egroup\par}}
+\newcommand{\president}[4][]{\appto\@jury{\bgroup#1#2 \bsc{#3}, #4~(président)\egroup\par}}
+\newcommand{\examiner}[4][]{\appto\@jury{\bgroup#1#2 \bsc{#3}, #4\egroup\par}}
 \newcommand{\@thesisadvisors}{\@advisors}
 \newcommand{\@jurymembers}{\@jury}
 %	Publication Info
@@ -953,12 +956,14 @@
 			\vspace{2\baselineskip}
 			{\Large\@author\par}
 			\vspace{3\baselineskip}
-			{\large\volumetext\space\RN{\@volume}\par}
+			% Check if \@volume starts with a digit
+			% Thanks @ egreg <http://tex.stackexchange.com/a/50131/10119>
+			{\large\ifnum0<0\@volume\relax\volumetext\space\RN{\@volume}\else\@volume\fi\par}
 			\vspace{3\baselineskip}
 			\if\@empty\@advisors\relax\else
-				{\large\advisortext\par
-				 \vspace{\baselineskip}
-				 \@advisors\par}
+				{\large\advisortext\par}
+				\vspace{\baselineskip}
+				{\large\@advisors\par}
 			\fi
 			\vspace{2\baselineskip}
 		\fi
@@ -977,9 +982,6 @@
 	\setlrmargins{*}{*}{1}
 	\checkandfixthelayout
 	\cleartorecto
-	\printtitle%
-	\cleartorecto
-	\setcounter{page}{1}
 	\printtitle%
 	\cleartorecto
 	\restore@twocolumns\par
@@ -1082,7 +1084,12 @@
 		\normalize@fontsize%
 		% Imposer une valeur (même \z@) pour maintenir l'alignement vertical:
 		\vspace*{0em}% Orig. = 3\baselineskip
-		{\Large\scshape\raggedright\csname @title@\languagename\endcsname\if\@empty\csname @subtitle@\languagename\endcsname\relax\else :\par\vspace{.25\baselineskip}\noindent\csname @subtitle@\languagename\endcsname\vspace{.25\baselineskip}\fi}\par%
+		{\Large\scshape\raggedright\csname @title@\languagename\endcsname}%
+		\if\@empty\csname @subtitle@\languagename\endcsname\relax\else%
+			\par\vspace{.5\baselineskip}
+			{\large \noindent\csname @subtitle@\languagename\endcsname}
+			\vspace{.5\baselineskip}\fi\par%
+		\vspace{\baselineskip}
 		{\if\@empty\@author\else\@author%
 		 \if\@empty\@institution\else, \@institution\fi%
 		 \if\@empty\@email\else~(\@email)\fi\fi
@@ -1339,15 +1346,15 @@
 %	####	TABLES DES MATIÈRES	####
 
 %	Définir la subdivision maximale pour la numérotation
-\maxsecnumdepth{subparagraph}
-\maxtocdepth{subparagraph}
-\setcounter{tocdepth}{6} % TODO » Needed? Check with <memoir>
 \if@CV
 	\maxsecnumdepth{chapter}
-\fi
-\if@didactic
+\else\if@didactic
 	\maxsecnumdepth{section}% Ou chapter (?)
-\fi
+\else
+	\maxsecnumdepth{subparagraph}
+\fi\fi
+\maxtocdepth{subparagraph}
+\setcounter{tocdepth}{6} % TODO » Needed? Check with <memoir>
 
 %	Ne pas numéroter les pages des livres et parties (car centrés)
 \cftpagenumbersoff{book}
@@ -1362,7 +1369,7 @@
 		\cftpagenumbersoff{subheading}
 		\cftpagenumbersoff{chapter}
 		\setlength{\cftbeforechapterskip}{.5\baselineskip}
-		% Save tocdepth counter
+		% Save tocdepth value
 		\newcounter{save@tocdepth}
 		\setcounter{save@tocdepth}{\value{tocdepth}}
 		\setcounter{tocdepth}{#1}
@@ -1684,8 +1691,15 @@
 		\if\relax\ch@pprefix\relax\else\ch@pprefix\cftchapteraftersnum\cftchapteraftersnumb~\fi#2}
 	% Increase, then decrease chapter counter (to reset all sub-counters)
 	\addtocounter{chapter}{-1}
-	\refstepcounter{chapter}
-}
+	\refstepcounter{chapter}}
+\newcommand{\fakechapter}[2][]{%
+	\clearforchapter
+	\thispagestyle{chapter}
+	\@schapter{\if\relax#1\relax\else#1\afterchapternum\fi#2}
+	\chaptermark{#1}
+	\phantomsection
+	\addtocontents{toc}{\vspace{\baselineskip}}
+	\addcontentsline{toc}{section}{\protect\if@maintoc\if\relax#1\relax\else#1\cftchapteraftersnum\cftchapteraftersnumb~\fi#2\protect\fi}}
 
 %	Définir le mode de numérotation des sections et paragraphes
 \if@article
@@ -1887,8 +1901,13 @@
 	\@ifnextchar\par{\@gobblepar\relax}{\relax}}
 
 %	Créer les commandes pour faire référence à un numéro
-\newcommand{\infra}[1]{\emph{infra} \no\ref{para:#1}}
-\newcommand{\supra}[1]{\emph{supra} \no\ref{para:#1}}
+\newcommand{\infra}{\@ifstar{\s@infra}{\@infra}}
+\newcommand{\supra}{\@ifstar{\s@supra}{\@supra}}
+
+\newcommand{\@infra}[1]{\emph{infra} \no\ref{para:#1}}
+\newcommand{\s@infra}[1]{\emph{infra} \nos\ref{para:#1}~s.}
+\newcommand{\@supra}[1]{\emph{supra} \no\ref{para:#1}}
+\newcommand{\s@supra}[1]{\emph{supra} \nos\ref{para:#1}~s.}
 
 %	Créer une commande \precis{} pour indiquer un résumé du paragraphe.
 %	TODO » Truver un moyen de supprimer toutes les espaces horizontales / verticales et éventuellement le saut de paragraphe. Placer en début de \para avec des % en fin de ligne, ou en fin de \para (mais tester un \unskip au début du \para)
@@ -2270,6 +2289,7 @@
 	\fi
 	backend=biber,
 	indexing=cite,
+    hyperref=auto,
 	% citereset=chapter,
 	mincrossrefs=2,
 	autolang=other*]{biblatex}
@@ -2458,6 +2478,45 @@
 % \egroup%
 % }
 
+%	Create a command that prints abbreviations
+\newlength{\abbreviationwidth}
+\newlength{\this@abbreviationwidth}
+\newenvironment{abbreviations}
+	{\list{}{\setmaxlength{\labelwidth}{\abbreviationwidth}%
+			 \setmaxlength{\labelwidth}{\shortjournalwidth}%
+			 \setlength{\leftmargin}{\labelwidth}%
+			 \setlength{\labelsep}{\biblabelsep}%
+			 \addtolength{\leftmargin}{\labelsep}%
+			 \setlength{\itemsep}{\bibitemsep}%
+			 \setlength{\parsep}{\bibparsep}%
+			 \raggedright%
+			 \renewcommand*{\makelabel}[1]{##1\hss}}}
+	{\endlist}
+
+\def\@shorthandlist{}
+\def\printabbreviations{%
+	\ifx\@empty\@shorthandlist\relax\else
+		\clearforchapter
+		\thispagestyle{chapter}
+		\@schapter{\listabbreviationname}
+		\chaptermark{\listabbreviationname}
+		\ifmemoirbibintoc
+			{\phantomsection
+			 \addcontentsline{toc}{section}{\protect\if@maintoc\listabbreviationname\protect\fi}}
+			{}
+		\begin{abbreviations}
+			\@shorthandlist
+		\end{abbreviations}
+	\fi}
+\newcommand{\abbreviation}[2]{%
+	\appto\@shorthandlist{\item[#1]{#2}}%
+	\settowidth{\this@abbreviationwidth}{#1}%
+	\setmaxlength{\abbreviationwidth}{\this@abbreviationwidth}}
+\newcommand{\bibabbreviation}[1]{%
+	\appto\@shorthandlist{\item[\citeshorttitle{#1}]{\citetitle{#1}}}%
+	\settowidth{\this@abbreviationwidth}{\citeshorttitle{#1}}%
+	\setmaxlength{\abbreviationwidth}{\this@abbreviationwidth}}
+
 
 %	Définir les éléments du <frontmatter>
 % Ajouter un \addtocontents{toc}{\vspace{\baselineskip}} pour ajouter de l'espace avant le corps du texte
@@ -2505,11 +2564,41 @@
 		% nottype=book,nottype=collection,nottype=proceedings,nottype=reference,nottype=inbook,nottype=thesis]
 }
 
+%	TODO » Adde un moyen de choisir entre la page de garde et une couv. perso
+% Ou deux commandes: \makefrontcover et \makefancycover
+\newcommand{\makefrontcover}{%
+	\cleartorecto
+	\setlrmargins{*}{*}{1}
+	\checkandfixthelayout
+	\thispagestyle{empty}
+	\printtitle}
+
 \newcommand{\makebackcover}[1]{%
 	\cleartorecto\cleartoverso
 	\setlrmargins{*}{*}{1}
 	\checkandfixthelayout
+	\thispagestyle{empty}
 	\include{#1}}
+
+\newcommand{\makespine}[1]{%
+	\cleartorecto
+	\setlrmargins{*}{*}{1}
+	\checkandfixthelayout
+	\thispagestyle{empty}
+	\bgroup
+	\centering%
+	\rotatebox{90}{%
+		\parbox{\textheight}{%
+		\Large%
+		\hfill%
+		\csname @title@\languagename\endcsname:\space%
+		\csname @subtitle@\languagename\endcsname%
+		\if\@empty\@volume\relax\else
+			\Large\enspace\textbullet\enspace\volumetext\space\RN{\@volume}
+		\fi
+		\hfill%
+		\Large\@author}}\par
+	\egroup}
 
 
 %	TODO » Ranger. Fleuron pour séparer les sections + harmoniser avec celui utilisé pour la doc
@@ -2546,6 +2635,7 @@
 			{\raggedleft\textcolor{teal}{\small #1 $\bigoplus$}}%
 		\textcolor{teal}{#2}%
 	\else#2\fi}
+
 \renewcommand{\changed}[3][]{%
 	\ifdraftdoc
 		\marginnote
@@ -2553,6 +2643,7 @@
 			{\raggedleft\textcolor{cyan}{\small #1 $\Leftrightarrow$}}%
 		\textcolor{cyan}{#3}%
 	\else#3\fi}
+
 \renewcommand{\deleted}[2][]{%
 	\ifdraftdoc
 		\marginnote
@@ -2560,6 +2651,7 @@
 			{\raggedleft\textcolor{purple}{\small #1 $/\kern-1ex/$}}%
 		\textcolor{purple}{\kern-.25ex$/$\kern-.4ex #2$/$\kern-.25ex}%
 	\else\unskip\fi}
+
 \newcommand{\todo}[2][]{%
 	\ifdraftdoc
 		\marginnote

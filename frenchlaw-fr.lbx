@@ -52,8 +52,8 @@
 	% MODIFIED ABBREVIATIONS
 	sequens			= {{sq\adddot}{s\adddot}},
 	sequentes		= {{sqq\adddot}{s\adddot}},
-	page			= {{page}{p\adddotspace\addnbspace}},
-	pages			= {{pages}{p\adddotspace\addnbspace}},
+	page			= {{page}{p\adddot\addnbspace}},
+	pages			= {{pages}{p\adddot\addnbspace}},
 	see				= {{voir}{voir}},
 	seealso			= {{voir aussi}{voir aussi}},
 	january			= {{janvier}{janv\adddot}},
@@ -61,6 +61,7 @@
 	march			= {{mars}{mars}},
 	july			= {{juillet}{juill\adddot}},
 	% AUTHOR / EDITOR FONCTIONS
+	commentary      = {{commentaires}{comm\adddot}},
 	compiler		= {{directeur}{dir\adddot}},
 	compilers		= {{directeurs}{dir\adddot}},
 	bycollaborator	= {{avec la collaboration \smartof}{avec}},
@@ -137,5 +138,21 @@
 	byeditortranaf	=
 		{{\'edition \'etablie, traduite \lbx@lfromlang, annot\'ee et postfac\'ee par}
 		{\'etablie, trad\adddotspace \lbx@sfromlang, annot\adddotspace et postf\adddotspace par}},
+	withcommentator = {{avec des commentaires \smartof}{avec des comm\adddotspace\smartof}},
   opcit            = {{op\adddotspace\addnbspace cit\adddot}{op\adddotspace\addnbspace cit\adddot}},
 }
+
+%	TODO » Modified to get edition numbers right
+\gdef\lbx@fr@ordinal#1#2{%
+  \begingroup
+  \@tempcnta0#2\relax\number\@tempcnta
+  \@whilenum\@tempcnta>100\do{\advance\@tempcnta-100}%
+  \ifnum\@tempcnta>100%	TODO » Not sure why the orig. macro stops counting at 20.
+    \@whilenum\@tempcnta>9\do{\advance\@tempcnta-10}%
+  \fi
+  \ifnum\@tempcnta=\@ne
+    \textsuperscript{#1}%
+  \else
+    \textsuperscript{e}%
+  \fi
+  \endgroup}

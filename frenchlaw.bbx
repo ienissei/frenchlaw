@@ -68,6 +68,7 @@
 		  \field{translator}
 		  \field{institution}}
 	\sort{\field{collaborator}}
+	\sort{\field{type}}
 	\sort{\field{sorttitle}
 		  \field{title}}
 	\sort{\field{sortyear}
@@ -78,22 +79,26 @@
 		  \literal{0}}
 }
 
-\DeclareSortingScheme{shortjournal}{
-	\sort{\field{shortjournal}
-		  \field{shorttitle}}
-	\sort[direction=descending]{
-		\field{year}}
-	\sort{\field{journaltitle}
-		  \field{title}}
-}
-
 \DeclareSortingScheme{shortauthor}{
+	\sort{\field{presort}}
+	\sort[final]{\field{sortkey}}
 	\sort{\field{labelname}
 		  \literal{ZZ}}
 	\sort{\field{sorttitle}
 		  \field{title}}
 	\sort{\field{sortyear}
 		  \field{year}}
+}
+
+\DeclareSortingScheme{abbreviations}{
+	\sort{\field{presort}}
+	\sort[final]{\field{sortkey}}
+	\sort{\field{shortjournal}
+		  \field{shorttitle}}
+	\sort[direction=descending]{
+		\field{year}}
+	\sort{\field{journaltitle}
+		  \field{title}}
 }
 
 % #####	FIELD FORMATS	#####
@@ -139,7 +144,7 @@
 \DeclareFieldFormat{titleaddon}{#1}
 \DeclareFieldFormat{journaltitle}{\mkbibemph{#1}}
 \DeclareFieldFormat{shortjournal}{\mkbibemph{#1}\isdot}
-\DeclareFieldFormat{shorttitle}{\mkbibemph{#1}\isdot}
+\DeclareFieldFormat[legislation]{shorttitle}{#1\isdot}%
 
 % Define volume fields
 \DeclareFieldFormat*{volume}{%
@@ -168,9 +173,10 @@
 
 %\NumCheckSetup{\def\&{\psq\addspace\bibstring{and}\addspace\mkpageprefix}}
 \DeclareRangeCommands*{\bibrangeslast}
+
 \newrobustcmd{\bibrangeslast}{%
-	\psq\addspace\bibstring{and}\addspace\mkpageprefix}
-\newrobustcmd{\sq}{\addnbspace\bibstring{sequens}\xspace}
+	\psq\addspace\bibstring{and}\addspace\mkpageprefix}%
+\newrobustcmd{\sq}{\addnbspace\bibstring{sequens}\xspace}%
 
 \renewcommand{\bibrangessep}{%
 	\ifthenelse{	\iffieldequalstr{langid}{french} \OR
@@ -219,13 +225,13 @@
 				{\namepartfamily}
 				{\namepartgiven}
 				{\namepartprefix}
-				{\namepartsuffix}
+				{\namepartsuffix}%
 		 \else
 			\usebibmacro{name:given-family}
 				{\namepartfamily}
 				{\namepartgiveni}
 				{\namepartprefix}
-				{\namepartsuffix}
+				{\namepartsuffix}%
 		 \fi}}
 
 \DeclareNameFormat{shortauthor}{%
@@ -282,6 +288,7 @@
 % 	\addcontentsline{toc}{section}{#1}%
 % 	\if@twoside\markright{\MakeUppercase{#1}}\fi}
 
+
 % #####	CITATION PROCESSORS	#####
 
 %	Set up a citation command for cross-references
@@ -308,17 +315,23 @@
 	{\endlist}
 	{\item}
 
-\defbibenvironment{shortjournal}
+\defbibcheck{shortauthor}{%
+	\ifnameundef{shortauthor}
+		{\skipentry}
+		{}}
+
+\defbibenvironment{abbreviations}
 	{\list
-		{\iffieldequalcs{shortjournal}{lastjournal}
-			{}
-			{\printfield[plain]{shortjournal}%
-			 \global\xdef\lastjournal{\thefield{shortjournal}}}%
-		 % \iffieldequalcs{shorttitle}{lasttitle}
-		 % 	{}
-		 % 	{\printfield[plain]{shorttitle}% [plain] style prevents double \emph
-		 % 	 \global\xdef\lasttitle{\thefield{shorttitle}}}
-		}
+		{\xdef\currentjournal{\thefield{shortjournal}}%
+		 \xdef\currenttitle{\thefield{shorttitle}}%
+		 \ifx\currentjournal\lastjournal\else
+			\printfield[plain]{shortjournal}%
+			\global\xdef\lastjournal{\thefield{shortjournal}}%
+		 \fi%
+		 \ifx\currenttitle\lasttitle\else
+		 	\printfield[plain]{shorttitle}% [plain] style prevents double \emph
+		 	\global\xdef\lasttitle{\thefield{shorttitle}}%
+		 \fi}
 		{\setmaxlength{\labelwidth}{\shortjournalwidth}%
 		 \setmaxlength{\labelwidth}{\shorttitlewidth}%
 		 \setlength{\leftmargin}{\labelwidth}%
@@ -331,30 +344,26 @@
 	{\endlist}
 	{\item}
 
-\defbibcheck{shortauthor}{%
-	\ifnameundef{shortauthor}
-		{\skipentry}
-		{}}
-
 %	TODO » Copier les defbibfilter et catégories ici
 %	Set up a bibliography check that removes duplicate journal titles from the shortjournal list
-\defbibcheck{shortjournal}{%
+\defbibcheck{abbreviations}{%
 	\iffieldundef{shortjournal}
-		% {\iffieldundef{shorttitle}
-		% 	{\skipentry}
-		% 	{\ifcsdef{\strfield{shorttitle}=\strfield{title}}
-		% 		{\skipentry}
-		% 		{\ifnameundef{shortauthor}
-		% 			{\savefieldcs{title}%
-		% 				{\strfield{shorttitle}=\strfield{title}}}
-		% 			{\skipentry}}}}
-		{\skipentry}
+		{\ifthenelse{	\iffieldundef{shorttitle} \OR
+						\ifentrytype{legislation} }
+			{\skipentry}
+			{\ifcsdef{\strfield{shorttitle}=\strfield{title}}
+				{\skipentry}
+				{\ifnameundef{shortauthor}
+					{\savefieldcs{title}%
+						{\strfield{shorttitle}=\strfield{title}}}
+					{\skipentry}}}}
 		{\iffieldundef{journaltitle}
 			{\skipentry}
 			{\ifcsdef{\strfield{shortjournal}=\strfield{journaltitle}}
 				{\skipentry}
 				{\savefieldcs{journaltitle}%
 					{\strfield{shortjournal}=\strfield{journaltitle}}}}}}
+
 
 % #####	BIBER PROCESSORS	#####
 
@@ -385,12 +394,30 @@
 			\step[fieldsource=shortjournal,%
 				match={\regexp{\.}},
 				replace={\regexp{\\adddot\x20}}]
-			\step[fieldsource=shortitle,%
+			\step[fieldsource=shortjournal,%
+				match={\regexp{([A-ZÉÈ\d])\s}},
+				replace={\regexp{$1\\addabbrvspace\x20}}]
+			\step[fieldsource=shortjournal,%
+				match={\regexp{([A-ZÉÈ\d][A-ZÉÈ\d]+)}},
+				replace={\regexp{\\acronym\{$1\}}}]
+			\step[fieldsource=shorttitle,%
 				match={\regexp{\.\s}},
 				replace={\regexp{\\adddotspace\x20}}]
-			\step[fieldsource=shortitle,%
+			\step[fieldsource=shorttitle,%
 				match={\regexp{\.}},
 				replace={\regexp{\\adddot\x20}}]
+			\step[fieldsource=shortjournal,%
+				match={\regexp{([A-ZÉÈ\d])\s}},
+				replace={\regexp{$1\\addabbrvspace\x20}}]
+			\step[fieldsource=shorttitle,%
+				match={\regexp{([A-ZÉÈ\d][A-ZÉÈ\d]+)}},
+				replace={\regexp{\\acronym\{$1\}}}]
+		}
+			%	Undo pre-processing of the \DH command
+		\map[overwrite=true]{
+			\step[fieldsource=series,%
+				match={\regexp{Ð}},
+				replace={\regexp{\\DH}}]
 		}
 		% When citing a collective/reference work, set the <editor> to <compiler> by default
 		\map[overwrite=false]{%
@@ -404,6 +431,12 @@
 		\map[overwrite=true]{%
 			\step[fieldsource=entrykey,
 				match={\regexp{:CW}}, fieldset=sorttitle, fieldvalue={1}]
+		}
+		% 	Skip <location> field for university presses
+		\map[overwrite=true]{%
+			\step[fieldsource=publisher,%
+				match={\regexp{(University|(U|u)niversité|(U|u)niversitaires)}},
+				fieldset=location, null]
 		}
 		% When citing a <legislation> entry, define a gender field based on the first word of the <type> field.
 		\map[overwrite=false]{%
@@ -432,10 +465,6 @@
 			\step[fieldsource=series,%
 				match={\regexp{\.(I|II)\.}},
 				replace={\regexp{\.\\textsc{\L$1}\.}}]
-			%	Undo pre-processing of the \DH command
-			\step[fieldsource=series,%
-				match={\regexp{Ð}},
-				replace={\regexp{\\DH}}]
 		}
 		% Tweak the sorting of <jurisdiction>, <legislation> entries without using a different sortscheme. Used for saving TeX memory on large .bib files
 		\map[overwrite=true]{%
@@ -634,11 +663,10 @@
 	\ifdefined\bpl@osurname
 		\usebibmacro{author/editor+others/translator+others}\fi%
 	\newunit\newblock
-	\usebibmacro{event+venue+date}%
-	\newunit\newblock
-	\usebibmacro{organization}%
-	\setunit{\newblockpunct}\newblock
-	\usebibmacro{edition}%
+	\usebibmacro{event+venue+date}%%
+	%\setunit{\newblockpunct}\newblock
+	% \usebibmacro{edition}%
+	\newunit\newblock% [= Instead of printing the edition]
 	\usebibmacro{byeditor+others}%
 	% \newunit\newblock
 	% \printfield{note}%
@@ -825,10 +853,9 @@
 		 \usebibmacro{maintitle+booktitle}%
 		 \newunit\newblock
 		 \usebibmacro{event+venue+date}%
-		 \newunit\newblock
-		 \usebibmacro{organization}%
-		 \setunit{\newblockpunct}\newblock
-		 \usebibmacro{edition}%
+		 %\setunit{\newblockpunct}\newblock
+		 % \usebibmacro{edition}%
+		 \newunit\newblock% [= Instead of printing the edition]
 		 \usebibmacro{byeditor+others}%
 		 % \newunit\newblock
 		 % \printfield{note}%
@@ -1219,20 +1246,24 @@
 		 \usebibmacro{related}}
 		% Short citation -- after the case citation
 		{\printfield{type}%
-		 \setunit{\addspace}%
+		 % Don't allow line breaks between "n. AUTHOR" in footnotes -- be a bit more tolerant in bibliographies
+		 \ifbibliography
+		 	{\setunit{\addabbrvspace}}
+		 	{\setunit{\addnbspace}}%
 		 \usebibmacro{author}%
 		 \newunit\newblock
 		 \usebibmacro{journal+issue+date}}%
 	\usebibmacro{finentry}}
 
 %	Define a driver for <shortjournal> abreviations
-\DeclareBibliographyDriver{shortjournal}{%
-  \iffieldundef{shortjournal}{}{\printfield[plain]{journaltitle}}%
-  %\iffieldundef{shorttitle}{}{\printfield[plain]{title}}
-  }
-
-\DeclareBibliographyDriver{shorttitle}{%
-	\printfield[plain]{title}}
+\DeclareBibliographyDriver{abbreviations}{%
+	\iffieldundef{shortjournal}
+		{\iffieldundef{type}
+			{}
+			{\printfield{type}%
+			 \setunit{\addnbspace}}%
+		 \printfield{title}}
+		{\printfield[plain]{journaltitle}}}
 
 \DeclareBibliographyDriver{shortauthor}{%
 	\usedriver
@@ -1254,7 +1285,7 @@
 % #####	CUSTOM BIBLIOGRAPHY MACROS	#####
 
 \renewbibmacro*{in:}{%
-	\bibstring{in}%
+	\bibstring[\mkbibemph]{in}%
 	\setunit{\addspace}}
 
 \newbibmacro*{see:}{%
@@ -1371,10 +1402,10 @@
 	% \newunit
 	\ifthenelse{	\iffieldequalstr{langid}{french} \OR
 					\iffieldundef{langid} \AND\NOT
-					\iffieldundef{part}}%
+					\iffieldundef{part}	}
 		%	For French language entries that have a <part> field
 		% Ex: JCP 1950, I, 12345 -- JCP 2015, chron., 123
-		{\setunit{\nopunct\adddotspace}
+		{\setunit{\addabbrvspace}%
 		 \printfield{year}%
 		 \iffieldnum{part}
 			{\setunit{\adddot}
@@ -1392,32 +1423,34 @@
 						\iffieldundef{month} }
 			%	If there is no <volume>, <number> or <month> defined, use short reference
 			% Ex: RTD civ. 2010.123
-			{\setunit{\nopunct\adddotspace}
+			{\setunit{\nopunct\addabbrvspace}
 			 \printfield{year}%
 			 \setunit{\adddot}
 			 \printfield[noprefix]{pages}%
 			 \clearfield{pages}%
 			 \clearfield{issue}}
 			%	If a <volume>, <number> or <month> is specified
-			{\iffieldequalstr{langid}{english}
+			{\ifthenelse{	\iffieldequalstr{langid}{english} \AND\NOT
+							\iffieldundef{volume} }
 				%	For english language journals, print date at the end
 				% Ex: 123 Harv. L.J. 12 (2015)
-				{\setunit{\adddotspace}
+				{\setunit{\nopunct\addabbrvspace}
 				 \printfield[noprefix]{pages}%
 				 \ifthenelse{	\iffieldundef{year} \AND
 								\iffieldundef{number} \AND
 								\iffieldundef{issue} }
 					{}
-				 	{\setunit{\addspace}
-				 	 \printtext[parens]{%
-					 \usebibmacro{date}%
-					 \newunit
-					 \printfield{number}%
-					 \newunit
-					 \usebibmacro{issue}}}}
+					{\setunit{\addspace}
+					 \printtext[parens]{%
+						\usebibmacro{date}%
+						\newunit
+						\printfield{number}%
+						\newunit
+						\usebibmacro{issue}}}}
 				%	For all other languages, use verbose style reference
-				% Ex: Gaz. Pal., n°123, 5 janv. 2015, p. 123
-				% --- Arch. phil. dr., n°123, 2015/4, p. 123
+				% Ex: Gaz. Pal., 5 janv. 2015, n°123, p. 123
+				% --- Arch. phil. dr., 2015/4, n°123, p. 123
+				% --- Past and Present, 2015, n°123, p. 123
 				{\usebibmacro{date}%
 				 \newunit
 				 \printfield{volume}%
@@ -1452,7 +1485,9 @@
 	\iffieldundef{venue}
 		{}
 		{\printtext[parens]{%
-			\printfield{venue}}}}
+			\printfield{venue}%
+			\newunit\newblock
+			\usebibmacro{organization}}}}
 
 %	Create macros for publication information
 \newbibmacro*{publisher+location+date}{%
@@ -1574,7 +1609,7 @@
 		{\global\undef\bbx@lasthash}%
 	\ifnameundef{collaborator}
 		{}
-		{\bibstring{bycollaborator}
+		{\bibstring{bycollaborator}%
 		 \setunit{\nopunct\addspace}%
 		 \printnames{collaborator}}}
 
@@ -1660,8 +1695,10 @@
 	 		 	{}%
 	 		 \ifthenelse{	\ifentrytype{article} \AND
 	 		 				\iffieldsequal{journaltitle}{savedjournaltitle} }
-	 		 	{\clearfield{journaltitle}%
-	 		 	 \clearfield{shortjournal}%
+	 		 	{\iffieldequalstr{langid}{english}
+	 		 		{}
+	 		 		{\clearfield{journaltitle}%
+	 		 		 \clearfield{shortjournal}}%
 	 		 	 \ifthenelse{	\iffieldsequal{day}{savedday} \AND
 	 		 	 				\iffieldsequal{month}{savedmonth} \AND
 	 		 	 				\iffieldsequal{year}{savedyear} }
