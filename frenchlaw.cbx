@@ -88,7 +88,6 @@
 % Format des abréviations: citetitle = forme longue, citeshorthand = dans le texte (point ajouté dynamiquement), shorthandlist = dans la liste des abréviations (ajouter un point).
 \DeclareFieldFormat[legislation]{citetitle}{#1\isdot}%
 
-
 \DeclareFieldFormat{postnote}{#1\isdot}
 
 % Needed?
@@ -110,9 +109,9 @@
 	\ifthenelse{	\ifentrytype{reference} \AND\NOT \iffieldundef{shorttitle}	}
 		{\boolfalse{citetracker}}
 		{}%
-	\ifnameundef{shortauthor}
-		{}
-		{\boolfalse{citetracker}}%
+	\ifthenelse{	\ifuseshortauthor \AND\NOT \ifnameundef{shortauthor}	}
+		{\boolfalse{citetracker}}
+		{\clearname{shortauthor}}%
 	\ifnumless{\value{multicitecount}}{2}
 		{\global\boolfalse{cbx:parens}%
 		 \global\undef\cbx@lasthash}
@@ -133,7 +132,7 @@
 					{\ifnameundef{labelname}
 						{}
 						{\ifnameundef{shortauthor}
-						 	{\printnames{labelname}
+						 	{\printnames[labelname]{author}
 						 	 \ifthenelse{	\value{collaborator}=1	}
 							 	{\bibstring{and}\space}
 							 	{\newunit}%
@@ -153,7 +152,7 @@
 							\ifuseauthor
 							 	{}
 							 	{\setunit{\addnbspace}
-							 	 \printnames{shortauthor}}}}}}}}%
+							 	 \printnames{labelname}}}}}}}}%
 	\usebibmacro{shorthandintro}}
 
 \newbibmacro*{citetitle}{%
@@ -194,7 +193,7 @@
 				 \clearfield{labeltitle}%
 				 \clearfield{title}}}
 			{\ifnameundef{shortauthor}
-				{\printnames[first-last]{labelname}%
+				{\printnames[first-last]{author}%
 				 \ifthenelse{	\value{collaborator}=1	}
 					{\bibstring{and}\space}
 					{\newunit}%
@@ -226,7 +225,7 @@
 						\ifuseauthor
 						 	{}
 						 	{\setunit{\addnbspace}
-							 \printnames{shortauthor}}}}}}}%
+							 \printnames{labelname}}}}}}}%
 	\ifbool{cbx:parens}
 		{}
 		{\setunit{\global\booltrue{cbx:parens}\addnbspace\bibopenparen}}%
@@ -268,7 +267,9 @@
 			 %	Driver for article type entries
 			 \ifthenelse{	\ifentrytype{article} \OR
 			 				\ifentrytype{commentary} }
-				{\usebibmacro{journal+issue+date}}
+				{\ifdefined\bpl@osurname
+					\printfield{addendum}\fi%
+				 \usebibmacro{journal+issue+date}}
 				{}%
 			 %	Driver for book / collection / proceedings entries
 			 \ifthenelse{	\ifentrytype{book} \OR
@@ -349,9 +350,11 @@
 \newbibmacro*{cite:related}{%
 	\ifentrytype{commentary}
 		{\togglefalse{bbx:related}%
-		 \printfield{type}%
-		 \setunit{\addspace}
-		 \bibstring{under}%
+		 \ifdefined\bpl@osurname\else
+			 \printfield{type}%
+			 \setunit{\addspace}
+			 \bibstring{under}%
+		  \fi
 		 \setunit{\addspace}
 		 \usebibmacro{related:init}%
 		 \usebibmacro{related}}

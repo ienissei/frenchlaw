@@ -20,6 +20,9 @@
 \ProvidesFile{frenchlaw.bbx}%
 	[2014/09/30 v.0.9. Bibliography style for French legal documents]
 
+%	TODO » Définir une option pour la langue latine, qui reprendrait la langue courante?
+%	Vérifier tous les \{\} (crochets vides) => Le \if est-il bien nécessaire partout? Possibilité de le supprimer en utilisant un \setunit*{} (étoilé) ??
+
 % #####	OPTIONS	#####
 
 %	Create bibliography toggles
@@ -59,6 +62,7 @@
 % #####	SORTING	#####
 
 %	Sort entries by {name/institution} + year + day + month + title
+%	TODO » Remplacer par \DeclareSortingTemplate
 \DeclareSortingScheme{nty}{
 	\sort{\field{presort}}
 	\sort[final]{\field{sortkey}}
@@ -135,7 +139,7 @@
 			{\mkbibquote{#1}}
 			{#1}}}
 \DeclareFieldFormat[thesis]{title}{\mkbibemph{#1}}
-\DeclareFieldFormat[review]{title}{#1}
+\DeclareFieldFormat[review]{title}{\bibstring{reviewof}\addcolon#1}
 \DeclareFieldFormat[article]{title}{\mkbibquote{#1}}
 \DeclareFieldFormat[commentary]{title}{\mkbibquote{#1}}
 \DeclareFieldFormat[legal]{title}{#1}
@@ -145,6 +149,8 @@
 \DeclareFieldFormat{journaltitle}{\mkbibemph{#1}}
 \DeclareFieldFormat{shortjournal}{\mkbibemph{#1}\isdot}
 \DeclareFieldFormat[legislation]{shorttitle}{#1\isdot}%
+
+\DeclareFieldFormat{url}{\\<\,\url{#1}>}
 
 % Define volume fields
 \DeclareFieldFormat*{volume}{%
@@ -164,8 +170,10 @@
 	\addnbthinspace\mkcomprange{#1}}
 
 % The <pages> field should only print the first page
-\DeclareFieldFormat[article,commentary]{pages}{%
+% Except in CV mode, for which we print the page span
+\DeclareFieldFormat[article,commentary,review]{pages}{%
 	\mkfirstpage*[\mkpageprefix]{#1}\psq}
+
 \DeclareFieldFormat{noprefix}{%
 	\let\psq\relax%
 	\let\mkpageprefix\relax%
@@ -329,7 +337,7 @@
 			\global\xdef\lastjournal{\thefield{shortjournal}}%
 		 \fi%
 		 \ifx\currenttitle\lasttitle\else
-		 	\printfield[plain]{shorttitle}% [plain] style prevents double \emph
+		 	\printfield{shorttitle}% [plain] style prevents double \emph
 		 	\global\xdef\lasttitle{\thefield{shorttitle}}%
 		 \fi}
 		{\setmaxlength{\labelwidth}{\shortjournalwidth}%
@@ -366,6 +374,8 @@
 
 
 % #####	BIBER PROCESSORS	#####
+
+% Ajouter un remplacement de " (" par une espace isnécable (?)
 
 % Never inherit shorttitle fields
 \DeclareDataInheritance{*}{*}
@@ -528,6 +538,8 @@
 
 % #####	BIBLIOGRAPHY DRIVERS	#####
 
+% Noter dans la doc quel est le type de chaque champ, e.g. <institution> est une liste, donc pour les cotutelles, séparer par "and"
+
 %	Create hooks for bibliography drivers
 \newbibmacro*{begentry}{}
 \newbibmacro*{finentry}{\finentry}
@@ -544,6 +556,7 @@
 	% \newunit
 	% \printlist{language}%
 	\ifdefined\bpl@osurname
+		\setunit*{\nopunct}%
 		\usebibmacro{author/translator+others}\fi%
 	\newunit\newblock
 	\usebibmacro{byauthor}%
@@ -554,9 +567,9 @@
 	\newunit\newblock
 	\usebibmacro{journal+issue+date}%
 	\setunit{\newblockpunct}\newblock
-	\usebibmacro{isbn+doi+eprint+url}%
-	\newunit\newblock
 	\usebibmacro{addendum+pubstate}%
+	\newunit\newblock
+	\usebibmacro{isbn+doi+eprint+url}%
 	\setunit{\bibpagerefpunct}\newblock
 	\usebibmacro{pageref}%
 	\iftoggle{bbx:related}
@@ -579,6 +592,7 @@
 	% \printlist{language}%
 	% In CV mode, additional author names come after the title
 	\ifdefined\bpl@osurname
+		\setunit*{\nopunct}%
 		\usebibmacro{author/editor+others/translator+others}\fi%
 	\newunit\newblock
 	\usebibmacro{byauthor}%
@@ -594,9 +608,9 @@
 	\setunit{\bibpagespunct}\newblock
 	\usebibmacro{pagetotal/volumes}%
 	\setunit{\newblockpunct}\newblock
-	\usebibmacro{isbn+doi+eprint+url}%
-	\newunit\newblock
 	\usebibmacro{addendum+pubstate}%
+	\newunit\newblock
+	\usebibmacro{isbn+doi+eprint+url}%
 	\setunit{\bibpagerefpunct}\newblock
 	\usebibmacro{pageref}%
 	\newunit\newblock
@@ -620,6 +634,7 @@
 	% \newunit%
 	% \printlist{language}%
 	\ifdefined\bpl@osurname
+		\setunit*{\nopunct}%
 		\usebibmacro{author/editor+others/translator+others}\fi%
 	\newunit\newblock
 	\usebibmacro{byauthor}%
@@ -635,9 +650,9 @@
 	\setunit{\bibpagespunct}\newblock
 	\usebibmacro{pagetotal/volumes}%
 	\setunit{\newblockpunct}\newblock
-	\usebibmacro{isbn+doi+eprint+url}%
-	\newunit\newblock
 	\usebibmacro{addendum+pubstate}%
+	\newunit\newblock
+	\usebibmacro{isbn+doi+eprint+url}%
 	\setunit{\bibpagerefpunct}\newblock
 	\usebibmacro{pageref}%
 	\newunit\newblock
@@ -661,6 +676,7 @@
 	% \newunit
 	% \printlist{language}%
 	\ifdefined\bpl@osurname
+		\setunit*{\nopunct}%
 		\usebibmacro{author/editor+others/translator+others}\fi%
 	\newunit\newblock
 	\usebibmacro{event+venue+date}%%
@@ -675,9 +691,9 @@
 	\setunit{\bibpagespunct}\newblock
 	\usebibmacro{pagetotal/volumes}%
 	\setunit{\newblockpunct}\newblock
-	\usebibmacro{isbn+doi+eprint+url}%
-	\newunit\newblock
 	\usebibmacro{addendum+pubstate}%
+	\newunit\newblock
+	\usebibmacro{isbn+doi+eprint+url}%
 	\setunit{\bibpagerefpunct}\newblock
 	\usebibmacro{pageref}%
 	\newunit\newblock
@@ -701,6 +717,7 @@
 	% \newunit%
 	% \printlist{language}%
 	\ifdefined\bpl@osurname
+		\setunit*{\nopunct}%
 		\usebibmacro{author/editor+others/translator+others}\fi%
 	\newunit\newblock
 	\usebibmacro{byauthor}%
@@ -718,9 +735,9 @@
 	\setunit{\bibpagespunct}\newblock
 	\usebibmacro{pagetotal/volumes}%
 	\setunit{\newblockpunct}\newblock
-	\usebibmacro{isbn+doi+eprint+url}%
-	\newunit\newblock
 	\usebibmacro{addendum+pubstate}%
+	\newunit\newblock
+	\usebibmacro{isbn+doi+eprint+url}%
 	\setunit{\bibpagerefpunct}\newblock
 	\usebibmacro{pageref}%
 	\newunit\newblock
@@ -744,6 +761,7 @@
 	% \newunit
 	% \printlist{language}%
 	\ifdefined\bpl@osurname
+		\setunit*{\nopunct}%
 		\usebibmacro{author/translator+others}\fi%
 	\newunit\newblock
 	\usebibmacro{byauthor}%
@@ -761,9 +779,9 @@
 		 \setunit{\newblockpunct}\newblock
 		 \usebibmacro{publisher+location+date}%
 		 \setunit{\newblockpunct}\newblock
-		 \usebibmacro{isbn+doi+eprint+url}%
+		 \usebibmacro{addendum+pubstate}%
 		 \newunit\newblock
-		 \usebibmacro{addendum+pubstate}}
+		 \usebibmacro{isbn+doi+eprint+url}}
 		{\newunit\newblock
 		 \usebibmacro{see:}%
 		 \bbx@crossref{\thefield{crossref}}}%
@@ -794,6 +812,7 @@
 	% \newunit
 	% \printlist{language}%
 	\ifdefined\bpl@osurname
+		\setunit*{\nopunct}%
 		\usebibmacro{author/translator+others}\fi%
 	\newunit\newblock
 	\usebibmacro{byauthor}%
@@ -818,9 +837,9 @@
 	\newunit\newblock
 	\usebibmacro{chapter+pages}%
 	\setunit{\newblockpunct}\newblock
-	\usebibmacro{isbn+doi+eprint+url}%
-	\newunit\newblock
 	\usebibmacro{addendum+pubstate}%
+	\newunit\newblock
+	\usebibmacro{isbn+doi+eprint+url}%
 	\setunit{\bibpagerefpunct}\newblock
 	\usebibmacro{pageref}%
 	\newunit\newblock
@@ -844,6 +863,7 @@
 	% \newunit
 	% \printlist{language}%
 	\ifdefined\bpl@osurname
+		\setunit*{\nopunct}%
 		\usebibmacro{author/translator+others}\fi%
 	\newunit\newblock
 	\usebibmacro{byauthor}%
@@ -869,9 +889,9 @@
 	\newunit\newblock
 	\usebibmacro{chapter+pages}%
 	\setunit{\newblockpunct}\newblock
-	\usebibmacro{isbn+doi+eprint+url}%
-	\newunit\newblock
 	\usebibmacro{addendum+pubstate}%
+	\newunit\newblock
+	\usebibmacro{isbn+doi+eprint+url}%
 	\setunit{\bibpagerefpunct}\newblock
 	\usebibmacro{pageref}%
 	\newunit\newblock
@@ -901,6 +921,7 @@
 			 \usebibmacro{in:}%
 			 \usebibmacro{maintitle+booktitle}%
 			 \ifdefined\bpl@osurname
+				\setunit*{\nopunct}%
 				\usebibmacro{author/translator+others}\fi%
 			 \newunit\newblock
 			 \usebibmacro{bybookauthor}%
@@ -919,9 +940,9 @@
 		 \newunit\newblock
 		 \usebibmacro{chapter+pages}%
 		 \setunit{\newblockpunct}\newblock
-		 \usebibmacro{isbn+doi+eprint+url}%
-		 \newunit\newblock
 		 \usebibmacro{addendum+pubstate}%
+		 \newunit\newblock
+		 \usebibmacro{isbn+doi+eprint+url}%
 		 \setunit{\bibpagerefpunct}\newblock
 		 \usebibmacro{pageref}%
 		 \newunit\newblock
@@ -961,6 +982,7 @@
 	% \newunit
 	% \printlist{language}%
 	\ifdefined\bpl@osurname
+		\setunit*{\nopunct}%
 		\usebibmacro{author}\fi%
 	\newunit\newblock
 	\iflistundef{publisher}
@@ -976,9 +998,9 @@
 	\setunit{\bibpagespunct}\newblock
 	\usebibmacro{pagetotal/volumes}%
 	\setunit{\newblockpunct}\newblock
-	\usebibmacro{isbn+doi+eprint+url}%
-	\newunit\newblock
 	\usebibmacro{addendum+pubstate}%
+	\newunit\newblock
+	\usebibmacro{isbn+doi+eprint+url}%
 	\setunit{\bibpagerefpunct}\newblock
 	\usebibmacro{pageref}%
 	\iftoggle{bbx:related}
@@ -1000,6 +1022,7 @@
 	% \newunit
 	% \printlist{language}%
 	\ifdefined\bpl@osurname
+		\setunit*{\nopunct}%
 		\usebibmacro{author}\fi%
 	\newunit\newblock
 	\usebibmacro{event+venue+date}%
@@ -1030,6 +1053,7 @@
 	% \newunit
 	% \printlist{language}%
 	\ifdefined\bpl@osurname
+		\setunit*{\nopunct}%
 		\usebibmacro{author/editor+others/translator+others}\fi%
 	\newunit\newblock
 	\usebibmacro{byauthor}%
@@ -1046,9 +1070,9 @@
 	\setunit{\newblockpunct}\newblock
 	\usebibmacro{publisher+location+date}%
 	\setunit{\newblockpunct}\newblock
-	\usebibmacro{isbn+doi+eprint+url}%
-	\newunit\newblock
 	\usebibmacro{addendum+pubstate}%
+	\newunit\newblock
+	\usebibmacro{isbn+doi+eprint+url}%
 	\setunit{\bibpagerefpunct}\newblock
 	\usebibmacro{pageref}%
 	\iftoggle{bbx:related}
@@ -1066,7 +1090,7 @@
 	\newunit
 	\iffieldundef{type}
 		{}
-		{\midsentence\printfield{type}%
+		{\midsentence\printfield{type}\isdot%
 		 \setunit{\addnbspace}}%
 	\iffieldundef{number}
 		{}
@@ -1085,6 +1109,9 @@
 			 \usebibmacro{date}%
 			 \setunit{\addspace}}}
 		{}%
+	\newunit
+	\printnames[labelname]{author}%
+	\newunit
 	\printfield{title}%
 	% Primary citations and references print the series and commentaries
 	\iftoggle{bbx:related}
@@ -1227,12 +1254,12 @@
 	\usebibmacro{begentry}%
 	\ifrelatedloop
 		% Long citation for stand-alone references
-		{% In CV mode, additional author names come after the title
-		 \ifdefined\bpl@osurname\else
+		{\ifdefined\bpl@osurname\else
 			\usebibmacro{author}\fi%
 		 \setunit{\labelnamepunct}\newblock
 		 \usebibmacro{title}%
 		 \ifdefined\bpl@osurname
+			\setunit*{\nopunct}%
 			\usebibmacro{author}\fi%
 		 \newunit\newblock
 		 \usebibmacro{journal+issue+date}%
@@ -1245,14 +1272,23 @@
 		 \usebibmacro{related:init}%
 		 \usebibmacro{related}}
 		% Short citation -- after the case citation
-		{\printfield{type}%
-		 % Don't allow line breaks between "n. AUTHOR" in footnotes -- be a bit more tolerant in bibliographies
-		 \ifbibliography
-		 	{\setunit{\addabbrvspace}}
-		 	{\setunit{\addnbspace}}%
-		 \usebibmacro{author}%
+		{\ifdefined\bpl@osurname
+			\usebibmacro{marginyear}%
+			\usebibmacro{title}%
+		\else
+			\printfield{type}%
+			% Don't allow line breaks between "n. AUTHOR" in footnotes -- be a bit more tolerant in bibliographies
+			\ifbibliography
+			 	{\setunit{\addabbrvspace}}
+			 	{\setunit{\addnbspace}}%
+			\usebibmacro{author}%
+		 \fi%
 		 \newunit\newblock
-		 \usebibmacro{journal+issue+date}}%
+		 \usebibmacro{journal+issue+date}%
+		\setunit{\newblockpunct}\newblock
+		\usebibmacro{addendum+pubstate}%
+		\newunit\newblock
+		\usebibmacro{isbn+doi+eprint+url}}%
 	\usebibmacro{finentry}}
 
 %	Define a driver for <shortjournal> abreviations
@@ -1262,7 +1298,7 @@
 			{}
 			{\printfield{type}%
 			 \setunit{\addnbspace}}%
-		 \printfield{title}}
+		 \printfield[plain]{title}}
 		{\printfield[plain]{journaltitle}}}
 
 \DeclareBibliographyDriver{shortauthor}{%
@@ -1351,18 +1387,17 @@
 		 \usebibmacro{maintitle}}}
 
 \newbibmacro*{maintitle+booktitle}{%
-	\usebibmacro{booktitle}%
-	\newunit\newblock
-	\usebibmacro{compiler}%
 	\iffieldsequal{maintitle}{booktitle}
 		{\clearfield{maintitle}%
 		 \clearfield{mainsubtitle}%
 		 \clearfield{maintitleaddon}}
 		{\iffieldundef{maintitle}
 			{}
-			{\newunit\newblock
-			 \usebibmacro{in:}%
-			 \usebibmacro{maintitle}}}}
+			{\usebibmacro{maintitle}%
+			 \setunit{\addcolon\addspace}}}%
+	\usebibmacro{booktitle}%
+	\newunit\newblock
+	\usebibmacro{compiler}}
 
 \renewbibmacro*{title}{%
 	\iffieldundef{title}
@@ -1371,7 +1406,9 @@
 			\printfield[titlecase]{title}%
 			\setunit{\subtitlepunct}%
 			\printfield[titlecase]{subtitle}}%
-		 \setunit{\newblockpunct}}%
+		 \ifentrytype{commentary}
+			{\newunit\newblock}
+			{\setunit{\newblockpunct}}}%
 	\printfield{titleaddon}}
 
 \renewbibmacro*{booktitle}{%
@@ -1405,7 +1442,7 @@
 					\iffieldundef{part}	}
 		%	For French language entries that have a <part> field
 		% Ex: JCP 1950, I, 12345 -- JCP 2015, chron., 123
-		{\setunit{\addabbrvspace}%
+		{\newunit%
 		 \printfield{year}%
 		 \iffieldnum{part}
 			{\setunit{\adddot}
@@ -1423,7 +1460,9 @@
 						\iffieldundef{month} }
 			%	If there is no <volume>, <number> or <month> defined, use short reference
 			% Ex: RTD civ. 2010.123
-			{\setunit{\nopunct\addabbrvspace}
+			{\iffieldundef{pages}
+				{}
+				{\setunit{\nopunct\addabbrvspace}}%
 			 \printfield{year}%
 			 \setunit{\adddot}
 			 \printfield[noprefix]{pages}%
@@ -1455,9 +1494,11 @@
 				 \newunit
 				 \printfield{volume}%
 				 \newunit
-				 \iffieldundef{pages}
-				 	{\printfield[plain]{number}}
-				 	{\printfield{number}}%
+				 \ifthenelse{	\iffieldundef{pages} \AND
+								\iffieldundef{url} \AND
+								\iffieldundef{pubstate} }
+				 	{\printfield[plain]{number}}%
+				 	{\printfield{number}}
 				 \iffieldundef{issue}
 				 	{}
 					{\setunit{\addspace}
@@ -1568,9 +1609,12 @@
 		{}}
 
 \newbibmacro*{addendum+pubstate}{%
-	\printfield{addendum}%
-	\newunit\newblock
-	\printfield{pubstate}}
+	\iffieldundef{year}
+		{}
+		{\newunit\newblock
+		 \printfield{pubstate}}%
+	\setunit{\adddot\addspace}\newblock
+	\printfield{addendum}}
 
 \renewbibmacro*{bibindex}{%
 	\ifbibindex
