@@ -20,63 +20,48 @@
 
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{frenchlaw-dev}%
-	[2014/09/30 v.0.9. Developer macros for the Frenchlaw class]
+	[2018/08/24 v.0.9. Developer macros for the Frenchlaw class]
 
-%	Print a grid
-\usepackage{tikz}
-\usepackage{calc} % Try to remove it and calculate with dimexpr
-\usepackage{eso-pic}
 
-\definecolor{grid}{gray}{0.8}
-\newlength{\topline}
-\setlength{\topline}{\paperheight}
-\addtolength{\topline}{-1in}
-\addtolength{\topline}{-\voffset-\topmargin-\headheight-\headsep-\topskip}
-\newcounter{nlines}
-\setcounter{nlines}{\textheight / \baselineskip + 1}
-\AtBeginDocument{
-\AddToShipoutPicture{%
-    \color{grid}
-    \multiput(0,\strip@pt\topline)%
-    (0,-\strip@pt\baselineskip){\value{nlines}}%
-        {\line(1,0){\strip@pt\paperwidth}}%
-}}
+% =***======***======***======***======***======***======***======***======***======***=
 
-\usepackage{showframe}
-\renewcommand*\ShowFrameColor{\color{grid}}
-\renewcommand*\ShowFrameLinethickness{.8pt}
 
-%	Require the needed packages
-\RequirePackage{etoolbox,xstring,xcolor,verbatim,docmute,makeidx,needspace,metalogo}
+%	#####	IMPLEMENT GRID OPTION	#####
 
-%	Change the kerning in the LaTeX logos
-\setlogokern{Xe}{-.3ex}
-\setlogokern{eT}{-.35ex}
-\setlogokern{eL}{-.25ex}
-\setlogokern{La}{-.65ex}
-\setlogokern{aT}{-.25ex}
-\setlogokern{Te}{-.35ex}
-\setlogokern{eX}{-.25ex}
-\setLaTeXa{\raisebox{.25em}{\scshape a}}
-\setlogodrop{.25em}
+\if@grid
+	%	Load required packages
+	\RequirePackage{tikz,calc,eso-pic}
 
-%	Create the Frenchlaw logo
-\newcommand{\frenchlaw}{%
-	\ifxetex
-		{\itshape F\kern-.2ex rench}%
-		L\kern-.7ex%
-		\raisebox{.25em}{\scshape a}\kern-.3ex%
-		W%
-	\else%
-		{\itshape French\kern.1ex}%
-		L\kern-.65ex%
-		\raisebox{.2em}{\scshape a}\kern-.3ex%
-		W%
-	\fi%
-	\xspace%
-}
-\newcommand{\frenchlawlogo}{\adforn{25}\adforn{63}~\adforn{53}}
+	%	Print a typographic grid for vertical alignment
+	\definecolor{grid}{gray}{0.8}
+	\newlength{\topline}
+	\setlength{\topline}{\paperheight}
+	\addtolength{\topline}{-1in}
+	\addtolength{\topline}{-\voffset-\topmargin-\headheight-\headsep-\topskip}
+	\newcounter{nlines}
+	\setcounter{nlines}{\textheight / \baselineskip + 1}
+	\AtBeginDocument{
+	\AddToShipoutPicture{%
+	    \color{grid}
+	    \multiput(0,\strip@pt\topline)%
+	    (0,-\strip@pt\baselineskip){\value{nlines}}%
+	        {\line(1,0){\strip@pt\paperwidth}}%
+	}}
+\fi
 
+%	Print a frame
+% \RequirePackage{showframe}
+% \definecolor{frame}{gray}{0.8}
+% \renewcommand*\ShowFrameColor{\color{frame}}
+% \renewcommand*\ShowFrameLinethickness{.8pt}
+
+
+% =***======***======***======***======***======***======***======***======***======***=
+
+
+%	IMPLEMENT DEVELOPER OPTION
+
+%	Load <listings> pachage
 \ifxetex
 	\RequirePackage{listings}
 \else
@@ -138,7 +123,7 @@
 	stepnumber=10000,
 	firstnumber=1,
 	numberstyle=\numbercolor\makebox[1em][c]{\macrosign}\@gobble,
-	identifierstyle=\identifiercolor\small\itshape,
+	identifierstyle=\identifiercolor,
 	emphstyle=\emphcolor,
 	literate=	%{\{}{{\bracketcolor\{}{\identifiercolor}}{2}
 	% 			{\}}{{\identifiercolor}{\bracketcolor\}}}{2}
@@ -174,6 +159,11 @@
 	  \addvspace{\baselineskip}}
 	{\addvspace{\baselineskip}}
 
+\lstnewenvironment{sample}[1][]
+	{\lstset{emph={#1}}%
+	  \addvspace{\baselineskip}}
+	{\addvspace{\baselineskip}}
+
 %	Short verbatim for inline code
 \lstMakeShortInline[style=inlinecode]{|}
 
@@ -189,6 +179,7 @@
 	  \ifstrempty{#1}{}{\lstinline[{style=macrocode}]{=<#1>}}%
 	  \hfill\ifstrempty{#2}{}{par d{\'e}faut~: \lstinline{#2}}\\}
 
+%	TODO » Indexation automatique à partir d'une liste CSV pour les options + exemples (?)
 %	Command for printing and indexing commands
 \newcommand{\devindex}[1]{%
 	\index{#1@\ttfamily\textbackslash #1}%
