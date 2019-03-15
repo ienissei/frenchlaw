@@ -2,4 +2,6 @@ doc/
 frenchlaw.bib
 frenchlaw.ist
 frenchlaw.xdy
+*.sublime-project
+*.sublime-workplace
 .DS_Store
