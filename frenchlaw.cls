@@ -16,121 +16,104 @@
 
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{frenchlaw}%
-	[2014/09/30 v.0.9. Versatile document class for French law, based on memoir]
+	[2018/08/24 v.0.9. Versatile document class for French law, based on memoir]
+
+
+% =***======***======***======***======***======***======***======***======***======***=
+
 
 %	#####	CLASS OPTIONS	#####
 
 %	Load <xkeyval>
 \RequirePackage{xkeyval}
 
-%	GENERAL OPTION SWITCHES
+%	SWITCHES
 
-%	TODO » Créer un switch \if@frontmatter  pour remplacer \@memfront
-%		Idem, pour remplacer \@memmain@floats => \if@mainmatter (?)
-
+%	Page layout
 \newif\if@stockaiv
 	\@stockaivfalse
 \newif\if@stockav
 	\@stockavfalse
 \newif\if@stockavi
 	\@stockavifalse
+\newif\if@oneside
+	\@onesidefalse
+\newif\if@landscape
+	\@landscapefalse
+\newif\if@marginal
+	\@marginalfalse
+
+%	Typefaces
 \newif\if@tenpoints
 	\@tenpointsfalse
 \newif\if@elevenpoints
 	\@elevenpointsfalse
 \newif\if@twelvepoints
 	\@twelvepointsfalse
-\newif\if@oneside							% Note: @twoside is already defined
-	\@onesidefalse
-\newif\if@draft
-	\@draftfalse
-\newif\if@marginal
-	\@marginalfalse
-
-%	SPECIAL OPTION SWITCHES
-
-\newif\if@article
-	\@articlefalse
-\newif\if@CV
-	\@CVfalse
-\newif\if@letter
-	\@letterfalse
-\newif\if@didactic
-	\@didacticfalse
-
-%	VARIOUS OPTION SWITCHES
-
+\newif\if@fourteenpoints
+	\@fourteenpointsfalse
 \newif\if@sansserif
 	\@sansseriffalse
-\newif\if@summary
-	\@summaryfalse
-\newif\if@outline
-	\@outlinefalse
-\newif\if@precis% TODO » Delete or rewrite
-	\@precisfalse
-\newif\if@backindex
-	\@backindexfalse
 
-%	LANGUAGE OPTION SWITCHES
+%	Document style
+\newif\if@article
+	\@articlefalse
+\newif\if@didactic
+	\@didacticfalse
+\newif\if@letter
+	\@letterfalse
+\newif\if@vitae
+	\@vitaefalse
+\newif\if@stationery
+	\@stationeryfalse
 
-\newif\if@british
-	\@britishfalse
-\newif\if@english
-	\@englishfalse
-\newif\if@french
-	\@frenchfalse
-
-%	COMMAND ACTIVATED SWITCHES
-
+%	Document features
+\newif\if@draft
+	\@draftfalse
+\newif\iflongcv
+	\longcvtrue
 \newif\if@paraname
 	\@paranametrue
-\newif\if@paratoc
-	\@paratocfalse
+\newif\if@precis
+	\@precisfalse
+\newif\if@outline
+	\@outlinefalse
+\newif\if@summary
+	\@summaryfalse
 \newif\if@indexparagraphs
 	\@indexparagraphstrue
-
-%	INTERNAL SWITCHES
-
-% Used for turning off bibliographies in short ToC
-\newif\if@maintoc
-	\@maintoctrue
-
-% Used for printing "page 1/3" in letters, CV, etc.
 \newif\if@require@lastpage
 	\@require@lastpagefalse
 
-%	Définir des commandes pour switcher entre l'indexation par page et par paragraphe
-% Utilisé par l'option index=..., non utilisable après le chargement de classe
-\newcommand{\set@indexparagraphs}{\@indexparagraphstrue}
-\newcommand{\set@indexpages}{\@indexparagraphsfalse}
+%	Developer features
+\newif\if@dev
+	\@devfalse
+\newif\if@grid
+	\@gridfalse
 
-%	GENERAL OPTIONS
+%	LAYOUT OPTIONS
 
 %	Define options for paper size <a4paper>, <a5paper> & <a6paper>
 \DeclareOptionX{a4paper}{
 	\@stockaivtrue
-	\@twelvepointstrue\@tenpointsfalse
+	\@stockavfalse\@stockavifalse
+	\@twelvepointstrue
+	\@tenpointsfalse\@elevenpointsfalse\@fourteenpointsfalse
 	\PassOptionsToClass{a4paper,12pt}{memoir}
 }
 \DeclareOptionX{a5paper}{
 	\@stockavtrue
-	\@twelvepointstrue\@tenpointsfalse
+	\@stockaivfalse\@stockavifalse
+	\@twelvepointstrue
+	\@tenpointsfalse\@elevenpointsfalse\@fourteenpointsfalse
 	\PassOptionsToClass{a5paper,12pt}{memoir}
 }
 \DeclareOptionX{a6paper}{
 	\@stockavitrue
-	\@tenpointstrue\@twelvepointsfalse
+	\@stockaivfalse\@stockavfalse
+	\@tenpointstrue
+	\@elevenpointsfalse\@twelvepointsfalse\@fourteenpointsfalse
 	\PassOptionsToClass{a6paper,10pt}{memoir}
-}
-
-%	Define options for font size <10pt> & <12pt>
-\DeclareOptionX{10pt}{
-	\@tenpointstrue\@twelvepointsfalse
-	\PassOptionsToClass{10pt}{memoir}
-}
-\DeclareOptionX{12pt}{
-	\@twelvepointstrue\@tenpointsfalse
-	\PassOptionsToClass{12pt}{memoir}
 }
 
 %	Define options for <oneside> & <twoside>
@@ -144,17 +127,10 @@
 	\PassOptionsToClass{twoside}{memoir}
 }
 
-%	Define options for <final> & <draft>
-\DeclareOptionX{final}{
-	\@draftfalse
-	\PassOptionsToClass{final}{memoir}
-}
-\DeclareOptionX{draft}{
-	\@drafttrue
-	\PassOptionsToClass{draft}{memoir}
-}
-\DeclareOptionX{draft+}{
-	\@drafttrue
+%	Define option for <landscape> format
+\DeclareOptionX{landscape}{
+	\@landscapetrue
+	\PassOptionsToClass{landscape}{memoir}
 }
 
 %	Define option for <marginal> layout
@@ -162,7 +138,146 @@
 	\@marginaltrue
 }
 
+%	TYPOGRAPHY OPTIONS
+
+%	Define options for font sizes <10pt>, <11pt> & <12pt>
+\DeclareOptionX{10pt}{
+	\@tenpointstrue
+	\@elevenpointsfalse\@twelvepointsfalse\@fourteenpointsfalse
+	\PassOptionsToClass{10pt}{memoir}
+}
+\DeclareOptionX{11pt}{
+	\@elevenpointstrue
+	\@tenpointsfalse\@twelvepointsfalse\@fourteenpointsfalse
+	\PassOptionsToClass{11pt}{memoir}
+}
+\DeclareOptionX{12pt}{
+	\@twelvepointstrue
+	\@tenpointsfalse\@elevenpointsfalse\@fourteenpointsfalse
+	\PassOptionsToClass{12pt}{memoir}
+}
+\DeclareOptionX{14pt}{
+	\@fourteenpointstrue
+	\@tenpointsfalse\@elevenpointsfalse\@twelvepointsfalse
+	\PassOptionsToClass{14pt}{memoir}
+}
+
+\DeclareOptionX{serif}{
+	\@sansseriffalse
+}
+
+\DeclareOptionX{sans-serif}{
+	\@sansseriftrue
+}
+
+%	Define an option to change line spacing
+\DeclareOptionX{linespacing}[1.1]{\def\custom@baselinestretch{#1}}
+
+%	LANGUAGE OPTIONS
+
+%	Define options to change the main language of the document
+\DeclareOptionX{british}{
+	\PassOptionsToPackage{british}{babel}
+	\PassOptionsToPackage{british}{fmtcount}
+	\AtEndOfClass{\main@language{british}}
+}
+\DeclareOptionX{english}{
+	\PassOptionsToPackage{british}{babel}
+	\PassOptionsToPackage{british}{fmtcount}
+	\AtEndOfClass{\main@language{british}}
+}
+\DeclareOptionX{french}{
+	\PassOptionsToPackage{french}{babel}
+	\PassOptionsToPackage{french}{fmtcount}
+	\AtEndOfClass{\main@language{french}}
+}
+%	Define options to load secondary languages
+\DeclareOptionX{italian}{\PassOptionsToPackage{italian}{babel}}
+\DeclareOptionX{german}{\PassOptionsToPackage{german}{babel}}
+\DeclareOptionX{spanish}{\PassOptionsToPackage{spanish}{babel}}
+
+%	STYLE OPTIONS
+
+%	Define option for <article> document style
+\DeclareOptionX{article}{
+	\@articletrue
+	\PassOptionsToClass{article}{memoir}
+}
+
+%	Define option for <didactic> document style
+\DeclareOptionX{didactic}{
+	\@didactictrue
+	\@articletrue
+	\@tenpointstrue
+	\@elevenpointsfalse\@twelvepointsfalse\@fourteenpointsfalse
+	\@twosidefalse\@onesidetrue
+	\PassOptionsToClass{10pt,oneside,twocolumn,article}{memoir}
+}
+\DeclareOptionX{didactic+}{
+	\@didactictrue
+	\@articletrue
+	\@fourteenpointstrue
+	\@tenpointsfalse\@elevenpointsfalse\@twelvepointsfalse
+	\@twosidefalse\@onesidetrue
+	\PassOptionsToClass{14pt,oneside,article}{memoir}
+}
+
+%	Define option for <letter> document style
+\DeclareOptionX{letter}{
+	\@lettertrue
+	\@sansseriftrue
+	\@stationerytrue
+	\@elevenpointstrue
+	\@tenpointsfalse\@twelvepointsfalse\@fourteenpointsfalse
+	\@twosidefalse\@onesidetrue
+	\PassOptionsToClass{11pt,oneside}{memoir}
+}
+
+%	Define option for <vitae> document style
+\DeclareOptionX{vitae}{
+	\@vitaetrue
+	\@sansseriftrue
+	\@stationerytrue
+	\@elevenpointstrue
+	\@tenpointsfalse\@twelvepointsfalse\@fourteenpointsfalse
+	\@marginaltrue
+	\@twosidefalse\@onesidetrue
+	\PassOptionsToClass{11pt,oneside}{memoir}
+}
+
+\DeclareOptionX{short}{
+	\longcvfalse
+}
+
+%	FEATURE OPTIONS
+
+%	Define options for <final> & <draft>
+\DeclareOptionX{draft}{
+	\@drafttrue
+	\PassOptionsToClass{draft}{memoir}
+}
+\DeclareOptionX{draft+}{
+	\@drafttrue
+}
+\DeclareOptionX{final}{
+	\@draftfalse
+	\PassOptionsToClass{final}{memoir}
+}
+
+%	Define options for <outline> & <summary> table of contents
+\DeclareOptionX{outline}{
+	\@outlinetrue
+	\@summarytrue
+	\@precistrue
+}
+\DeclareOptionX{summary}{
+	\@summarytrue
+	\@precistrue
+}
+
 %	Define an option to change indexing (pages or paragraphs)
+\newcommand{\set@indexparagraphs}{\@indexparagraphstrue}
+\newcommand{\set@indexpages}{\@indexparagraphsfalse}
 \DeclareOptionX{index}[paragraphs]{
 	\ifcsname set@index#1\endcsname
 		\csname set@index#1\endcsname
@@ -174,108 +289,20 @@
 	\fi
 }
 
-%	Define an option to change line spacing
-\DeclareOptionX{linespacing}[1.1]{\def\custom@baselinestretch{#1}}
+%	DEVELOPER FEATURES
 
-%	SPECIAL OTIONS
-%	TODO » Ajouter les formats pour les thèses, les docs juridiques, etc.
-
-%	Define option for <article> document style
-\DeclareOptionX{article}{
-	\@articletrue
-	\PassOptionsToClass{article}{memoir}
+%	Define <developer> option (see frenchlaw-dev)
+\DeclareOptionX{developer}{
+	\@devtrue
 }
 
-%	Define option for <letter> document style
-\DeclareOptionX{letter}{
-	\@lettertrue
-	\@sansseriftrue
-	\@elevenpointstrue
-%	\@marginaltrue% Only used to accompany CV, document it elsewhere or create a + option
-	\@twosidefalse\@onesidetrue
-	\PassOptionsToClass{11pt,oneside}{memoir}
+%	Define <grid> option (see frenchlaw-dev)
+\DeclareOptionX{vgrid}{
+	\@devtrue
+	\@gridtrue
 }
 
-%	Define option for <CV> document style
-\DeclareOptionX{vitae}{
-	\@CVtrue
-	\@sansseriftrue
-	\@elevenpointstrue
-	\@marginaltrue
-	\@twosidefalse\@onesidetrue
-	\PassOptionsToClass{11pt,oneside}{memoir}
-}
-
-%	Define option for <didactic> document style
-\DeclareOptionX{didactic}{
-	\@didactictrue
-	\@tenpointstrue
-	\@twosidefalse\@onesidetrue
-	\PassOptionsToClass{10pt,article,twocolumn,oneside}{memoir}
-}
-\DeclareOptionX{didactic+}{
-	\@didactictrue
-	\@stockavtrue
-	\@tenpointstrue
-	\@twosidefalse\@onesidetrue
-	\PassOptionsToClass{a5paper,10pt,article,oneside}{memoir}
-}
-
-%	VARIOUS OPTIONS
-
-%	Define options for <outline> document style
-\DeclareOptionX{outline}{
-	\@outlinetrue
-	\@summarytrue
-	\@paratoctrue
-}
-
-%	Define options for <summary> document style
-\DeclareOptionX{summary}{
-	\@summarytrue
-	\@precistrue
-	\@paratoctrue
-}
-
-%	Define options for <backindex> option
-\DeclareOptionX{backindex}{
-	\@backindextrue
-}
-
-%	LANGUAGE OPTIONS
-
-%	TODO » Utilité des switch de langue ? On utilise languagename partout
-%	Define options to change the main language of the document
-\DeclareOptionX{british}{
-	\@britishtrue
-	\@englishfalse
-	\@frenchfalse
-	\PassOptionsToPackage{british}{babel}
-	\PassOptionsToPackage{british}{fmtcount}
-	\AtEndOfClass{\main@language{british}}
-}
-\DeclareOptionX{english}{%	TODO » Remplacer par USenglish? // Créer un alias dans le code de biber pour les langid / hyphenation
-	\@englishtrue
-	\@frenchfalse
-	\@britishfalse
-	\PassOptionsToPackage{british}{babel}
-	\PassOptionsToPackage{british}{fmtcount}
-	\AtEndOfClass{\main@language{british}}
-}
-\DeclareOptionX{french}{
-	\@frenchtrue
-	\@englishfalse
-	\@britishfalse
-	\PassOptionsToPackage{french}{babel}
-	\PassOptionsToPackage{french}{fmtcount}
-	\AtEndOfClass{\main@language{french}}
-}
-%	Define options to load secondary languages
-\DeclareOptionX{italian}{\PassOptionsToPackage{italian}{babel}}
-\DeclareOptionX{german}{\PassOptionsToPackage{german}{babel}}
-\DeclareOptionX{spanish}{\PassOptionsToPackage{spanish}{babel}}
-
-%	IMPLEMENT OPTIONS, LOAD MEMOIR
+%	IMPLEMENT OPTIONS, LOAD DEPENDENCIES
 
 %	Pass all undefined options to <memoir>
 \DeclareOptionX*{\PassOptionsToClass{\CurrentOption}{memoir}}
@@ -284,42 +311,97 @@
 \ExecuteOptionsX{a4paper,twoside,12pt,french,linespacing=1.1}
 \ProcessOptionsX\relax
 
-%	Load the main dependencies: <memoir>, <environ>
+%	Load the main dependencies
 \LoadClass{memoir}
-\RequirePackage{environ,pdfpages}
+\RequirePackage{etoolbox,environ,fmtcount,graphicx,numprint,url,xcolor,xspace}
+% \RequirePackage{pdfpages}%	TODO » Pertinence (?)
 
 %	Deactivate incompatible options
 % Option <twocolumn> always defeats option <marginal>
 \if@marginal\if@twocolumn\@marginalfalse\fi\fi
+\if@stockavi\if@elevenpoints\@tenpointstrue\@elevenpointsfalse\fi\fi
+\if@stockavi\if@twelvepoints\@tenpointstrue\@twelvepointsfalse\fi\fi
+\if@stockavi\if@fourteenpoints\@tenpointstrue\@fourteenpointsfalse\fi\fi
 
 %	Set \baselinestretch to the ratio given in the option
-%	TODO » Voir si on peut faire des valeurs nommées "simple" = 0.83, "median" = 1.25, "double" = 1.66
-\def\baselinestretch{\custom@baselinestretch}\selectfont
+% The value given in the <linespacing> option must be either a number or one of the preset values.
+\ifdefstring{\custom@baselinestretch}{simple}
+	{\def\baselinestretch{.83}\selectfont}
+	{\ifdefstring{\custom@baselinestretch}{median}
+		{\def\baselinestretch{1.25}\selectfont}
+		{\ifdefstring{\custom@baselinestretch}{double}
+			{\def\baselinestretch{1.66}\selectfont}
+			{\def\baselinestretch{\custom@baselinestretch}\selectfont}}}
+
+
+% =***======***======***======***======***======***======***======***======***======***=
+
+
+%	#####	HELPER MACROS	#####
+
+%	Provide a list of greek numbers for counters
+\def\@greek#1{%
+	\ifcase#1\or\ensuremath{\alpha}\or\ensuremath{\beta}\or\ensuremath{\gamma}\or\ensuremath{\delta}\or\ensuremath{\varepsilon}\or\ensuremath{\zeta}\or\ensuremath{\eta}\or\ensuremath{\theta}\or\ensuremath{\iota}\or\ensuremath{\kappa}\or\ensuremath{\lambda}\or\ensuremath{\mu}\or\ensuremath{\nu}\or\ensuremath{\xi}\or\ensuremath{ o}\or\ensuremath{\pi}\or\ensuremath{\varrho}\or\ensuremath{\sigma}\or\ensuremath{\tau}\or\ensuremath{\upsilon}\or\ensuremath{\phi}\or\ensuremath{\chi}\or\ensuremath{\psi}\or\ensuremath{\omega}\else\@ctrerr\fi}
+\def\@Greek#1{%
+	\ifcase#1\or\ensuremath{\Alpha}\or\ensuremath{\Beta}\or\ensuremath{\Gamma}\or\ensuremath{\Delta}\or\ensuremath{\Epsilon}\or\ensuremath{\Zeta}\or\ensuremath{\Eta}\or\ensuremath{\Theta}\or\ensuremath{\Iota}\or\ensuremath{\Kappa}\or\ensuremath{\Lambda}\or\ensuremath{\Mu}\or\ensuremath{\Nu}\or\ensuremath{\Xi}\or\ensuremath{\Omicron}\or\ensuremath{\Pi}\or\ensuremath{\Rho}\or\ensuremath{\Sigma}\or\ensuremath{\Tau}\or\ensuremath{\Upsilon}\or\ensuremath{\Phi}\or\ensuremath{\Chi}\or\ensuremath{\Psi}\or\ensuremath{\Omega}\else\@ctrerr\fi}
+
+%	Create a command that sets a length to the greater of two values
+% Set length #1 to the value of #2, but only if #2 is greater than #1
+\newcommand{\setmaxlength}[2]{%
+	\ifdim\dimexpr#2>\dimexpr#1
+		\global\setlength{#1}{#2}%
+	\fi}
+
+%	Command that gobbles all whitespace until the next paragraph
+% Usage:	\@ifnextchar\par{\@gobblepar}{\relax}
+\newcommand{\@gobblepar}[1]{%
+	\@ifnextchar\par{\@gobblepar}{\relax}}
+
+%	Command that prints its own argument. Some macros \let it to \@gobble
+% Usage:	In .tex file, use \sanitize to silence a macro in certain contexts, e.g. ToC
+\newcommand{\sanitize}[1]{#1}
+
+
+% =***======***======***======***======***======***======***======***======***======***=
+
 
 %	#####	PAGE LAYOUT	#####
 
-%	Define the size of the type bloc depending on the paper size
-% The block proportions follow the golden number, as in the medieval method
-\if@stockaiv
-	\settypeblocksize{*}{424pt}{1.618}% 43 lines size 12pt, 52 lines size 10pt
-\fi
-\if@stockav
-	\settypeblocksize{*}{300pt}{1.618}% 31 lines size 12pt, 37 lines size 10pt
-\fi
-\if@stockavi
-	\settypeblocksize{*}{212pt}{1.618}% 22 lines size 12pt, 26 lines size 10pt
-\fi
+%	Define the size of page headers & footers
+\setlength{\headsep}{\baselineskip}
+\setlength{\headheight}{2\baselineskip}
+\setlength{\footskip}{2\baselineskip}
 
-% Block width is reduced while keeping the same height at font size 11pt
-% TODO » Remplcer par un autre test qui comprennent toutes les formes de correspondance, i.e. lettre, cv, mémo, etc. pour ne pas dépendre de la taille du texte
-\if@elevenpoints
-	\settypeblocksize{*}{400pt}{1.715}% 45 lines
-	% TODO » Adde quelque chose pour les lettres avec en-tête latérale, e.g.
-	%\settypeblocksize{*}{320pt}{2} % environ 1:3 marge 2:3 texte
-\fi
+%	Define the size of the type block depending on the paper size
+% The block proportions follow the golden number, as in the medieval method
+% Use a narrower type block in letters and other stationery documents
+\if@stockaiv
+	\if@landscape
+		\settypeblocksize{424pt}{*}{1.618}
+	\else\if@stationery
+		\settypeblocksize{*}{400pt}{1.715}
+		\setlength{\headsep}{2\baselineskip}
+	\else
+		\settypeblocksize{*}{424pt}{1.618}
+	\fi\fi
+\else\if@stockav
+	\if@landscape
+		\settypeblocksize{300pt}{*}{1.618}
+	\else
+		\settypeblocksize{*}{300pt}{1.618}
+	\fi
+	\setlength{\footskip}{1.5\baselineskip}
+\else\if@stockavi
+	\if@landscape
+		\settypeblocksize{212pt}{*}{1.618}
+	\else
+		\settypeblocksize{*}{212pt}{1.618}
+	\fi
+	\setlength{\headsep}{.5\baselineskip}
+	\setlength{\footskip}{1.5\baselineskip}
+\fi\fi\fi
 
 %	Define the size and proportion of the margins depending on the layout options
-% Margins are significantly smaller than the typographic tradition requires
 \setulmargins{*}{*}{1}
 \if@marginal
 	\if@twoside
@@ -340,98 +422,47 @@
 	\fi
 \fi
 
-%	Define the size of page headers & footers
-%	TODO » Utilité du \setheaderspaces. Vérifier la doc de <memoir>
-%\setheaderspaces{*}{\baselineskip}{*}
-
-\setlength{\headsep}{\baselineskip}
-\setlength{\headheight}{2\baselineskip}
-\setlength{\footskip}{2\baselineskip}
-
-% Can afford more room between header and text at font size 11pt
-% TODO » Remplcer par un autre test qui comprennent toutes les formes de correspondance, i.e. lettre, cv, mémo, etc. pour ne pas dépendre de la taille du texte
-\if@elevenpoints
-	\setlength{\headsep}{2\baselineskip}
-\fi
-
-%	Use larger headers & footers with <didactic>
-%	TODO » Vérifier l'utilité et/ou revoir intégralement le design...
-\if@didactic
-	\setlength{\headheight}{3\baselineskip}
-	\setlength{\uppermargin}{4.5\baselineskip}
-\fi
-
-%	Use smaller footers in <a5> and <a5> if text is set to <12pt>
-%	TODO » Vérifier la mise en page en a5 et a6
-\if@twelvepoints
-	\if@stockav
-		\setlength{\footskip}{1.5\baselineskip}
-	\fi
-	\if@stockavi
-		\setlength{\footskip}{1.25\baselineskip}
-	\fi
-\fi
-
 %	Check & fix the layout
-%	TODO » Charger un hook pour les modifier avant \checkandfixthelayout
-%	TODO » Bug si on met la page en <landscape> => Résoudre (?)
 \checkandfixthelayout
 
-%	#####	HELPER MACROS	#####
+%	Prevent PDF scaling on print
+\ifxetex
+	\special{pdf:docview<</ViewerPreferences<</PrintScaling/None>>>>}
+\else
+	% \ifluatex\RequirePackage{luatex85}\fi
+	\pdfcatalog{/ViewerPreferences<</PrintScaling/None>>}
+\fi
 
-%	Provide a list of greek numbers for internal counters
-\def\@greek#1{%
-	\ifcase#1\or\ensuremath{\alpha}\or\ensuremath{\beta}\or\ensuremath{\gamma}\or\ensuremath{\delta}\or\ensuremath{\varepsilon}\or\ensuremath{\zeta}\or\ensuremath{\eta}\or\ensuremath{\theta}\or\ensuremath{\iota}\or\ensuremath{\kappa}\or\ensuremath{\lambda}\or\ensuremath{\mu}\or\ensuremath{\nu}\or\ensuremath{\xi}\or\ensuremath{ o}\or\ensuremath{\pi}\or\ensuremath{\varrho}\or\ensuremath{\sigma}\or\ensuremath{\tau}\or\ensuremath{\upsilon}\or\ensuremath{\phi}\or\ensuremath{\chi}\or\ensuremath{\psi}\or\ensuremath{\omega}\else\@ctrerr\fi}
-\def\@Greek#1{%
-	\ifcase#1\or\ensuremath{\Alpha}\or\ensuremath{\Beta}\or\ensuremath{\Gamma}\or\ensuremath{\Delta}\or\ensuremath{\Epsilon}\or\ensuremath{\Zeta}\or\ensuremath{\Eta}\or\ensuremath{\Theta}\or\ensuremath{\Iota}\or\ensuremath{\Kappa}\or\ensuremath{\Lambda}\or\ensuremath{\Mu}\or\ensuremath{\Nu}\or\ensuremath{\Xi}\or\ensuremath{\Omicron}\or\ensuremath{\Pi}\or\ensuremath{\Rho}\or\ensuremath{\Sigma}\or\ensuremath{\Tau}\or\ensuremath{\Upsilon}\or\ensuremath{\Phi}\or\ensuremath{\Chi}\or\ensuremath{\Psi}\or\ensuremath{\Omega}\else\@ctrerr\fi}
 
-%	TODO » A documenter
-%	Create a command that gobbles all whitespace until the next paragraph
-% In another command, call:	\@ifnextchar\par{\@gobblepar}{\relax}
-\newcommand{\@gobblepar}[1]{%
-	\@ifnextchar\par{\@gobblepar}{\relax}}
+% =***======***======***======***======***======***======***======***======***======***=
 
-%	Create a command that just prints its argument. Some macros \let it to \@gobble
-\newcommand{\sanitize}[1]{#1}
-
-%	TODO » Unused (so far)
-%	Checks if a counter exists; if not, create it.
-\newcommand\checkcounter[1]{%
-  \@ifundefined{c@#1}
-    {\newcounter{#1}}
-    {}}
-
-%	Create a command that sets a lengths to the greater of two values
-% Set length #1 to the value of #2, but only if #2 is greater than #1
-\newcommand{\setmaxlength}[2]{%
-	\ifdim\dimexpr#2>\dimexpr#1
-		\global\setlength{#1}{#2}%
-	\fi}
 
 %	#####	TYPOGRAPHY	#####
 
-%	Load the relevant fonts and packages for LaTeX and XeLaTeX
-\RequirePackage{adforn,mathpazo}% + Biolinum (sans serif)
+%	TYPEFACES
+
+%	Load fonts and packages comme to LaTeX and XeLaTeX
+\RequirePackage{adforn,mathpazo}
+
 \ifxetex
-	%	Load XeLaTeX fonts: Junicode & Latin Modern (?)
+	%	Load XeLaTeX fonts
 	\RequirePackage{fontspec}
 	\defaultfontfeatures{
 		Ligatures = {TeX},
-		Numbers = {OldStyle},%	TODO » Rendre les OSF conditionnelles (?)
-		SmallCapsFeatures = {WordSpace = 1.2, LetterSpace=3.0}}% WordSpace s'applique partout (?) ou que sur SmallCaps (vérif., mais garder)
-	%	TODO » Problème de OSX des accents (copier coller)
-	%	TODO » problème avec les OldStyle figures sous Junicode (option ?)
-	%	TODO » Problème avec les Superscript sous Concourse (changer? fake?)
+		Numbers = {OldStyle},
+		SmallCapsFeatures = {WordSpace = 1.2, LetterSpace=3.0}}
 	\setmainfont[	Extension		= .ttf,
 					UprightFont		= *,
 					ItalicFont		= *-Italic,
 					BoldFont		= *-Bold,
 					BoldItalicFont	= *-BoldItalic ]
 					{Junicode}
-	\setsansfont[	SmallCapsFont	= Concourse C3,
+	\setsansfont[	Extension		= .otf,
+					UprightFont		= *-Regular,
+					ItalicFont		= *-RegularIt,
+					BoldFont		= *-Bold,
 					Scale			= MatchLowercase ]
-					{Concourse T3}
-	%	TODO » Changer: Biolinum, Concourse (?)
+					{SourceSansPro}
 	\setmonofont[	Extension		= .otf,
 					UprightFont		= *-regular,
 					ItalicFont		= *-italic,
@@ -444,53 +475,18 @@
 \else
 	\RequirePackage[utf8]{inputenc}% OLD: \AtEndOfClass{\usepackage[utf8]{inputenc}} (?)
 	\RequirePackage[T1]{fontenc}
-	\RequirePackage{lmodern,libertine}
+	\RequirePackage{lmodern}
+	\RequirePackage[osf,scale=.85]{sourcesanspro}
+	\RequirePackage[osf]{ebgaramond}
 	\renewcommand*{\ttdefault}{lmtt}
 	\newcommand{\acronym}[1]{#1}
 	\RequirePackage[tracking,letterspace=30]{microtype}
 \fi
 
-%	TODO » Use a boolean switch common to all options that use sans font
-%	+ Create a serif|sans option to override it
-\if@sansserif
-	\renewcommand{\familydefault}{\sfdefault}
-	\usepackage{metalogo}
-	\setlogokern{La}{-0.165em}
-	\setlogokern{aT}{-0.0485em}
-	\setlogokern{eX}{-0.022em}
-\fi
-
-%	Load language and number packages and fixes
-
-%	TODO » Implémenter {csquotes} et le documenter
-%	TODO » Suppr. la langue <english> après avoir converti automatiquement via biber
-\RequirePackage[greek,latin,english,british,french]{babel}
-
-% Load {csquotes} and implement styles for foreign language quotations
-\RequirePackage[autostyle=true]{csquotes}
-\DeclareQuoteAlias[american]{english}{british}% Use double quotes in British english
-\DeclareQuoteStyle[american]{english}% verified
-	{\textquotedblleft\em}{\em\kern.1em\textquotedblright}[0.05em]
-	{\textquoteleft}{\textquoteright}
-\DeclareQuoteStyle{latin}
-  {\mkfrenchopenquote{\guillemotleft}\em}
-  {\em\mkfrenchclosequote{\guillemotright}}
-  {\textquotedblleft}
-  {\textquotedblright}
-
-\RequirePackage{fmtcount}% 	TODO » Ou autre? {engord} pour l'anglais + babel FR
-\RequirePackage{fixltxhyph}
-
-%	TODO » Reprendre les documents pour intégrer le package + Renommer {frenchlaw-typo}
-\RequirePackage{typographie}
-
-%	Use the superscript macro from Babel-French
-\let\textsuperscript=\fup
-
-%	#####	FONT SIZE AND LEADING	#####
+%	FONT SIZE AND LEADING
 
 %	Create dimensions that will be used to calculate vertical compensation
-% This provides vertical alignment to pages, as long as headings are one-liners
+% This provides vertical alignment, as long as headings are one-liners
 \newdimen\addto@miniscule
 \newdimen\addto@tiny
 \newdimen\addto@large
@@ -500,9 +496,8 @@
 \newdimen\addto@Huge
 \newdimen\addto@HUGE
 
-%	Define font sizes and compensations for <10pt>
+%	Define font sizes for <10pt>
 \if@tenpoints
-	% Define font sizes for <10pt>
 	\renewcommand*{\scriptsize}{\fontsize{8}{12}\selectfont}
 	\renewcommand*{\footnotesize}{\fontsize{8}{12}\selectfont}
 	\renewcommand*{\small}{\fontsize{9}{12}\selectfont}
@@ -527,10 +522,9 @@
 	\addto@huge=9pt
 	\addto@Huge=4pt
 	\addto@HUGE=11pt
-\else
-%	Define font sizes and compensations for <12pt>
-\if@elevenpoints
-	% Define font sizes for <11pt>
+
+%	Define font sizes for <11pt>
+\else\if@elevenpoints
 	\renewcommand*{\scriptsize}{\fontsize{9}{13.6}\selectfont}
 	\renewcommand*{\footnotesize}{\fontsize{9}{13.6}\selectfont}
 	\renewcommand*{\small}{\fontsize{10}{13.6}\selectfont}
@@ -546,7 +540,7 @@
 	\renewcommand*{\Huge}{\fontsize{28}{34}\selectfont}
 	\renewcommand*{\HUGE}{\fontsize{34}{42}\selectfont}
 	
-	% Define compensations for <12pt>
+	% Define compensations for <11pt>
 	\addto@miniscule=5.6pt
 	\addto@tiny=4.6pt
 	\addto@large=11.2pt
@@ -555,10 +549,9 @@
 	\addto@huge=12.8pt
 	\addto@Huge=6.8pt
 	\addto@HUGE=12.4pt
-\else
-%	Define font sizes and compensations for <12pt>
-\if@twelvepoints
-	% Define font sizes for <12pt>
+
+%	Define font sizes for <12pt>
+\else\if@twelvepoints
 	\renewcommand*{\scriptsize}{\fontsize{9}{14.5}\selectfont}
 	\renewcommand*{\footnotesize}{\fontsize{10}{14.5}\selectfont}
 	\renewcommand*{\small}{\fontsize{11}{14.5}\selectfont}
@@ -583,93 +576,150 @@
 	\addto@huge=13.5pt
 	\addto@Huge=6.5pt
 	\addto@HUGE=13pt
-\fi\fi\fi
 
-%	#####	TYPESETTING RULES	#####
+%	Define font sizes for <14pt>
+\else\if@fourteenpoints
+	\renewcommand*{\scriptsize}{\fontsize{10}{17.5}\selectfont}
+	\renewcommand*{\footnotesize}{\fontsize{11}{17.5}\selectfont}
+	\renewcommand*{\small}{\fontsize{12}{17.5}\selectfont}
+	\renewcommand*{\normalsize}{\fontsize{14}{17.5}\selectfont}
+	
+	\renewcommand*{\miniscule}{\fontsize{8}{10}\selectfont}
+	\renewcommand*{\tiny}{\fontsize{9}{11.5}\selectfont}
+	
+	\renewcommand*{\large}{\fontsize{17}{21.5}\selectfont}
+	\renewcommand*{\Large}{\fontsize{20}{25}\selectfont}
+	\renewcommand*{\LARGE}{\fontsize{25}{30.5}\selectfont}
+	\renewcommand*{\huge}{\fontsize{30}{37}\selectfont}
+	\renewcommand*{\Huge}{\fontsize{36}{45}\selectfont}
+	\renewcommand*{\HUGE}{\fontsize{48}{60}\selectfont}
+	
+	% Define compensations for <14pt>
+	\addto@miniscule=7.5pt
+	\addto@tiny=6pt
+	\addto@large=13.5pt
+	\addto@Large=10pt
+	\addto@LARGE=4.5pt
+	\addto@huge=15.5pt
+	\addto@Huge=7.5pt
+	\addto@HUGE=10pt
+\fi\fi\fi\fi
 
-%	Set penalties and demerits
-%	TODO » Pénalités (à tester et modifier, surtout aux formats non-A4)
-\if@twocolumn
-	\widowpenalties=3 300 100 -150 % Discourage widows [Orig. 150]
-	\clubpenalties=3 300 100 -150 % Discourage orphans [Orig. 150]
-\else
-	\widowpenalties=3 20000 1000 -150 % Discourage widows [Orig. 150]
-	\clubpenalties=3 20000 1000 -150 % Discourage orphans [Orig. 150]
-\fi
-\hyphenpenalty=100 % Discourage hyphens [Orig. 50]
-\doublehyphendemerits=1000000 % Discourage consecutive hyphens [Orig. 10000]
-\finalhyphendemerits=100000000 % Discourage hyphens at the end of paragraphs [Orig. 5000]
-\exhyphenpenalty=500 % Discourage hyphens in compound nouns [Orig. 50]
-\brokenpenalty=10000 % Discourage hyphens at the end of pages [Orig. 100]
+%	Create a command to set all font sizes to a multiple of the standard \baselineskip
+\newcommand{\normalize@fontsize}{%
+	\if@tenpoints
+		\renewcommand*{\miniscule}{\fontsize{6}{12}\selectfont}
+		\renewcommand*{\tiny}{\fontsize{7}{12}\selectfont}
+		\renewcommand*{\large}{\fontsize{12}{12}\selectfont}
+		\renewcommand*{\Large}{\fontsize{15}{24}\selectfont}
+		\renewcommand*{\LARGE}{\fontsize{18}{24}\selectfont}
+		\renewcommand*{\huge}{\fontsize{22}{24}\selectfont}
+		\renewcommand*{\Huge}{\fontsize{27}{36}\selectfont}
+		\renewcommand*{\HUGE}{\fontsize{32}{36}\selectfont}
+	\else\if@elevenpoints
+		\renewcommand*{\miniscule}{\fontsize{7}{13.5}\selectfont}
+		\renewcommand*{\tiny}{\fontsize{8}{13.6}\selectfont}
+		\renewcommand*{\large}{\fontsize{12}{13.6}\selectfont}
+		\renewcommand*{\Large}{\fontsize{15}{27.2}\selectfont}
+		\renewcommand*{\LARGE}{\fontsize{18}{27.2}\selectfont}
+		\renewcommand*{\huge}{\fontsize{23}{27.2}\selectfont}
+		\renewcommand*{\Huge}{\fontsize{28}{40.8}\selectfont}
+		\renewcommand*{\HUGE}{\fontsize{34}{40.8}\selectfont}
+	\else\if@twelvepoints
+		\renewcommand*{\miniscule}{\fontsize{7}{14.5}\selectfont}
+		\renewcommand*{\tiny}{\fontsize{8}{14.5}\selectfont}
+		\renewcommand*{\large}{\fontsize{14}{14.5}\selectfont}
+		\renewcommand*{\Large}{\fontsize{17}{29}\selectfont}
+		\renewcommand*{\LARGE}{\fontsize{20}{29}\selectfont}
+		\renewcommand*{\huge}{\fontsize{25}{29}\selectfont}
+		\renewcommand*{\Huge}{\fontsize{30}{43.5}\selectfont}
+		\renewcommand*{\HUGE}{\fontsize{36}{43.5}\selectfont}
+	\else\if@fourteenpoints
+		\renewcommand*{\miniscule}{\fontsize{8}{17.5}\selectfont}
+		\renewcommand*{\tiny}{\fontsize{9}{17.5}\selectfont}
+		\renewcommand*{\large}{\fontsize{17}{17.5}\selectfont}
+		\renewcommand*{\Large}{\fontsize{20}{35}\selectfont}
+		\renewcommand*{\LARGE}{\fontsize{25}{35}\selectfont}
+		\renewcommand*{\huge}{\fontsize{30}{35}\selectfont}
+		\renewcommand*{\Huge}{\fontsize{36}{52.5}\selectfont}
+		\renewcommand*{\HUGE}{\fontsize{48}{52.5}\selectfont}
+	\fi\fi\fi\fi}
 
-% Use raggedbottom even when <twoside> is on (removes underfull \vbox warnings)
+
+%	TYPESETTING RULES
+
+%	Always use raggedbottom (prevents underfull \vbox warnings)
 \raggedbottom
-
-%\linepenalty=10% Discourage the creation of new lines within paragraphs
-%\interlinepenalty=100 % Discourage page breaks within paragraphs
-%\interlinepenalties <number> <numbers 1...n>
-
-%\pretolerance=100% Set acceptable \badness for a line without hyphens
-%\tolerance=200% Set acceptable \badness for a line with hyphens
-
-%\adjdemerits=10000% Discourage consecutive lines over \badness level
-
-%\floatingpenalty = 300% Discourage page breaks within floats
-%\interfootnotelinepenalty=100 % Discourage page breaks in footnotes
-
-%\@beginparpenalty=-50% Penalty for page breaks before lists
-%\@endparpenalty=-50% Penalty for page breaks after lists
-%\@itempenalty=-50% Penalty for page breaks after items in lists
-
-%	Style paragraphs
-% Force vertical alignment
-\setlength{\parskip}{0pt}
-% Set indentation length
-\setlength{\parindent}{1.5em}
-% Prevent overly short or long lines at the end of paragraphs
-\setlength{\parfillskip}{2ex plus \dimexpr\linewidth-2\parindent}
-% Never use double spaces, even in English
+%	Never use double spaces after a period
 \frenchspacing
 
-%	Style footnotes
-% Set footnote mark to hang on the left
-\setlength{\footmarkwidth}{2em}
-\setlength{\footmarksep}{0em}
-% Set footnote marks on the baseline (instead of superscript)
-\footmarkstyle{#1.\kern.5em}
-% Set a shorter \parindent in footnotes
-\setlength{\footparindent}{1em}
-% Set footnotes at the bottom of the page
+%	PARAGRAPHS
+
+%	Set penalties and demerits
+\if@twocolumn
+	\widowpenalties=3 300 100 -150 % Discourage widows [Orig. 3 150 0 0]
+	\clubpenalties=3 300 100 -150 % Discourage orphans [Orig. 3 150 0 0]
+\else
+	\widowpenalties=3 20000 1000 -150 % Discourage widows [Orig. 3 150 0 0]
+	\clubpenalties=3 20000 1000 -150 % Discourage orphans [Orig. 3 150 0 0]
+\fi
+\hyphenpenalty=100 % Discourage hyphens [Orig. 50]
+\exhyphenpenalty=500 % Discourage hyphens in compound nouns [Orig. 50]
+\doublehyphendemerits=1000000 % Discourage consecutive hyphens [Orig. 10000]
+\finalhyphendemerits=100000000 % Discourage end of paragraph hyphens [Orig. 5000]
+\brokenpenalty=10000 % Discourage hyphens at the end of pages [Orig. 100]
+
+%	Define indentation and vertical spacing of paragraphs
+\if@stationery
+	% Paragraphs are aligned with the left margin in stationery documents
+	\setlength{\parskip}{\baselineskip}
+	\setlength{\parindent}{0em}
+\else
+	% Päragraphs are indented in regular documents
+	\setlength{\parskip}{0pt}
+	\setlength{\parindent}{1.5em}
+\fi
+
+%	Prevent excessively short or long lines at the end of paragraphs
+\setlength{\parfillskip}{2ex plus \dimexpr\linewidth-3em}
+
+
+% =***======***======***======***======***======***======***======***======***======***=
+
+
+%	#####	PAGE NOTES	#####
+
+%	FOOTNOTES
+
+%	Set footnotes at the bottom of the page
 \setfootnoterule[\vfill]{0pt}{0pt}{0pt}
-% Force vertical alignment with a \strut height (.7\baselineskip) for all footnotes
+%	Force vertical alignment with a \strut height (.7\baselineskip) for all footnotes
 \setlength{\footnotesep}{.7\baselineskip}
 
-%	Create the \symbolfootnote macro (e.g. thanks)
-% The symbol can be chosen via the regular optional argument
-% A \par at the end of the note will create an additional line before the next footnote
+%	Set footnote marks to hang on the left
+\setlength{\footmarkwidth}{2em}
+\setlength{\footmarksep}{0em}
+%	Set footnote marks on the baseline (instead of superscript)
+\footmarkstyle{#1.\kern.5em}
+
+%	Reset footnote counter at every chapter
+\counterwithout*{footnote}{chapter}
+%	Create a command to reset the footnote counter on every page.
+\RequirePackage{perpage}
+\newcommand{\footnotebypage}
+	{\MakePerPage{footnote}}
+
+%	Create the \symbolfootnote macro (for thanks, etc.)
 \newcommand{\symbolfootnote}[2][2]{%
 	\begingroup%
 	\renewcommand{\thefootnote}{\fnsymbol{footnote}}%
-%	\addtocounter{footnote}{-1}% Si nécessaire (vérifier, car on est dans un groupe…)
-%	\footnotemark[#1]%
 	\footnotetext[#1]{#2}%
 	\endgroup%
 }
 
-% By default, the counter is reset at every chapter
-\counterwithout*{footnote}{chapter}
-%	Create a command to reset the footnote counter on every page.
-\newcommand{\footnotebypage}
-	{\usepackage{perpage}
-	 \MakePerPage{footnote}}
+%	MARGIN NOTES
 
-%	Style margin notes (\marginpar)
-% Use a ragged-right, smaller sized text
-% Make sure the first and last line of the note are \strut height for vertical alignment
-\let\old@marginpar=\marginpar
-\renewcommand{\marginpar}[1]{%
-	\old@marginpar[\raggedleft\footnotesize\strut#1\strut]{\raggedright\footnotesize\strut#1\strut}}
-%	Set the width based on the actual margin width
+%	Set margin notes width based on the actual margin width
 \newlength{\marginwidth}
 \setlength{\marginwidth}{\dimexpr\stockwidth-\textwidth\relax}
 \if@marginal
@@ -680,9 +730,6 @@
 	\setmarginnotes{.05\marginwidth}{.35\marginwidth}{0pt}
 \fi\fi
 
-%	Use the same style for side paragraphs (\sidebar)
-\setsidebars{\marginparsep}{\marginparwidth}{\baselineskip}{0pt}{\footnotesize}{\textheight}
-
 %	Margin and side notes are set in the widest margin
 \if@twoside
 	\marginparmargin{outer}
@@ -692,17 +739,312 @@
 	\sidebarmargin{left}
 \fi
 
-%	Create a command that forces the same line-spacing in notes as in the main block
-% This allows for better vertical alignment, but is not part of standard styles
-\newcommand{\notespacing}{\edef\m@m@footnote@spacing{\custom@baselinestretch}}
+%	Style margin notes (\marginpar)
+% Make sure the first and last line of the note are \strut height for vertical alignment
+\let\old@marginpar=\marginpar
+\renewcommand{\marginpar}[1]{%
+	\old@marginpar[\raggedleft\footnotesize\strut#1\strut]{\raggedright\footnotesize\strut#1\strut}}
 
-%	Create a command for alternative emphasis of text (Bold ± Color).
-\DeclareTextFontCommand{\headline}{\bfseries\color{\@headlinecolor}}
-% Create color specification commands
-\newcommand{\headlinecolor}[1]{\gdef\@headlinecolor{#1}}
-	\newcommand{\@headlinecolor}{black}% E.g. "black", "darkgray"
+%	Set the style for side paragraphs (\sidebar)
+\setsidebars{\marginparsep}{\marginparwidth}{\baselineskip}{0pt}{\footnotesize}{\textheight}
 
-%	TODO » Ajouter ici les paramètres des listes et floats
+
+% =***======***======***======***======***======***======***======***======***======***=
+
+
+%	##### LIST ENVIRONMENTS	#####
+
+%	SET DEFAULT LIST SPACING
+
+%	Set all vertical space to mutliples of \baselineskip
+\setlength{\parskip}{\z@}
+\setlength{\partopsep}{\z@}
+\setlength{\parsep}{\z@}
+\setlength{\parsepi}{\parskip}
+\setlength{\parsepii}{\parskip}
+\setlength{\topsep}{\z@}
+\setlength{\topsepi}{\z@}
+\setlength{\topsepii}{\z@}
+\setlength{\topsepiii}{\z@}
+\setlength{\itemindent}{\z@}
+\setlength{\itemsepi}{\parskip}
+\setlength{\itemsepii}{\parskip}
+\setlength{\itemsepiii}{\z@}
+
+%	Set horizontal space to multiples of \parindent
+\setlength{\listparindent}{\parindent}
+\setlength{\everylistparindent}{\listparindent}
+%\setlength{\labelsep}{.5em}
+\setlength{\leftmargin}{\z@}
+\setlength{\rightmargin}{\z@}
+\setlength{\leftmargini}{\if@twocolumn 1em \else 1.5em \fi}
+\setlength{\leftmarginii}{\if@twocolumn 1em \else 1.5em \fi}
+\setlength{\leftmarginiii}{\if@twocolumn 1em \else 1.5em \fi}
+\setlength{\leftmarginiv}{\if@twocolumn 1em \else 1.5em \fi}
+\setlength{\leftmarginv}{\if@twocolumn 1em \else 1.5em \fi}
+\setlength{\leftmarginvi}{\if@twocolumn 1em \else 1.5em \fi}
+
+%	BLOCK QUOTATIONS
+
+%	Specific settings for <quote> environement  
+\renewenvironment{quote}[1][]%
+	{\list{}{\setlength{\itemindent}{\z@}%
+			 \setlength{\leftmargin}{\parindent}}%
+	 \small\item[]\ignorespaces%
+	 \if\relax#1\relax\else\selectlanguage{british}\itshape\fi}
+	{\endlist}
+
+%	Specific settings for <quotation> environement  
+\renewenvironment{quotation}[1][]%
+	{\list{}{\setlength{\itemindent}{\parindent}%
+			 \setlength{\leftmargin}{\parindent}}%
+	 \small\item[]\ignorespaces%
+	 \if\relax#1\relax\else\selectlanguage{british}\itshape\fi}
+	{\endlist}
+
+%	EPIGRAPHS
+
+%	Define epigraph style for <memoir> class
+\epigraphfontsize{\normalsize}
+\setlength{\epigraphwidth}{.6\textwidth}
+\setlength{\epigraphrule}{\z@}
+\setlength{\beforeepigraphskip}{\z@}
+\setlength{\afterepigraphskip}{2\baselineskip}
+
+%	Redefine epigraph text format
+\renewcommand{\@epitext}[1]{%
+	\begin{minipage*}{\epigraphwidth}#1\end{minipage*}}
+%	Redefine epigraph source format
+\renewcommand{\@episource}[1]{%
+	\begin{minipage*}{\epigraphwidth}%
+		\begin{\sourceflush}---~#1\end{\sourceflush}%
+	\end{minipage*}}
+
+%	Redefine the command that prints epigraphs
+\renewcommand{\epigraph}[2]{
+	\vspace{\beforeepigraphskip}
+	{\begin{\epigraphflush}
+		\epigraphsize
+		\@epitext{#1}\par%
+		\if\relax#2\relax\else
+			\vspace{\baselineskip}
+			\@episource{#2}\par
+		\fi
+		\ifdim\epigraphrule>\z@ \@epirule\fi%
+	\end{\epigraphflush}}
+	\vspace{\afterepigraphskip}}
+
+%	Redefine the <epigraphs> environment (multiple epigraphs)
+\renewenvironment{epigraphs}
+	{\list{}{%
+	 \vspace{\beforeepigraphskip}}}%
+	{\begin{\epigraphflush}%
+		\vspace{-\baselineskip}% Remove the line added after the last epigraph
+	 	\ifdim\epigraphrule>\z@ \@epirule\fi%
+	 \end{\epigraphflush}
+	 \vspace{\afterepigraphskip}\endlist}
+%	Use \qitem{<text>}{<source>} for each epigraph
+\renewcommand{\qitem}[2]{%
+	\item[]{%
+		\setlength{\epigraphrule}{\z@}
+		\setlength{\beforeepigraphskip}{\z@}
+		\setlength{\afterepigraphskip}{\z@}
+		\epigraph{#1}{#2}
+		\vspace{\baselineskip}}}
+
+%	Définir un format pour les dédicaces, basé sur celui des épigraphes
+\newenvironment{dedication}
+	{\clearpage
+	 \vspace*{0pt}\vfill%
+	 \thispagestyle{empty}
+	 \begin{\epigraphflush}%
+	 \begin{minipage}{\epigraphwidth}%
+	 \setlength{\parskip}{\baselineskip}%
+	 \epigraphsize\raggedleft}
+	{\end{minipage}%
+	 \end{\epigraphflush}%
+	 \vfill\vfill\clearpage}
+
+%	LISTS
+
+%	Define <enumerate> style
+\renewcommand{\labelenumii}{\itshape\theenumii).}
+\renewcommand{\labelenumiii}{\textit{\theenumiii}.}
+\renewcommand{\theenumiv}{\@greek\c@enumiv}
+
+%	Define <description> styles
+\renewcommand{\descriptionlabel}[1]{\scshape{#1:\enspace}}
+\renewcommand{\blockdescriptionlabel}[1]{\scshape{#1:\enspace}}
+
+%	Renew <description> environment
+\renewenvironment{description}
+	{\list{}{\vskip\baselineskip
+			 \let\makelabel\descriptionlabel
+			 \setlength{\labelwidth}{\z@}
+			 \setlength{\labelsep}{\z@}
+			 \setlength{\leftmargin}{\z@}}}
+	{\vskip\baselineskip\endlist}
+
+%	Renew <blockdescription> environment
+\renewenvironment{blockdescription}%
+	{\list{}{\vskip\baselineskip
+			 \let\makelabel\blockdescriptionlabel
+			 \setlength{\labelwidth}{\z@}
+			 \setlength{\labelsep}{\z@}
+			 \setlength{\leftmargin}{\z@}}}%
+	{\vskip\baselineskip\endlist}
+
+%	TODO » Placer avec les commandes babel +  Défaut == "En résumé"
+\newcommand{\summaryname}{Pour l'essentiel}
+\newcommand{\summarylabel}[1]{\scshape{\hfill\summaryname:}}
+
+%	Créer un environnement <summmary> pour des conclusions avec un label prédéfini
+\NewEnviron{summary}
+	{\if@summary\bgroup%
+		\let\footnote\@gobble%
+		\let\sanitize\@gobble%
+		\addtocontents{toc}{%
+			\if\relax\BODY\relax\else%
+				\vskip-\lastskip\vskip\baselineskip%
+				\textsc{\summaryname}: \BODY\vskip\baselineskip\par\fi}%
+	\egroup\fi%
+	\list{}{\vskip\baselineskip%
+			\let\makelabel\summarylabel%
+			\setlength{\itemsep}{\baselineskip}%
+			\setlength{\leftmargin}{2\parindent}}%
+	 \item\BODY% + \needspace{2\baselineskip} (?) [Semble inutile]
+	 \vskip\baselineskip\endlist}
+
+
+
+\newcommand{\vitaelabel}[1]{\footnotesize\itshape{\hfill\strut#1:\strut}}
+
+%	Créer un environnement <vitae> pour les CV (label dans la marge)
+\newenvironment{vitae}
+	{\list{}{\let\makelabel\vitaelabel
+			 \setlength{\leftmargin}{\z@}
+			 \setlength{\labelwidth}{\marginparwidth}}}
+	{\endlist}
+
+
+% =***======***======***======***======***======***======***======***======***======***=
+
+
+%	#####	BOXES & MINIPAGES	#####
+
+%	MINIPAGES
+
+%	Refefine the <minipage> environment for vertical alignment
+% Thanks @ egreg <http://tex.stackexchange.com/a/34982/10119>
+\newenvironment{minipage*}[2][l]
+	{\ifx#1r\hfill\fi%
+	 \ifx#1c\centering\fi%
+	 \noindent\minipage[t]{#2}}
+	{\par\xdef\tpd{\the\prevdepth}\endminipage%
+	 \setlength{\parfillskip}{0ex plus \dimexpr\linewidth-3em}%
+	 \par\prevdepth\tpd%
+	 \ignorespacesafterend}
+
+%	FRAMED BOXES
+
+%	Create customization macros
+\newcommand{\showcasetitle}[1]{{\showcasetitlestyle #1:}\par}
+\newcommand{\showcasetitlestyle}{\bfseries}
+\newcommand{\showcasestyle}{\sffamily}
+\newcommand{\frampagerulecolor}{gray}
+
+%	Environment for a box with vertical line along the left side
+\newsavebox{\fmbox}
+\newenvironment{showcase}[1][]
+	{\addvspace{\baselineskip}%
+	 \noindent\begin{lrbox}{\fmbox}%
+	 \begin{minipage}[t]{\dimexpr\linewidth-1.5em\relax}%
+	 \showcasestyle%
+	 \if\relax#1\relax\else\showcasetitle{#1}\fi}
+	{\par\xdef\tpd{\the\prevdepth}%
+	 \end{minipage}%
+	 \end{lrbox}%
+	 \setlength{\parfillskip}{0ex plus \dimexpr\linewidth-3em}%
+	 {\color{\frampagerulecolor}\vrule width .2em}\hfill%
+	 \usebox{\fmbox}%
+	 \par\prevdepth\tpd%
+	 \addvspace{\baselineskip}}
+
+%	MULTIPLE COLUMNS
+
+%	Load Package, enforce vertical alignment, harmonize column sep width
+\RequirePackage{multicol}
+\setlength{\multicolsep}{\baselineskip}
+\setlength{\columnsep}{1em}
+
+%	Apply the same typography settings as for the <twocolumn> option
+\let\old@multicols=\multicols
+\let\old@endmulticols=\endmulticols
+\renewcommand{\multicols}{\@twocolumntrue\old@multicols}
+\renewcommand{\endmulticols}{\@twocolumnfalse\old@endmulticols}
+
+
+% =***======***======***======***======***======***======***======***======***======***=
+
+
+%	#####	TABLES & FIGURES	#####
+
+%	Forcer les <floats> à se placer en bas de page ou sur une page dédiée
+% Suppose qu'il y ait peu de floats, mais les aligne verticalement à moindre coût
+\setfloatlocations{figure}{bp}
+\setfloatlocations{table}{bp}
+
+%	Définir la hauteurs des séparateurs verticaux
+\setlength{\floatsep}{0pt}
+\setlength{\textfloatsep}{\baselineskip}
+\setlength{\intextsep}{\baselineskip}
+\setlength{\dblfloatsep}{\baselineskip}
+\setlength{\dbltextfloatsep}{\baselineskip}
+
+%	Utiliser l'interligne standard pour les floats
+\edef\m@m@float@spacing{\custom@baselinestretch}
+
+%	Définir l'alignement des <floats> (centré)
+\setfloatadjustment{figure}{\centering}
+\setfloatadjustment{table}{\centering}
+
+%	Numéroter les <floats> pour le document entier et non par chapitre
+\counterwithout{figure}{chapter}
+\counterwithout{table}{chapter}
+
+%	Idem pour le <mainmatter> (puisque <memoir> y change explicitement la numérotation)
+\renewcommand\@memmain@floats{
+	\counterwithout{figure}{chapter}
+	\counterwithout{table}{chapter}}
+
+%	Définir l'affichage des figures et tableaux dans la table des matières
+\cftsetindents{figure}{0em}{1.5em}
+\cftsetindents{table}{0em}{1.5em}
+
+%	TABULARS
+
+%	Définir la hauteur des éléments du tableau via <booktabs>
+\setlength{\aboverulesep}{.5\baselineskip}
+\setlength{\belowrulesep}{.5\baselineskip}
+\setlength{\abovetopsep}{0pt}
+\setlength{\belowbottomsep}{0pt}
+
+%	Définir le style des <tabular> (centrés, alignement vertical)
+\let\old@tabular=\tabular
+\let\old@endtabular=\endtabular
+\renewenvironment{tabular}[2][t]
+	{\noindent\old@tabular[#1]{#2}\toprule}
+	{\bottomrule\old@endtabular}
+
+%	Définir le style de la légende
+\changecaptionwidth\captionwidth{.8\columnwidth}
+\setlength{\abovecaptionskip}{.5\baselineskip}
+\setlength{\belowcaptionskip}{.5\baselineskip}
+\hangcaption
+
+
+% =***======***======***======***======***======***======***======***======***======***=
+
 
 %	#####	TITLE PAGES	#####
 
@@ -723,26 +1065,6 @@
 }
 \newcommand{\restore@twocolumns}{
 	\if@restonecol\twocolumn\fi%
-}
-
-%	Create a command to set all font sizes to a multiple of \baselineskip
-\newcommand{\normalize@fontsize}{%
-	\setlength{\parindent}{0em}
-	\if@tenpoints
-		\renewcommand*{\large}{\fontsize{12}{12}\selectfont}
-		\renewcommand*{\Large}{\fontsize{15}{24}\selectfont}
-		\renewcommand*{\LARGE}{\fontsize{18}{24}\selectfont}
-	\fi
-	\if@elevenpoints
-		\renewcommand*{\large}{\fontsize{12}{13.6}\selectfont}
-		\renewcommand*{\Large}{\fontsize{15}{27.2}\selectfont}
-		\renewcommand*{\LARGE}{\fontsize{18}{27.2}\selectfont}
-	\fi
-	\if@twelvepoints
-		\renewcommand*{\large}{\fontsize{14}{14.5}\selectfont}
-		\renewcommand*{\Large}{\fontsize{17}{29}\selectfont}
-		\renewcommand*{\LARGE}{\fontsize{20}{29}\selectfont}
-	\fi
 }
 
 %	Define new meta-data macros
@@ -809,12 +1131,12 @@
 \newcommand{\location}[1]{\gdef\@location{#1}}
 	\newcommand{\@location}{\@empty}
 \newcommand{\phone}[1]{\gdef\@phone{#1}}
-	\newcommand{\@phone}{\@empty}
+	\newcommand{\@phone}{\relax}
 \newcommand{\fax}[1]{\gdef\@fax{#1}}
-	\newcommand{\@fax}{\@empty}
+	\newcommand{\@fax}{\relax}
 % TODO » Sécuriser les emails si * et éviter qu'ils débordent du cadre (?)
 \newcommand{\email}[1]{\gdef\@email{#1}}
-	\newcommand{\@email}{\@empty}
+	\newcommand{\@email}{\relax}
 \newcommand{\signature}[1]{\gdef\@signature{#1}}
 	\newcommand{\@signature}{\@empty}
 %	Letter Data
@@ -848,7 +1170,7 @@
 %	Create a command for the signature block in letters and other documents
 % The optional argument inserts some text right before the signature. If there are multiple signatures and the header is not used for all of them, leave whitespace in the argument. 
 \newcommand{\makesignature}[1][\@empty]{
-	\hfill%
+	\vspace{\baselineskip}\hfill%
 	\begin{minipage}[t]{.4\textwidth}
 	\centering%
 	\if\@empty#1\else#1\par\vspace{2\baselineskip}\fi
@@ -866,6 +1188,17 @@
 %	TODO » Ajouter \website et \linkedin (2 args, nom + url ?)
 %	TODO » Ajouter une commande pour le copyright + intégrer aux styles
 
+%	TODO » Tout reprendre
+% Créer une commande \createtitepage{name}{code} et \createcoverpage{name}{code}
+% Elles définissent: \printtitleName et \printcoverpageName
+% Appeler ces commandes avec \titlepagestyle{name} et \coverpagestyle{name}
+% Et modèles prédéfinis:
+%	\long\def\printitleDidactic % dont redéfinition du fontmatter et mainmatter (* auto)
+%	\long\def\printcoverDidactic % -- ou \let\printcover=\printitile
+%	Et inclure tous les éléments de présentation de la page
+%	E.g. pour didactic, le titre comme un article (sans saut de ligne avan tl'auteur) et la couverture sur une page distincte
+% Puis \maketitle générique
+
 %	Define a default style (esp. for long documents)
 \newcommand{\maketitleBook}{%
 	% Send out warnings on empty fields
@@ -875,6 +1208,7 @@
 	\renewcommand{\@memfront}{\@smemfront\pagenumbering{Roman}}
 	% Create the \maketitle
 	\long\def\printtitle{%
+		\setlength{\parindent}{0em}
 		\normalize@fontsize%
 		\centering%	TODO » Tout aligner à gauche pour les livres
 		{\large\scshape\@institution\par}
@@ -923,6 +1257,7 @@
 	% Create the \maketitle
 	\long\def\printtitle{%
 		\pagestyle{empty}
+		\setlength{\parindent}{0em}
 		\normalize@fontsize%
 		\bgroup
 		\centering%
@@ -1004,6 +1339,7 @@
 		\@latex@warning@no@line{No \noexpand\director given}\fi
 	% Create the \maketitle
 	\long\def\printtitle{%
+		\setlength{\parindent}{0em}
 		\normalize@fontsize%
 		\centering%
 		{\large\scshape\@institution\par}
@@ -1037,6 +1373,7 @@
 }
 
 %	Define a default style for lecture notes, handbooks, etx.
+%	TODO » Adde un switch selon qu'on a rajouté article ou pas
 \newcommand{\maketitleDidactic}{%
 	% Send out warnings on empty fields
 	\if\expandafter\@empty\csname @title@\languagename\endcsname\relax
@@ -1044,6 +1381,7 @@
 	% Create the title page
 	\long\def\printtitle{
 		\reset@twocolumns%
+		\setlength{\parindent}{0em}
 		\normalize@fontsize%
 		\vspace*{3\baselineskip}
 		{\large\scshape\raggedright\csname @title@\languagename\endcsname\par}%
@@ -1057,7 +1395,7 @@
 		{\if\@empty\@author\else
 		 \vspace{2\baselineskip}
 		 \@author\par%
-		 \if\@empty\@email\else\emailname:~\@email\par\fi\fi}%
+		 \if\relax\@email\relax\else\emailname:~\@email\par\fi\fi}%
 		\vspace{\baselineskip}
 		{\@date\par}}
 	% Print the title page
@@ -1081,6 +1419,7 @@
 	\bgroup
 		\cleardoublepage%
 		\reset@twocolumns%
+		\setlength{\parindent}{0em}
 		\normalize@fontsize%
 		% Imposer une valeur (même \z@) pour maintenir l'alignement vertical:
 		\vspace*{0em}% Orig. = 3\baselineskip
@@ -1092,7 +1431,8 @@
 		\vspace{\baselineskip}
 		{\if\@empty\@author\else\@author%
 		 \if\@empty\@institution\else, \@institution\fi%
-		 \if\@empty\@email\else~(\@email)\fi\fi
+		 \if\relax\@email\relax\else~(\@email)\fi\fi
+		 % Revoir le --- (inutile si on laisse les auteurs vides)
 		 \if\@empty\@date\else~--- \@date\fi\par}%
 		\vspace{2\baselineskip}% TODO » Faire une longueur absorbable s'il y a un skip ensuite
 		\restore@twocolumns%
@@ -1110,11 +1450,12 @@
 	\bgroup
 		\cleardoublepage%
 		\reset@twocolumns%
+		\setlength{\parindent}{0em}
 		\normalize@fontsize%
 		\vspace*{0em}
 		{\Large\scshape\raggedright\csname @title@\languagename\endcsname\if\@empty\csname @subtitle@\languagename\endcsname\relax\else :\par\noindent\csname @subtitle@\languagename\endcsname\fi}\par%
 		{\@author~---\space\@date\par}%
-		{\if\@empty\@email\else\emailname:~\@email\fi\par}%
+		{\if\relax\@email\relax\else\emailname:~\@email\fi\par}%
 		\vspace{2\baselineskip}%
 		\restore@twocolumns%
 	\egroup
@@ -1134,14 +1475,20 @@
 	\bgroup
 	\reset@twocolumns%
 	\normalize@fontsize%
-	\vspace*{-\baselineskip}
+	\vspace*{-2\baselineskip}
 	{\Large\raggedright\@author}\\%
 	\begin{minipage*}{.5\linewidth}
 		\@address\par
-		\if\@empty\@phone\else\phonename:~\@phone\fi\par
-		\if\@empty\@fax\else\faxname:~\@fax\fi\par
-		\if\@empty\@email\else\emailname:~\@email\fi
-	\end{minipage*}\par%\href{\@email}{\@email}
+		\if\relax\@fax\relax
+			\@email%
+			\if\relax\@email\relax\else\if\relax\@phone\relax\else\ / \fi\fi%
+			\@phone\par
+		\else
+			\if\relax\@email\relax\else\emailname:~\@email\fi
+			\if\relax\@phone\relax\else\phonename:~\@phone\fi\par
+			\faxname:~\@fax\par
+		\fi
+	\end{minipage*}\par
 	\restore@twocolumns%
 	\egroup
 }
@@ -1163,9 +1510,15 @@
 	\begin{minipage*}{.5\linewidth}
 		\@author\par
 		\@address\par
-		\if\@empty\@phone\else\phonename:~\@phone\fi\par
-		\if\@empty\@fax\else\faxname:~\@fax\fi\par
-		\if\@empty\@email\else\emailname:~\@email\fi
+		\if\relax\@fax\relax
+			\@email%
+			\if\relax\@email\relax\else\if\relax\@phone\relax\else\ / \fi\fi%
+			\@phone\par
+		\else
+			\if\relax\@email\relax\else\emailname:~\@email\fi
+			\if\relax\@phone\relax\else\phonename:~\@phone\fi\par
+			\faxname:~\@fax\par
+		\fi
 	\end{minipage*}%
 	\hfill
 	\begin{minipage*}{.4\linewidth}
@@ -1185,16 +1538,17 @@
 %	TODO » Prévoir de pouvoir personnaliser la hauteur de la signature, idéalement pour qu'elle empiète un peu sur le texte (ou dans \makesignature)
 \newcommand{\closing}{
 	\addvspace{\baselineskip}
-	\if\@empty\@enclosed\relax\else%
-		\enclname:\hfill%
-		\begin{minipage*}{.85\linewidth}\@enclosed\end{minipage*}
-	\fi\par
 	\if\@empty\@cc\relax\else%
 		\ccname:\hfill%
 		\begin{minipage*}{.85\linewidth}\@cc\end{minipage*}%
 	\fi\par
 	\addvspace{2\baselineskip}
 	\makesignature\par
+	\if\@empty\@enclosed\relax\else%
+		\addvspace{\baselineskip}
+		\enclname:\hfill%
+		\begin{minipage*}{.85\linewidth}\@enclosed\end{minipage*}
+	\fi\par
 	% TODO » Ajouter avec les clausiers
 	% \nondisclosure
 }
@@ -1202,7 +1556,7 @@
 %	Set the default title page styles
 \titlepagestyle{Book}
 \if@article\titlepagestyle{Article}\fi
-\if@CV\titlepagestyle{CV}\fi
+\if@vitae\titlepagestyle{CV}\fi
 \if@letter\titlepagestyle{Letter}\fi
 \if@didactic\titlepagestyle{Didactic}\fi
  
@@ -1218,7 +1572,7 @@
 %	Create a command that uses \rightmark instead of \leftmark if empty
 \newcommand{\leftrightmark}{%
 	\begingroup\protected@edef\x{\leftmark}%
-	\ifx\@empty\x\relax
+	\if\@empty\x\@empty
 		\endgroup\rightmark
 	\else
 		\endgroup\leftmark
@@ -1275,12 +1629,12 @@
 	\makeevenhead{letterhead}
 		{}
 		{\ifnum\value{page}>1%
-		 \if@CV\MakeLowercase{\scshape\@author~-- \cvname}\fi\fi}
+		 \if@vitae\MakeLowercase{\scshape\@author~-- \cvname}\fi\fi}
 		{}
 	\makeoddhead{letterhead}
 		{}
 		{\ifnum\value{page}>1%
-		 \if@CV\MakeLowercase{\scshape\@author~-- \cvname}\fi\fi}
+		 \if@vitae\MakeLowercase{\scshape\@author~-- \cvname}\fi\fi}
 		{}
 	\makeevenfoot{letterhead}
 		{}
@@ -1299,28 +1653,26 @@
 	\makeevenhead{didactichead}
 		{\textit{\csname @title@\languagename\endcsname%
 		 \if\@empty\csname @subtitle@\languagename\endcsname\@empty\else: \csname @subtitle@\languagename\endcsname\fi}%
-		 \ifnum\value{division}>0\relax\par\thedivision\afterdivnum\@division\fi%
 		 \vspace*{0pt}}
 		{}
 		{}
 	\makeoddhead{didactichead}
 		{\textit{\csname @title@\languagename\endcsname%
 		 \if\@empty\csname @subtitle@\languagename\endcsname\@empty\else: \csname @subtitle@\languagename\endcsname\fi}%
-		 \ifnum\value{division}>0\relax\par\thedivision\afterdivnum\@division\fi%
 		 \vspace*{0pt}}
 		{}
 		{}
 	\makeevenfoot{didactichead}
 		{\footnotesize{%
 			\@author%
-			\ifx\@empty\@email\@empty\else~(\@email), \fi%
+			\if\relax\@email\relax\else~(\@email)\fi, %
 			\@date.}}
 		{}
 		{\thepage}
 	\makeoddfoot{didactichead}
 		{\footnotesize{%
 			\@author%
-			\ifx\@empty\@email\@empty\else~(\@email), \fi%
+			\if\relax\@email\relax\else~(\@email)\fi, %
 			\@date.}}
 		{}
 		{\thepage}
@@ -1330,7 +1682,7 @@
 %
 %\if@letter\pagestyle{letterhead}\fi
 
-\if@CV\pagestyle{letterhead}\@require@lastpagetrue\fi
+\if@vitae\pagestyle{letterhead}\@require@lastpagetrue\fi
 \if@letter\pagestyle{letterhead}\@require@lastpagetrue\fi
 \if@didactic
 	\pagestyle{didactichead}
@@ -1346,7 +1698,7 @@
 %	####	TABLES DES MATIÈRES	####
 
 %	Définir la subdivision maximale pour la numérotation
-\if@CV
+\if@vitae
 	\maxsecnumdepth{chapter}
 \else\if@didactic
 	\maxsecnumdepth{section}% Ou chapter (?)
@@ -1374,10 +1726,8 @@
 		\setcounter{save@tocdepth}{\value{tocdepth}}
 		\setcounter{tocdepth}{#1}
 		% Print the table of contents and restore tocdepth
-		\@maintocfalse
 		\tableofcontents*
 		\setcounter{tocdepth}{\value{save@tocdepth}}
-		\@maintoctrue
 		\clearpage
 	\egroup
 }
@@ -1435,7 +1785,7 @@
 % The first entry (book, part, heading, chapter) has an extra \baselineskip
 %	TODO » Adde + +.5\baselineskip sous le titre du Sommaire
 %		   Ou supprimer automatiquement les intro / ccl (mais pas les ch. prélim.), auquel cas on peut garder le \cftbefroechapterskip dans le sommaire
-\AtBeginDocument{\addtocontents{toc}{\protect\if@maintoc\protect\else\vspace{-\baselineskip}\protect\fi}}
+\AtBeginDocument{\addtocontents{toc}{\vspace{-\baselineskip}}}
 % S'assurer que la table des matières termine bien le dernier paragraphe
 \AtEndDocument{\addtocontents{toc}{\par}}
 
@@ -1448,13 +1798,12 @@
 \renewcommand*{\booknumfont}{\booktitlefont}
 \renewcommand*{\printbooknum}{%
 	\booknumfont%
-	\if@french
-		\ifnum\value{book}=1	\ordinalstring{book}[m]%
-	\else						\Roman{book}%
-	\fi\fi}
-% TODO » Add if@eleventpoints
+	\ifdefstring{\languagename}{french}
+		{\ifnum\value{book}=1	\ordinalstring{book}[m]%
+		 \else					\Roman{book}\fi}
+		{\Roman{book}}}
 \renewcommand{\beforebookskip}{\null\vspace{\baselinestretch\addto@Huge}%
-	\vspace{\if@tenpoints 12\baselineskip\fi\if@twelvepoints 10\baselineskip\fi}}
+	\vspace{\if@tenpoints 12\baselineskip\else 10\baselineskip\fi}}
 \renewcommand{\midbookskip}{\par\vspace{\baselinestretch\addto@Huge}}
 
 %	Définir le style des livres dans la table des matières
@@ -1483,24 +1832,24 @@
 % Test can be printed after the part title, on the same page
 \nopartblankpage
 
-%	TODO » Essayer d'automatiser la création de compteur, à chaque Partie I
-\newcounter{lastpart@I}
-\newcounter{lastpart@II}
-\newcounter{lastpart@III}
-\newcounter{lastpart@IV}
-\newcounter{lastpart@V}
-\newcounter{lastpart@VI}
-\newcounter{lastpart@VII}
-\newcounter{lastpart@VIII}
-\newcounter{lastpart@IX}
-\newcounter{lastpart@X}
+%	TODO » Seconde partie et Titre second == créer un switch manuel \onlytwoparts \onlytwoheadings à insérer dans le .tex
 
-\renewcommand{\printpartnum}{%
-	% If last part > 2, write it in the .aux file for numbrring purposes
-	\ifnum\value{part}>2%
-		\immediate\write\@auxout%
-    		{\string\setcounter{lastpart@\thebook}{\the\c@part}}
-    \fi}
+% \newcounter{lastpart@I}
+% \newcounter{lastpart@II}
+% \newcounter{lastpart@III}
+% \newcounter{lastpart@IV}
+% \newcounter{lastpart@V}
+% \newcounter{lastpart@VI}
+% \newcounter{lastpart@VII}
+% \newcounter{lastpart@VIII}
+% \newcounter{lastpart@IX}
+% \newcounter{lastpart@X}
+% \renewcommand{\printpartnum}{%
+% 	% If last part > 2, write it in the .aux file for numbrring purposes
+% 	\ifnum\value{part}>2%
+% 		\immediate\write\@auxout%
+%     		{\string\setcounter{lastpart@\thebook}{\the\c@part}}
+%     \fi}
 
  %	TODO » Coder proprement \printpartname. Supprimer les modifs de babel (option?)
  % Utiliser le test:
@@ -1528,11 +1877,12 @@
 \newcommand{\afterheadingnum}{\par\nobreak\vskip\midchapskip}
 \newcommand{\printheadingname}{\headnamefont\headingname}
 \newcommand{\headingnamenum}{\space}
-\newcommand{\printheadingnum}{\headnumfont%
-	\if@french
-		\ifnum\value{heading}=1	\ordinalstring{heading}[m]%
-	\else					\Roman{heading}%
-	\fi\fi}
+\newcommand{\printheadingnum}{%
+	\headnumfont%
+	\ifdefstring{\languagename}{french}
+		{\ifnum\value{heading}=1	\ordinalstring{heading}[m]%
+		 \else						\Roman{heading}\fi}
+		{\Roman{heading}}}
 \newcommand{\printheadingtitle}[1]{\headtitlefont#1}
 
 %	Définir le style des titres dans la table des matières
@@ -1571,11 +1921,12 @@
 \newcommand{\aftersubheadingnum}{\par\nobreak\vskip\midchapskip}
 \newcommand{\printsubheadingname}{\subheadnamefont\subheadingname}
 \newcommand{\subheadingnamenum}{\space}
-\newcommand{\printsubheadingnum}{\subheadnumfont%
-	\if@french
-		\ifnum\value{subheading}=1	\ordinalstring{subheading}[m]%
-	\else					\Roman{subheading}%
-	\fi\fi}
+\newcommand{\printsubheadingnum}{%
+	\subheadnumfont%
+	\ifdefstring{\languagename}{french}
+		{\ifnum\value{subheading}=1		\ordinalstring{subheading}[m]%
+		 \else							\Roman{subheading}\fi}
+		{\Roman{subheading}}}
 \newcommand{\printsubheadingtitle}[1]{\subheadtitlefont#1}
 
 %	Définir le style des sous-titres dans la table des matières
@@ -1617,11 +1968,10 @@
 	\renewcommand{\printchapternum}{%
 		\chapnumfont%
 		\ifanappendix					\Alph{chapter}%
-		\else\if@french%
-			\ifnum\value{chapter}=1		\ordinalstring{chapter}[m]%
-			\else						\Roman{chapter}\fi
-		\else							\Roman{chapter}%
-		\fi\fi}
+		\else\ifdefstring{\languagename}{french}
+			{\ifnum\value{chapter}=1	\ordinalstring{chapter}[m]%
+			 \else						\Roman{chapter}\fi}
+			{\Roman{chapter}}\fi}
 	\renewcommand{\afterchapternum}{:\par\nobreak\vskip\midchapskip}
 	\setlength{\beforechapskip}{\baselinestretch\addto@Large}
 	\addtolength{\beforechapskip}{\baselineskip}
@@ -1699,9 +2049,10 @@
 	\chaptermark{#1}
 	\phantomsection
 	\addtocontents{toc}{\vspace{\baselineskip}}
-	\addcontentsline{toc}{section}{\protect\if@maintoc\if\relax#1\relax\else#1\cftchapteraftersnum\cftchapteraftersnumb~\fi#2\protect\fi}}
+	\addcontentsline{toc}{section}{\if\relax#1\relax\else#1\cftchapteraftersnum\cftchapteraftersnumb~\fi#2}}
 
 %	Définir le mode de numérotation des sections et paragraphes
+%	TODO » Créer un subsubparagraph > \@greek (pour tout le monde)
 \if@article
 	% En mode article, utiliser une numérotation courte (I.A.1.a)
 	\renewcommand{\thesection}{\Roman{section}}
@@ -1771,12 +2122,14 @@
 \setlength{\cftbeforesubsubsectionskip}{0pt}
 
 %	Définir le style des paragraphes
+% Vérifier l'indentation, notamment didactic+
 \setparaheadstyle{\scshape}
 \setparaindent{0em}
 \setlength{\beforeparaskip}{\baselineskip}
 \setlength{\afterparaskip}{\baselineskip}
 
 %	Définir le style des sous-paragraphes
+% Vérifier l'indentation, notamment didactic+
 \setsubparaheadstyle{\itshape}
 \setsubparaindent{0em}
 \setlength{\beforesubparaskip}{\baselineskip}
@@ -1791,11 +2144,11 @@
 	\setlength{\aftersubparaskip}{0em}
 \else\if@marginal
 	% En mode <marginal>, ils sont placés dans une note marginale
-	\newcommand{\marginparahead}[1]{\marginpar{\itshape#1}}
+	\newcommand{\marginparahead}[1]{\marginpar{\itshape#1\if@vitae:\fi}}
 	\setparaheadstyle{\marginparahead}
 	\setlength{\afterparaskip}{0em}
 	% Idem pour les sous-paragraphes (dans la marge)
-	\newcommand{\marginsubparahead}[1]{\marginpar{\itshape#1}}
+	\newcommand{\marginsubparahead}[1]{\marginpar{\itshape#1\if@vitae:\fi}}
 	\setsubparaheadstyle{\marginsubparahead}
 	\setlength{\aftersubparaskip}{0em}
 \fi\fi
@@ -1848,29 +2201,24 @@
 \counterwithin{precis}{paragraph}
 \counterwithin{precis}{subparagraph}
 
-%	TODO » \if@precis, afficher les \precis{Résumé du paragraphe} (+ retrait de la liste?) @OK \else juste la liste, éventuellement inline (style des PUF) @TODO
-%	TODO » Utilité des numéros de page? (imprimer > cf. PUF)
-%	TODO » Ajouter une commande manuelle pour insérer le chapitre / section, etc. juste en-dessous du titre (comme pour les labels) (?) + Ajouter autommatiquement à la commande via etoolbox (apptocmd, etc.) -- idem pour les chapitres non numérotés (header et toc)
-
-%	Créer un switch pour imprimer ou non les noms des \para dans le texte
+%	Créer un switch pour afficher les noms des paragraphes ou non
 \newcommand{\paragraphnames}{\@paranametrue}
 \newcommand{\noparagraphnames}{\@paranamefalse}
 
 %	Créer un switch pour imprimer ou non les \para dans la table des matières
-\newcommand{\paratoc}{\@paratoctrue}
-\newcommand{\noparatoc}{\@paratocfalse}
-
-%	Créer un switch pour imprimer ou non les \outline dans la table des matières
-\newcommand{\summarytoc}{\@summarytrue}
-\newcommand{\nosummarytoc}{\@summaryfalse}
+\newcommand{\precis}{\@precistrue}
+\newcommand{\noprecis}{\@precisfalse}
 
 %	Créer un switch pour imprimer ou non les \outline dans la table des matières
 \newcommand{\outlinetoc}{\@outlinetrue}
 \newcommand{\nooutlinetoc}{\@outlinefalse}
 
-%	Créer un switch pour imprimer ou non les \precis dans la table des matières
-\newcommand{\precistoc}{\@precistrue}
-\newcommand{\noprecistoc}{\@precisfalse}
+%	Créer un switch pour imprimer ou non les \outline dans la table des matières
+\newcommand{\summarytoc}{\@summarytrue}
+\newcommand{\nosummarytoc}{\@summaryfalse}
+
+%	TODO » Utilité des numéros de page? (imprimer > cf. PUF)
+%	TODO » Ajouter une commande manuelle pour insérer le chapitre / section, etc. juste en-dessous du titre (comme pour les labels) (?) + Ajouter autommatiquement à la commande via etoolbox (apptocmd, etc.) -- idem pour les chapitres non numérotés (header et toc)
 
 %	Créer une commande \para pour faire des paragraphes numérotés
 %	TODO » Supprimer le \precis, et utiliser plutôt \chapterprecis et \precistoctext (memoir)
@@ -1878,15 +2226,14 @@
 	\refstepcounter{para}%
 	\refstepcounter{precis}%
 	\def\@currentlabel{\thepara}%
-	{\paranumstyle\thepara\ifx\relax#1\relax\label{para:\thepara}\else\label{para:#1}\paranumsep\fi}%
+	{\paranumstyle\thepara\if\relax#1\relax\label{para:\thepara}\else\label{para:#1}\paranumsep\fi}%
 	\if@paraname%
-		\if@backindex\specialindex{\jobname-par}{para}{#1}\fi
 		\if@marginal%
 			\marginpar{\parastyle#1}%
 		\else%
 			{\parastyle#1\parasep}%
 	\fi\fi%
-	\if@paratoc
+	\if@precis
 		\addtocontents{toc}{%
 			\ifnum\value{precis}>1\vskip-\lastskip\cftparasep\else%
 				\vskip\baselineskip\par\fi%
@@ -1895,10 +2242,56 @@
 			%\ifx\relax#1\relax\else
 				\protect\noindent%
 				{\cftparastyle{\cftparanumstyle\thepara\cftparaaftersnum}
-					\ifx\relax#1\relax\else#1\cftparanumsep\fi\cftparaleader\thepage\cftparaafterpnum}\vskip\baselineskip\par%\fi
+					\if\relax#1\relax\else#1\cftparanumsep\fi\cftparaleader\thepage\cftparaafterpnum}\vskip\baselineskip\par%\fi
 			}%
 	\fi%
 	\@ifnextchar\par{\@gobblepar\relax}{\relax}}
+
+%	Créer une commande pour calculer automatiquement l'âge (vitae)
+% \agecalc{dd}{mm}{yyyy}
+\newcounter{calculate@age}
+\newcommand{\agecalc}[3]{%
+	\setcounter{calculate@age}{\the\year}%
+	\addtocounter{calculate@age}{-#3}%
+	\ifnum\the\month < #2\relax\addtocounter{calculate@age}{-1}\fi%
+	\ifnum\the\month = #2\relax
+		\ifnum\the\day < #1\relax\addtocounter{calculate@age}{-1}\fi\fi%
+	\arabic{calculate@age}~\agename}
+
+
+%	#####	LANGUAGES	#####
+
+%	TODO » Implémenter {csquotes} et le documenter
+%	TODO » Suppr. la langue <english> après avoir converti automatiquement via biber
+\RequirePackage[greek,latin,english,british,french]{babel}
+\RequirePackage{fixltxhyph}
+
+%	Use the superscript macro from Babel-French
+\let\textsuperscript=\fup
+
+%	TODO » Vérifier \bsc, \frquote, \frenchdate, etc. et les mapper sur les commandes normales (cf. doc babel french)
+
+% Load {csquotes} and implement styles for foreign language quotations
+\RequirePackage[autostyle=true]{csquotes}
+\DeclareQuoteAlias[american]{english}{british}% Use double quotes in British english
+\DeclareQuoteStyle[american]{english}% verified
+	{\textquotedblleft\em}{\em\kern.1em\textquotedblright}[0.05em]
+	{\textquoteleft}{\textquoteright}
+\DeclareQuoteStyle{latin}
+  {\mkfrenchopenquote{\guillemotleft}\em}
+  {\em\mkfrenchclosequote{\guillemotright}}
+  {\textquotedblleft}
+  {\textquotedblright}
+
+
+
+%	TODO » Reprendre les documents pour intégrer le package + Renommer {frenchlaw-typo}
+\RequirePackage{typographie}
+
+
+
+
+
 
 %	Créer les commandes pour faire référence à un numéro
 \newcommand{\infra}{\@ifstar{\s@infra}{\@infra}}
@@ -1909,27 +2302,20 @@
 \newcommand{\@supra}[1]{\emph{supra} \no\ref{para:#1}}
 \newcommand{\s@supra}[1]{\emph{supra} \nos\ref{para:#1}~s.}
 
-%	Créer une commande \precis{} pour indiquer un résumé du paragraphe.
-%	TODO » Truver un moyen de supprimer toutes les espaces horizontales / verticales et éventuellement le saut de paragraphe. Placer en début de \para avec des % en fin de ligne, ou en fin de \para (mais tester un \unskip au début du \para)
-%	TODO » \@gobble can work but only if the user doesn't add any %
-\newcommand{\precis}[1]{%
-	\if@precis\bgroup
-		\let\footnote\@gobble
-		\addtocontents{toc}{%
-			\ifx\relax#1\relax\else\noindent#1\par\fi}
-	\egroup\fi%
-	\@ifnextchar\par{\@gobblepar}{\relax}}
+%	TODO » Créer une commande \precis{} pour indiquer un résumé du paragraphe. Revoir celui de <memoir>
+% TODO » Ou imprimer tous les \para + \paraname à la suite dans la ToC, en forme de précis.
 
 %	Créer un environnement {outline} pour indiquer les passages à copier en ToC.
 % On utilise le package {environ} pour récupérer le texte dans l'environnement.
 % Utiliser \sanitize[<remplacement>]{<original>} pour retirer les passages problématiques de la ToC. Tester. Sinon utiliser une macro sans argument + \@gobble
+%	TODO » Documenter \sanitize
 \NewEnviron{outline}{%
 	\if@outline\bgroup%
 		\let\footnote\@gobble%
 		\let\sanitize\@gobble%
 		\setcounter{precis}{0}
 		\addtocontents{toc}{%
-			\ifx\relax\BODY\relax\else%
+			\if\relax\BODY\relax\else%
 				\vskip-\lastskip\vskip\baselineskip\BODY\vskip\baselineskip\par\fi}%
 	\egroup\fi%
 	\BODY%
@@ -1955,225 +2341,6 @@
 \newcommand{\glosemark}[1]{\textsuperscript{\thinspace\emph{#1)}}}
 
 
-%	#####	DÉFINITIONS RELATIVES AUX FLOATS	#####
-
-%	Numéroter les <floats> pour le document entier et non par chapitre
-\counterwithout{figure}{chapter}
-\counterwithout{table}{chapter}
-
-%	Idem pour le <mainmatter> (puisque <memoir> y change explicitement la numérotation)
-\renewcommand\@memmain@floats{
-	\counterwithout{figure}{chapter}
-	\counterwithout{table}{chapter}}
-
-%	Utiliser l'interligne standard pour les floats
-\edef\m@m@float@spacing{\custom@baselinestretch}
-
-%	Définir l'alignement des <floats> (centré)
-\setfloatadjustment{figure}{\centering}
-\setfloatadjustment{table}{\centering}
-
-%	Définir l'affichage des figures et tableaux dans la table des matières
-\cftsetindents{figure}{0em}{1.5em}
-\cftsetindents{table}{0em}{1.5em}
-
-%	Définir la hauteurs des séparateurs verticaux
-\setlength{\floatsep}{0pt}
-\setlength{\textfloatsep}{\baselineskip}
-\setlength{\intextsep}{\baselineskip}
-\setlength{\dblfloatsep}{\baselineskip}
-\setlength{\dbltextfloatsep}{\baselineskip}
-
-%	Définir la hauteur des éléments du tableau via <booktabs>
-\setlength{\aboverulesep}{.5\baselineskip}
-\setlength{\belowrulesep}{.5\baselineskip}
-\setlength{\abovetopsep}{0pt}
-\setlength{\belowbottomsep}{0pt}
-
-%	Forcer les <floats> à se placer en bas de page ou sur une page dédiée
-% Suppose qu'il y ait peu de floats, mais les aligne verticalement à moindre coût
-\setfloatlocations{figure}{bp}
-\setfloatlocations{table}{bp}
-
-%	Définir le style des <tabular> (centrés, alignement vertical)
-\let\old@tabular=\tabular
-\let\old@endtabular=\endtabular
-\renewenvironment{tabular}[2][t]
-	{\noindent\old@tabular[#1]{#2}\toprule}
-	{\bottomrule\old@endtabular}
-
-%	Définir le style de la légende
-\changecaptionwidth\captionwidth{.8\columnwidth}
-\setlength{\abovecaptionskip}{.5\baselineskip}
-\setlength{\belowcaptionskip}{.5\baselineskip}
-\hangcaption
-
-%	Définir un environnement <minipage> qui respecte l'alignement vertical
-% Thanks @ egreg <http://tex.stackexchange.com/a/34982/10119>
-\newenvironment{minipage*}[2][t]
-	{\minipage[#1]{#2}}
-	{\par\xdef\tpd{\the\prevdepth}\endminipage\par\prevdepth\tpd}
-
-%	#####	DÉFINITIONS RELATIVES AUX LISTES	#####
-
-%	Supprimer les espaces verticaux dans les listes pour assurer l'alignement vertical
-\newcommand*{\frenchlawlists}{
-	\setlength{\listparindent}{\parindent}
-	\setlength{\everylistparindent}{\listparindent}
-	\setlength{\parskip}{\z@}
-	\setlength{\partopsep}{\z@}
-	\setlength{\parsep}{\z@}
-	\setlength{\parsepi}{\parskip}
-	\setlength{\parsepii}{\parskip}
-	\setlength{\topsep}{\z@}
-	\setlength{\topsepi}{\z@}
-	\setlength{\topsepii}{\z@}
-	\setlength{\topsepiii}{\z@}
-	\setlength{\itemindent}{\z@}
-	\setlength{\itemsepi}{\parsepi}
-	\setlength{\itemsepii}{\parsepii}
-	\setlength{\itemsepiii}{\topsepiii}
-	%\setlength{\labelsep}{.5em}
-	\setlength{\leftmargin}{\z@}
-	\setlength{\rightmargin}{\z@}
-	\setlength{\leftmargini}{\if@twocolumn 1em \else 1.5em \fi}
-	\setlength{\leftmarginii}{\if@twocolumn 1em \else 1.5em \fi}
-	\setlength{\leftmarginiii}{\if@twocolumn 1em \else 1.5em \fi}
-	\setlength{\leftmarginiv}{\if@twocolumn 1em \else 1.5em \fi}
-	\setlength{\leftmarginv}{\if@twocolumn 1em \else 1.5em \fi}
-	\setlength{\leftmarginvi}{\if@twocolumn 1em \else 1.5em \fi}}
-\frenchlawlists
-
-%	TODO » Enumerate numbering
-%	Définir le style des labels dans les enumerate
-\renewcommand{\labelenumii}{\theenumii).}
-\renewcommand{\labelenumiii}{\textit{\theenumiii}.}
-\renewcommand{\theenumiv}{\@greek\c@enumiv}
-
-%	Définir le style des labels des descriptions
-\renewcommand{\descriptionlabel}[1]{\scshape{#1:\enspace}}
-\renewcommand{\blockdescriptionlabel}[1]{\scshape{#1:\enspace}}
-\newcommand{\summarylabel}[1]{\scshape{\hfill\summaryname:}}
-\newcommand{\vitaelabel}[1]{\footnotesize\itshape{\hfill\strut#1:\strut}}
-
-%	TODO » Revoir les espacements horizontaux des descriptions
-%	Modifier l'environnement <description>
-\renewenvironment{description}
-	{\list{}{\vskip\baselineskip
-			 \let\makelabel\descriptionlabel
-			 \setlength{\labelwidth}{\z@}
-			 \setlength{\labelsep}{\z@}
-			 \setlength{\leftmargin}{\z@}}}
-	{\vskip\baselineskip\endlist}
-
-%	Modifier l'environnement <blockdescription>
-\renewenvironment{blockdescription}%
-	{\list{}{\vskip\baselineskip
-			 \let\makelabel\blockdescriptionlabel
-			 \setlength{\labelwidth}{\z@}
-			 \setlength{\labelsep}{\z@}
-			 \setlength{\leftmargin}{\z@}}}%
-	{\vskip\baselineskip\endlist}
-
-%	TODO » Placer avec les commandes babel +  Défaut == "En résumé"
-\newcommand{\summaryname}{Pour l'essentiel}
-
-%	Créer un environnement <summmary> pour des conclusions avec un label prédéfini
-\NewEnviron{summary}
-	{\if@summary\bgroup%
-		\let\footnote\@gobble%
-		\let\sanitize\@gobble%
-		\addtocontents{toc}{%
-			\ifx\relax\BODY\relax\else%
-				\vskip-\lastskip\vskip\baselineskip%
-				\textsc{\summaryname}: \BODY\vskip\baselineskip\par\fi}%
-	\egroup\fi%
-	\list{}{\vskip\baselineskip%
-			\let\makelabel\summarylabel%
-			\setlength{\itemsep}{\baselineskip}%
-			\setlength{\leftmargin}{2\parindent}}%
-	 \item\BODY% + \needspace{2\baselineskip} (?) [Semble inutile]
-	 \vskip\baselineskip\endlist}
-
-%	Créer un environnement <vitae> pour les CV (label dans la marge)
-\newenvironment{vitae}
-	{\list{}{\let\makelabel\vitaelabel
-			 \setlength{\leftmargin}{\z@}
-			 \setlength{\labelwidth}{\marginparwidth}}}
-	{\endlist}
-
-%	TODO » Appliquer \idemindent si le texte est en français (<quote>, <quotation>)
-
-%	Appliquer à l'environnement quote    
-\renewenvironment{quote}%
-	{\list{}{\setlength{\itemindent}{\z@}%
-			 \setlength{\leftmargin}{\parindent}}%
-	 \small\item[]\ignorespaces}
-	{\endlist}
-
-%	Appliquer à l'environnement quotation
-\renewenvironment{quotation}%
-	{\list{}{\setlength{\itemindent}{\parindent}%
-			 \setlength{\leftmargin}{\parindent}}%
-	 \small\item[]\ignorespaces}
-	{\endlist}
-
-%	Définir le style des épigraphes
-\epigraphfontsize{\normalsize}
-\setlength{\epigraphwidth}{.6\textwidth}
-\setlength{\epigraphrule}{0pt}
-\setlength{\beforeepigraphskip}{0pt}
-\setlength{\afterepigraphskip}{2\baselineskip}
-%
-%	TODO » Documenter les minipages, utiliser \footnotemark et \footnotetext pour des notes
-%	Définir le format de la citation de l'épigraphe
-\renewcommand{\@epitext}[1]{%
-	\begin{minipage*}\epigraphwidth#1\end{minipage*}}
-
-%	Redéfinir le format de la source de l'épigraphe
-\renewcommand{\@episource}[1]{%
-	\begin{minipage*}\epigraphwidth\begin{\sourceflush}---~#1\end{\sourceflush}\end{minipage*}}
-
-%	Redéfinir la commande des épigraphes simples
-\renewcommand{\epigraph}[2]{
-	\vspace*{\beforeepigraphskip}
-	{\begin{\epigraphflush}
-		\epigraphsize
-		\@epitext{#1}\par\vspace{\baselineskip}
-		\@episource{#2}\par
-	\end{\epigraphflush}}
-	\vspace*{\afterepigraphskip}}
-
-%	Définir un format pour les dédicaces, basé sur celui des épigraphes
-\newenvironment{dedication}
-	{\clearpage
-	 \vspace*{0pt}\vfill%
-	 \thispagestyle{empty}
-	 \begin{\epigraphflush}%
-	 \minipage{\epigraphwidth}%
-	 \setlength{\parskip}{\baselineskip}%
-	 \epigraphsize\raggedleft}
-	{\endminipage%
-	 \end{\epigraphflush}%
-	 \vfill\vfill\clearpage}
-
-%	Redéfinir les commandes des épigraphes multiples
-
-%	Appliquer à l'environnement <epigraphs>
-\renewenvironment{epigraphs}{%
-	\list	{}
-			{\vspace*{\beforeepigraphskip}}}%
-			{\vspace*{\afterepigraphskip}\endlist}
-
-%	Redéfinir les commandes des épigraphes multiples
-% Redéfinir \qitem (ajout d'un espace entre deux épigraphes successifs)
-\renewcommand{\qitem}[2]{%
-	\item[]{%
-	\begin{\epigraphflush}
-		\epigraphsize
-		\@epitext{#1}\par\vspace{.5\baselineskip}%
-		\@episource{#2}\par\vspace{2.5\baselineskip}
-	\end{\epigraphflush}}}
 
 %	#####	CRÉATION DES INDEX ET GLOSSAIRES	#####
 
@@ -2182,10 +2349,6 @@
 \makeindex
 \makeindex[\jobname-bib]
 \makeindex[\jobname-law]
-\if@backindex
-	\makeindex[\jobname-ref]
-	\makeindex[\jobname-par]
-\fi
 
 
 %	Use the same styling for letter groups with xindy and makeindex
@@ -2219,7 +2382,7 @@
 	\indexmark
 	\ifnoindexintoc\else
 		\phantomsection
-		\addcontentsline{toc}{section}{\protect\if@maintoc\indexname\protect\fi}%
+		\addcontentsline{toc}{section}{\indexname}%
 	\fi
 	\thispagestyle{chapter}% indextitlepagestyle
 	\setlength{\parindent}{0em}
@@ -2247,7 +2410,7 @@
 	\glossarymark
 	\ifnoglossaryintoc\else
 		\phantomsection
-		\addcontentsline{toc}{section}{\protect\if@maintoc\glossaryname\protect\fi}
+		\addcontentsline{toc}{section}{\glossaryname}
 	\fi
 	\thispagestyle{chapter}
 	\setlength{\parindent}{0em}
@@ -2281,11 +2444,16 @@
 \newcommand*{\publistbasestyle}{frenchlaw}
 
 %	Charger <biblatex> avec les options
-\usepackage[
+\RequirePackage[
 	style=frenchlaw,
-	\if@CV
+	\if@article
+		useshortauthor=false,
+	\fi
+	\if@vitae
 		bibstyle=publist,
-		marginyear=true,
+		marginyear=false,% TODO » True
+		% TODO » Avec la versio 2019
+		% plnumbered=reset,
 	\fi
 	backend=biber,
 	indexing=cite,
@@ -2306,7 +2474,7 @@
 	\chaptermark{#1}
     \ifmemoirbibintoc
 		{\phantomsection
-		 \addcontentsline{toc}{section}{\protect\if@maintoc#1\protect\fi}}
+		 \addcontentsline{toc}{section}{#1}}
 		{}}
 \defbibheading{biblist}[\biblistname]{%
 	\clearforchapter
@@ -2315,7 +2483,7 @@
 	\chaptermark{#1}
 	\ifmemoirbibintoc
 		{\phantomsection
-		 \addcontentsline{toc}{section}{\protect\if@maintoc#1\protect\fi}}
+		 \addcontentsline{toc}{section}{#1}}
 		{}}
 \defbibheading{subbibliography}[\refname]{%
 	\bgroup
@@ -2324,8 +2492,9 @@
 	\egroup}%
 
 
-%	TODO » Sortir tout ce qu'on peut du \if@CV
-\if@CV
+%	TODO » Sortir tout ce qu'on peut du \if@vitae -- créer un .bbx exprès qui charge publist et modifie ce qu'il faut
+%	+ Documenter l'option {short} et le switch \iflongcv à utiliser dans le corps du CV pour délimiter les deux versions du document
+\if@vitae
 	%	Use bibliography headings that fit the rest of the CV
 	\defbibheading{bibliography}[\refname]{\section*{#1}}
 	\defbibheading{subbibliography}[\refname]{\paragraph*{#1}}
@@ -2334,6 +2503,9 @@
 
 	% Use own style for book reviews
 	\DeclareBibliographyAlias{review}{article}
+	% Reset article pagination to default (print page range)
+	\DeclareFieldFormat[article,commentary,review]{pages}{%
+		\mkpageprefix[bookpagination]{#1}}
 
 	%	Number CV items by section and in reverse order
 	% Count total number of entries in each refsection
@@ -2347,16 +2519,25 @@
 		\number\numexpr\csuse{entrycount:\therefsection}+1-#1\relax}
 
 	% Print the publication {year} in the margin if it is different from the previouw entry, subsidiarily, print the {eventyear} or the {pubstate}.
+	%	TODO » \if@marginyear plante si on n'est pas en mode CV, sans doute car undefined => créer le switch (?)
 	\renewbibmacro*{marginyear}{%
-		\iffieldundef{year}
-			{\ifthenelse{	\iffieldundef{eventyear} \OR
-							\iffieldequals{eventyear}{\bbx@lasthash} }
-				{\ifthenelse{	\iffieldundef{pubstate} \OR
-								\iffieldequals{pubstate}{\bbx@lasthash} }
+		%\if@marginyear
+			\iffieldundef{year}
+				{\ifthenelse{	\iffieldundef{eventyear} \OR
+								\iffieldequals{eventyear}{\bbx@lasthash} }
+					{\ifthenelse{	\iffieldundef{pubstate} \OR
+									\iffieldequals{pubstate}{\bbx@lasthash} }
+						{}
+						{\marginpar{\nopunct\vitaelabel{\printfield{pubstate}}}%
+						 \savefield{pubstate}{\bbx@lasthash}}}
+					{\marginpar{\nopunct\vitaelabel{\printfield{eventyear}}}%
+					 \savefield{eventyear}{\bbx@lasthash}}}
+				{\iffieldequals{year}{\bbx@lasthash}
 					{}
-					{\marginpar{\nopunct\vitaelabel{\printfield{pubstate}}}}}
-				{\marginpar{\nopunct\vitaelabel{\printfield{eventyear}}}}}
-			{\marginpar{\nopunct\vitaelabel{\printfield{year}}}}}
+					{\marginpar{\nopunct\vitaelabel{\printfield{year}}}%
+					 \savefield{year}{\bbx@lasthash}}}%
+		%\fi%
+		}
 
 	% Do not print the label year, since it is in the margin already
 	\renewbibmacro*{year+labelyear}{}
@@ -2435,6 +2616,7 @@
 	 \if@article
 		{\noindent\large\scshape\raggedright\abstractname:\space}
 	 \else
+		\setlength{\parindent}{0em}
 		\normalize@fontsize
 		{\noindent\large\scshape\raggedright\csname @title@\languagename\endcsname:\space
 		 \csname @subtitle@\languagename\endcsname}\par
@@ -2448,6 +2630,7 @@
 	\bgroup
 	\reset@twocolumns
 	\if\relax#1\relax\else\selectlanguage{#1}\fi
+	\setlength{\parindent}{0em}
 	\normalize@fontsize
 	\addvspace{\baselineskip}
 	{\noindent\scshape\raggedright\keywordsname:\enskip}{#2}\par%
@@ -2494,20 +2677,19 @@
 	{\endlist}
 
 \def\@shorthandlist{}
+% Adde un moyen de vérifier si \@shorthandlist est vide (tout en le laissant vide, car il ne peut contenir que des \item )
 \def\printabbreviations{%
-	\ifx\@empty\@shorthandlist\relax\else
 		\clearforchapter
 		\thispagestyle{chapter}
 		\@schapter{\listabbreviationname}
 		\chaptermark{\listabbreviationname}
 		\ifmemoirbibintoc
 			{\phantomsection
-			 \addcontentsline{toc}{section}{\protect\if@maintoc\listabbreviationname\protect\fi}}
+			 \addcontentsline{toc}{section}{\listabbreviationname}}
 			{}
 		\begin{abbreviations}
 			\@shorthandlist
-		\end{abbreviations}
-	\fi}
+		\end{abbreviations}}
 \newcommand{\abbreviation}[2]{%
 	\appto\@shorthandlist{\item[#1]{#2}}%
 	\settowidth{\this@abbreviationwidth}{#1}%
@@ -2588,7 +2770,7 @@
 	\bgroup
 	\centering%
 	\rotatebox{90}{%
-		\parbox{\textheight}{%
+		\parbox[t]{\textheight}{%
 		\Large%
 		\hfill%
 		\csname @title@\languagename\endcsname:\space%
@@ -2615,13 +2797,17 @@
 	{\noindent\centering#1\par}%
 	\addvspace{\baselineskip}}
 
+
+%	Create a command for alternative emphasis of text (Bold ± Color).
+\DeclareTextFontCommand{\headline}{\bfseries\color{\@headlinecolor}}
+% Create color specification commands
+\newcommand{\headlinecolor}[1]{\gdef\@headlinecolor{#1}}
+	\newcommand{\@headlinecolor}{black}% E.g. "black", "darkgray"
+
 %	#####	GESTION DU MODE DRAFT	#####
 
-%	TODO » Pour les notes
-\usepackage{xcolor}
-
 % TODO » Requires two runs of LaTeX in order to place the marks correctly.
-\usepackage{marginnote}
+\RequirePackage{marginnote}
 
 %	TODO » On utilise \ifdraftdoc (de memoir) pour exclure le \if@draft (version pré-inale du manuscrit, qui ne doit pas avoir de coquilles)
 %	==> Créer deux options:
@@ -2665,16 +2851,84 @@
 \if@draft
 	% Imprimer une marque pour les lignes qui dépassent du cadre
 	\overfullrule=5pt
-	% \usepackage{showframe}
+	% \RequirePackage{showframe}
 	% \showtrimson
 	%	Imprimer les indexes
 	% \let\old@index=\index
 	% \AtBeginDocument{\renewcommand{\index}[1]{\marginpar{\color{orange}{#1}}\old@index{#1}}}
 \fi
 
+% Préparer des environnements avec tcolorbox pour les fiches pédagogiques
+% 
+
+\def\point{\addvspace{\baselineskip}\noindent\textrightarrow\enspace\textbf}
+
+%	TODO » Rechercher toutes les "color" pour en faire une liste dans la documentation (et éventuellement harmoniser + créer une otiion black/color)
+
 %	TODO » Implémenter <hyperref>
 %\RequirePackage{hyperref}% Mais crée des bugs avec les références type \supra
 
-%	TODO » Définir une commande pour les \todo
+%	TODO » Vérifier tous les warnings et les résoudre
+%	<fmtcount> trouve un \ordinal déjà défini > par qui / inverser l'ordre ou désactiver?
+%	Fontshape `TU/OrnementsADF/m/n` undefined ==> Tester quel emploi de adforn provoque le warning -- peut-être en utilisant la commande par nom complet (cf. la doc du package)?
+%	Option <english> à remplacer par <british> partout
+%	Fichier de langue latine pour biblatex (?)
 
-% Fin
+%	TODO » Définir une commande pour les \todo
+%	TODO » Ajouter un environnement pour les projets avec timing (cf. lettre de motivation / avancement ATER Lyon)
+
+\if@dev
+	\RequirePackage{frenchlaw-dev}
+\fi
+
+
+%	Configure LzTeX & friends logos
+\RequirePackage{metalogo}
+\if@sansserif
+	\renewcommand{\familydefault}{\sfdefault}
+	\setlogokern{Xe}{-.03em}
+	\setlogokern{La}{-.1em}
+	\setlogokern{aT}{-.04em}
+\else
+	\setlogokern{Xe}{-.3ex}
+	\setlogokern{eT}{-.35ex}
+	\setlogokern{eL}{-.25ex}
+	\setlogokern{La}{-.65ex}
+	\setlogokern{aT}{-.25ex}
+	\setlogokern{Te}{-.35ex}
+	\setlogokern{eX}{-.25ex}
+	\setLaTeXa{\raisebox{.25em}{\scshape a}}
+	\setlogodrop{.25em}
+\fi
+
+%	Create the frenchlaw logo
+\newcommand{\frenchlaw}{%
+	\if@sansserif
+		{\itshape F\kern-.2ex rench}%
+		 L\kern-.4ex%
+		 \raisebox{.25em}{\scshape a}\kern-.1ex%
+		 W%
+	\else\ifxetex
+			{\itshape F\kern-.2ex rench}%
+			 L\kern-.7ex%
+			 \raisebox{.25em}{\scshape a}\kern-.3ex%
+			 W%
+		\else
+			{\itshape French\kern.1ex}%
+			 L\kern-.65ex%
+			 \raisebox{.2em}{\scshape a}\kern-.3ex%
+			 W%
+	\fi\fi\xspace}
+
+
+
+% Adde: If file exists!
+
+\IfFileExists{frenchlaw.cnf}
+	{\input{frenchlaw.cnf}}
+	{}
+
+
+
+
+%%   End of class Frenchlaw
