@@ -215,7 +215,6 @@
 }
 \DeclareOptionX{didactic+}{
 	\@didactictrue
-	\@articletrue
 	\@fourteenpointstrue
 	\@tenpointsfalse\@elevenpointsfalse\@twelvepointsfalse
 	\@twosidefalse\@onesidetrue
@@ -245,10 +244,6 @@
 	\PassOptionsToClass{11pt,oneside}{memoir}
 }
 
-\DeclareOptionX{short}{
-	\longcvfalse
-}
-
 %	FEATURE OPTIONS
 
 %	Define options for <final> & <draft>
@@ -262,6 +257,11 @@
 \DeclareOptionX{final}{
 	\@draftfalse
 	\PassOptionsToClass{final}{memoir}
+}
+
+%	Define option <short> for convertible documents
+\DeclareOptionX{short}{
+	\longcvfalse
 }
 
 %	Define options for <outline> & <summary> table of contents
@@ -337,29 +337,30 @@
 % =***======***======***======***======***======***======***======***======***======***=
 
 
-%	#####	HELPER MACROS	#####
+%	#####	LANGUAGES	#####
 
-%	Provide a list of greek numbers for counters
-\def\@greek#1{%
-	\ifcase#1\or\ensuremath{\alpha}\or\ensuremath{\beta}\or\ensuremath{\gamma}\or\ensuremath{\delta}\or\ensuremath{\varepsilon}\or\ensuremath{\zeta}\or\ensuremath{\eta}\or\ensuremath{\theta}\or\ensuremath{\iota}\or\ensuremath{\kappa}\or\ensuremath{\lambda}\or\ensuremath{\mu}\or\ensuremath{\nu}\or\ensuremath{\xi}\or\ensuremath{ o}\or\ensuremath{\pi}\or\ensuremath{\varrho}\or\ensuremath{\sigma}\or\ensuremath{\tau}\or\ensuremath{\upsilon}\or\ensuremath{\phi}\or\ensuremath{\chi}\or\ensuremath{\psi}\or\ensuremath{\omega}\else\@ctrerr\fi}
-\def\@Greek#1{%
-	\ifcase#1\or\ensuremath{\Alpha}\or\ensuremath{\Beta}\or\ensuremath{\Gamma}\or\ensuremath{\Delta}\or\ensuremath{\Epsilon}\or\ensuremath{\Zeta}\or\ensuremath{\Eta}\or\ensuremath{\Theta}\or\ensuremath{\Iota}\or\ensuremath{\Kappa}\or\ensuremath{\Lambda}\or\ensuremath{\Mu}\or\ensuremath{\Nu}\or\ensuremath{\Xi}\or\ensuremath{\Omicron}\or\ensuremath{\Pi}\or\ensuremath{\Rho}\or\ensuremath{\Sigma}\or\ensuremath{\Tau}\or\ensuremath{\Upsilon}\or\ensuremath{\Phi}\or\ensuremath{\Chi}\or\ensuremath{\Psi}\or\ensuremath{\Omega}\else\@ctrerr\fi}
+%	TODO » À documenter !!
 
-%	Create a command that sets a length to the greater of two values
-% Set length #1 to the value of #2, but only if #2 is greater than #1
-\newcommand{\setmaxlength}[2]{%
-	\ifdim\dimexpr#2>\dimexpr#1
-		\global\setlength{#1}{#2}%
-	\fi}
+%	TODO » Suppr. la langue <english> après avoir converti automatiquement via biber
+\RequirePackage[greek,latin,english,british,french]{babel}
 
-%	Command that gobbles all whitespace until the next paragraph
-% Usage:	\@ifnextchar\par{\@gobblepar}{\relax}
-\newcommand{\@gobblepar}[1]{%
-	\@ifnextchar\par{\@gobblepar}{\relax}}
+%	TODO » Implémenter {csquotes} et le documenter
+\RequirePackage{frenchlaw-babel}
+\RequirePackage{fixltxhyph}
 
-%	Command that prints its own argument. Some macros \let it to \@gobble
-% Usage:	In .tex file, use \sanitize to silence a macro in certain contexts, e.g. ToC
-\newcommand{\sanitize}[1]{#1}
+%	LANGUAGE COMMANDS
+
+%	Create quick macros for switching languages
+\newcommand{\british}[1]{\foreignlanguage{british}{\emph{#1}}}
+\newcommand{\english}[1]{\foreignlanguage{english}{\emph{#1}}}
+\newcommand{\french}[1]{\foreignlanguage{french}{\emph{#1}}}
+
+\newcommand{\greek}[1]{\foreignlanguage{greek}{#1}}
+\newcommand{\latin}[1]{\foreignlanguage{latin}{\emph{#1}}}
+
+\newcommand{\german}[1]{\foreignlanguage{german}{\emph{#1}}}
+\newcommand{\italian}[1]{\foreignlanguage{italian}{\emph{#1}}}
+\newcommand{\spanish}[1]{\foreignlanguage{spanish}{\emph{#1}}}
 
 
 % =***======***======***======***======***======***======***======***======***======***=
@@ -389,6 +390,10 @@
 		\settypeblocksize{300pt}{*}{1.618}
 	\else
 		\settypeblocksize{*}{300pt}{1.618}
+	\fi
+	\if@fourteenpoints
+		\setlength{\headheight}{1.5\baselineskip}
+	\setlength{\footskip}{\baselineskip}
 	\fi
 	\setlength{\footskip}{1.5\baselineskip}
 \else\if@stockavi
@@ -645,9 +650,6 @@
 		\renewcommand*{\HUGE}{\fontsize{48}{52.5}\selectfont}
 	\fi\fi\fi\fi}
 
-
-%	TYPESETTING RULES
-
 %	Always use raggedbottom (prevents underfull \vbox warnings)
 \raggedbottom
 %	Never use double spaces after a period
@@ -665,9 +667,9 @@
 \fi
 \hyphenpenalty=100 % Discourage hyphens [Orig. 50]
 \exhyphenpenalty=500 % Discourage hyphens in compound nouns [Orig. 50]
+\brokenpenalty=10000 % Discourage hyphens at the end of pages [Orig. 100]
 \doublehyphendemerits=1000000 % Discourage consecutive hyphens [Orig. 10000]
 \finalhyphendemerits=100000000 % Discourage end of paragraph hyphens [Orig. 5000]
-\brokenpenalty=10000 % Discourage hyphens at the end of pages [Orig. 100]
 
 %	Define indentation and vertical spacing of paragraphs
 \if@stationery
@@ -676,7 +678,7 @@
 	\setlength{\parindent}{0em}
 \else
 	% Päragraphs are indented in regular documents
-	\setlength{\parskip}{0pt}
+	\setlength{\parskip}{\z@}
 	\setlength{\parindent}{1.5em}
 \fi
 
@@ -687,12 +689,600 @@
 % =***======***======***======***======***======***======***======***======***======***=
 
 
+%	####	TABLES OF CONTENTS	####
+
+%	SET UP TABLE OF CONTENTS
+
+%	Define max ToC numbering
+\maxtocdepth{subparagraph}
+% \setcounter{tocdepth}{6} % TODO » Remove
+
+%	Do not pritn page numbers in ToC for <book> and <part> (centered)
+\cftpagenumbersoff{book}
+\cftpagenumbersoff{part}
+
+%	Create ToC subdivisions for <heading> and <subheading>
+\newlistentry[part]{heading}{toc}{-1}
+\newlistentry[heading]{subheading}{toc}{-1}
+
+%	TABLE OF CONTENTS TYPOGRAPhY
+
+%	Define ToC style for \book
+\renewcommand*{\cftbookpresnum}{\space}
+\renewcommand*{\cftbookaftersnum}{.}
+\renewcommand*{\cftbookaftersnumb}{}
+\renewcommand*{\cftbookfont}{\large\scshape\hfil}
+\renewcommand*{\cftbookpagefont}{\normalsize}
+\setlength{\cftbeforebookskip}{2\baselineskip}
+
+%	Define ToC style for \part
+\renewcommand*{\cftpartpresnum}{\space}
+\renewcommand*{\cftpartaftersnum}{.}
+\renewcommand*{\cftpartaftersnumb}{}
+\renewcommand*{\cftpartfont}{\large\scshape\hfil}
+\renewcommand*{\cftpartpagefont}{\normalsize}
+\setlength{\cftbeforepartskip}{\baselineskip}
+
+%	Define ToC style for \heading
+\renewcommand{\cftheadingaftersnum}{.}
+\renewcommand{\cftheadingaftersnumb}{\mdseries}
+\renewcommand{\cftheadingfont}{\large\bfseries}
+\renewcommand{\cftheadingleader}{\hfill}
+\setlength{\cftbeforeheadingskip}{\baselineskip}
+
+%	Define ToC style for \subheading
+\renewcommand{\cftsubheadingaftersnum}{.}
+\renewcommand{\cftsubheadingaftersnumb}{\mdseries}
+\renewcommand{\cftsubheadingfont}{\normalsize\bfseries}
+\renewcommand{\cftsubheadingleader}{\hfill}
+\setlength{\cftbeforesubheadingskip}{\baselineskip}
+
+%	Define ToC style for \chapter
+\renewcommand*{\cftchapteraftersnum}{.}
+\renewcommand*{\cftchapteraftersnumb}{\mdseries}
+\renewcommand{\cftchapterfont}{\bfseries}
+\renewcommand*{\cftchapterpagefont}{\normalsize}
+\setlength{\cftbeforechapterskip}{\baselineskip}
+
+%	Define ToC style for \section
+\renewcommand*{\cftsectionaftersnum}{.}
+\renewcommand*{\cftsectionaftersnumb}{\mdseries}
+\renewcommand*{\cftsectionfont}{\bfseries}
+\setlength{\cftbeforesectionskip}{\z@}
+
+%	Define ToC style for \subsection
+\renewcommand*{\cftsubsectionaftersnum}{.}
+\renewcommand*{\cftsubsectionaftersnumb}{\mdseries}
+\renewcommand*{\cftsubsectionfont}{\footnotesize\bfseries}
+\setlength{\cftbeforesubsectionskip}{\z@}
+
+%	Define ToC style for \subsubsection
+\renewcommand*{\cftsubsubsectionaftersnum}{.}
+\renewcommand*{\cftsubsubsectionaftersnumb}{\mdseries}
+\renewcommand*{\cftsubsubsectionfont}{\footnotesize\bfseries}
+\setlength{\cftbeforesubsubsectionskip}{\z@}
+
+%	Define ToC style for \paragraph
+\renewcommand*{\cftparagraphaftersnum}{.}
+\renewcommand*{\cftparagraphaftersnumb}{\mdseries}
+\renewcommand*{\cftparagraphfont}{\footnotesize\bfseries}
+\setlength{\cftbeforeparagraphskip}{\z@}
+
+%	Define ToC style for \subparagraph
+\renewcommand*{\cftsubparagraphaftersnum}{.}
+\renewcommand*{\cftsubparagraphaftersnumb}{\mdseries}
+\renewcommand*{\cftsubparagraphfont}{\footnotesize\bfseries}
+\setlength{\cftbeforesubparagraphskip}{\z@}
+
+%	TABLE OF CONTENTS HORIZONTAL SPACING
+
+%	TODO » Hook: Babel loads languages at begin document.
+% Créer un switch pour enregistrer, dès les options, la langue principale dans une macro, puis appliquer \if@french\selectlanguage{french} (et le mettre juste après babel)
+% Préciser dans la doc que c'est pour l'utiliser dans les macros de la ToC
+\selectlanguage{french}
+
+%	Set ToC division labels to the width of “chapter” label
+% Create an ad hoc length
+\newlength{\toclabelwidth}
+	\settowidth{\toclabelwidth}{\cftchapterfont\chaptername\space}
+% Create a command that gives ToC labels the proper length
+% To be used with babel's \cftXname
+\newcommand{\toclabelbox}[1]{\makebox[\toclabelwidth]{\hfill\llap{#1\normalsize\space}}}
+
+%	Define lengths to be used within ToC layout
+% Set ToC number to the width of roman numeral 30
+\newlength{\tocnumwidth}
+	\settowidth{\tocnumwidth}{\cftchapterfont XXX\space}
+% Centered headings will take into account the label + number lengths
+\newlength{\toccenterwidth}
+	\setlength{\toccenterwidth}{\tocnumwidth}
+	\addtolength{\toccenterwidth}{\toclabelwidth}
+
+%	Set up ToC components indentation using the previously defined lengths
+\cftsetindents{book}{\toccenterwidth}{\tocnumwidth}
+\cftsetindents{part}{\toccenterwidth}{\tocnumwidth}
+\cftsetindents{heading}{\z@}{\tocnumwidth}
+\cftsetindents{subheading}{\z@}{\tocnumwidth}
+\cftsetindents{chapter}{\z@}{\tocnumwidth}
+\cftsetindents{section}{\z@}{\tocnumwidth}
+\cftsetindents{subsection}{\z@}{\tocnumwidth}
+\cftsetindents{subsubsection}{\if@article\z@\else\toclabelwidth\fi}{\tocnumwidth}
+\cftsetindents{paragraph}{\if@article\z@\else\toclabelwidth\fi}{\tocnumwidth}
+\cftsetindents{subparagraph}{\if@article\z@\else\toclabelwidth\fi}{\tocnumwidth}
+
+%	Configure ToC dotted lines
+\renewcommand*{\cftdotsep}{2}
+
+%	TABLE OF CONTENTS VERTICAL SPACING
+
+%	Ensure ToC starts on a new page (like a chapter)
+\if@article\else
+	\pretocmd{\tableofcontents}{\clearforchapter}{}{}
+\fi
+
+%	Adjust vertical spacing in ToC and other lists
+% Because the first entry (book, part, heading, chapter) adds \baselineskip
+\AtBeginDocument{%
+	\addtocontents{toc}{\addvspace{-\baselineskip}}%
+	\addtocontents{lot}{\addvspace{-\baselineskip}}%
+	\addtocontents{lof}{\addvspace{-\baselineskip}}}
+% S'assurer que la table des matières termine bien le dernier paragraphe
+\AtEndDocument{%
+	\addtocontents{toc}{\par}%
+	\addtocontents{lot}{\par}%
+	\addtocontents{lof}{\par}}
+
+%	ALTERNATE TABLES OF CONTENTS
+
+%	Create a command for short table of contents
+\newcommand{\shortcontents}[1][0]{%
+	\bgroup
+		% Reset all necessary commands and remove page numbers
+		\let\contentsname=\shortcontentsname
+		\cftpagenumbersoff{heading}
+		\cftpagenumbersoff{subheading}
+		\cftpagenumbersoff{chapter}
+		\setlength{\cftbeforechapterskip}{\baselineskip}
+		% Save tocdepth value
+		\newcounter{save@tocdepth}
+		\setcounter{save@tocdepth}{\value{tocdepth}}
+		\setcounter{tocdepth}{#1}
+		% Print the table of contents and restore tocdepth
+		\tableofcontents*
+		\setcounter{tocdepth}{\value{save@tocdepth}}
+		\clearpage
+	\egroup}
+
+%	TODO » Create minitoc for articles
+
+
+% =***======***======***======***======***======***======***======***======***======***=
+
+
+%	#####	HIERARCHICAL DIVISIONS	#####
+
+%	Define max section numbering
+\if@vitae
+	\maxsecnumdepth{chapter}
+\else\if@didactic
+	\maxsecnumdepth{section}
+\else
+	\maxsecnumdepth{subparagraph}
+\fi\fi
+
+%	TODO » Vérifier la pertinence de toutes les lignes
+%	Réinitialiser les compteurs 
+\counterwithin*{part}{book}
+\counterwithin*{heading}{book}
+\counterwithin*{chapter}{book}
+\counterwithin*{chapter}{part}
+\counterwithin*{chapter}{heading}
+\counterwithin*{chapter}{subheading}
+\counterwithin*{section}{chapter}
+\counterwithin*{paragraph}{chapter}
+\counterwithin*{paragraph}{section}
+
+%	Définir le style des livres dans le texte
+\renewcommand*{\booktitlefont}{\Huge\scshape}
+\renewcommand*{\booknamefont}{\booktitlefont}
+\renewcommand*{\booknumfont}{\booktitlefont}
+\renewcommand*{\printbooknum}{%
+	\booknumfont%
+	\ifdefstring{\languagename}{french}
+		{\ifnum\value{book}=1	\ordinalstring{book}[m]%
+		 \else					\Roman{book}\fi}
+		{\Roman{book}}}
+\renewcommand{\beforebookskip}{\null\vspace{\baselinestretch\addto@Huge}%
+	\vspace{\if@tenpoints 12\baselineskip\else 10\baselineskip\fi}}
+\renewcommand{\midbookskip}{\par\vspace{\baselinestretch\addto@Huge}}
+
+%	Définir le style des parties dans le texte
+% Babel French gère la numérotation en toutes lettres des parties
+\renewcommand*{\thepart}{\Roman{part}}
+\renewcommand*{\parttitlefont}{\LARGE\scshape}
+\renewcommand*{\partnamefont}{\parttitlefont}
+\renewcommand*{\partnumfont}{\parttitlefont}
+\renewcommand{\beforepartskip}{\null\vspace{\baselinestretch\addto@LARGE}%
+	%	TODO » Si PhD ou Memoir (ou article?)
+	\vspace{\baselineskip}%
+	%	TODO » Sauf PhD ou Memoir (ou article?) + Add: if@elevenpoints
+%	\vspace{\if@tenpoints12\baselineskip\fi\if@twelvepoints10\baselineskip\fi}%
+	}
+\renewcommand{\midpartskip}{\par\vspace{\baselinestretch\addto@LARGE}}
+%	TODO » Seulement si PhD ou Memoir (ou article?), utiliser des options
+\renewcommand{\afterpartskip}{\vspace{2\baselineskip}}
+% Test can be printed after the part title, on the same page
+\nopartblankpage
+
+%	TODO » Seconde partie et Titre second == créer un switch manuel \onlytwoparts \onlytwoheadings à insérer dans le .tex
+
+% \newcounter{lastpart@I}
+% \newcounter{lastpart@II}
+% \newcounter{lastpart@III}
+% \newcounter{lastpart@IV}
+% \newcounter{lastpart@V}
+% \newcounter{lastpart@VI}
+% \newcounter{lastpart@VII}
+% \newcounter{lastpart@VIII}
+% \newcounter{lastpart@IX}
+% \newcounter{lastpart@X}
+% \renewcommand{\printpartnum}{%
+% 	% If last part > 2, write it in the .aux file for numbrring purposes
+% 	\ifnum\value{part}>2%
+% 		\immediate\write\@auxout%
+%     		{\string\setcounter{lastpart@\thebook}{\the\c@part}}
+%     \fi}
+
+ %	TODO » Coder proprement \printpartname. Supprimer les modifs de babel (option?)
+ % Utiliser le test:
+%  \ifnum\value{part}=2
+% 	\ifnum\value{part}<\value{lastpart@\thebook}
+% 		Définir l'ordinal == Deuxième%
+% 	\else
+% 		Définir l'ordinal ==  Seconde%
+% \fi\fi
+% Puis imprimer le numéro ordinal et le \partname
+
+%	Définir le style des titres dans le texte
+\renewcommand{\theheading}{\Roman{heading}}
+\newcommand{\headtitlefont}{\Large\scshape\centering}
+\newcommand{\headnamefont}{\headtitlefont}
+\newcommand{\headnumfont}{\headtitlefont}
+\newcommand{\afterheadingnum}{\par\nobreak\vskip\midchapskip}
+\newcommand{\printheadingname}{\headnamefont\headingname}
+\newcommand{\headingnamenum}{\space}
+\newcommand{\printheadingnum}{%
+	\headnumfont%
+	\ifdefstring{\languagename}{french}
+		{\ifnum\value{heading}=1	\ordinalstring{heading}[m]%
+		 \else						\Roman{heading}\fi}
+		{\Roman{heading}}}
+\newcommand{\printheadingtitle}[1]{\headtitlefont#1}
+
+%	Créer la commande pour les titres (semblables à des chapitres)
+\newcommand{\heading}[1]{
+	\begingroup
+		\if@article\cleardoublepage\fi
+		\stepcounter{heading}
+		\renewcommand{\printchaptertitle}{%
+			\printheadingname%
+			\headingnamenum\printheadingnum%
+			\afterheadingnum%
+			\printheadingtitle%
+		}
+		\clearforchapter
+		\thispagestyle{chapter}
+		\@schapter{#1}
+		\chaptermark{#1}
+		\phantomsection
+		\addcontentsline{toc}{heading}{\protect\numberline{\theheading}#1}
+	\endgroup
+}
+
+%	Définir le style des sous-titres dans le texte
+\renewcommand{\thesubheading}{\Roman{subheading}}
+\newcommand{\subheadtitlefont}{\Large\centering}
+\newcommand{\subheadnamefont}{\subheadtitlefont}
+\newcommand{\subheadnumfont}{\subheadtitlefont}
+\newcommand{\aftersubheadingnum}{\par\nobreak\vskip\midchapskip}
+\newcommand{\printsubheadingname}{\subheadnamefont\subheadingname}
+\newcommand{\subheadingnamenum}{\space}
+\newcommand{\printsubheadingnum}{%
+	\subheadnumfont%
+	\ifdefstring{\languagename}{french}
+		{\ifnum\value{subheading}=1		\ordinalstring{subheading}[m]%
+		 \else							\Roman{subheading}\fi}
+		{\Roman{subheading}}}
+\newcommand{\printsubheadingtitle}[1]{\subheadtitlefont#1}
+
+%	Créer la commande des sous-titres (semblables à des chapitres)
+\newcommand{\subheading}[1]{
+	\begingroup
+		\if@article\cleardoublepage\fi
+		\stepcounter{subheading}
+		\renewcommand{\printchaptertitle}{%
+			\printsubheadingname%
+			\subheadingnamenum\printsubheadingnum%
+			\aftersubheadingnum%
+			\printsubheadingtitle%
+		}
+		\clearforchapter
+		\thispagestyle{chapter}
+		\@schapter{#1}
+		\chaptermark{#1}
+		\phantomsection
+		\addcontentsline{toc}{subheading}{\protect\numberline{\thesubheading}#1}
+	\endgroup
+}
+
+%	Définir le style des chapitres dans le texte
+% Créer un style, pour pouvoir l'appliquer au mode <article>
+\makechapterstyle{frenchlaw}{
+	\renewcommand{\thechapter}{\Roman{chapter}}
+	\renewcommand{\chaptitlefont}{\Large\scshape\raggedright}
+	\renewcommand{\chapnamefont}{\chaptitlefont}
+	\renewcommand{\chapnumfont}{\chaptitlefont}
+	\renewcommand{\chapternamenum}{\space}
+	\renewcommand{\printchapternum}{%
+		\chapnumfont%
+		\ifanappendix					\Alph{chapter}%
+		\else\ifdefstring{\languagename}{french}
+			{\ifnum\value{chapter}=1	\ordinalstring{chapter}[m]%
+			 \else						\Roman{chapter}\fi}
+			{\Roman{chapter}}\fi}
+	\renewcommand{\afterchapternum}{:\par\nobreak\vskip\midchapskip}
+	\setlength{\beforechapskip}{\baselinestretch\addto@Large}
+	\addtolength{\beforechapskip}{\baselineskip}
+	\setlength{\midchapskip}{\baselinestretch\addto@Large}
+	\setlength{\afterchapskip}{2\baselineskip}
+}
+%	Define additional elements for <article>-style chapters (new page, reduce spacing)
+\newcommand{\chapterblock}{%
+	\setlength{\afterchapskip}{\baselineskip}}
+% Appliquer le style de chapitre généralement (mode normal et mode <article>)
+\chapterstyle{frenchlaw}
+
+%	TODO » Clean-up. Ajouter un hook dans la commande \@chapter
+% Utilisé par \xchapter (pour simuler un chapitre du \frontmatter, i.e. avec toutes les informations sauf le numéro du chapitre)
+
+% \patchcmd{\@chapter}
+%   {\ifm@m@And}
+%   {\if@special@chapter\m@m@Andfalse\fi%
+%    \ifm@m@And}
+%   {}
+%   {\typeout{WARNING! Patching \noexpand\@chapter failed!}}
+
+% \newcommand{\xchapter}[1][\@empty]{% Remplacer par \ifx\relax#1\relax (?)
+% 	\def\tmpch@ptoc{#1}% Capture first optional argument (ToC-name)
+% 	\@ifnextchar[{\@xchapter}{\@xchapter[]}}
+% \def\@xchapter[#1]#2#3{%
+% 	\@special@chaptertrue
+% 	\def\ch@phead{% If #1 (header-name) undefined, use #3 (regular title)
+% 		\ifx\relax#1\relax#3\else#1\fi}
+% 	\def\ch@ptoc{%
+% 		#2\ifx\relax#2\relax\else\ifx\relax#3\relax\else\cftchapteraftersnum\cftchapteraftersnumb~\fi\fi#3}% If both #2 and #3 are defined, add ToC separators between them
+% 	\if\@empty\tmpch@ptoc\relax\else\def\ch@ptoc{\tmpch@ptoc}\fi
+% 	\def\ch@pname{%
+% 		\ifx\relax#2\relax\else#2\afterxchapternum\fi#3}
+% 	\chapter[\ch@ptoc][\ch@phead]{\ch@pname}
+% 	\markboth{\ch@phead}{\ch@phead}
+% 	% Increase, then decrease chapter counter (to reset all sub-counters)
+% 	\refstepcounter{chapter}
+% 	\addtocounter{chapter}{-1}
+% 	\@special@chapterfalse
+% }
+
+\renewcommand{\chapter}{%
+	\if@article\par\@nameuse{chapterblock}\else
+		\clearforchapter
+		\thispagestyle{chapter}
+		\global\@topnum\z@
+	\fi
+	\m@mindentafterchapter
+	\@ifstar{\xchapter}{\@m@mchapter}}
+\newcommand{\xchapter}[1][]{%
+	\def\ch@pprefix{#1}% Capture first optional argument (title-prefix)
+	\@ifnextchar[{\@xchapter}{\@xchapter[]}}
+\def\@xchapter[#1]#2{%
+	\@schapter{\if\relax\ch@pprefix\relax\else\ch@pprefix\afterchapternum\fi#2}
+	\chaptermark{\if\relax#1\relax#2\else#1\fi}
+	\phantomsection
+	\addcontentsline{toc}{chapter}{%
+		\if\relax\ch@pprefix\relax\else\ch@pprefix\cftchapteraftersnum\cftchapteraftersnumb~\fi#2}
+	% Increase, then decrease chapter counter (to reset all sub-counters)
+	\addtocounter{chapter}{-1}
+	\refstepcounter{chapter}}
+\newcommand{\fakechapter}[2][]{%
+	\clearforchapter
+	\thispagestyle{chapter}
+	\@schapter{\if\relax#1\relax\else#1\afterchapternum\fi#2}
+	\chaptermark{#1}
+	\phantomsection
+	\addtocontents{toc}{\vspace{\baselineskip}}
+	\addcontentsline{toc}{section}{\if\relax#1\relax\else#1\cftchapteraftersnum\cftchapteraftersnumb~\fi#2}}
+
+%	Définir le mode de numérotation des sections et paragraphes
+%	TODO » Créer un subsubparagraph > \@greek (pour tout le monde)
+\if@article
+	% En mode article, utiliser une numérotation courte (I.A.1.a)
+	\renewcommand{\thesection}{\Roman{section}}
+	\renewcommand{\thesubsection}{\Alph{subsection}}
+	\renewcommand{\thesubsubsection}{\arabic{subsubsection}}
+	\renewcommand{\theparagraph}{\alph{paragraph}}
+	\renewcommand{\thesubparagraph}{\roman{subparagraph}}
+\else
+	% En mode normal, utiliser les intitulés classiques
+	\renewcommand{\thesection}{\Roman{section}}
+	\renewcommand{\thesubsection}{\Roman{subsection}}
+	\renewcommand{\thesubsubsection}{\Alph{subsubsection}}
+	\renewcommand{\theparagraph}{\arabic{paragraph}}
+	\renewcommand{\thesubparagraph}{\alph{subparagraph}}
+\fi
+
+%	Replace \vskip with \addvspace at the end of section titles
+% Prevents stacking vertical white space when using environments which also add some.
+\patchcmd{\@xsect}
+	{\vskip\@tempskipa\vskip-\parskip}{\addvspace{\@tempskipa}\addvspace{-\parskip}}
+	{}{\typeout{WARNING! Patching \noexpand\@xsect failed!}}
+
+%	Définir la ponctuation après chaque numéro de section et paragraphe
+% S'il est défini dans babel, on rajoute le nom donné à la section concernée
+% En anglais, les paragraphes suivant les sections ne sont pas indentés
+% Ne pas ajouter d'espace si <article>, car il n'y a pas de préfix
+\setsecnumformat{%
+	\ifcsname #1name\endcsname\csname #1name\endcsname\if@article\else\space\fi\fi%
+	\csname the#1\endcsname.\enskip}
+
+%	Définir le style des sections
+\setsecheadstyle{\large\scshape\raggedright}	
+\setlength{\beforesecskip}{\baselinestretch\addto@large}
+\setlength{\aftersecskip}{\baselineskip}
+\if@twocolumn
+	% En mode <twocolumn>, ne pas rajouter un second saut de ligne
+	\addtolength{\beforesecskip}{\z@}
+\else
+	% En mode <onecolumn>, sauter une deuxième ligne avant la section
+	\addtolength{\beforesecskip}{\baselineskip}
+\fi
+
+%	Définit le style des sous-sections
+\setsubsecheadstyle{\scshape\raggedright}
+\setlength{\beforesubsecskip}{\baselineskip}
+\setlength{\aftersubsecskip}{\baselineskip}
+
+%	Définir le style des sous-sous-sections
+\setsubsubsecheadstyle{\itshape\raggedright}
+\setlength{\beforesubsubsecskip}{\baselineskip}
+\setlength{\aftersubsubsecskip}{\baselineskip}
+
+%	Définir le style des paragraphes
+% Vérifier l'indentation, notamment didactic+
+\setparaheadstyle{\scshape}
+\setparaindent{0em}
+\setlength{\beforeparaskip}{\baselineskip}
+\setlength{\afterparaskip}{\baselineskip}
+
+%	Définir le style des sous-paragraphes
+% Vérifier l'indentation, notamment didactic+
+\setsubparaheadstyle{\itshape}
+\setsubparaindent{0em}
+\setlength{\beforesubparaskip}{\baselineskip}
+\setlength{\aftersubparaskip}{\baselineskip}
+
+\if@twocolumn
+	% En mode <twocolumn>, ils sont insérés dans le corps du texte (inline)
+	\setparaheadstyle{\scshape\raggedright\addperiod}
+	\setlength{\afterparaskip}{0em}
+	% Idem pour les sous-paragraphes (inline)
+	\setsubparaheadstyle{\itshape\raggedright\addperiod}
+	\setlength{\aftersubparaskip}{0em}
+\else\if@marginal
+	% En mode <marginal>, ils sont placés dans une note marginale
+	\newcommand{\marginparahead}[1]{\marginpar{\itshape#1\if@vitae:\fi}}
+	\setparaheadstyle{\marginparahead}
+	\setlength{\afterparaskip}{0em}
+	% Idem pour les sous-paragraphes (dans la marge)
+	\newcommand{\marginsubparahead}[1]{\marginpar{\itshape#1\if@vitae:\fi}}
+	\setsubparaheadstyle{\marginsubparahead}
+	\setlength{\aftersubparaskip}{0em}
+\fi\fi
+
+
+% =***======***======***======***======***======***======***======***======***======***=
+
+
+%	#####	LOGICAL DIVISIONS	#####
+
+%	TODO » Sub-para (323-3), article + clause de contrats + documenter
+
+%	Créer un compteur pour les paragraphes (juridiques)
+\newcounter{para}
+\setcounter{para}{0}
+
+%	Créer les commandes pour paramétrer l'apparence du compteur de paragrpahes
+\renewcommand{\thepara}{\arabic{para}}
+\newcommand{\paranumsep}{.~}
+\newcommand{\parasep}{.\enskip}
+\newcommand{\paranumstyle}{\bfseries}
+\newcommand{\parastyle}{\normalsize\scshape}
+
+%	Créer des commandes pour paramétrer l'apparence dans la table des matières
+\newcommand{\cftparastyle}{\llap}
+\newcommand{\cftparanumstyle}{\bfseries}
+\newcommand{\cftparaaftersnum}{.\enskip}
+\newcommand{\cftparanumsep}{,~}
+\newcommand{\cftparaleader}{p.~}
+\newcommand{\cftparaafterpnum}{.}
+\newcommand{\cftparasep}{\par}
+
+%	Créer un compteur <precis> pour savoir si un \para est le premier de sa section ou non (pour la table des matières)
+\newcounter{precis}
+\setcounter{precis}{0}
+\counterwithin{precis}{book}
+\counterwithin{precis}{part}
+\counterwithin{precis}{chapter}
+\counterwithin{precis}{section}
+\counterwithin{precis}{subsection}
+\counterwithin{precis}{subsubsection}
+\counterwithin{precis}{paragraph}
+\counterwithin{precis}{subparagraph}
+
+%	Créer un switch pour afficher les noms des paragraphes ou non
+\newcommand{\paragraphnames}{\@paranametrue}
+\newcommand{\noparagraphnames}{\@paranamefalse}
+
+%	Créer un switch pour imprimer ou non les \para dans la table des matières
+\newcommand{\precis}{\@precistrue}
+\newcommand{\noprecis}{\@precisfalse}
+
+%	Créer un switch pour imprimer ou non les \outline dans la table des matières
+\newcommand{\outlinetoc}{\@outlinetrue}
+\newcommand{\nooutlinetoc}{\@outlinefalse}
+
+%	Créer un switch pour imprimer ou non les \outline dans la table des matières
+\newcommand{\summarytoc}{\@summarytrue}
+\newcommand{\nosummarytoc}{\@summaryfalse}
+
+%	TODO » Utilité des numéros de page? (imprimer > cf. PUF)
+%	TODO » Ajouter une commande manuelle pour insérer le chapitre / section, etc. juste en-dessous du titre (comme pour les labels) (?) + Ajouter autommatiquement à la commande via etoolbox (apptocmd, etc.) -- idem pour les chapitres non numérotés (header et toc)
+
+%	Créer une commande \para pour faire des paragraphes numérotés
+%	TODO » Supprimer le \precis, et utiliser plutôt \chapterprecis et \precistoctext (memoir)
+\newcommand{\para}[1][]{%
+	\refstepcounter{para}%
+	\refstepcounter{precis}%
+	\def\@currentlabel{\thepara}%
+	{\paranumstyle\thepara\if\relax#1\relax\label{para:\thepara}\else\label{para:#1}\paranumsep\fi}%
+	\if@paraname%
+		\if@marginal%
+			\marginpar{\parastyle#1}%
+		\else%
+			{\parastyle#1\parasep}%
+	\fi\fi%
+	\if@precis
+		\addtocontents{toc}{%
+			\ifnum\value{precis}>1\vskip-\lastskip\cftparasep\else%
+				\vskip\baselineskip\par\fi%
+			% TODO » \ifx...\fi désactivé TMP (pour vérifier les \para innommés)
+			%% Et suppr. le \ifx...\fi interne
+			%\ifx\relax#1\relax\else
+				\protect\noindent%
+				{\cftparastyle{\cftparanumstyle\thepara\cftparaaftersnum}
+					\if\relax#1\relax\else#1\cftparanumsep\fi\cftparaleader\thepage\cftparaafterpnum}\vskip\baselineskip\par%\fi
+			}%
+	\fi%
+	\@ifnextchar\par{\@gobblepar\relax}{\relax}}
+
+
+% =***======***======***======***======***======***======***======***======***======***=
+
+
 %	#####	PAGE NOTES	#####
 
 %	FOOTNOTES
 
 %	Set footnotes at the bottom of the page
-\setfootnoterule[\vfill]{0pt}{0pt}{0pt}
+\setfootnoterule[\vfill]{\z@}{\z@}{\z@}
 %	Force vertical alignment with a \strut height (.7\baselineskip) for all footnotes
 \setlength{\footnotesep}{.7\baselineskip}
 
@@ -723,11 +1313,11 @@
 \newlength{\marginwidth}
 \setlength{\marginwidth}{\dimexpr\stockwidth-\textwidth\relax}
 \if@marginal
-	\setmarginnotes{.05\marginwidth}{.5\marginwidth}{0pt}
+	\setmarginnotes{.05\marginwidth}{.5\marginwidth}{\z@}
 \else\if@twoside
-	\setmarginnotes{.05\marginwidth}{.4\marginwidth}{0pt}
+	\setmarginnotes{.05\marginwidth}{.4\marginwidth}{\z@}
 \else
-	\setmarginnotes{.05\marginwidth}{.35\marginwidth}{0pt}
+	\setmarginnotes{.05\marginwidth}{.35\marginwidth}{\z@}
 \fi\fi
 
 %	Margin and side notes are set in the widest margin
@@ -746,7 +1336,7 @@
 	\old@marginpar[\raggedleft\footnotesize\strut#1\strut]{\raggedright\footnotesize\strut#1\strut}}
 
 %	Set the style for side paragraphs (\sidebar)
-\setsidebars{\marginparsep}{\marginparwidth}{\baselineskip}{0pt}{\footnotesize}{\textheight}
+\setsidebars{\marginparsep}{\marginparwidth}{\baselineskip}{\z@}{\footnotesize}{\textheight}
 
 
 % =***======***======***======***======***======***======***======***======***======***=
@@ -852,10 +1442,10 @@
 		\epigraph{#1}{#2}
 		\vspace{\baselineskip}}}
 
-%	Définir un format pour les dédicaces, basé sur celui des épigraphes
+%	Define an environment for full-page dedications, based on epigraphs
 \newenvironment{dedication}
 	{\clearpage
-	 \vspace*{0pt}\vfill%
+	 \vspace*{\z@}\vfill%
 	 \thispagestyle{empty}
 	 \begin{\epigraphflush}%
 	 \begin{minipage}{\epigraphwidth}%
@@ -872,59 +1462,29 @@
 \renewcommand{\labelenumiii}{\textit{\theenumiii}.}
 \renewcommand{\theenumiv}{\@greek\c@enumiv}
 
-%	Define <description> styles
-\renewcommand{\descriptionlabel}[1]{\scshape{#1:\enspace}}
-\renewcommand{\blockdescriptionlabel}[1]{\scshape{#1:\enspace}}
+%	Define <description> style
+\newcommand{\descriptionlabelstyle}{\scshape}
+\renewcommand{\descriptionlabel}[1]{{\descriptionlabelstyle #1:\enspace}}
+\renewcommand{\blockdescriptionlabel}[1]{{\descriptionlabelstyle #1:\enspace}}
 
 %	Renew <description> environment
 \renewenvironment{description}
-	{\list{}{\vskip\baselineskip
-			 \let\makelabel\descriptionlabel
-			 \setlength{\labelwidth}{\z@}
-			 \setlength{\labelsep}{\z@}
-			 \setlength{\leftmargin}{\z@}}}
-	{\vskip\baselineskip\endlist}
+	{\addvspace{\baselineskip}
+	 \list{}{\let\makelabel\descriptionlabel
+			 \setlength{\labelwidth}{\parindent}
+			 \setlength{\leftmargin}{\parindent}}}
+	{\endlist%
+	 \addvspace{\baselineskip}}
 
 %	Renew <blockdescription> environment
 \renewenvironment{blockdescription}%
-	{\list{}{\vskip\baselineskip
-			 \let\makelabel\blockdescriptionlabel
-			 \setlength{\labelwidth}{\z@}
-			 \setlength{\labelsep}{\z@}
-			 \setlength{\leftmargin}{\z@}}}%
-	{\vskip\baselineskip\endlist}
-
-%	TODO » Placer avec les commandes babel +  Défaut == "En résumé"
-\newcommand{\summaryname}{Pour l'essentiel}
-\newcommand{\summarylabel}[1]{\scshape{\hfill\summaryname:}}
-
-%	Créer un environnement <summmary> pour des conclusions avec un label prédéfini
-\NewEnviron{summary}
-	{\if@summary\bgroup%
-		\let\footnote\@gobble%
-		\let\sanitize\@gobble%
-		\addtocontents{toc}{%
-			\if\relax\BODY\relax\else%
-				\vskip-\lastskip\vskip\baselineskip%
-				\textsc{\summaryname}: \BODY\vskip\baselineskip\par\fi}%
-	\egroup\fi%
-	\list{}{\vskip\baselineskip%
-			\let\makelabel\summarylabel%
-			\setlength{\itemsep}{\baselineskip}%
-			\setlength{\leftmargin}{2\parindent}}%
-	 \item\BODY% + \needspace{2\baselineskip} (?) [Semble inutile]
-	 \vskip\baselineskip\endlist}
-
-
-
-\newcommand{\vitaelabel}[1]{\footnotesize\itshape{\hfill\strut#1:\strut}}
-
-%	Créer un environnement <vitae> pour les CV (label dans la marge)
-\newenvironment{vitae}
-	{\list{}{\let\makelabel\vitaelabel
-			 \setlength{\leftmargin}{\z@}
-			 \setlength{\labelwidth}{\marginparwidth}}}
-	{\endlist}
+	{\addvspace{\baselineskip}
+	 \list{}{\let\makelabel\blockdescriptionlabel
+	 		 \setlength{\parsep}{\baselineskip}
+			 \setlength{\labelwidth}{\parindent}
+			 \setlength{\leftmargin}{\parindent}}}%
+	{\endlist%
+	 \addvspace{\baselineskip}}
 
 
 % =***======***======***======***======***======***======***======***======***======***=
@@ -951,7 +1511,7 @@
 \newcommand{\showcasetitle}[1]{{\showcasetitlestyle #1:}\par}
 \newcommand{\showcasetitlestyle}{\bfseries}
 \newcommand{\showcasestyle}{\sffamily}
-\newcommand{\frampagerulecolor}{gray}
+\newcommand{\framerulecolor}{gray}
 
 %	Environment for a box with vertical line along the left side
 \newsavebox{\fmbox}
@@ -965,7 +1525,7 @@
 	 \end{minipage}%
 	 \end{lrbox}%
 	 \setlength{\parfillskip}{0ex plus \dimexpr\linewidth-3em}%
-	 {\color{\frampagerulecolor}\vrule width .2em}\hfill%
+	 {\color{\framerulecolor}\vrule width .2em}\hfill%
 	 \usebox{\fmbox}%
 	 \par\prevdepth\tpd%
 	 \addvspace{\baselineskip}}
@@ -989,58 +1549,106 @@
 
 %	#####	TABLES & FIGURES	#####
 
-%	Forcer les <floats> à se placer en bas de page ou sur une page dédiée
-% Suppose qu'il y ait peu de floats, mais les aligne verticalement à moindre coût
-\setfloatlocations{figure}{bp}
-\setfloatlocations{table}{bp}
-
-%	Définir la hauteurs des séparateurs verticaux
-\setlength{\floatsep}{0pt}
-\setlength{\textfloatsep}{\baselineskip}
-\setlength{\intextsep}{\baselineskip}
-\setlength{\dblfloatsep}{\baselineskip}
-\setlength{\dbltextfloatsep}{\baselineskip}
-
-%	Utiliser l'interligne standard pour les floats
-\edef\m@m@float@spacing{\custom@baselinestretch}
-
-%	Définir l'alignement des <floats> (centré)
-\setfloatadjustment{figure}{\centering}
-\setfloatadjustment{table}{\centering}
-
-%	Numéroter les <floats> pour le document entier et non par chapitre
-\counterwithout{figure}{chapter}
-\counterwithout{table}{chapter}
-
-%	Idem pour le <mainmatter> (puisque <memoir> y change explicitement la numérotation)
-\renewcommand\@memmain@floats{
-	\counterwithout{figure}{chapter}
-	\counterwithout{table}{chapter}}
-
-%	Définir l'affichage des figures et tableaux dans la table des matières
-\cftsetindents{figure}{0em}{1.5em}
-\cftsetindents{table}{0em}{1.5em}
-
 %	TABULARS
 
-%	Définir la hauteur des éléments du tableau via <booktabs>
+%	Define the height of tabular elements via <booktabs>
 \setlength{\aboverulesep}{.5\baselineskip}
 \setlength{\belowrulesep}{.5\baselineskip}
-\setlength{\abovetopsep}{0pt}
-\setlength{\belowbottomsep}{0pt}
+\setlength{\abovetopsep}{\z@}
+\setlength{\belowbottomsep}{\z@}
 
-%	Définir le style des <tabular> (centrés, alignement vertical)
+%	Define the style of <tabulars> (center, vertical align)
 \let\old@tabular=\tabular
 \let\old@endtabular=\endtabular
 \renewenvironment{tabular}[2][t]
 	{\noindent\old@tabular[#1]{#2}\toprule}
 	{\bottomrule\old@endtabular}
 
-%	Définir le style de la légende
+%	FLOATS
+
+%	Force floats at the bottom of the page or on a dedicated page
+% Enforces vertical grid at a minimal cost
+\setfloatlocations{figure}{bp}
+\setfloatlocations{table}{bp}
+
+%	Set the default psecing around floats
+\setlength{\floatsep}{\z@}
+\setlength{\textfloatsep}{\baselineskip}
+\setlength{\intextsep}{\baselineskip}
+\setlength{\dblfloatsep}{\baselineskip}
+\setlength{\dbltextfloatsep}{\baselineskip}
+
+%	Set the default baseline within floats
+\edef\m@m@float@spacing{\custom@baselinestretch}
+
+%	Set floats to the center of the textblock
+\setfloatadjustment{figure}{\centering}
+\setfloatadjustment{table}{\centering}
+
+%	Define float caption style
 \changecaptionwidth\captionwidth{.8\columnwidth}
 \setlength{\abovecaptionskip}{.5\baselineskip}
 \setlength{\belowcaptionskip}{.5\baselineskip}
 \hangcaption
+
+%	Number flaots for the whole document instead of per chapter
+\counterwithout{figure}{chapter}
+\counterwithout{table}{chapter}
+% And within the \mainmatter
+\renewcommand\@memmain@floats{
+	\counterwithout{figure}{chapter}
+	\counterwithout{table}{chapter}}
+
+%	Défine List of Table settings
+\cftsetindents{table}{0em}{1.5em}
+\renewcommand*{\cfttablepresnum}{\space}
+\renewcommand*{\cfttableaftersnum}{.}
+\renewcommand*{\cfttableaftersnumb}{\mdseries}
+\renewcommand{\cfttablefont}{\bfseries}
+\renewcommand*{\cfttablepagefont}{\normalsize}
+\setlength{\cftbeforetableskip}{\z@}
+
+%	Define List of Figures settings
+\cftsetindents{figure}{0em}{1.5em}
+\renewcommand*{\cftfigurepresnum}{\space}
+\renewcommand*{\cftfigureaftersnum}{.}
+\renewcommand*{\cftfigureaftersnumb}{\mdseries}
+\renewcommand{\cftfigurefont}{\bfseries}
+\renewcommand*{\cftfigurepagefont}{\normalsize}
+\setlength{\cftbeforefigureskip}{\z@}
+
+%	Do not insert extra vertical space in List of... commands
+\renewcommand*{\insertchapterspace}{%
+  \addtocontents{lof}{\protect\addvspace{\z@}}%
+  \addtocontents{lot}{\protect\addvspace{\z@}}}
+
+
+% =***======***======***======***======***======***======***======***======***======***=
+
+
+%	#####	HELPER MACROS	#####
+
+%	Provide a list of greek numbers for counters
+\def\@greek#1{%
+	\ifcase#1\or\ensuremath{\alpha}\or\ensuremath{\beta}\or\ensuremath{\gamma}\or\ensuremath{\delta}\or\ensuremath{\varepsilon}\or\ensuremath{\zeta}\or\ensuremath{\eta}\or\ensuremath{\theta}\or\ensuremath{\iota}\or\ensuremath{\kappa}\or\ensuremath{\lambda}\or\ensuremath{\mu}\or\ensuremath{\nu}\or\ensuremath{\xi}\or\ensuremath{ o}\or\ensuremath{\pi}\or\ensuremath{\varrho}\or\ensuremath{\sigma}\or\ensuremath{\tau}\or\ensuremath{\upsilon}\or\ensuremath{\phi}\or\ensuremath{\chi}\or\ensuremath{\psi}\or\ensuremath{\omega}\else\@ctrerr\fi}
+\def\@Greek#1{%
+	\ifcase#1\or\ensuremath{\Alpha}\or\ensuremath{\Beta}\or\ensuremath{\Gamma}\or\ensuremath{\Delta}\or\ensuremath{\Epsilon}\or\ensuremath{\Zeta}\or\ensuremath{\Eta}\or\ensuremath{\Theta}\or\ensuremath{\Iota}\or\ensuremath{\Kappa}\or\ensuremath{\Lambda}\or\ensuremath{\Mu}\or\ensuremath{\Nu}\or\ensuremath{\Xi}\or\ensuremath{\Omicron}\or\ensuremath{\Pi}\or\ensuremath{\Rho}\or\ensuremath{\Sigma}\or\ensuremath{\Tau}\or\ensuremath{\Upsilon}\or\ensuremath{\Phi}\or\ensuremath{\Chi}\or\ensuremath{\Psi}\or\ensuremath{\Omega}\else\@ctrerr\fi}
+
+%	Create a command that sets a length to the greater of two values
+% Set length #1 to the value of #2, but only if #2 is greater than #1
+\newcommand{\setmaxlength}[2]{%
+	\ifdim\dimexpr#2>\dimexpr#1
+		\global\setlength{#1}{#2}%
+	\fi}
+
+%	Command that gobbles all whitespace until the next paragraph
+% Usage:	\@ifnextchar\par{\@gobblepar}{\relax}
+\newcommand{\@gobblepar}[1]{%
+	\@ifnextchar\par{\@gobblepar}{\relax}}
+
+%	Command that prints its own argument. Some macros \let it to \@gobble
+% Usage:	In .tex file, use \sanitize to silence a macro in certain contexts, e.g. ToC
+\newcommand{\sanitize}[1]{#1}
 
 
 % =***======***======***======***======***======***======***======***======***======***=
@@ -1070,6 +1678,7 @@
 %	Define new meta-data macros
 %	Document Info
 %	TODO » Replacer les \@empty par des \relax (dans la déf. des macros)
+%	Tester tous les champs (gros bordel entre relax et empty)
 % The \title and \subtitle fields can be given in several languages, e.g. for abstracts
 \renewcommand{\title}[2][\languagename]{\expandafter\gdef\csname @title@#1\endcsname{#2}}
 	\expandafter\gdef\csname @title@\languagename\endcsname{\@empty}
@@ -1124,7 +1733,7 @@
 \newcommand{\printcopyright}{%
 	\if\@empty\@licensing\relax\else
 		\cleartoverso\vspace*{25\baselineskip}%
-		\bgroup\parindent=0pt\@licensing\egroup\fi}
+		\bgroup\parindent=\z@\@licensing\egroup\fi}
 %	Author Info
 \newcommand{\address}[1]{\gdef\@address{#1}}
 	\newcommand{\@address}{\@empty}
@@ -1149,9 +1758,9 @@
 \newcommand{\yourRef}[1]{\gdef\@yourRef{#1}}
 	\newcommand{\@yourRef}{\@empty}
 \newcommand{\enclosed}[1]{\gdef\@enclosed{#1}}
-	\newcommand{\@enclosed}{\@empty}
+	\newcommand{\@enclosed}{\relax}
 \newcommand{\cc}[1]{\gdef\@cc{#1}}
-	\newcommand{\@cc}{\@empty}
+	\newcommand{\@cc}{\relax}
 
 %	TODO » Ajouter un mailto: crypté en UTF-8 (\@ifstar ?), mais uniquement si on crypte l'adresse
 % \newcommand{\mailto}{%
@@ -1170,12 +1779,12 @@
 %	Create a command for the signature block in letters and other documents
 % The optional argument inserts some text right before the signature. If there are multiple signatures and the header is not used for all of them, leave whitespace in the argument. 
 \newcommand{\makesignature}[1][\@empty]{
-	\vspace{\baselineskip}\hfill%
+	\hfill%
 	\begin{minipage}[t]{.4\textwidth}
 	\centering%
 	\if\@empty#1\else#1\par\vspace{2\baselineskip}\fi
 	\if\@empty\@signature\relax\par\addvspace{\baselineskip}\else
-		\raisebox{-2\baselineskip}[0pt][0pt]{%
+		\raisebox{-2\baselineskip}[\z@][\z@]{%
 			\includegraphics[width=\textwidth,height=4\baselineskip,keepaspectratio]{\@signature}}\\
 	\fi
 	\@author
@@ -1373,7 +1982,7 @@
 }
 
 %	Define a default style for lecture notes, handbooks, etx.
-%	TODO » Adde un switch selon qu'on a rajouté article ou pas
+%	TODO » Adde un switch selon qu'on a rajouté article ou pas -- Et supprimer l'article automatique dans didactic(+)
 \newcommand{\maketitleDidactic}{%
 	% Send out warnings on empty fields
 	\if\expandafter\@empty\csname @title@\languagename\endcsname\relax
@@ -1381,33 +1990,41 @@
 	% Create the title page
 	\long\def\printtitle{
 		\reset@twocolumns%
+		\raggedright%
 		\setlength{\parindent}{0em}
 		\normalize@fontsize%
-		\vspace*{3\baselineskip}
-		{\large\scshape\raggedright\csname @title@\languagename\endcsname\par}%
-		\vspace{\baselineskip}%
+		\vspace*{2\baselineskip}
+		{\Large\scshape\csname @title@\languagename\endcsname\par}%
+		 \vspace{\baselineskip}%
 		{\if\@empty\csname @subtitle@\languagename\endcsname\relax\else
-		 \large\raggedright\csname @subtitle@\languagename\endcsname\par\fi}%
-		{\if\@empty\@lecture\else
-		 \vspace{2\baselineskip}
-		 \lecturename:~\@lecture\par
-		 \if\@empty\@seminar\else\seminarname:~\@seminar\par\fi\fi}%
-		{\if\@empty\@author\else
-		 \vspace{2\baselineskip}
-		 \@author\par%
-		 \if\relax\@email\relax\else\emailname:~\@email\par\fi\fi}%
+		 \large\csname @subtitle@\languagename\endcsname\par\fi}%
+		{\if\@empty\@lecture
+			\vspace{\baselineskip}
+			\if\@empty\@author\else\@author\par%
+			\if\relax\@email\relax\else\emailname:~\@email\par\fi\fi
+		 \else
+			\vspace{\baselineskip}
+			\lecturename:~\@lecture\par
+			\if\relax\@email\relax\else\emailname:~\@email\par\fi\par
+			\if\@empty\@seminar\else\seminarname:~\@seminar\par\fi\fi}%
 		\vspace{\baselineskip}
-		{\@date\par}}
+		{\schoolyearname:~\@date\par}}
 	% Print the title page
-	\frontmatter
-	\bgroup
-		\pagestyle{empty}
-		\reset@twocolumns%
-		\printtitle%
-		\restore@twocolumns%
-		\cleartorecto\par
-	\egroup
-	\mainmatter
+	\if@article
+		\bgroup
+			\printtitle\par%
+		\egroup
+	\else
+		\frontmatter
+		\bgroup
+			\pagestyle{empty}
+			\reset@twocolumns%
+			\printtitle%
+			\restore@twocolumns%
+			\cleartorecto\par
+		\egroup
+		\mainmatter
+	\fi
 }
 
 %	Define a default style for articles and other short documents
@@ -1419,15 +2036,14 @@
 	\bgroup
 		\cleardoublepage%
 		\reset@twocolumns%
+		\raggedright%
 		\setlength{\parindent}{0em}
 		\normalize@fontsize%
 		% Imposer une valeur (même \z@) pour maintenir l'alignement vertical:
 		\vspace*{0em}% Orig. = 3\baselineskip
-		{\Large\scshape\raggedright\csname @title@\languagename\endcsname}%
+		{\Large\scshape\csname @title@\languagename\endcsname}\par%
 		\if\@empty\csname @subtitle@\languagename\endcsname\relax\else%
-			\par\vspace{.5\baselineskip}
-			{\large \noindent\csname @subtitle@\languagename\endcsname}
-			\vspace{.5\baselineskip}\fi\par%
+			{\large \noindent\csname @subtitle@\languagename\endcsname}\fi\par%
 		\vspace{\baselineskip}
 		{\if\@empty\@author\else\@author%
 		 \if\@empty\@institution\else, \@institution\fi%
@@ -1450,10 +2066,11 @@
 	\bgroup
 		\cleardoublepage%
 		\reset@twocolumns%
+		\raggedright%
 		\setlength{\parindent}{0em}
 		\normalize@fontsize%
 		\vspace*{0em}
-		{\Large\scshape\raggedright\csname @title@\languagename\endcsname\if\@empty\csname @subtitle@\languagename\endcsname\relax\else :\par\noindent\csname @subtitle@\languagename\endcsname\fi}\par%
+		{\Large\scshape\csname @title@\languagename\endcsname\if\@empty\csname @subtitle@\languagename\endcsname\relax\else :\par\noindent\csname @subtitle@\languagename\endcsname\fi}\par%
 		{\@author~---\space\@date\par}%
 		{\if\relax\@email\relax\else\emailname:~\@email\fi\par}%
 		\vspace{2\baselineskip}%
@@ -1475,9 +2092,11 @@
 	\bgroup
 	\reset@twocolumns%
 	\normalize@fontsize%
+	\raggedright%
 	\vspace*{-2\baselineskip}
-	{\Large\raggedright\@author}\\%
+	{\Large\@author}\\%
 	\begin{minipage*}{.5\linewidth}
+		\raggedright%
 		\@address\par
 		\if\relax\@fax\relax
 			\@email%
@@ -1508,6 +2127,7 @@
 	\clearpage
 	\if\@empty\@logo\relax\else\includegraphics[width=.3\textwidth]{\@logo}\fi\par
 	\begin{minipage*}{.5\linewidth}
+		\raggedright%
 		\@author\par
 		\@address\par
 		\if\relax\@fax\relax
@@ -1522,6 +2142,7 @@
 	\end{minipage*}%
 	\hfill
 	\begin{minipage*}{.4\linewidth}
+		\raggedright%
 		\if\@empty\@recipient\relax\else\@recipient\fi\par
 		\if\@empty\@addressee\relax\else\@addressee\fi\par
 		\vspace{\baselineskip}
@@ -1538,14 +2159,14 @@
 %	TODO » Prévoir de pouvoir personnaliser la hauteur de la signature, idéalement pour qu'elle empiète un peu sur le texte (ou dans \makesignature)
 \newcommand{\closing}{
 	\addvspace{\baselineskip}
-	\if\@empty\@cc\relax\else%
+	\if\relax\@cc\relax\else%
 		\ccname:\hfill%
 		\begin{minipage*}{.85\linewidth}\@cc\end{minipage*}%
 	\fi\par
 	\addvspace{2\baselineskip}
 	\makesignature\par
-	\if\@empty\@enclosed\relax\else%
-		\addvspace{\baselineskip}
+	\if\relax\@enclosed\relax\else%
+		\addvspace{2\baselineskip}
 		\enclname:\hfill%
 		\begin{minipage*}{.85\linewidth}\@enclosed\end{minipage*}
 	\fi\par
@@ -1572,7 +2193,7 @@
 %	Create a command that uses \rightmark instead of \leftmark if empty
 \newcommand{\leftrightmark}{%
 	\begingroup\protected@edef\x{\leftmark}%
-	\if\@empty\x\@empty
+	\ifx\@empty\x\relax% NE PAS MODIFIER (ou intelligemment, tester en book, twoside)
 		\endgroup\rightmark
 	\else
 		\endgroup\leftmark
@@ -1653,13 +2274,13 @@
 	\makeevenhead{didactichead}
 		{\textit{\csname @title@\languagename\endcsname%
 		 \if\@empty\csname @subtitle@\languagename\endcsname\@empty\else: \csname @subtitle@\languagename\endcsname\fi}%
-		 \vspace*{0pt}}
+		 \vspace*{\z@}}
 		{}
 		{}
 	\makeoddhead{didactichead}
 		{\textit{\csname @title@\languagename\endcsname%
 		 \if\@empty\csname @subtitle@\languagename\endcsname\@empty\else: \csname @subtitle@\languagename\endcsname\fi}%
-		 \vspace*{0pt}}
+		 \vspace*{\z@}}
 		{}
 		{}
 	\makeevenfoot{didactichead}
@@ -1668,14 +2289,14 @@
 			\if\relax\@email\relax\else~(\@email)\fi, %
 			\@date.}}
 		{}
-		{\thepage}
+		{\ifnum\value{lastpage}>1\relax\thepage\fi}
 	\makeoddfoot{didactichead}
 		{\footnotesize{%
 			\@author%
 			\if\relax\@email\relax\else~(\@email)\fi, %
 			\@date.}}
 		{}
-		{\thepage}
+		{\ifnum\value{lastpage}>1\relax\thepage\fi}
 
 %	Set Default header styles
 \pagestyle{frenchlaw}
@@ -1694,558 +2315,35 @@
 		\ClassWarningNoLine{frenchlaw}{Please rerun LaTeX on file: \MessageBreak \jobname.tex \MessageBreak to get correct page numbering}%
 	\fi\fi\fi}
 
+%	TODO » Placer avec les commandes babel +  Défaut == "En résumé"
+\newcommand{\summaryname}{Pour l'essentiel}
+\newcommand{\summarylabel}[1]{\scshape{\hfill\summaryname:}}
 
-%	####	TABLES DES MATIÈRES	####
-
-%	Définir la subdivision maximale pour la numérotation
-\if@vitae
-	\maxsecnumdepth{chapter}
-\else\if@didactic
-	\maxsecnumdepth{section}% Ou chapter (?)
-\else
-	\maxsecnumdepth{subparagraph}
-\fi\fi
-\maxtocdepth{subparagraph}
-\setcounter{tocdepth}{6} % TODO » Needed? Check with <memoir>
-
-%	Ne pas numéroter les pages des livres et parties (car centrés)
-\cftpagenumbersoff{book}
-\cftpagenumbersoff{part}
-
-%	Create a command for short table of contents
-\newcommand{\shortcontents}[1][0]{%
-	\bgroup
-		% Reset all necessary commands and remove page numbers
-		\renewcommand{\contentsname}{\shortcontentsname}
-		\cftpagenumbersoff{heading}
-		\cftpagenumbersoff{subheading}
-		\cftpagenumbersoff{chapter}
-		\setlength{\cftbeforechapterskip}{.5\baselineskip}
-		% Save tocdepth value
-		\newcounter{save@tocdepth}
-		\setcounter{save@tocdepth}{\value{tocdepth}}
-		\setcounter{tocdepth}{#1}
-		% Print the table of contents and restore tocdepth
-		\tableofcontents*
-		\setcounter{tocdepth}{\value{save@tocdepth}}
-		\clearpage
-	\egroup
-}
-
-\if@article\else
-	\pretocmd{\tableofcontents}{\clearforchapter}{}{}
-\fi
-
-
-%	Créer de nouvelles divisions logiques: <heading> et <subheading>
-\newlistentry[part]{heading}{toc}{-1}
-\newlistentry[heading]{subheading}{toc}{-1}
-
-%	Créer une commande pour définir la taille des labels
-\newlength{\toclabelwidth}
-\if@article
-	\setlength{\toclabelwidth}{-.3em}% TODO » Why not 0em?
-\else
-	\settowidth{\toclabelwidth}{\cftchapterfont\space Chapitre\space}
-\fi
-\newlength{\tocnumwidth}
-	\settowidth{\tocnumwidth}{\cftchapterfont\space XXX\space}
-\newlength{\toccenterwidth}
-	\setlength{\toccenterwidth}{\tocnumwidth}
-	\addtolength{\toccenterwidth}{\toclabelwidth}
-\newcommand{\toclabelbox}[1]{\makebox[\toclabelwidth]{\hfill#1}}
-
-%	TODO » Vérifier la pertinence de toutes les lignes
-%	Réinitialiser les compteurs 
-\counterwithin*{part}{book}
-\counterwithin*{heading}{book}
-\counterwithin*{chapter}{book}
-\counterwithin*{chapter}{part}
-\counterwithin*{chapter}{heading}
-\counterwithin*{chapter}{subheading}
-\counterwithin*{section}{chapter}
-\counterwithin*{paragraph}{chapter}
-\counterwithin*{paragraph}{section}
-
-%	Définir l'espacement des différentes divisions dans la table des matières
-\renewcommand*{\cftdotsep}{2}
-\cftsetindents{book}{\toccenterwidth}{\tocnumwidth}
-\cftsetindents{part}{\toccenterwidth}{\tocnumwidth}
-\cftsetindents{heading}{0em}{\tocnumwidth}
-\cftsetindents{subheading}{0em}{\tocnumwidth}
-\cftsetindents{chapter}{0em}{\tocnumwidth}
-\cftsetindents{section}{0em}{\tocnumwidth}
-\cftsetindents{subsection}{0em}{\tocnumwidth}
-\cftsetindents{subsubsection}{\toclabelwidth}{\tocnumwidth}
-\cftsetindents{paragraph}{\toclabelwidth}{\tocnumwidth}
-\cftsetindents{subparagraph}{\toclabelwidth}{\tocnumwidth}
-
-
-%	Adjust vertical spacing in ToC
-% The first entry (book, part, heading, chapter) has an extra \baselineskip
-%	TODO » Adde + +.5\baselineskip sous le titre du Sommaire
-%		   Ou supprimer automatiquement les intro / ccl (mais pas les ch. prélim.), auquel cas on peut garder le \cftbefroechapterskip dans le sommaire
-\AtBeginDocument{\addtocontents{toc}{\vspace{-\baselineskip}}}
-% S'assurer que la table des matières termine bien le dernier paragraphe
-\AtEndDocument{\addtocontents{toc}{\par}}
-
-
-%	#####	LOGICAL DIVISIONS	#####
-
-%	Définir le style des livres dans le texte
-\renewcommand*{\booktitlefont}{\Huge\scshape}
-\renewcommand*{\booknamefont}{\booktitlefont}
-\renewcommand*{\booknumfont}{\booktitlefont}
-\renewcommand*{\printbooknum}{%
-	\booknumfont%
-	\ifdefstring{\languagename}{french}
-		{\ifnum\value{book}=1	\ordinalstring{book}[m]%
-		 \else					\Roman{book}\fi}
-		{\Roman{book}}}
-\renewcommand{\beforebookskip}{\null\vspace{\baselinestretch\addto@Huge}%
-	\vspace{\if@tenpoints 12\baselineskip\else 10\baselineskip\fi}}
-\renewcommand{\midbookskip}{\par\vspace{\baselinestretch\addto@Huge}}
-
-%	Définir le style des livres dans la table des matières
-\renewcommand*{\cftbookpresnum}{\space}
-\renewcommand*{\cftbookaftersnum}{.}
-\renewcommand*{\cftbookaftersnumb}{}
-\renewcommand*{\cftbookfont}{\large\scshape\hfil}
-\renewcommand*{\cftbookpagefont}{\normalsize}
-\setlength{\cftbeforebookskip}{2\baselineskip}
-
-%	Définir le style des parties dans le texte
-% Babel French gère la numérotation en toutes lettres des parties
-\renewcommand*{\thepart}{\Roman{part}}
-\renewcommand*{\parttitlefont}{\LARGE\scshape}
-\renewcommand*{\partnamefont}{\parttitlefont}
-\renewcommand*{\partnumfont}{\parttitlefont}
-\renewcommand{\beforepartskip}{\null\vspace{\baselinestretch\addto@LARGE}%
-	%	TODO » Si PhD ou Memoir (ou article?)
-	\vspace{\baselineskip}%
-	%	TODO » Sauf PhD ou Memoir (ou article?) + Add: if@elevenpoints
-%	\vspace{\if@tenpoints12\baselineskip\fi\if@twelvepoints10\baselineskip\fi}%
-	}
-\renewcommand{\midpartskip}{\par\vspace{\baselinestretch\addto@LARGE}}
-%	TODO » Seulement si PhD ou Memoir (ou article?), utiliser des options
-\renewcommand{\afterpartskip}{\vspace{2\baselineskip}}
-% Test can be printed after the part title, on the same page
-\nopartblankpage
-
-%	TODO » Seconde partie et Titre second == créer un switch manuel \onlytwoparts \onlytwoheadings à insérer dans le .tex
-
-% \newcounter{lastpart@I}
-% \newcounter{lastpart@II}
-% \newcounter{lastpart@III}
-% \newcounter{lastpart@IV}
-% \newcounter{lastpart@V}
-% \newcounter{lastpart@VI}
-% \newcounter{lastpart@VII}
-% \newcounter{lastpart@VIII}
-% \newcounter{lastpart@IX}
-% \newcounter{lastpart@X}
-% \renewcommand{\printpartnum}{%
-% 	% If last part > 2, write it in the .aux file for numbrring purposes
-% 	\ifnum\value{part}>2%
-% 		\immediate\write\@auxout%
-%     		{\string\setcounter{lastpart@\thebook}{\the\c@part}}
-%     \fi}
-
- %	TODO » Coder proprement \printpartname. Supprimer les modifs de babel (option?)
- % Utiliser le test:
-%  \ifnum\value{part}=2
-% 	\ifnum\value{part}<\value{lastpart@\thebook}
-% 		Définir l'ordinal == Deuxième%
-% 	\else
-% 		Définir l'ordinal ==  Seconde%
-% \fi\fi
-% Puis imprimer le numéro ordinal et le \partname
-
-%	Définir le style des parties dans la table des matières
-\renewcommand*{\cftpartpresnum}{\space}
-\renewcommand*{\cftpartaftersnum}{.}
-\renewcommand*{\cftpartaftersnumb}{}
-\renewcommand*{\cftpartfont}{\large\scshape\hfil}
-\renewcommand*{\cftpartpagefont}{\normalsize}
-\setlength{\cftbeforepartskip}{\baselineskip}
-
-%	Définir le style des titres dans le texte
-\renewcommand{\theheading}{\Roman{heading}}
-\newcommand{\headtitlefont}{\Large\scshape\centering}
-\newcommand{\headnamefont}{\headtitlefont}
-\newcommand{\headnumfont}{\headtitlefont}
-\newcommand{\afterheadingnum}{\par\nobreak\vskip\midchapskip}
-\newcommand{\printheadingname}{\headnamefont\headingname}
-\newcommand{\headingnamenum}{\space}
-\newcommand{\printheadingnum}{%
-	\headnumfont%
-	\ifdefstring{\languagename}{french}
-		{\ifnum\value{heading}=1	\ordinalstring{heading}[m]%
-		 \else						\Roman{heading}\fi}
-		{\Roman{heading}}}
-\newcommand{\printheadingtitle}[1]{\headtitlefont#1}
-
-%	Définir le style des titres dans la table des matières
-\renewcommand{\cftheadingpresnum}{\space}
-\renewcommand{\cftheadingaftersnum}{.}
-\renewcommand{\cftheadingaftersnumb}{\mdseries}
-\renewcommand{\cftheadingfont}{\large\bfseries}
-\renewcommand{\cftheadingleader}{\hfill}
-\setlength{\cftbeforeheadingskip}{\baselineskip}
-
-%	Créer la commande pour les titres (semblables à des chapitres)
-\newcommand{\heading}[1]{
-	\begingroup
-		\if@article\cleardoublepage\fi
-		\stepcounter{heading}
-		\renewcommand{\printchaptertitle}{%
-			\printheadingname%
-			\headingnamenum\printheadingnum%
-			\afterheadingnum%
-			\printheadingtitle%
-		}
-		\clearforchapter
-		\thispagestyle{chapter}
-		\@schapter{#1}
-		\chaptermark{#1}
-		\phantomsection
-		\addcontentsline{toc}{heading}{\protect\numberline{\theheading}#1}
-	\endgroup
-}
-
-%	Définir le style des sous-titres dans le texte
-\renewcommand{\thesubheading}{\Roman{subheading}}
-\newcommand{\subheadtitlefont}{\Large\centering}
-\newcommand{\subheadnamefont}{\subheadtitlefont}
-\newcommand{\subheadnumfont}{\subheadtitlefont}
-\newcommand{\aftersubheadingnum}{\par\nobreak\vskip\midchapskip}
-\newcommand{\printsubheadingname}{\subheadnamefont\subheadingname}
-\newcommand{\subheadingnamenum}{\space}
-\newcommand{\printsubheadingnum}{%
-	\subheadnumfont%
-	\ifdefstring{\languagename}{french}
-		{\ifnum\value{subheading}=1		\ordinalstring{subheading}[m]%
-		 \else							\Roman{subheading}\fi}
-		{\Roman{subheading}}}
-\newcommand{\printsubheadingtitle}[1]{\subheadtitlefont#1}
-
-%	Définir le style des sous-titres dans la table des matières
-\renewcommand{\cftsubheadingpresnum}{\space}
-\renewcommand{\cftsubheadingaftersnum}{.}
-\renewcommand{\cftsubheadingaftersnumb}{\mdseries}
-\renewcommand{\cftsubheadingfont}{\normalsize\bfseries}
-\renewcommand{\cftsubheadingleader}{\hfill}
-\setlength{\cftbeforesubheadingskip}{\baselineskip}
-
-%	Créer la commande des sous-titres (semblables à des chapitres)
-\newcommand{\subheading}[1]{
-	\begingroup
-		\if@article\cleardoublepage\fi
-		\stepcounter{subheading}
-		\renewcommand{\printchaptertitle}{%
-			\printsubheadingname%
-			\subheadingnamenum\printsubheadingnum%
-			\aftersubheadingnum%
-			\printsubheadingtitle%
-		}
-		\clearforchapter
-		\thispagestyle{chapter}
-		\@schapter{#1}
-		\chaptermark{#1}
-		\phantomsection
-		\addcontentsline{toc}{subheading}{\protect\numberline{\thesubheading}#1}
-	\endgroup
-}
-
-%	Définir le style des chapitres dans le texte
-% Créer un style, pour pouvoir l'appliquer au mode <article>
-\makechapterstyle{frenchlaw}{
-	\renewcommand{\thechapter}{\Roman{chapter}}
-	\renewcommand{\chaptitlefont}{\Large\scshape\raggedright}
-	\renewcommand{\chapnamefont}{\chaptitlefont}
-	\renewcommand{\chapnumfont}{\chaptitlefont}
-	\renewcommand{\chapternamenum}{\space}
-	\renewcommand{\printchapternum}{%
-		\chapnumfont%
-		\ifanappendix					\Alph{chapter}%
-		\else\ifdefstring{\languagename}{french}
-			{\ifnum\value{chapter}=1	\ordinalstring{chapter}[m]%
-			 \else						\Roman{chapter}\fi}
-			{\Roman{chapter}}\fi}
-	\renewcommand{\afterchapternum}{:\par\nobreak\vskip\midchapskip}
-	\setlength{\beforechapskip}{\baselinestretch\addto@Large}
-	\addtolength{\beforechapskip}{\baselineskip}
-	\setlength{\midchapskip}{\baselinestretch\addto@Large}
-	\setlength{\afterchapskip}{2\baselineskip}
-}
-%	Define additional elements for <article>-style chapters (new page, reduce spacing)
-\newcommand{\chapterblock}{%
-	\setlength{\afterchapskip}{\baselineskip}}
-% Appliquer le style de chapitre généralement (mode normal et mode <article>)
-\chapterstyle{frenchlaw}
-
-%	Définir le style des chapitres dans la table des matières
-\renewcommand*{\cftchapterpresnum}{\space}
-\renewcommand*{\cftchapteraftersnum}{.}
-\renewcommand*{\cftchapteraftersnumb}{\mdseries}
-\renewcommand{\cftchapterfont}{\bfseries}
-\renewcommand*{\cftchapterpagefont}{\normalsize}
-\setlength{\cftbeforechapterskip}{\baselineskip}
-
-%	TODO » Clean-up. Ajouter un hook dans la commande \@chapter
-% Utilisé par \xchapter (pour simuler un chapitre du \frontmatter, i.e. avec toutes les informations sauf le numéro du chapitre)
-
-% \patchcmd{\@chapter}
-%   {\ifm@m@And}
-%   {\if@special@chapter\m@m@Andfalse\fi%
-%    \ifm@m@And}
-%   {}
-%   {\typeout{WARNING! Patching \noexpand\@chapter failed!}}
-
-% \newcommand{\xchapter}[1][\@empty]{% Remplacer par \ifx\relax#1\relax (?)
-% 	\def\tmpch@ptoc{#1}% Capture first optional argument (ToC-name)
-% 	\@ifnextchar[{\@xchapter}{\@xchapter[]}}
-% \def\@xchapter[#1]#2#3{%
-% 	\@special@chaptertrue
-% 	\def\ch@phead{% If #1 (header-name) undefined, use #3 (regular title)
-% 		\ifx\relax#1\relax#3\else#1\fi}
-% 	\def\ch@ptoc{%
-% 		#2\ifx\relax#2\relax\else\ifx\relax#3\relax\else\cftchapteraftersnum\cftchapteraftersnumb~\fi\fi#3}% If both #2 and #3 are defined, add ToC separators between them
-% 	\if\@empty\tmpch@ptoc\relax\else\def\ch@ptoc{\tmpch@ptoc}\fi
-% 	\def\ch@pname{%
-% 		\ifx\relax#2\relax\else#2\afterxchapternum\fi#3}
-% 	\chapter[\ch@ptoc][\ch@phead]{\ch@pname}
-% 	\markboth{\ch@phead}{\ch@phead}
-% 	% Increase, then decrease chapter counter (to reset all sub-counters)
-% 	\refstepcounter{chapter}
-% 	\addtocounter{chapter}{-1}
-% 	\@special@chapterfalse
-% }
-
-\renewcommand{\chapter}{%
-	\if@article\par\@nameuse{chapterblock}\else
-		\clearforchapter
-		\thispagestyle{chapter}
-		\global\@topnum\z@
-	\fi
-	\m@mindentafterchapter
-	\@ifstar{\xchapter}{\@m@mchapter}}
-\newcommand{\xchapter}[1][]{%
-	\def\ch@pprefix{#1}% Capture first optional argument (title-prefix)
-	\@ifnextchar[{\@xchapter}{\@xchapter[]}}
-\def\@xchapter[#1]#2{%
-	\@schapter{\if\relax\ch@pprefix\relax\else\ch@pprefix\afterchapternum\fi#2}
-	\chaptermark{\if\relax#1\relax#2\else#1\fi}
-	\phantomsection
-	\addcontentsline{toc}{chapter}{%
-		\if\relax\ch@pprefix\relax\else\ch@pprefix\cftchapteraftersnum\cftchapteraftersnumb~\fi#2}
-	% Increase, then decrease chapter counter (to reset all sub-counters)
-	\addtocounter{chapter}{-1}
-	\refstepcounter{chapter}}
-\newcommand{\fakechapter}[2][]{%
-	\clearforchapter
-	\thispagestyle{chapter}
-	\@schapter{\if\relax#1\relax\else#1\afterchapternum\fi#2}
-	\chaptermark{#1}
-	\phantomsection
-	\addtocontents{toc}{\vspace{\baselineskip}}
-	\addcontentsline{toc}{section}{\if\relax#1\relax\else#1\cftchapteraftersnum\cftchapteraftersnumb~\fi#2}}
-
-%	Définir le mode de numérotation des sections et paragraphes
-%	TODO » Créer un subsubparagraph > \@greek (pour tout le monde)
-\if@article
-	% En mode article, utiliser une numérotation courte (I.A.1.a)
-	\renewcommand{\thesection}{\Roman{section}}
-	\renewcommand{\thesubsection}{\Alph{subsection}}
-	\renewcommand{\thesubsubsection}{\arabic{subsubsection}}
-	\renewcommand{\theparagraph}{\alph{paragraph}}
-	\renewcommand{\thesubparagraph}{\roman{subparagraph}}
-\else
-	% En mode normal, utiliser les intitulés classiques
-	\renewcommand{\thesection}{\Roman{section}}
-	\renewcommand{\thesubsection}{\Roman{subsection}}
-	\renewcommand{\thesubsubsection}{\Alph{subsubsection}}
-	\renewcommand{\theparagraph}{\arabic{paragraph}}
-	\renewcommand{\thesubparagraph}{\alph{subparagraph}}
-\fi
-
-%	Replace \vskip with \addvspace at the end of section titles
-% Prevents stacking vertical white space when using environments which also add some.
-\patchcmd{\@xsect}
-	{\vskip\@tempskipa\vskip-\parskip}{\addvspace{\@tempskipa}\addvspace{-\parskip}}
-	{}{\typeout{WARNING! Patching \noexpand\@xsect failed!}}
-
-%	Définir la ponctuation après chaque numéro de section et paragraphe
-% S'il est défini dans babel, on rajoute le nom donné à la section concernée
-% En anglais, les paragraphes suivant les sections ne sont pas indentés
-\setsecnumformat{%
-	\ifcsname #1name\endcsname\csname #1name\endcsname\space\fi%
-	\csname the#1\endcsname.\enskip}
-
-%	Définir le style des sections
-\setsecheadstyle{\large\scshape\raggedright}	
-\setlength{\beforesecskip}{\baselinestretch\addto@large}
-\setlength{\aftersecskip}{\baselineskip}
-\if@twocolumn
-	% En mode <twocolumn>, ne pas rajouter un second saut de ligne
-	\addtolength{\beforesecskip}{0pt}
-\else
-	% En mode <onecolumn>, sauter une deuxième ligne avant la section
-	\addtolength{\beforesecskip}{\baselineskip}
-\fi
-
-%	Définit le style des sous-sections
-\setsubsecheadstyle{\scshape\raggedright}
-\setlength{\beforesubsecskip}{\baselineskip}
-\setlength{\aftersubsecskip}{\baselineskip}
-
-%	Définir le style des sous-sous-sections
-\setsubsubsecheadstyle{\itshape\raggedright}
-\setlength{\beforesubsubsecskip}{\baselineskip}
-\setlength{\aftersubsubsecskip}{\baselineskip}
-
-%	Définir le style des sections et sous-sections dans la table des matières
-\renewcommand*{\cftsectionpresnum}{\space}
-\renewcommand*{\cftsectionaftersnum}{.}
-\renewcommand*{\cftsectionaftersnumb}{\mdseries}
-\renewcommand*{\cftsectionfont}{\bfseries}
-\setlength{\cftbeforesectionskip}{0pt}
-\renewcommand*{\cftsubsectionpresnum}{\space}
-\renewcommand*{\cftsubsectionaftersnum}{.}
-\renewcommand*{\cftsubsectionaftersnumb}{\mdseries}
-\renewcommand*{\cftsubsectionfont}{\footnotesize\bfseries}
-\setlength{\cftbeforesubsectionskip}{0pt}
-\renewcommand*{\cftsubsubsectionpresnum}{\space}
-\renewcommand*{\cftsubsubsectionaftersnum}{.}
-\renewcommand*{\cftsubsubsectionaftersnumb}{\mdseries}
-\renewcommand*{\cftsubsubsectionfont}{\footnotesize\bfseries}
-\setlength{\cftbeforesubsubsectionskip}{0pt}
-
-%	Définir le style des paragraphes
-% Vérifier l'indentation, notamment didactic+
-\setparaheadstyle{\scshape}
-\setparaindent{0em}
-\setlength{\beforeparaskip}{\baselineskip}
-\setlength{\afterparaskip}{\baselineskip}
-
-%	Définir le style des sous-paragraphes
-% Vérifier l'indentation, notamment didactic+
-\setsubparaheadstyle{\itshape}
-\setsubparaindent{0em}
-\setlength{\beforesubparaskip}{\baselineskip}
-\setlength{\aftersubparaskip}{\baselineskip}
-
-\if@twocolumn
-	% En mode <twocolumn>, ils sont insérés dans le corps du texte (inline)
-	\setparaheadstyle{\scshape\raggedright\addperiod}
-	\setlength{\afterparaskip}{0em}
-	% Idem pour les sous-paragraphes (inline)
-	\setsubparaheadstyle{\itshape\raggedright\addperiod}
-	\setlength{\aftersubparaskip}{0em}
-\else\if@marginal
-	% En mode <marginal>, ils sont placés dans une note marginale
-	\newcommand{\marginparahead}[1]{\marginpar{\itshape#1\if@vitae:\fi}}
-	\setparaheadstyle{\marginparahead}
-	\setlength{\afterparaskip}{0em}
-	% Idem pour les sous-paragraphes (dans la marge)
-	\newcommand{\marginsubparahead}[1]{\marginpar{\itshape#1\if@vitae:\fi}}
-	\setsubparaheadstyle{\marginsubparahead}
-	\setlength{\aftersubparaskip}{0em}
-\fi\fi
-
-%	Définir lz style des paragraphes et sous-paragraphes dans la table des matières
-\renewcommand*{\cftparagraphpresnum}{\space}
-\renewcommand*{\cftparagraphaftersnum}{.}
-\renewcommand*{\cftparagraphaftersnumb}{\mdseries}
-\renewcommand*{\cftparagraphfont}{\footnotesize\bfseries}
-\setlength{\cftbeforeparagraphskip}{0pt}
-\renewcommand*{\cftsubparagraphpresnum}{\space}
-\renewcommand*{\cftsubparagraphaftersnum}{.}
-\renewcommand*{\cftsubparagraphaftersnumb}{\mdseries}
-\renewcommand*{\cftsubparagraphfont}{\footnotesize\bfseries}
-\setlength{\cftbeforesubparagraphskip}{0pt}
-
-%	#####	DIVISIONS SPÉCIFIQUES AU DROIT	#####
-
-%	TODO » Sub-para (323-3), article + clause de contrats + documenter
-
-%	Créer un compteur pour les paragraphes (juridiques)
-\newcounter{para}
-\setcounter{para}{0}
-
-%	Créer les commandes pour paramétrer l'apparence du compteur de paragrpahes
-\renewcommand{\thepara}{\arabic{para}}
-\newcommand{\paranumsep}{.~}
-\newcommand{\parasep}{.\enskip}
-\newcommand{\paranumstyle}{\bfseries}
-\newcommand{\parastyle}{\normalsize\scshape}
-
-%	Créer des commandes pour paramétrer l'apparence dans la table des matières
-\newcommand{\cftparastyle}{\llap}
-\newcommand{\cftparanumstyle}{\bfseries}
-\newcommand{\cftparaaftersnum}{.\enskip}
-\newcommand{\cftparanumsep}{,~}
-\newcommand{\cftparaleader}{p.~}
-\newcommand{\cftparaafterpnum}{.}
-\newcommand{\cftparasep}{\par}
-
-%	Créer un compteur <precis> pour savoir si un \para est le premier de sa section ou non (pour la table des matières)
-\newcounter{precis}
-\setcounter{precis}{0}
-\counterwithin{precis}{book}
-\counterwithin{precis}{part}
-\counterwithin{precis}{chapter}
-\counterwithin{precis}{section}
-\counterwithin{precis}{subsection}
-\counterwithin{precis}{subsubsection}
-\counterwithin{precis}{paragraph}
-\counterwithin{precis}{subparagraph}
-
-%	Créer un switch pour afficher les noms des paragraphes ou non
-\newcommand{\paragraphnames}{\@paranametrue}
-\newcommand{\noparagraphnames}{\@paranamefalse}
-
-%	Créer un switch pour imprimer ou non les \para dans la table des matières
-\newcommand{\precis}{\@precistrue}
-\newcommand{\noprecis}{\@precisfalse}
-
-%	Créer un switch pour imprimer ou non les \outline dans la table des matières
-\newcommand{\outlinetoc}{\@outlinetrue}
-\newcommand{\nooutlinetoc}{\@outlinefalse}
-
-%	Créer un switch pour imprimer ou non les \outline dans la table des matières
-\newcommand{\summarytoc}{\@summarytrue}
-\newcommand{\nosummarytoc}{\@summaryfalse}
-
-%	TODO » Utilité des numéros de page? (imprimer > cf. PUF)
-%	TODO » Ajouter une commande manuelle pour insérer le chapitre / section, etc. juste en-dessous du titre (comme pour les labels) (?) + Ajouter autommatiquement à la commande via etoolbox (apptocmd, etc.) -- idem pour les chapitres non numérotés (header et toc)
-
-%	Créer une commande \para pour faire des paragraphes numérotés
-%	TODO » Supprimer le \precis, et utiliser plutôt \chapterprecis et \precistoctext (memoir)
-\newcommand{\para}[1][]{%
-	\refstepcounter{para}%
-	\refstepcounter{precis}%
-	\def\@currentlabel{\thepara}%
-	{\paranumstyle\thepara\if\relax#1\relax\label{para:\thepara}\else\label{para:#1}\paranumsep\fi}%
-	\if@paraname%
-		\if@marginal%
-			\marginpar{\parastyle#1}%
-		\else%
-			{\parastyle#1\parasep}%
-	\fi\fi%
-	\if@precis
+%	Créer un environnement <summmary> pour des conclusions avec un label prédéfini
+\NewEnviron{summary}
+	{\if@summary\bgroup%
+		\let\footnote\@gobble%
+		\let\sanitize\@gobble%
 		\addtocontents{toc}{%
-			\ifnum\value{precis}>1\vskip-\lastskip\cftparasep\else%
-				\vskip\baselineskip\par\fi%
-			% TODO » \ifx...\fi désactivé TMP (pour vérifier les \para innommés)
-			%% Et suppr. le \ifx...\fi interne
-			%\ifx\relax#1\relax\else
-				\protect\noindent%
-				{\cftparastyle{\cftparanumstyle\thepara\cftparaaftersnum}
-					\if\relax#1\relax\else#1\cftparanumsep\fi\cftparaleader\thepage\cftparaafterpnum}\vskip\baselineskip\par%\fi
-			}%
-	\fi%
-	\@ifnextchar\par{\@gobblepar\relax}{\relax}}
+			\if\relax\BODY\relax\else%
+				\vskip-\lastskip\vskip\baselineskip%
+				\textsc{\summaryname}: \BODY\vskip\baselineskip\par\fi}%
+	\egroup\fi%
+	\list{}{\vskip\baselineskip%
+			\let\makelabel\summarylabel%
+			\setlength{\itemsep}{\baselineskip}%
+			\setlength{\leftmargin}{2\parindent}}%
+	 \item\BODY% + \needspace{2\baselineskip} (?) [Semble inutile]
+	 \vskip\baselineskip\endlist}
+
+\newcommand{\vitaelabel}[1]{\footnotesize\itshape{\hfill\strut#1:\strut}}
+
+%	Créer un environnement <vitae> pour les CV (label dans la marge)
+\newenvironment{vitae}
+	{\list{}{\let\makelabel\vitaelabel
+			 \setlength{\leftmargin}{\z@}
+			 \setlength{\labelwidth}{\marginparwidth}}}
+	{\endlist}
 
 %	Créer une commande pour calculer automatiquement l'âge (vitae)
 % \agecalc{dd}{mm}{yyyy}
@@ -2259,16 +2357,7 @@
 	\arabic{calculate@age}~\agename}
 
 
-%	#####	LANGUAGES	#####
-
-%	TODO » Implémenter {csquotes} et le documenter
-%	TODO » Suppr. la langue <english> après avoir converti automatiquement via biber
-\RequirePackage[greek,latin,english,british,french]{babel}
-\RequirePackage{fixltxhyph}
-
-%	Use the superscript macro from Babel-French
-\let\textsuperscript=\fup
-
+%	TPDP » Remonter dans la section languages / babel
 %	TODO » Vérifier \bsc, \frquote, \frenchdate, etc. et les mapper sur les commandes normales (cf. doc babel french)
 
 % Load {csquotes} and implement styles for foreign language quotations
@@ -2284,13 +2373,8 @@
   {\textquotedblright}
 
 
-
-%	TODO » Reprendre les documents pour intégrer le package + Renommer {frenchlaw-typo}
+% TODO » Renommer + PLacer avec la section de la doc sur les helper macros + abréviations
 \RequirePackage{typographie}
-
-
-
-
 
 
 %	Créer les commandes pour faire référence à un numéro
@@ -2614,7 +2698,7 @@
 	 \reset@twocolumns
 	 \if\relax#1\relax\else\selectlanguage{#1}\vspace{\baselineskip}\fi
 	 \if@article
-		{\noindent\large\scshape\raggedright\abstractname:\space}
+		{\noindent\scshape\raggedright\abstractname:\space}
 	 \else
 		\setlength{\parindent}{0em}
 		\normalize@fontsize
@@ -2623,7 +2707,8 @@
 		\setlength{\parindent}{1.5em}
 		\vspace{\baselineskip}
 	 \fi}
-	{\restore@twocolumns\egroup}
+	{\if@article\vspace{2\baselineskip}\fi%
+	 \restore@twocolumns\egroup}
 
 %	Créer une commande <keywords>, qui peut être utilisée dans le résumé
 \newcommand{\keywords}[2][]{%
@@ -2804,6 +2889,8 @@
 \newcommand{\headlinecolor}[1]{\gdef\@headlinecolor{#1}}
 	\newcommand{\@headlinecolor}{black}% E.g. "black", "darkgray"
 
+%	TODO » Créer un mode couleur => pour les didactic + éventuellement dans le CV (healine), les environnements showcase, etc. -- ou même pour les titres de section (sans serif + gras / couleur == tester sur la documentation)
+
 %	#####	GESTION DU MODE DRAFT	#####
 
 % TODO » Requires two runs of LaTeX in order to place the marks correctly.
@@ -2815,36 +2902,36 @@
 %		[draft+] == afficher la version consolidée + les marques dans la marge.
 %	TODO » Ajouter toutes les modifs à une liste de todo, e.g. Ajouter: --- p. X (auteur)
 \renewcommand{\added}[2][]{%
-	\ifdraftdoc
+	\if@draft
 		\marginnote
 			[\raggedright\textcolor{teal}{\small #1 $\bigoplus$}]
-			{\raggedleft\textcolor{teal}{\small #1 $\bigoplus$}}%
-		\textcolor{teal}{#2}%
-	\else#2\fi}
+			{\raggedleft\textcolor{teal}{\small #1 $\bigoplus$}}\fi%
+	\ifdraftdoc\textcolor{teal}{#2}\else#2\fi}
 
 \renewcommand{\changed}[3][]{%
-	\ifdraftdoc
+	\if@draft
 		\marginnote
 			[\raggedright\textcolor{cyan}{\small #1 $\Leftrightarrow$}]
-			{\raggedleft\textcolor{cyan}{\small #1 $\Leftrightarrow$}}%
-		\textcolor{cyan}{#3}%
-	\else#3\fi}
+			{\raggedleft\textcolor{cyan}{\small #1 $\Leftrightarrow$}}\fi%
+	\ifdraftdoc\textcolor{cyan}{#3}\else#3\fi}
 
 \renewcommand{\deleted}[2][]{%
-	\ifdraftdoc
+	\if@draft
 		\marginnote
 			[\raggedright\textcolor{purple}{\small #1 $/\kern-1ex/$}]
-			{\raggedleft\textcolor{purple}{\small #1 $/\kern-1ex/$}}%
+			{\raggedleft\textcolor{purple}{\small #1 $/\kern-1ex/$}}\fi%
+	\ifdraftdoc
 		\textcolor{purple}{\kern-.25ex$/$\kern-.4ex #2$/$\kern-.25ex}%
-	\else\unskip\fi}
+		\else\ifvmode\else\unskip\fi\fi}
 
 \newcommand{\todo}[2][]{%
-	\ifdraftdoc
+	\if@draft
 		\marginnote
 			[\raggedright\textcolor{violet}{\small #1 $\bigodot$}]
-			{\raggedleft\textcolor{violet}{\small #1 $\bigodot$}}%
-		\unskip~\textcolor{violet}{$\bigodot$\kern1ex#2}%
-	\else\unskip\fi}
+			{\raggedleft\textcolor{violet}{\small #1 $\bigodot$}}\fi%
+	\ifdraftdoc
+		\ifvmode\else\unskip\fi~\textcolor{violet}{$\bigodot$\kern1ex#2}%
+		\else\ifvmode\else\unskip\fi\fi}
 
 %	TODO » A reprendre
 %	Si on est en mode <draft>, afficher le cadre et marquer les overfull hbox
@@ -2858,8 +2945,8 @@
 	% \AtBeginDocument{\renewcommand{\index}[1]{\marginpar{\color{orange}{#1}}\old@index{#1}}}
 \fi
 
-% Préparer des environnements avec tcolorbox pour les fiches pédagogiques
-% 
+%	TODO » Préparer des environnements avec tcolorbox pour les fiches pédagogiques
+%	TODO » Documenter les jeux de notes de bas de page +/- fin de document pour les éditions critiques
 
 \def\point{\addvspace{\baselineskip}\noindent\textrightarrow\enspace\textbf}
 

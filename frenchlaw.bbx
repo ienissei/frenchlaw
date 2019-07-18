@@ -49,7 +49,7 @@
 	\iftoggle{bbx:dashed}{\ExecuteBibliographyOptions{pagetracker}}{}}
 
 %	Execute bibliography options
-\ExecuteBibliographyOptions{isbn,url,doi,eprint,related,dashed,%
+\ExecuteBibliographyOptions{isbn,doi,eprint,url,related,dashed,%
 	sorting=nty,useeditor=true,usetranslator=false,maxnames=5,language=auto}
 \ExecuteBibliographyOptions[collection]{useeditor=false}
 \ExecuteBibliographyOptions[reference,proceedings]{useauthor=false,useeditor=false}
@@ -560,14 +560,14 @@
 		\usebibmacro{author/translator+others}\fi%
 	\newunit\newblock
 	\usebibmacro{byauthor}%
-	\newunit\newblock
-	\usebibmacro{bytranslator+others}%
+	% \newunit\newblock
+	% \usebibmacro{bytranslator+others}%
 	% \newunit\newblock
 	% \printfield{note}%
 	\newunit\newblock
 	\usebibmacro{journal+issue+date}%
 	\setunit{\newblockpunct}\newblock
-	\usebibmacro{addendum+pubstate}%
+	\usebibmacro{pubstate+addendum}%
 	\newunit\newblock
 	\usebibmacro{isbn+doi+eprint+url}%
 	\setunit{\bibpagerefpunct}\newblock
@@ -608,7 +608,7 @@
 	\setunit{\bibpagespunct}\newblock
 	\usebibmacro{pagetotal/volumes}%
 	\setunit{\newblockpunct}\newblock
-	\usebibmacro{addendum+pubstate}%
+	\usebibmacro{pubstate+addendum}%
 	\newunit\newblock
 	\usebibmacro{isbn+doi+eprint+url}%
 	\setunit{\bibpagerefpunct}\newblock
@@ -650,7 +650,7 @@
 	\setunit{\bibpagespunct}\newblock
 	\usebibmacro{pagetotal/volumes}%
 	\setunit{\newblockpunct}\newblock
-	\usebibmacro{addendum+pubstate}%
+	\usebibmacro{pubstate+addendum}%
 	\newunit\newblock
 	\usebibmacro{isbn+doi+eprint+url}%
 	\setunit{\bibpagerefpunct}\newblock
@@ -691,7 +691,7 @@
 	\setunit{\bibpagespunct}\newblock
 	\usebibmacro{pagetotal/volumes}%
 	\setunit{\newblockpunct}\newblock
-	\usebibmacro{addendum+pubstate}%
+	\usebibmacro{pubstate+addendum}%
 	\newunit\newblock
 	\usebibmacro{isbn+doi+eprint+url}%
 	\setunit{\bibpagerefpunct}\newblock
@@ -735,7 +735,7 @@
 	\setunit{\bibpagespunct}\newblock
 	\usebibmacro{pagetotal/volumes}%
 	\setunit{\newblockpunct}\newblock
-	\usebibmacro{addendum+pubstate}%
+	\usebibmacro{pubstate+addendum}%
 	\newunit\newblock
 	\usebibmacro{isbn+doi+eprint+url}%
 	\setunit{\bibpagerefpunct}\newblock
@@ -779,7 +779,7 @@
 		 \setunit{\newblockpunct}\newblock
 		 \usebibmacro{publisher+location+date}%
 		 \setunit{\newblockpunct}\newblock
-		 \usebibmacro{addendum+pubstate}%
+		 \usebibmacro{pubstate+addendum}%
 		 \newunit\newblock
 		 \usebibmacro{isbn+doi+eprint+url}}
 		{\newunit\newblock
@@ -837,7 +837,7 @@
 	\newunit\newblock
 	\usebibmacro{chapter+pages}%
 	\setunit{\newblockpunct}\newblock
-	\usebibmacro{addendum+pubstate}%
+	\usebibmacro{pubstate+addendum}%
 	\newunit\newblock
 	\usebibmacro{isbn+doi+eprint+url}%
 	\setunit{\bibpagerefpunct}\newblock
@@ -889,7 +889,7 @@
 	\newunit\newblock
 	\usebibmacro{chapter+pages}%
 	\setunit{\newblockpunct}\newblock
-	\usebibmacro{addendum+pubstate}%
+	\usebibmacro{pubstate+addendum}%
 	\newunit\newblock
 	\usebibmacro{isbn+doi+eprint+url}%
 	\setunit{\bibpagerefpunct}\newblock
@@ -940,7 +940,7 @@
 		 \newunit\newblock
 		 \usebibmacro{chapter+pages}%
 		 \setunit{\newblockpunct}\newblock
-		 \usebibmacro{addendum+pubstate}%
+		 \usebibmacro{pubstate+addendum}%
 		 \newunit\newblock
 		 \usebibmacro{isbn+doi+eprint+url}%
 		 \setunit{\bibpagerefpunct}\newblock
@@ -998,7 +998,7 @@
 	\setunit{\bibpagespunct}\newblock
 	\usebibmacro{pagetotal/volumes}%
 	\setunit{\newblockpunct}\newblock
-	\usebibmacro{addendum+pubstate}%
+	\usebibmacro{pubstate+addendum}%
 	\newunit\newblock
 	\usebibmacro{isbn+doi+eprint+url}%
 	\setunit{\bibpagerefpunct}\newblock
@@ -1070,7 +1070,7 @@
 	\setunit{\newblockpunct}\newblock
 	\usebibmacro{publisher+location+date}%
 	\setunit{\newblockpunct}\newblock
-	\usebibmacro{addendum+pubstate}%
+	\usebibmacro{pubstate+addendum}%
 	\newunit\newblock
 	\usebibmacro{isbn+doi+eprint+url}%
 	\setunit{\bibpagerefpunct}\newblock
@@ -1286,7 +1286,7 @@
 		 \newunit\newblock
 		 \usebibmacro{journal+issue+date}%
 		\setunit{\newblockpunct}\newblock
-		\usebibmacro{addendum+pubstate}%
+		\usebibmacro{pubstate+addendum}%
 		\newunit\newblock
 		\usebibmacro{isbn+doi+eprint+url}}%
 	\usebibmacro{finentry}}
@@ -1422,6 +1422,7 @@
 	\printfield{booktitleaddon}}
 
 %	Create a macro for journal titles + citation in French and English
+%	TODO » Vérifier et corriger le bug quand un titre d'article (ou ouvrage?) se termine par un ... (et autres signes?). Ajouter un \isdot (?) ou préciser d'ajouter \@ dans le fichier .bib
 \newbibmacro*{journal+issue+date}{%
 	\iffieldequalstr{langid}{english}
 		%	For english language journals, print volume first
@@ -1608,13 +1609,13 @@
 		{\usebibmacro{url+urldate}}
 		{}}
 
-\newbibmacro*{addendum+pubstate}{%
-	\iffieldundef{year}
+\newbibmacro*{pubstate+addendum}{%
+	\newunit\newblock
+	\printfield{pubstate}%
+	\iffieldundef{pubstate}
 		{}
-		{\newunit\newblock
-		 \printfield{pubstate}}%
-	\setunit{\adddot\addspace}\newblock
-	\printfield{addendum}}
+		{\setunit{\addspace}
+		 \printfield{addendum}}}
 
 \renewbibmacro*{bibindex}{%
 	\ifbibindex
@@ -1734,11 +1735,9 @@
 	 			{\ifnamesequal{author}{savedauthor}
 	 				{\clearname{author}}
 	 				{}}%
-	 		 \iffieldsequal{title}{savedtitle}
-	 		 	{\clearfield{title}}
-	 		 	{}%
 	 		 \ifthenelse{	\ifentrytype{article} \AND
-	 		 				\iffieldsequal{journaltitle}{savedjournaltitle} }
+	 		 				\iffieldsequal{journaltitle}{savedjournaltitle} \AND
+	 		 				\iffieldsequal{title}{savedtitle} }
 	 		 	{\iffieldequalstr{langid}{english}
 	 		 		{}
 	 		 		{\clearfield{journaltitle}%
@@ -1756,6 +1755,9 @@
 	 		 	 \iffieldsequal{volume}{savedvolume}
 	 		 	 	{\clearfield{volume}}
 	 		 	 	{}}
+	 		 	{}%
+	 		 \iffieldsequal{title}{savedtitle}
+	 		 	{\clearfield{title}}
 	 		 	{}%
 	 		 % If a <jurisdiction> is related to another <jurisdiction>, use "and"
 	 		 \ifthenelse{	\ifentrytype{jurisdiction} \AND

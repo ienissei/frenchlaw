@@ -104,14 +104,20 @@
 \DeclareFieldAlias{shorttitle}{citetitle}
 \DeclareFieldAlias{shorthand}{plain}
 
+%	TODO » Bug sur Rec. Fenet, qui imprime une virgule (Rec., Fenet) quand la référence est en bibliographie (bbx) ou en crossref/related (in Rec. Fenet) notamment. => Bug dans le code imprimant shorttitle / shortauthor (donc via les macros principales, qui mettent une virgule alors même que les chaps sont remplacés)
+
 \newbibmacro*{cite:init}{%
 	\global\boolfalse{cbx:loccit}%
 	\ifthenelse{	\ifentrytype{reference} \AND\NOT \iffieldundef{shorttitle}	}
 		{\boolfalse{citetracker}}
 		{}%
-	\ifthenelse{	\ifuseshortauthor \AND\NOT \ifnameundef{shortauthor}	}
+	\ifthenelse{	\ifuseshortauthor \AND\NOT \ifnameundef{shortauthor}	}% TOTO » Create <article> bib option (used with article mode) => if@article and not ifuseshortauthor, deactivate shorttitle (+ shorthand?), except for juristidciotn / legislation / etc.
 		{\boolfalse{citetracker}}
-		{\clearname{shortauthor}}%
+		{\clearname{shortauthor}%
+		 \if@article% TOTO » Create <article> bib option (used with article mode) => if@article and not ifuseshortauthor, deactivate shorttitle (+ shorthand?), except for juristidciotn / legislation / etc.
+		 	\clearfield{shorttitle}%
+		 	\clearfield{labeltitle}%
+		 \fi}%
 	\ifnumless{\value{multicitecount}}{2}
 		{\global\boolfalse{cbx:parens}%
 		 \global\undef\cbx@lasthash}
@@ -252,7 +258,8 @@
 	 	{}%
 	%	Driver for printing the title of the work
 	\iffieldundef{labeltitle}
-		{}
+		{\printtext[bibhyperref]{\printfield{title}}%
+		 \newunit\newblock}
 		{\printtext[bibhyperref]{\printfield[title]{labeltitle}}%
 		 \newunit\newblock}%
 	% If the work has already been cited, stop there. Else, print verbose citation.
@@ -413,10 +420,10 @@
 \newbibmacro*{cite:prenote}{%
 	\iffieldundef{prenote}
 		{}
-		{\printfield{prenote}%
+		{\printfield{prenote}\isdot%
 		 \unspace\setunit{\prenotedelim}}% Unspace car il y a des "~" (nbsp) dans les abréviations. Corriger (?)
 	\ifthenelse{	\ifentrytype{legislation}\AND\NOT\iffieldundef{postnote} }
-	 	{%\unskip\setunit{\addnbspace}% Créait des spurrious spaces
+	 	{\setunit{\addnbspace}% Créait des spurrious spaces
 	 	 \printfield{postnote}%
 	 	 \clearfield{postnote}%
 	 	 \setunit{\addspace}

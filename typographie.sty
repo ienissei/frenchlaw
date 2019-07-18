@@ -17,130 +17,8 @@
 %	WARNING: Please note that this is style file for "frenchlaw.cls"
 %	         It will be renamed and/or merged with the later at some point
 
-%	Configurer <babel> en français
-\frenchsetup{
-	ReduceListSpacing=false,% Alignement des listes est géré par {frenchlaw}, à vérifier
-	StandardItemizeEnv=true,
-	FrenchFootnotes=false,% Les notes de bas de page sont gérées par {frenchlaw}
-%	SuppressWarning=true%
-	ItemLabels={\textendash},%
-	ThinSpaceInFrenchNumbers=true,
-}
-
-%	Configurer les noms des différents éléments en français
-\addto\captionsfrench{%%
-	\def\abstractname{R{\'e}sum{\'e}}%
-	\def\keywordsname{Mots clefs}%
-	\def\contentsname{Table des mati{\`e}res}%
-	\def\shortcontentsname{Sommaire}%
-	\def\listfigurename{Figures}%
-	\def\listtablename{Tableaux}%
-	\def\listabbreviationname{Abréviations infrapaginales}%
-	\def\prefacename{Pr{\'e}face}%
-	\def\bookname{Livre}%
-	\def\cftbookname{Livre}%
-	\def\bookrefname{Livre}%
-	\def\partname{\Ordinalstring{part}[f]\space partie\def\thepart{}}%
-	\def\cftpartname{Partie}%
-	\def\partrefname{Partie}%
-	\def\headingname{Titre}%
-	\def\cftheadingname{\toclabelbox{Titre}}%
-	\def\headingrefname{Titre}%
-	\def\subheadingname{Sous-titre}%
-	\def\cftsubheadingname{\toclabelbox{Sous-titre}}%
-	\def\subheadingrefname{Sous-titre}%
-	\def\chaptername{Chapitre}%
-	\def\cftchaptername{\toclabelbox{Chapitre}}%
-	\def\chapterrefname{Chapitre}%
-	\if@article%
-		\def\sectionname{}%
-		\def\cftsectionname{}%
-		\def\sectionrefname{}%
-		\def\subsectionname{}%
-		\def\cftsubsectionname{}%
-		\def\subsectionrefname{}%
-	\else%
-		\def\sectionname{Section}%
-		\def\cftsectionname{\toclabelbox{Section}}%
-		\def\sectionrefname{Section}%
-		\def\subsectionname{\S}%
-		\def\cftsubsectionname{\toclabelbox{\S}}%
-		\def\subsectionrefname{\S}%
-	\fi%
-	\def\appendixname{Annexe}%
-	\def\cftappendixname{Annexe}%
-	\def\appendixpagename{Annexe}%
-	\def\appendixrefname{\toclabelbox{Annexe}}%
-	\def\bibname{Bibliographie}%
-	\def\refname{R{\'e}f{\'e}rences}%
-	\def\indexname{Index}%
-	\def\glossaryname{Glossaire}%
-	\def\figurename{{\scshape Figure}}%
-	\def\figurerefname{Figure}%
-	\def\tablename{{\scshape Tableau}}%
-	\def\tablerefname{Tableau}%
-	\def\proofname{{\scshape D{\'e}monstration}}%
-	\def\pagename{page}%
-	\def\pageofname{sur}%
-	\def\pagerefname{page}%
-	\def\seename{voir}%
-	\def\alsoname{voir aussi}%
-	\def\headtoname{{\`A}}%
-	\def\cvname{Curriculum vitæ}%
-	\def\agename{ans}%
-	\def\ccname{C.\thinspace C.}%
-	\def\enclname{P.\thinspace J.}%
-	\def\centuryname{si{\`e}cle}%
-	\def\centuriesname{si{\`e}cles}%
-	\def\dateprefix{le~}
-	% Pages de titre
-	\def\emailname{Email}
-	\def\phonename{Tél.}
-	\def\faxname{Fax.}
-	\def\lecturename{Cours magistral}
-	\def\seminarname{Travaux dirigés}
-	\def\subjectname{Objet}% Lettres
-	\def\subjecttext{Doctorat en}% Thèse pour le doctorat en
-	\def\volumetext{Volume}% Numéro de volume
-	\def\datetext{soutenue le}% Présentée et soutenue publiquement le
-	\def\drafttext{Version du}% Date du manuscrit (draft)
-	\def\advisortext{Thèse dirigée par:}% Sous la direction de
-	\def\jurytext{Membres du jury:}% Membres du jury
-}
-
-%	Configurer les noms des différents éléments en anglais
-%	TODO » Vérifier l'exhaustivité 
-\addto\captionsenglish{
-	\def\pagename{page}%
-	\def\pageofname{of}%
-	\def\headingname{}% TODO
-	\def\subheadingname{}%
-	\def\keywordsname{Keywords}
-	\def\centuryname{century}%
-	\def\centuriesname{centuries}%
-	\def\dateprefix{}
-	\def\agename{years}%
-	\def\emailname{Email}
-	\def\phonename{Phone}
-	\def\faxname{Fax.}
-	\def\subjectname{Subject}% Lettres
-}
-\let\captionsbritish=\captionsenglish
-
 %	Créer une commande pour les noms de famille (petites-capitales, pas de césure)
 \let\lastname=\bsc% Commande <babel>
-
-%	Créer des commandes rapides pour les citations dans d'autres langues
-\newcommand{\british}[1]{\foreignlanguage{british}{\emph{#1}}}
-\newcommand{\english}[1]{\foreignlanguage{english}{\emph{#1}}}
-\newcommand{\french}[1]{\foreignlanguage{french}{\emph{#1}}}
-
-\newcommand{\greek}[1]{\foreignlanguage{greek}{#1}}
-\newcommand{\latin}[1]{\foreignlanguage{latin}{\emph{#1}}}
-
-\newcommand{\german}[1]{\foreignlanguage{german}{\emph{#1}}}
-\newcommand{\italian}[1]{\foreignlanguage{italian}{\emph{#1}}}
-\newcommand{\spanish}[1]{\foreignlanguage{spanish}{\emph{#1}}}
 
 % 	Définir une commande pour souligner une partie du texte proprement
 %\newcommand{\textul}[1]{\uline{#1}}
@@ -398,6 +276,7 @@
 \newcommand{\TI}{\acronym{TI}\xspace}
 \newcommand{\TA}{\acronym{TA}\xspace}
 \newcommand{\Tcomm}{T.~comm.\@\xspace}
+\newcommand{\Tciv}{Trib.~civ.\@\xspace}
 \newcommand{\Tcorr}{T.~corr.\@\xspace}
 \newcommand{\Tpol}{T. pol.\@\xspace}
 %

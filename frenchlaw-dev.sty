@@ -180,7 +180,7 @@
 	  \hfill\ifstrempty{#2}{}{par d{\'e}faut~: \lstinline{#2}}\\}
 
 %	TODO » Indexation automatique à partir d'une liste CSV pour les options + exemples (?)
-%	Command for printing and indexing commands
-\newcommand{\devindex}[1]{%
-	\index{#1@\ttfamily\textbackslash #1}%
-}
+\newcommand{\cmdindex}[1]{\index{#1@\ttfamily\textbackslash#1\rmfamily}}%
+\newcommand{\dimindex}[1]{\index{#1@\ttfamily\textbackslash#1\rmfamily~(length)}}%
+\newcommand{\envindex}[1]{\index{#1@\ttfamily#1\rmfamily~(environnement)}}%
+\newcommand{\optindex}[1]{\index{#1@\ttfamily#1\rmfamily~(option)}}%
