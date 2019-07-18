@@ -1,0 +1,152 @@
+%%
+%%   This is file "frenchlaw-languages.sty", which is part of the "frenchlaw" package
+%%   Copyright 2009--2018: Fora VERN -- ienissei (at) gmail (dot) com
+%% 
+%%   This work may be distributed and/or modified under the conditions of the
+%%   LaTeX Project Public License, either version 1.3 of this license or, at your
+%%   option, any later version.
+%%
+%%   The latest version of the license can be found at:
+%%      http://www.latex-project.org/lppl.txt
+%%   and version 1.3 or later is part of all distributions of LaTeX, 2005/12/01 or later.
+%% 
+%%   This work has the LPPL maintenance status "author-maintained".
+%%   This work consists of the files listed in the README file.
+%%
+
+%	WARNING: Please note that this is style file for "frenchlaw.cls"
+%	         It will be renamed and/or merged with the later at some point
+
+
+% =***======***======***======***======***======***======***======***======***======***=
+
+
+%	#####	BABEL CONFIGURATION (FRENCH)	#####
+
+%	TODO » Cf. doc de babel (french) sur la syntaxe, notamment p. 14
+%	Et doc babel générale, e.g. tester l'option main=french
+
+%	Configure French language options
+% Footnotes are dealt with directly by frenchlaw.cls
+% Vertical alignment of lists is dealt with directly by frenchlaw.cls
+\frenchsetup{
+	FrenchFootnotes=false,
+	ReduceListSpacing=false,
+	StandardItemizeEnv=true,
+	ItemLabels={\textendash},
+	ThinSpaceInFrenchNumbers=true,
+%	SuppressWarning=true%
+}
+
+%	Use the superscript macro from Babel French
+\let\textsuperscript=\fup
+
+%	Configure French language babel captions
+\addto\captionsfrench{%%
+	\def\abstractname{R{\'e}sum{\'e}}%
+	\def\keywordsname{Mots clefs}%
+	\def\contentsname{Table des mati{\`e}res}%
+	\def\shortcontentsname{Sommaire}%
+	\def\listfigurename{Figures}%
+	\def\listtablename{Tableaux}%
+	\def\listabbreviationname{Abréviations infrapaginales}%
+	\def\prefacename{Pr{\'e}face}%
+	\def\bookname{Livre}%
+	\def\cftbookname{Livre}%
+	\def\bookrefname{Livre}%
+	\def\partname{\Ordinalstring{part}[f]\space partie\def\thepart{}}%
+	\def\cftpartname{Partie}%
+	\def\partrefname{Partie}%
+	\def\headingname{Titre}%
+	\def\cftheadingname{\toclabelbox{Titre}}%
+	\def\headingrefname{Titre}%
+	\def\subheadingname{Sous-titre}%
+	\def\cftsubheadingname{\toclabelbox{Sous-titre}}%
+	\def\subheadingrefname{Sous-titre}%
+	\def\chaptername{Chapitre}%
+	\def\cftchaptername{\toclabelbox{Chapitre}}%
+	\def\chapterrefname{Chapitre}%
+	\if@article%
+		\def\sectionname{}%
+		\def\cftsectionname{}%
+		\def\sectionrefname{}%
+		\def\subsectionname{}%
+		\def\cftsubsectionname{}%
+		\def\subsectionrefname{}%
+	\else%
+		\def\sectionname{Section}%
+		\def\cftsectionname{\toclabelbox{Section}}%
+		\def\sectionrefname{Section}%
+		\def\subsectionname{\S}%
+		\def\cftsubsectionname{\toclabelbox{\S}}%
+		\def\subsectionrefname{\S}%
+	\fi%
+	\def\appendixname{Annexe}%
+	\def\cftappendixname{\toclabelbox{Annexe}}%
+	\def\appendixpagename{Annexe}% TODO » Quelle utilité???
+	\def\appendixrefname{Annexe}%
+	\def\bibname{Bibliographie}%
+	\def\refname{R{\'e}f{\'e}rences}%
+	\def\indexname{Index}%
+	\def\glossaryname{Glossaire}%
+	\def\figurename{{\scshape Figure}}%
+	\def\cftfigurename{Figure}%
+	\def\figurerefname{Figure}%
+	\def\tablename{{\scshape Tableau}}%
+	\def\cfttablename{Tableau}%
+	\def\tablerefname{Tableau}%
+	\def\proofname{{\scshape D{\'e}monstration}}%
+	\def\pagename{page}%
+	\def\pageofname{sur}%
+	\def\pagerefname{page}%
+	\def\seename{voir}%
+	\def\alsoname{voir aussi}%
+	\def\headtoname{{\`A}}%
+	\def\cvname{Curriculum vitæ}%
+	\def\agename{ans}%
+	\def\ccname{C.\thinspace C.}%
+	\def\enclname{P.\thinspace J.}%
+	\def\centuryname{si{\`e}cle}%
+	\def\centuriesname{si{\`e}cles}%
+	\def\dateprefix{le~}
+	% Pages de titre
+	\def\emailname{Email}
+	\def\phonename{Tél.}
+	\def\faxname{Fax.}
+	\def\lecturename{Cours magistral}
+	\def\seminarname{Travaux dirigés}
+	\def\schoolyearname{Année universitaire}%
+	\def\subjectname{Objet}% Lettres
+	\def\subjecttext{Doctorat en}% Thèse pour le doctorat en
+	\def\volumetext{Volume}% Numéro de volume
+	\def\datetext{soutenue le}% Présentée et soutenue publiquement le
+	\def\drafttext{Version du}% Date du manuscrit (draft)
+	\def\advisortext{Thèse dirigée par:}% Sous la direction de
+	\def\jurytext{Membres du jury:}% Membres du jury
+}
+
+
+% =***======***======***======***======***======***======***======***======***======***=
+
+
+%	#####	BABEL CONFIGURATION (ENGLISH)	#####
+
+%	Configurer les noms des différents éléments en anglais
+%	TODO » Vérifier l'exhaustivité 
+\addto\captionsenglish{
+	\def\shortcontentsname{Contents}%
+	\def\pagename{page}%
+	\def\pageofname{of}%
+	\def\headingname{}% TODO
+	\def\subheadingname{}%
+	\def\keywordsname{Keywords}
+	\def\centuryname{century}%
+	\def\centuriesname{centuries}%
+	\def\dateprefix{}
+	\def\agename{years}%
+	\def\emailname{Email}
+	\def\phonename{Phone}
+	\def\faxname{Fax.}
+	\def\subjectname{Subject}% Lettres
+}
+\let\captionsbritish=\captionsenglish
