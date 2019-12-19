@@ -274,9 +274,7 @@
 			 %	Driver for article type entries
 			 \ifthenelse{	\ifentrytype{article} \OR
 			 				\ifentrytype{commentary} }
-				{\ifdefined\bpl@osurname
-					\printfield{addendum}\fi%
-				 \usebibmacro{journal+issue+date}}
+				{\usebibmacro{journal+issue+date}}
 				{}%
 			 %	Driver for book / collection / proceedings entries
 			 \ifthenelse{	\ifentrytype{book} \OR
@@ -435,7 +433,7 @@
 		{}}
 
 \newbibmacro*{cite:postnote}{%
-	\ifbool{cbx:loccit}
+	\ifthenelse{	\ifbool{cbx:loccit} \OR \ifentrytype{jurisdiction}	}
 		{}
 		{\setunit{\postnotedelim}%
 		 \printfield{postnote}\isdot\unspace}}% Enforce abbreviative dot just in case (?)

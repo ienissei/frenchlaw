@@ -23,6 +23,8 @@
 %	TODO » Définir une option pour la langue latine, qui reprendrait la langue courante?
 %	Vérifier tous les \{\} (crochets vides) => Le \if est-il bien nécessaire partout? Possibilité de le supprimer en utilisant un \setunit*{} (étoilé) ??
 
+%	TODO » Simplifier au maximum en ajoutant des \ifcitation et \ifbibliography pour éviter de tout reprendre dans le .cbx, au moins pour les cas compliqués (e.g. postnote dans la jurisprudence)
+
 % #####	OPTIONS	#####
 
 %	Create bibliography toggles
@@ -139,7 +141,7 @@
 			{\mkbibquote{#1}}
 			{#1}}}
 \DeclareFieldFormat[thesis]{title}{\mkbibemph{#1}}
-\DeclareFieldFormat[review]{title}{\bibstring{reviewof}\addcolon#1}
+\DeclareFieldFormat[review]{title}{#1}
 \DeclareFieldFormat[article]{title}{\mkbibquote{#1}}
 \DeclareFieldFormat[commentary]{title}{\mkbibquote{#1}}
 \DeclareFieldFormat[legal]{title}{#1}
@@ -552,6 +554,10 @@
 	\ifdefined\bpl@osurname\else
 		\usebibmacro{author/translator+others}\fi%
 	\setunit{\labelnamepunct}\newblock
+	\ifentrytype{review}
+		{\printtext{\bibstring{reviewof}}
+		 \setunit{\addcolon\addspace}}
+		{}%
 	\usebibmacro{title}%
 	% \newunit
 	% \printlist{language}%
@@ -1234,6 +1240,9 @@
 				 	{}
 				 	{\newunit
 				 	 \printfield{number}}}}}%
+	\ifcitation
+		{\usebibmacro{cite:postnote}}
+		{}
 	% Primary citations and references print the series and commentaries
 	\iftoggle{bbx:related}
 		{\iffieldundef{series}
@@ -1253,29 +1262,34 @@
 	\usebibmacro{bibindex}%
 	\usebibmacro{begentry}%
 	\ifrelatedloop
-		% Long citation for stand-alone references
-		{\ifdefined\bpl@osurname\else
-			\usebibmacro{author}\fi%
-		 \setunit{\labelnamepunct}\newblock
+		% Long citation for stand-alone references (in citations or bibliography)
+		{\ifdefined\bpl@osurname
+			\usebibmacro{marginyear}%
+		 \else
+			\usebibmacro{author}%
+			\setunit{\labelnamepunct}\newblock
+		 \fi
 		 \usebibmacro{title}%
-		 \ifdefined\bpl@osurname
-			\setunit*{\nopunct}%
-			\usebibmacro{author}\fi%
+		 % \ifdefined\bpl@osurname
+			% \setunit*{\nopunct}%
+			% \usebibmacro{author}\fi%
 		 \newunit\newblock
 		 \usebibmacro{journal+issue+date}%
-		 \newunit\newblock
-		 \printfield{type}%
-		 \setunit{\addspace}
-		 \bibstring{under}%
-		 \setunit{\addspace}
-		 \settoggle{bbx:related}{false}%
-		 \usebibmacro{related:init}%
-		 \usebibmacro{related}}
-		% Short citation -- after the case citation
+		 \ifdefined\bpl@osurname\else
+			\newunit\newblock
+			\printfield{type}%
+			\setunit{\addspace}
+			\bibstring{under}%
+			\setunit{\addspace}
+			\settoggle{bbx:related}{false}%
+			\usebibmacro{related:init}%
+			\usebibmacro{related}
+		 \fi}
+		% Short citation, after the case citation (in citations or bibliography)
 		{\ifdefined\bpl@osurname
 			\usebibmacro{marginyear}%
 			\usebibmacro{title}%
-		\else
+		 \else
 			\printfield{type}%
 			% Don't allow line breaks between "n. AUTHOR" in footnotes -- be a bit more tolerant in bibliographies
 			\ifbibliography
@@ -1284,11 +1298,11 @@
 			\usebibmacro{author}%
 		 \fi%
 		 \newunit\newblock
-		 \usebibmacro{journal+issue+date}%
-		\setunit{\newblockpunct}\newblock
-		\usebibmacro{pubstate+addendum}%
-		\newunit\newblock
-		\usebibmacro{isbn+doi+eprint+url}}%
+		 \usebibmacro{journal+issue+date}}%
+	\setunit{\newblockpunct}\newblock
+	\usebibmacro{pubstate+addendum}%
+	\newunit\newblock
+	\usebibmacro{isbn+doi+eprint+url}
 	\usebibmacro{finentry}}
 
 %	Define a driver for <shortjournal> abreviations
@@ -1612,10 +1626,8 @@
 \newbibmacro*{pubstate+addendum}{%
 	\newunit\newblock
 	\printfield{pubstate}%
-	\iffieldundef{pubstate}
-		{}
-		{\setunit{\addspace}
-		 \printfield{addendum}}}
+	\setunit{\nopunct\addspace}
+	\printfield[parens]{addendum}}
 
 \renewbibmacro*{bibindex}{%
 	\ifbibindex

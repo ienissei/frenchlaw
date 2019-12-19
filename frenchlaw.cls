@@ -171,6 +171,7 @@
 }
 
 %	Define an option to change line spacing
+%	TODO » Midifier pour inclure les autres options
 \DeclareOptionX{linespacing}[1.1]{\def\custom@baselinestretch{#1}}
 
 %	LANGUAGE OPTIONS
@@ -207,11 +208,10 @@
 %	Define option for <didactic> document style
 \DeclareOptionX{didactic}{
 	\@didactictrue
-	\@articletrue
-	\@tenpointstrue
-	\@elevenpointsfalse\@twelvepointsfalse\@fourteenpointsfalse
+	\@twelvepointstrue
+	\@tenpointsfalse\@elevenpointsfalse\@fourteenpointsfalse
 	\@twosidefalse\@onesidetrue
-	\PassOptionsToClass{10pt,oneside,twocolumn,article}{memoir}
+	\PassOptionsToClass{10pt,oneside,article}{memoir}
 }
 \DeclareOptionX{didactic+}{
 	\@didactictrue
@@ -224,6 +224,7 @@
 %	Define option for <letter> document style
 \DeclareOptionX{letter}{
 	\@lettertrue
+	\@articletrue
 	\@sansseriftrue
 	\@stationerytrue
 	\@elevenpointstrue
@@ -235,6 +236,7 @@
 %	Define option for <vitae> document style
 \DeclareOptionX{vitae}{
 	\@vitaetrue
+	\@articletrue
 	\@sansseriftrue
 	\@stationerytrue
 	\@elevenpointstrue
@@ -325,6 +327,7 @@
 
 %	Set \baselinestretch to the ratio given in the option
 % The value given in the <linespacing> option must be either a number or one of the preset values.
+% TODO » BUG, en fait ça ne marche pas, il y a des lignes moins espacées que d'autres avant un \clearpage => il faudrait insérer un \par automatiquement avant (?) -- Ou alors créer ces valeurs directement comme options de la classe, car ce seront les seules utilisées en pratique => interdire les autres valeurs
 \ifdefstring{\custom@baselinestretch}{simple}
 	{\def\baselinestretch{.83}\selectfont}
 	{\ifdefstring{\custom@baselinestretch}{median}
@@ -847,6 +850,7 @@
 		\newcounter{save@tocdepth}
 		\setcounter{save@tocdepth}{\value{tocdepth}}
 		\setcounter{tocdepth}{#1}
+		% Rajouter un RaggedRight (+package ragged2e)
 		% Print the table of contents and restore tocdepth
 		\tableofcontents*
 		\setcounter{tocdepth}{\value{save@tocdepth}}
@@ -1204,7 +1208,7 @@
 \newcommand{\paranumsep}{.~}
 \newcommand{\parasep}{.\enskip}
 \newcommand{\paranumstyle}{\bfseries}
-\newcommand{\parastyle}{\normalsize\scshape}
+\newcommand{\parastyle}{\if@marginal\footnotesize\itshape\else\normalsize\scshape\fi}
 
 %	Créer des commandes pour paramétrer l'apparence dans la table des matières
 \newcommand{\cftparastyle}{\llap}
@@ -1252,13 +1256,14 @@
 	\refstepcounter{para}%
 	\refstepcounter{precis}%
 	\def\@currentlabel{\thepara}%
-	{\paranumstyle\thepara\if\relax#1\relax\label{para:\thepara}\else\label{para:#1}\paranumsep\fi}%
-	\if@paraname%
-		\if@marginal%
-			\marginpar{\parastyle#1}%
-		\else%
-			{\parastyle#1\parasep}%
-	\fi\fi%
+	{\paranumstyle\thepara\paranumsep\if\relax#1\relax\label{para:\thepara}\else\label{para:#1}\fi}%
+	\if@paraname
+		\if\relax#1\relax\else%
+			\if@marginal%
+				\marginpar{\parastyle#1}%
+			\else%
+				{\parastyle#1\parasep}%
+	\fi\fi\fi%
 	\if@precis
 		\addtocontents{toc}{%
 			\ifnum\value{precis}>1\vskip-\lastskip\cftparasep\else%
@@ -2250,12 +2255,12 @@
 	\makeevenhead{letterhead}
 		{}
 		{\ifnum\value{page}>1%
-		 \if@vitae\MakeLowercase{\scshape\@author~-- \cvname}\fi\fi}
+		 \if@vitae\MakeLowercase{\scshape\@author~-- \if\@empty\csname @title@\languagename\endcsname\@empty\cvname\else\csname @title@\languagename\endcsnamefi}\fi\fi}
 		{}
 	\makeoddhead{letterhead}
 		{}
 		{\ifnum\value{page}>1%
-		 \if@vitae\MakeLowercase{\scshape\@author~-- \cvname}\fi\fi}
+		 \if@vitae\MakeLowercase{\scshape\@author~-- \if\@empty\csname @title@\languagename\endcsname\@empty\cvname\else\csname @title@\languagename\endcsname\fi}\fi\fi}
 		{}
 	\makeevenfoot{letterhead}
 		{}
@@ -2522,6 +2527,8 @@
 
 %	#####	CRÉATION DES BIBLIOGRAPHIES (BIBLATEX)	#####
 
+% Charger automatiquement frenchlaw.bib
+
 %	Create macros in case we want to use package <publist> (in CV style)
 % Prévoir de charger le style <frenchlaw> dans les listes de publications des CV
 % Ou le mettre par défaut et virer le switchç
@@ -2534,7 +2541,9 @@
 		useshortauthor=false,
 	\fi
 	\if@vitae
+		useshortauthor=false,
 		bibstyle=publist,
+		sorting=ddnt,
 		marginyear=false,% TODO » True
 		% TODO » Avec la versio 2019
 		% plnumbered=reset,
@@ -2597,16 +2606,21 @@
 	\AtDataInput{%
 		\csnumgdef{entrycount:\therefsection}{%
 			\csuse{entrycount:\therefsection}+1}}
-	% Print the labelnumber as the total number of entries in the current refsection, minus the actual labelnumber, plus one
-	\DeclareFieldFormat{labelnumber}{\mkbibdesc{#1}}    
+	% Create a counter to arbitrarily change the entrycount (e.g. if there are NOPRINT + Related entries)
+	\newcounter{adjustnumbers}
+	\setcounter{adjustnumbers}{0}
+	% Create a command that calculates the labelnumber for each entry (total number of entries in the current refsection, minus the actual labelnumber, plus one, plus or minus the value of adjustnumbers)
 	\renewcommand*{\mkbibdesc}[1]{%
-		\number\numexpr\csuse{entrycount:\therefsection}+1-#1\relax}
+		\number\numexpr\csuse{entrycount:\therefsection}-#1+1+\value{adjustnumbers}\relax}
+	% Define the format of labelnumber in the bibliography
+	\DeclareFieldFormat{labelnumber}{\mkbibdesc{#1}}
 
 	% Print the publication {year} in the margin if it is different from the previouw entry, subsidiarily, print the {eventyear} or the {pubstate}.
 	%	TODO » \if@marginyear plante si on n'est pas en mode CV, sans doute car undefined => créer le switch (?)
 	\renewbibmacro*{marginyear}{%
 		%\if@marginyear
-			\iffieldundef{year}
+		\ifbibliography
+			{\iffieldundef{year}
 				{\ifthenelse{	\iffieldundef{eventyear} \OR
 								\iffieldequals{eventyear}{\bbx@lasthash} }
 					{\ifthenelse{	\iffieldundef{pubstate} \OR
@@ -2619,7 +2633,8 @@
 				{\iffieldequals{year}{\bbx@lasthash}
 					{}
 					{\marginpar{\nopunct\vitaelabel{\printfield{year}}}%
-					 \savefield{year}{\bbx@lasthash}}}%
+					 \savefield{year}{\bbx@lasthash}}}}
+			{}%
 		%\fi%
 		}
 
@@ -2792,6 +2807,7 @@
 	% Abstract / Keywords (FR+EN), Dedication, Acknowledgements / Foreword
 	
 	\cleardoublepage
+	% Remplacer par shortcontents + Rajouter un RaggedRight (+package ragged2e)
 	{\raggedbottom\tableofcontents*}\clearmark{toc}
 	
 	% Table of lists, table of figures
@@ -2829,6 +2845,8 @@
 		% nottype=reference,nottype=article,nottype=incollection,nottype=inproceedings]
 	% \printbibliography[title=Articles,
 		% nottype=book,nottype=collection,nottype=proceedings,nottype=reference,nottype=inbook,nottype=thesis]
+
+	% Rajouter la ToC + RaggedRight (+package ragged2e)
 }
 
 %	TODO » Adde un moyen de choisir entre la page de garde et une couv. perso
@@ -2885,6 +2903,7 @@
 
 %	Create a command for alternative emphasis of text (Bold ± Color).
 \DeclareTextFontCommand{\headline}{\bfseries\color{\@headlinecolor}}
+\DeclareTextFontCommand{\subheadline}{\itshape\color{\@headlinecolor}}
 % Create color specification commands
 \newcommand{\headlinecolor}[1]{\gdef\@headlinecolor{#1}}
 	\newcommand{\@headlinecolor}{black}% E.g. "black", "darkgray"
