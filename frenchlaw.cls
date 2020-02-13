@@ -55,6 +55,14 @@
 \newif\if@sansserif
 	\@sansseriffalse
 
+%	Languages
+\newif\if@british
+	\@britishfalse
+\newif\if@english
+	\@englishfalse
+\newif\if@french
+	\@frenchfalse
+
 %	Document style
 \newif\if@article
 	\@articlefalse
@@ -171,26 +179,42 @@
 }
 
 %	Define an option to change line spacing
-%	TODO » Midifier pour inclure les autres options
-\DeclareOptionX{linespacing}[1.1]{\def\custom@baselinestretch{#1}}
+% The value of \custom@baselinestretch is calculated based on the font/leading ratio, which is 12/14.5 
+\newcommand{\set@defaultspacing}{\def\custom@baselinestretch{1.1}}%	12/16pt
+\newcommand{\set@simplespacing}{\def\custom@baselinestretch{.83}}%	12/12pt
+\newcommand{\set@medianspacing}{\def\custom@baselinestretch{1.25}}%	12/18pt
+\newcommand{\set@doublespacing}{\def\custom@baselinestretch{1.66}}%	12/24pt
+\DeclareOptionX{linespacing}[default]{
+	\ifcsname set@#1spacing\endcsname
+		\csname set@#1spacing\endcsname
+	\else
+		\AtEndDocument{\ClassWarningNoLine{frenchlaw}{%
+			Unknown option linespacing=#1, \MessageBreak
+			Valid arguments are: "default", "simple", "median" \MessageBreak
+			and "double". Reverting to default}}%
+	\fi
+}
 
 %	LANGUAGE OPTIONS
 
 %	Define options to change the main language of the document
 \DeclareOptionX{british}{
+	\@britishtrue\@englishfalse\@frenchfalse
 	\PassOptionsToPackage{british}{babel}
 	\PassOptionsToPackage{british}{fmtcount}
-	\AtEndOfClass{\main@language{british}}
+	\AtBeginDocument{\main@language{british}}
 }
 \DeclareOptionX{english}{
+	\@britishfalse\@englishtrue\@frenchfalse
 	\PassOptionsToPackage{british}{babel}
 	\PassOptionsToPackage{british}{fmtcount}
-	\AtEndOfClass{\main@language{british}}
+	\AtBeginDocument{\main@language{english}}
 }
 \DeclareOptionX{french}{
+	\@britishfalse\@englishfalse\@frenchtrue
 	\PassOptionsToPackage{french}{babel}
 	\PassOptionsToPackage{french}{fmtcount}
-	\AtEndOfClass{\main@language{french}}
+	\AtBeginDocument{\main@language{french}}
 }
 %	Define options to load secondary languages
 \DeclareOptionX{italian}{\PassOptionsToPackage{italian}{babel}}
@@ -202,10 +226,12 @@
 %	Define option for <article> document style
 \DeclareOptionX{article}{
 	\@articletrue
+	\@twosidefalse\@onesidetrue
 	\PassOptionsToClass{article}{memoir}
 }
 
 %	Define option for <didactic> document style
+%	TODO » Supprimer didactic et renommer didactic+ en <lecture> + documenter
 \DeclareOptionX{didactic}{
 	\@didactictrue
 	\@twelvepointstrue
@@ -230,20 +256,20 @@
 	\@elevenpointstrue
 	\@tenpointsfalse\@twelvepointsfalse\@fourteenpointsfalse
 	\@twosidefalse\@onesidetrue
-	\PassOptionsToClass{11pt,oneside}{memoir}
+	\PassOptionsToClass{11pt,oneside,article}{memoir}
 }
 
 %	Define option for <vitae> document style
 \DeclareOptionX{vitae}{
 	\@vitaetrue
 	\@articletrue
+	\@marginaltrue
 	\@sansseriftrue
 	\@stationerytrue
 	\@elevenpointstrue
 	\@tenpointsfalse\@twelvepointsfalse\@fourteenpointsfalse
-	\@marginaltrue
 	\@twosidefalse\@onesidetrue
-	\PassOptionsToClass{11pt,oneside}{memoir}
+	\PassOptionsToClass{11pt,oneside,article}{memoir}
 }
 
 %	FEATURE OPTIONS
@@ -262,6 +288,7 @@
 }
 
 %	Define option <short> for convertible documents
+%	TODO » Renommer \longcv en autre chose, e.g. \iflong
 \DeclareOptionX{short}{
 	\longcvfalse
 }
@@ -286,7 +313,7 @@
 	\else
 		\AtEndDocument{\ClassWarningNoLine{frenchlaw}{%
 			Unknown option index=#1, \MessageBreak
-			Valid arguments are: "pages", "paragraphs"
+			Valid arguments are: "pages", "paragraphs" \MessageBreak
 			Reverting to default: index=paragraphs}}%
 	\fi
 }
@@ -310,7 +337,7 @@
 \DeclareOptionX*{\PassOptionsToClass{\CurrentOption}{memoir}}
 
 %	Execute and process options
-\ExecuteOptionsX{a4paper,twoside,12pt,french,linespacing=1.1}
+\ExecuteOptionsX{a4paper,twoside,12pt,french,linespacing=default}
 \ProcessOptionsX\relax
 
 %	Load the main dependencies
@@ -325,45 +352,29 @@
 \if@stockavi\if@twelvepoints\@tenpointstrue\@twelvepointsfalse\fi\fi
 \if@stockavi\if@fourteenpoints\@tenpointstrue\@fourteenpointsfalse\fi\fi
 
-%	Set \baselinestretch to the ratio given in the option
-% The value given in the <linespacing> option must be either a number or one of the preset values.
-% TODO » BUG, en fait ça ne marche pas, il y a des lignes moins espacées que d'autres avant un \clearpage => il faudrait insérer un \par automatiquement avant (?) -- Ou alors créer ces valeurs directement comme options de la classe, car ce seront les seules utilisées en pratique => interdire les autres valeurs
-\ifdefstring{\custom@baselinestretch}{simple}
-	{\def\baselinestretch{.83}\selectfont}
-	{\ifdefstring{\custom@baselinestretch}{median}
-		{\def\baselinestretch{1.25}\selectfont}
-		{\ifdefstring{\custom@baselinestretch}{double}
-			{\def\baselinestretch{1.66}\selectfont}
-			{\def\baselinestretch{\custom@baselinestretch}\selectfont}}}
-
+\def\baselinestretch{\custom@baselinestretch}\selectfont
 
 % =***======***======***======***======***======***======***======***======***======***=
 
 
 %	#####	LANGUAGES	#####
 
-%	TODO » À documenter !!
-
 %	TODO » Suppr. la langue <english> après avoir converti automatiquement via biber
 \RequirePackage[greek,latin,english,british,french]{babel}
+
+%	Set main language right away
+% Required by some macros inside the class
+\if@french
+	\selectlanguage{french}
+\else\if@british
+	\selectlanguage{british}
+\else\if@english
+	\selectlanguage{english}
+\fi\fi\fi
 
 %	TODO » Implémenter {csquotes} et le documenter
 \RequirePackage{frenchlaw-babel}
 \RequirePackage{fixltxhyph}
-
-%	LANGUAGE COMMANDS
-
-%	Create quick macros for switching languages
-\newcommand{\british}[1]{\foreignlanguage{british}{\emph{#1}}}
-\newcommand{\english}[1]{\foreignlanguage{english}{\emph{#1}}}
-\newcommand{\french}[1]{\foreignlanguage{french}{\emph{#1}}}
-
-\newcommand{\greek}[1]{\foreignlanguage{greek}{#1}}
-\newcommand{\latin}[1]{\foreignlanguage{latin}{\emph{#1}}}
-
-\newcommand{\german}[1]{\foreignlanguage{german}{\emph{#1}}}
-\newcommand{\italian}[1]{\foreignlanguage{italian}{\emph{#1}}}
-\newcommand{\spanish}[1]{\foreignlanguage{spanish}{\emph{#1}}}
 
 
 % =***======***======***======***======***======***======***======***======***======***=
@@ -437,7 +448,7 @@
 \ifxetex
 	\special{pdf:docview<</ViewerPreferences<</PrintScaling/None>>>>}
 \else
-	% \ifluatex\RequirePackage{luatex85}\fi
+	% TODO » \ifluatex\RequirePackage{luatex85}\fi
 	\pdfcatalog{/ViewerPreferences<</PrintScaling/None>>}
 \fi
 
@@ -698,9 +709,11 @@
 
 %	Define max ToC numbering
 \maxtocdepth{subparagraph}
-% \setcounter{tocdepth}{6} % TODO » Remove
 
-%	Do not pritn page numbers in ToC for <book> and <part> (centered)
+%	Configure ToC dotted lines
+\renewcommand*{\cftdotsep}{2}
+
+%	Do not pritn page numbers (or dots) in ToC for <book> and <part> (centered)
 \cftpagenumbersoff{book}
 \cftpagenumbersoff{part}
 
@@ -779,23 +792,16 @@
 
 %	TABLE OF CONTENTS HORIZONTAL SPACING
 
-%	TODO » Hook: Babel loads languages at begin document.
-% Créer un switch pour enregistrer, dès les options, la langue principale dans une macro, puis appliquer \if@french\selectlanguage{french} (et le mettre juste après babel)
-% Préciser dans la doc que c'est pour l'utiliser dans les macros de la ToC
-\selectlanguage{french}
-
-%	Set ToC division labels to the width of “chapter” label
-% Create an ad hoc length
+%	Ser ToC label to the width of “chapter” label
 \newlength{\toclabelwidth}
 	\settowidth{\toclabelwidth}{\cftchapterfont\chaptername\space}
-% Create a command that gives ToC labels the proper length
-% To be used with babel's \cftXname
-\newcommand{\toclabelbox}[1]{\makebox[\toclabelwidth]{\hfill\llap{#1\normalsize\space}}}
-
-%	Define lengths to be used within ToC layout
-% Set ToC number to the width of roman numeral 30
+%	Set ToC number to the width of roman numeral 30
 \newlength{\tocnumwidth}
+\if@article
+	\settowidth{\tocnumwidth}{\cftsectionfont XX\space}
+\else
 	\settowidth{\tocnumwidth}{\cftchapterfont XXX\space}
+\fi
 % Centered headings will take into account the label + number lengths
 \newlength{\toccenterwidth}
 	\setlength{\toccenterwidth}{\tocnumwidth}
@@ -808,13 +814,19 @@
 \cftsetindents{subheading}{\z@}{\tocnumwidth}
 \cftsetindents{chapter}{\z@}{\tocnumwidth}
 \cftsetindents{section}{\z@}{\tocnumwidth}
-\cftsetindents{subsection}{\z@}{\tocnumwidth}
-\cftsetindents{subsubsection}{\if@article\z@\else\toclabelwidth\fi}{\tocnumwidth}
-\cftsetindents{paragraph}{\if@article\z@\else\toclabelwidth\fi}{\tocnumwidth}
-\cftsetindents{subparagraph}{\if@article\z@\else\toclabelwidth\fi}{\tocnumwidth}
+\cftsetindents{subsection}{%
+	\if@article\tocnumwidth\else\z@\fi}{\tocnumwidth}
+\cftsetindents{subsubsection}{%
+	\if@article 2\tocnumwidth\else\toclabelwidth\fi}{\tocnumwidth}
+\cftsetindents{paragraph}{%
+	\if@article 3\tocnumwidth\else\dimexpr\toclabelwidth+\tocnumwidth\relax\fi}
+	{\if@article\tocnumwidth\else.5\tocnumwidth\fi}
+\cftsetindents{subparagraph}{%
+	\if@article 4\tocnumwidth\else\dimexpr\toclabelwidth+1.5\tocnumwidth\relax\fi}
+	{\if@article\tocnumwidth\else.5\tocnumwidth\fi}
 
-%	Configure ToC dotted lines
-\renewcommand*{\cftdotsep}{2}
+% Create a command that formats ToC labels into a box (used in frenchlaw-babel.sty)
+\newcommand{\toclabelbox}[1]{\makebox[\toclabelwidth]{\hfill\llap{#1\normalsize\space}}}
 
 %	TABLE OF CONTENTS VERTICAL SPACING
 
@@ -824,11 +836,11 @@
 \fi
 
 %	Adjust vertical spacing in ToC and other lists
-% Because the first entry (book, part, heading, chapter) adds \baselineskip
+% When the ToC doesn't go below chapter level (e.g. short contents), remove the extra line skip from chapter / heading / part / book contents line --- if not, hope the book starts with a \fakechapter (treated as section)
 \AtBeginDocument{%
-	\addtocontents{toc}{\addvspace{-\baselineskip}}%
-	\addtocontents{lot}{\addvspace{-\baselineskip}}%
-	\addtocontents{lof}{\addvspace{-\baselineskip}}}
+	\addtocontents{toc}{\protect\ifnum\protect\value{tocdepth}=0\protect\relax\vspace{-\baselineskip}\protect\fi}
+	\addtocontents{lot}{\protect\ifnum\protect\value{tocdepth}=0\protect\relax\vspace{-\baselineskip}\protect\fi}
+	\addtocontents{lof}{\protect\ifnum\protect\value{tocdepth}=0\protect\relax\vspace{-\baselineskip}\protect\fi}}
 % S'assurer que la table des matières termine bien le dernier paragraphe
 \AtEndDocument{%
 	\addtocontents{toc}{\par}%
@@ -845,7 +857,7 @@
 		\cftpagenumbersoff{heading}
 		\cftpagenumbersoff{subheading}
 		\cftpagenumbersoff{chapter}
-		\setlength{\cftbeforechapterskip}{\baselineskip}
+		\setlength{\cftbeforechapterskip}{.5\baselineskip}
 		% Save tocdepth value
 		\newcounter{save@tocdepth}
 		\setcounter{save@tocdepth}{\value{tocdepth}}
@@ -964,7 +976,7 @@
 \newcommand{\printheadingtitle}[1]{\headtitlefont#1}
 
 %	Créer la commande pour les titres (semblables à des chapitres)
-\newcommand{\heading}[1]{
+\newcommand{\heading}[2][]{
 	\begingroup
 		\if@article\cleardoublepage\fi
 		\stepcounter{heading}
@@ -976,10 +988,10 @@
 		}
 		\clearforchapter
 		\thispagestyle{chapter}
-		\@schapter{#1}
-		\chaptermark{#1}
+		\@schapter{#2}
+		\chaptermark{#2}
 		\phantomsection
-		\addcontentsline{toc}{heading}{\protect\numberline{\theheading}#1}
+		\addcontentsline{toc}{heading}{\protect\numberline{\theheading}\if\relax#1\relax#2\else#1\fi}
 	\endgroup
 }
 
@@ -1034,7 +1046,7 @@
 			{\ifnum\value{chapter}=1	\ordinalstring{chapter}[m]%
 			 \else						\Roman{chapter}\fi}
 			{\Roman{chapter}}\fi}
-	\renewcommand{\afterchapternum}{:\par\nobreak\vskip\midchapskip}
+	\renewcommand{\afterchapternum}{\par\nobreak\vskip\midchapskip}
 	\setlength{\beforechapskip}{\baselinestretch\addto@Large}
 	\addtolength{\beforechapskip}{\baselineskip}
 	\setlength{\midchapskip}{\baselinestretch\addto@Large}
@@ -1102,7 +1114,6 @@
 	\@schapter{\if\relax#1\relax\else#1\afterchapternum\fi#2}
 	\chaptermark{#1}
 	\phantomsection
-	\addtocontents{toc}{\vspace{\baselineskip}}
 	\addcontentsline{toc}{section}{\if\relax#1\relax\else#1\cftchapteraftersnum\cftchapteraftersnumb~\fi#2}}
 
 %	Définir le mode de numérotation des sections et paragraphes
@@ -1277,6 +1288,28 @@
 			}%
 	\fi%
 	\@ifnextchar\par{\@gobblepar\relax}{\relax}}
+
+
+% =***======***======***======***======***======***======***======***======***======***=
+
+
+%	#####	HELPER MACROS	#####
+
+%	TODO » Rappartier le reste
+
+%	LANGUAGE COMMANDS
+
+%	Create quick macros for switching languages
+\newcommand{\british}[1]{\foreignlanguage{british}{\emph{#1}}}
+\newcommand{\english}[1]{\foreignlanguage{english}{\emph{#1}}}
+\newcommand{\french}[1]{\foreignlanguage{french}{\emph{#1}}}
+
+\newcommand{\greek}[1]{\foreignlanguage{greek}{#1}}
+\newcommand{\latin}[1]{\foreignlanguage{latin}{\emph{#1}}}
+
+\newcommand{\german}[1]{\foreignlanguage{german}{\emph{#1}}}
+\newcommand{\italian}[1]{\foreignlanguage{italian}{\emph{#1}}}
+\newcommand{\spanish}[1]{\foreignlanguage{spanish}{\emph{#1}}}
 
 
 % =***======***======***======***======***======***======***======***======***======***=
@@ -1704,7 +1737,7 @@
 	\newcommand{\@laboratory}{\@empty}
 %	TODO » Revoir
 %	Utilisé pour les lettres
-%	Permettre d'insérer plusieurs logos, e.g. en haut de page (commande incrémentale)
+%	Permettre d'insérer plusieurs logos, e.g. en haut de page (commande incrémentale + définir la taille et utiliser des \hfill pour les placer)
 \newcommand{\logo}[2][]{\gdef\@logo{#2}}
 	\newcommand{\@logo}{\@empty}
 %	Volume Info
@@ -1727,6 +1760,8 @@
 \newcommand{\examiner}[4][]{\appto\@jury{\bgroup#1#2 \bsc{#3}, #4\egroup\par}}
 \newcommand{\@thesisadvisors}{\@advisors}
 \newcommand{\@jurymembers}{\@jury}
+\newcommand{\foreword}[1]{\gdef\@foreword{#1}}
+	\newcommand{\@foreword}{\@empty}
 %	Publication Info
 \newcommand{\publisher}[1]{\gdef\@publisher{#1}}
 	\newcommand{\@publisher}{\@empty}
@@ -1824,16 +1859,17 @@
 	\long\def\printtitle{%
 		\setlength{\parindent}{0em}
 		\normalize@fontsize%
-		\centering%	TODO » Tout aligner à gauche pour les livres
-		{\large\scshape\@institution\par}
+	%	{\large\scshape\@institution\par}% TODO » Remplacer par la collection (et \ifnum, cf. infra, pour laisser une page de faux-titre)
 		{\itshape\@series\par}
-		\vspace*{8\baselineskip}
+		\vspace*{7\baselineskip}
 		{\LARGE\scshape\csname @title@\languagename\endcsname\par}
 		{\Large\scshape\csname @subtitle@\languagename\endcsname\par}
 		\vspace{4\baselineskip}
 		{\Large\@author\par}
+		\vspace{2\baselineskip}
+		{\large\@foreword\par}
 		\vfill
-		{\large\@publisher\par}}
+		{\ifnum\value{page}=1\relax\else\large\@publisher\par\fi}}
 	% Begin \frontmatter and print the title page twice
 	\frontmatter
 	\bgroup
@@ -2189,6 +2225,8 @@
 %	#####	HEADERS & FOOTERS	#####
 
 %	TODO » Documenté pour les livres, articles, lettres, CVs. Programmer et documenter les docs juridiques
+%	TODO » Créer un header avec les numéros de page en haut (et vide sur la première page de chapitre) + renommer le header normal (avec les numéros en bas de page)
+%	TODO »  Créer une macro spéciale type \chapterend avec fleuron si suffisamment de lignes (optionnel, via une macro) + footer vide (pas de numéro de page), à insérer manuellement (trop risqué sinon)
 
 %	Set a style for <book>, <part>, <heading>, <subheading> and <chapter>
 \aliaspagestyle{book}{empty}
@@ -2308,8 +2346,7 @@
 %
 %\if@letter\pagestyle{letterhead}\fi
 
-\if@vitae\pagestyle{letterhead}\@require@lastpagetrue\fi
-\if@letter\pagestyle{letterhead}\@require@lastpagetrue\fi
+\if@stationery\pagestyle{letterhead}\@require@lastpagetrue\fi
 \if@didactic
 	\pagestyle{didactichead}
 	\aliaspagestyle{chapter}{didactichead}
@@ -2559,7 +2596,7 @@
 \setcounter{abbrvpenalty}{9000}% Discourage line breaking within abbreviations [Orig. 100]
 
 %	Exclude bibliographies from the short table of contents
-% Do no automatically print subbibliographies in the ToC (use "subbibintoc" heading for that purpose)
+% Do not automatically print subbibliographies in the ToC (use "subbibintoc" heading for that purpose)
 \defbibheading{bibliography}[\bibname]{%
 	\clearforchapter
 	\thispagestyle{chapter}
@@ -2586,7 +2623,7 @@
 
 
 %	TODO » Sortir tout ce qu'on peut du \if@vitae -- créer un .bbx exprès qui charge publist et modifie ce qu'il faut
-%	+ Documenter l'option {short} et le switch \iflongcv à utiliser dans le corps du CV pour délimiter les deux versions du document
+%	+ Documenter l'option {short} et le switch \iflongcv (=> renommer) à utiliser dans le corps du CV pour délimiter les deux versions du document
 \if@vitae
 	%	Use bibliography headings that fit the rest of the CV
 	\defbibheading{bibliography}[\refname]{\section*{#1}}
@@ -2823,6 +2860,7 @@
 % Ajouter un \addtocontents{toc}{\vspace{\baselineskip}} pour ajouter de l'espace avant les bilios
 \newcommand{\makebackmatter}{
 	\backmatter
+	\addtocontents{toc}{\vspace{\baselineskip}}
 	\setlength{\emergencystretch}{2em}
 	
 	% \renewcommand{\indexname}{Index des sources}
@@ -2935,22 +2973,23 @@
 	\ifdraftdoc\textcolor{cyan}{#3}\else#3\fi}
 
 \renewcommand{\deleted}[2][]{%
+	\@bsphack
 	\if@draft
 		\marginnote
 			[\raggedright\textcolor{purple}{\small #1 $/\kern-1ex/$}]
 			{\raggedleft\textcolor{purple}{\small #1 $/\kern-1ex/$}}\fi%
 	\ifdraftdoc
-		\textcolor{purple}{\kern-.25ex$/$\kern-.4ex #2$/$\kern-.25ex}%
-		\else\ifvmode\else\unskip\fi\fi}
+		\textcolor{purple}{\kern-.25ex$/$\kern-.4ex #2$/$\kern-.25ex}\fi%
+	\@esphack}
 
 \newcommand{\todo}[2][]{%
+	\@bsphack
 	\if@draft
 		\marginnote
 			[\raggedright\textcolor{violet}{\small #1 $\bigodot$}]
 			{\raggedleft\textcolor{violet}{\small #1 $\bigodot$}}\fi%
-	\ifdraftdoc
-		\ifvmode\else\unskip\fi~\textcolor{violet}{$\bigodot$\kern1ex#2}%
-		\else\ifvmode\else\unskip\fi\fi}
+	\ifdraftdoc~\textcolor{violet}{$\bigodot$\kern1ex#2\space}\fi%
+	\@esphack}
 
 %	TODO » A reprendre
 %	Si on est en mode <draft>, afficher le cadre et marquer les overfull hbox
@@ -3033,8 +3072,6 @@
 \IfFileExists{frenchlaw.cnf}
 	{\input{frenchlaw.cnf}}
 	{}
-
-
 
 
 %%   End of class Frenchlaw

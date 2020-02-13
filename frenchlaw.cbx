@@ -258,8 +258,10 @@
 	 	{}%
 	%	Driver for printing the title of the work
 	\iffieldundef{labeltitle}
-		{\printtext[bibhyperref]{\printfield{title}}%
-		 \newunit\newblock}
+		{\iffieldundef{title}
+			{}
+			{\printtext[bibhyperref]{\printfield{title}}%
+			 \newunit\newblock}}
 		{\printtext[bibhyperref]{\printfield[title]{labeltitle}}%
 		 \newunit\newblock}%
 	% If the work has already been cited, stop there. Else, print verbose citation.
@@ -375,6 +377,7 @@
 			{\togglefalse{bbx:related}}
 			{}%
 		 \printtext[bibhyperref]{\usedriver{}{\thefield{entrytype}}}%
+		 \clearfield{postnote}
 		 \ifciteseen
 		 	{\newunit\newblock
 			 \bibstring[\mainlang]{citeseen}}}%
@@ -433,7 +436,7 @@
 		{}}
 
 \newbibmacro*{cite:postnote}{%
-	\ifthenelse{	\ifbool{cbx:loccit} \OR \ifentrytype{jurisdiction}	}
+	\ifbool{cbx:loccit}
 		{}
 		{\setunit{\postnotedelim}%
 		 \printfield{postnote}\isdot\unspace}}% Enforce abbreviative dot just in case (?)

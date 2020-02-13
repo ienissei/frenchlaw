@@ -619,8 +619,8 @@
 	\usebibmacro{isbn+doi+eprint+url}%
 	\setunit{\bibpagerefpunct}\newblock
 	\usebibmacro{pageref}%
-	\newunit\newblock
-	\thefield{postnote}%
+	% \newunit\newblock
+	% \usebibmacro{cite:postnote}%
 	\iftoggle{bbx:related}
 		{\setunit{\relatedpunct}\newblock
 		 \usebibmacro{related:init}%
@@ -661,8 +661,8 @@
 	\usebibmacro{isbn+doi+eprint+url}%
 	\setunit{\bibpagerefpunct}\newblock
 	\usebibmacro{pageref}%
-	\newunit\newblock
-	\thefield{postnote}%
+	% \newunit\newblock
+	% \usebibmacro{cite:postnote}%
 	\iftoggle{bbx:related}
 		{\setunit{\relatedpunct}\newblock
 		 \usebibmacro{related:init}%
@@ -702,8 +702,8 @@
 	\usebibmacro{isbn+doi+eprint+url}%
 	\setunit{\bibpagerefpunct}\newblock
 	\usebibmacro{pageref}%
-	\newunit\newblock
-	\thefield{postnote}%
+	% \newunit\newblock
+	% \usebibmacro{cite:postnote}%
 	\iftoggle{bbx:related}
 		{\setunit{\relatedpunct}\newblock
 		 \usebibmacro{related:init}%
@@ -746,8 +746,8 @@
 	\usebibmacro{isbn+doi+eprint+url}%
 	\setunit{\bibpagerefpunct}\newblock
 	\usebibmacro{pageref}%
-	\newunit\newblock
-	\thefield{postnote}%
+	% \newunit\newblock
+	% \usebibmacro{cite:postnote}%
 	\iftoggle{bbx:related}
 		{\setunit{\relatedpunct}\newblock
 		 \usebibmacro{related:init}%
@@ -797,8 +797,8 @@
 	\usebibmacro{chapter+pages}%
 	\setunit{\bibpagerefpunct}\newblock
 	\usebibmacro{pageref}%
-	\newunit\newblock
-	\thefield{postnote}%
+	% \newunit\newblock
+	% \usebibmacro{cite:postnote}%
 	\iftoggle{bbx:related}
 		{\setunit{\relatedpunct}\newblock
 		 \usebibmacro{related:init}%
@@ -848,8 +848,8 @@
 	\usebibmacro{isbn+doi+eprint+url}%
 	\setunit{\bibpagerefpunct}\newblock
 	\usebibmacro{pageref}%
-	\newunit\newblock
-	\thefield{postnote}%
+	% \newunit\newblock
+	% \usebibmacro{cite:postnote}%
 	\iftoggle{bbx:related}
 		{\setunit{\relatedpunct}
 		 \newblock\usebibmacro{related:init}%
@@ -900,8 +900,8 @@
 	\usebibmacro{isbn+doi+eprint+url}%
 	\setunit{\bibpagerefpunct}\newblock
 	\usebibmacro{pageref}%
-	\newunit\newblock
-	\thefield{postnote}%
+	% \newunit\newblock
+	% \usebibmacro{cite:postnote}%
 	\iftoggle{bbx:related}
 		{\setunit{\relatedpunct}\newblock
 		 \usebibmacro{related:init}%
@@ -952,7 +952,7 @@
 		 \setunit{\bibpagerefpunct}\newblock
 		 \usebibmacro{pageref}%
 		 \newunit\newblock
-		 \thefield{postnote}%
+		 \usebibmacro{cite:postnote}%
 		 \iftoggle{bbx:related}
 			{\setunit{\relatedpunct}\newblock
 			 \usebibmacro{related:init}%
@@ -1102,8 +1102,13 @@
 		{}
 		{\printfield{number}%
 		 \setunit{\addspace}}%
+	\iffieldundef{series}
+		{}
+		{\newunit\newblock
+		 \printfield{series}}%
 	\iflistundef{location}
-		{\ifthenelse{\iffieldundef{day}\AND\iffieldundef{month}\AND\iffieldundef{year}}
+		{\setunit{\addspace}
+		 \ifthenelse{\iffieldundef{day}\AND\iffieldundef{month}\AND\iffieldundef{year}}
 			{}
 			{\iffieldundef{day}
 				{\bibstring{fromyear}%
@@ -1115,15 +1120,17 @@
 			 \usebibmacro{date}%
 			 \setunit{\addspace}}}
 		{}%
+	\newunit\newblock
+	\printfield{pages}%
 	\newunit
 	\printnames[labelname]{author}%
 	\newunit
 	\printfield{title}%
+	\newunit\newblock
+	\usebibmacro{cite:postnote}%
 	% Primary citations and references print the series and commentaries
 	\iftoggle{bbx:related}
-		{\newunit\newblock
-		 \printfield{series}%
-		 % \newunit\newblock
+		{ % \newunit\newblock
 		 % \printfield{note}%
 		 \setunit{\relatedpunct}\newblock
 		 \usebibmacro{related:init}%
@@ -1210,7 +1217,7 @@
 			{\newunit\newblock
 			 \printfield{type}%
 			 \setunit{\addcomma\addspace}
-			 \printfield{number}%
+			 \printfield{number}% TODO » Mettre au pluriel via un champ inséré par biber en présence d'un "et" (?) ou voir si on peut rechercher dans la chaîne "number" directement (string maniputation sous latex)
 			 \newunit\newblock
 			 \usebibmacro{date}%
 			 \iffieldundef{title}
@@ -1240,9 +1247,8 @@
 				 	{}
 				 	{\newunit
 				 	 \printfield{number}}}}}%
-	\ifcitation
-		{\usebibmacro{cite:postnote}}
-		{}
+	\newunit\newblock
+	\usebibmacro{cite:postnote}%
 	% Primary citations and references print the series and commentaries
 	\iftoggle{bbx:related}
 		{\iffieldundef{series}
@@ -1627,7 +1633,9 @@
 	\newunit\newblock
 	\printfield{pubstate}%
 	\setunit{\nopunct\addspace}
-	\printfield[parens]{addendum}}
+	\printfield[parens]{addendum}%
+	\setunit{\newblockpunct}
+	\printfield{note}}
 
 \renewbibmacro*{bibindex}{%
 	\ifbibindex
