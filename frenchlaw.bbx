@@ -1630,10 +1630,14 @@
 		{}}
 
 \newbibmacro*{pubstate+addendum}{%
-	\newunit\newblock
-	\printfield{pubstate}%
-	\setunit{\nopunct\addspace}
-	\printfield[parens]{addendum}%
+	\iffieldundef{pubstate}
+		{}
+		{\newunit\newblock
+		 \biblstring{\thefield{pubstate}}}%
+	\iffieldundef{addendum}
+		{}
+		{\setunit{\nopunct\addspace}
+		 \printfield[parens]{addendum}}%
 	\setunit{\newblockpunct}
 	\printfield{note}}
 

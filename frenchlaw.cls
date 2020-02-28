@@ -1149,7 +1149,9 @@
 	\csname the#1\endcsname.\enskip}
 
 %	Définir le style des sections
-\setsecheadstyle{\large\scshape\raggedright}	
+\setsecheadstyle{%
+	\large\scshape\raggedright%
+	\if@vitae\strut\marginpar{\vitaecolor\raisebox{.5ex}{\rule{2cm}{.5ex}}}\fi}% ou: \large\adfhangingflatleafright
 \setlength{\beforesecskip}{\baselinestretch\addto@large}
 \setlength{\aftersecskip}{\baselineskip}
 \if@twocolumn
@@ -1193,11 +1195,11 @@
 	\setlength{\aftersubparaskip}{0em}
 \else\if@marginal
 	% En mode <marginal>, ils sont placés dans une note marginale
-	\newcommand{\marginparahead}[1]{\marginpar{\itshape#1\if@vitae:\fi}}
+	\newcommand{\marginparahead}[1]{\marginpar{\itshape#1\if@vitae~:\fi}}
 	\setparaheadstyle{\marginparahead}
 	\setlength{\afterparaskip}{0em}
 	% Idem pour les sous-paragraphes (dans la marge)
-	\newcommand{\marginsubparahead}[1]{\marginpar{\itshape#1\if@vitae:\fi}}
+	\newcommand{\marginsubparahead}[1]{\marginpar{\itshape#1\if@vitae~:\fi}}
 	\setsubparaheadstyle{\marginsubparahead}
 	\setlength{\aftersubparaskip}{0em}
 \fi\fi
@@ -2378,7 +2380,8 @@
 	 \item\BODY% + \needspace{2\baselineskip} (?) [Semble inutile]
 	 \vskip\baselineskip\endlist}
 
-\newcommand{\vitaelabel}[1]{\footnotesize\itshape{\hfill\strut#1:\strut}}
+\newcommand{\vitaecolor}{\color[HTML]{BF4D28}}% Saffron / Dark Red
+\newcommand{\vitaelabel}[1]{\footnotesize\itshape{\hfill\strut#1~:\strut}}
 
 %	Créer un environnement <vitae> pour les CV (label dans la marge)
 \newenvironment{vitae}
@@ -2406,7 +2409,7 @@
 \RequirePackage[autostyle=true]{csquotes}
 \DeclareQuoteAlias[american]{english}{british}% Use double quotes in British english
 \DeclareQuoteStyle[american]{english}% verified
-	{\textquotedblleft\em}{\em\kern.1em\textquotedblright}[0.05em]
+	{\textquotedblleft\if@french\em\fi}{\if@french\em\fi\kern.1em\textquotedblright}[0.05em]
 	{\textquoteleft}{\textquoteright}
 \DeclareQuoteStyle{latin}
   {\mkfrenchopenquote{\guillemotleft}\em}
@@ -2637,6 +2640,32 @@
 	\DeclareFieldFormat[article,commentary,review]{pages}{%
 		\mkpageprefix[bookpagination]{#1}}
 
+	% Improve sirting scheme (use event year)
+	\DeclareSortingScheme{ddnt}{
+	\sort{\field{presort}}
+	\sort[final]{\field{sortkey}}
+	\sort[direction=descending]{
+		\field[strside=left,strwidth=4]{sortyear}
+		\field[strside=left,strwidth=4]{year}
+		\field[strside=left,strwidth=4]{eventyear}
+		\literal{9999}}
+	\sort[direction=descending]{
+		\field[padside=left,padwidth=2,padchar=0]{month}
+		\field[strside=left,strwidth=2]{eventmonth}
+		\literal{00}}
+	\sort[direction=descending]{
+		\field[padside=left,padwidth=2,padchar=0]{day}
+		\field[strside=left,strwidth=2]{eventday}
+		\literal{00}}
+	\sort{\field{sortname}
+		  \field{author}
+		  \field{editor}
+		  \field{translator}
+		  \field{institution}}
+	\sort{\field{sorttitle}
+		  \field{title}}
+}
+
 	%	Number CV items by section and in reverse order
 	% Count total number of entries in each refsection
 	% Thanks @ Audrey <https://tex.stackexchange.com/a/22770/10119>
@@ -2657,20 +2686,20 @@
 	\renewbibmacro*{marginyear}{%
 		%\if@marginyear
 		\ifbibliography
-			{\iffieldundef{year}
-				{\ifthenelse{	\iffieldundef{eventyear} \OR
-								\iffieldequals{eventyear}{\bbx@lasthash} }
-					{\ifthenelse{	\iffieldundef{pubstate} \OR
-									\iffieldequals{pubstate}{\bbx@lasthash} }
-						{}
-						{\marginpar{\nopunct\vitaelabel{\printfield{pubstate}}}%
-						 \savefield{pubstate}{\bbx@lasthash}}}
-					{\marginpar{\nopunct\vitaelabel{\printfield{eventyear}}}%
-					 \savefield{eventyear}{\bbx@lasthash}}}
-				{\iffieldequals{year}{\bbx@lasthash}
-					{}
+			{\ifthenelse{	\iffieldundef{pubstate}	}
+				{\ifthenelse{	\iffieldundef{year} \OR
+								\iffieldequals{year}{\bbx@lasthash} }
+					{\ifthenelse{	\iffieldundef{eventyear} \OR
+			 						\iffieldequals{eventyear}{\bbx@lasthash} }
+			 			{}
+			 			{\marginpar{\nopunct\vitaelabel{\printfield{eventyear}}}%
+				 		 \savefield{eventyear}{\bbx@lasthash}}}
 					{\marginpar{\nopunct\vitaelabel{\printfield{year}}}%
-					 \savefield{year}{\bbx@lasthash}}}}
+			 		 \savefield{year}{\bbx@lasthash}}}
+				{\iffieldequals{pubstate}{\bbx@lasthash}
+					{}
+					{\marginpar{\nopunct\vitaelabel{\printfield{pubstate}}}}%
+				 \savefield{pubstate}{\bbx@lasthash}}}
 			{}%
 		%\fi%
 		}
