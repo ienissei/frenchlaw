@@ -199,7 +199,7 @@
 				 \clearfield{labeltitle}%
 				 \clearfield{title}}}
 			{\ifnameundef{shortauthor}
-				{\printnames[first-last]{author}%
+				{\printnames[given-family]{author}%
 				 \ifthenelse{	\value{collaborator}=1	}
 					{\bibstring{and}\space}
 					{\newunit}%
@@ -240,6 +240,7 @@
 		{\usebibmacro{cite:postnote}}%
 	\usebibmacro{shorthandintro}}
 
+%	TDOO » Adde le pubstate
 \newbibmacro*{cite:title}{%
 	%	Driver for inreference entries with an author (encyclopédies / classeurs)
 	\ifthenelse{	\ifentrytype{inreference} \AND\NOT \ifnameundef{author} }
@@ -548,7 +549,7 @@
 	{\usebibmacro{citeindex}%
 	 \ifnameundef{author}
 		{\printtext[bold]{???}}
-	 	{\printnames[first-last]{author}}}%
+	 	{\printnames[given-family]{author}}}%
 	{\setunit{\multicitedelim}}
 	{}%
 
@@ -579,6 +580,16 @@
 	{\printfield[title]{shorttitle}\isdot\addnbspace}%
 	{\setunit{\multicitedelim}}
 	{}
+
+% Prevent spurrious space by using a \setunit{\addspace} instead of a hard \space
+\renewcommand*{\multicitedelim}{\addsemicolon\setunit{\addspace}}
+
+\DeclareMultiCiteCommand{\cites}{\cite}{\multicitedelim}
+\DeclareMultiCiteCommand{\parencites}[\unskip~\mkbibparens]{\parencite}{\multicitedelim}
+\DeclareMultiCiteCommand{\footcites}[\mkbibfootnote]{\footcite}{\multicitedelim}
+\DeclareMultiCiteCommand{\smartcites}[\iffootnote\mkbibparens\mkbibfootnote]
+  {\smartcite}{\multicitedelim}
+\DeclareMultiCiteCommand{\textcites}{\textcite}{\multicitedelim}
 
 %	Définir les raccourcis de citation
 \let\citep=\parencite

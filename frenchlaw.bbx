@@ -65,7 +65,7 @@
 
 %	Sort entries by {name/institution} + year + day + month + title
 %	TODO » Remplacer par \DeclareSortingTemplate
-\DeclareSortingScheme{nty}{
+\DeclareSortingTemplate{nty}{
 	\sort{\field{presort}}
 	\sort[final]{\field{sortkey}}
 	\sort{\field{sortname}
@@ -85,7 +85,7 @@
 		  \literal{0}}
 }
 
-\DeclareSortingScheme{shortauthor}{
+\DeclareSortingTemplate{shortauthor}{
 	\sort{\field{presort}}
 	\sort[final]{\field{sortkey}}
 	\sort{\field{labelname}
@@ -96,7 +96,7 @@
 		  \field{year}}
 }
 
-\DeclareSortingScheme{abbreviations}{
+\DeclareSortingTemplate{abbreviations}{
 	\sort{\field{presort}}
 	\sort[final]{\field{sortkey}}
 	\sort{\field{shortjournal}
@@ -259,7 +259,7 @@
 
 %\DeclareNameAlias[jurisdiction]{institution}{sortname}%	TODO	» Utilité?
 
-%	TODO » NameFormat first-last if bbx:related -- insérer dans une commande \DeclareNameFormat{author}
+%	TODO » NameFormat given-family if bbx:related -- insérer dans une commande \DeclareNameFormat{author}
 % Utiliser \ifbibliography pour trier entre les auteurs alphabétiques et ceux dans l'ordre normal (?)
 
 % #####	PUNCTUATION	#####
@@ -390,13 +390,27 @@
 	\maps[datatype=bibtex]{%
 		% Replace the initial of people's first names with the first consonnants of the name, as per the French typographic rules. Including composite given names (Jean-Pierre)
 		% Requires name fields to be in the "Last, First" format
-		\map{%
+		% TODO » Broken with TeXline 2020 (strips all commands before localising initials)
+		\map[overwrite=true]{%
 			\step[fieldsource=author,%
-				match={\regexp{(,\s|-)\b(Chr|Ch|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))}},%
-				replace={\regexp{$1\{\\relax\{\}$2\}}}]
+				match=\regexp{(\A|\s+and\s+)([a-z'\s]+)?\s*(.+?)\,\s+(Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](?:l|r)|\w)([^\-]+?)(?:(\-(?:Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](?:l|r)|\w))(.+?))?(?=\Z|\s+and\s+)},
+				replace=\regexp{$1 family=$3, prefix=$2\\relax, given=$4$5$6$7, given-i=\{$4$6\}}]
 			\step[fieldsource=editor,%
-				match={\regexp{(,\s|-)\b(Chr|Ch|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))}},%
-				replace={\regexp{$1\{\\relax\{\}$2\}}}]
+				match=\regexp{(\A|\s+and\s+)([a-z'\s]+)?\s*(.+?)\,\s+(Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](?:l|r)|\w)([^\-]+?)(?:(\-(?:Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](?:l|r)|\w))(.+?))?(?=\Z|\s+and\s+)},
+				replace=\regexp{$1 family=$3, prefix=$2\\relax, given=$4$5$6$7, given-i=\{$4$6\}}]
+			%	Regex explanation:
+				% (\A|\s+and\s+) -- Beginning of a name
+				% ([a-z'\s]+)?\s* -- Prefix (von part)
+				% (.+?)\,\s+ -- Family name + comma
+				% (Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](?:l|r)|\w) -- Given name initials
+				% ([^\-]+?) -- Rest of frist given name, except compoud names
+				% (?: -- If compound name, same pattern after the dash
+				% 	(\-(?:Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](?:l|r)|\w))
+				% 	(.+?))?
+				% (?=\Z|\s+and\s+) -- End of a name
+			% Old system (pre-2020):
+				% match={\regexp{(,\s|-)\b(Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))}},%
+				% replace={\regexp{$1\{\\relax\{\}$2\}}}]
 		}
 		% Replace dots and spaces in abbreviations with the proper macros
 		\map[overwrite=true]{
@@ -445,6 +459,7 @@
 				match={\regexp{:CW}}, fieldset=sorttitle, fieldvalue={1}]
 		}
 		% 	Skip <location> field for university presses
+		%	TODO » Ajouter un \if language = french, delete ", France"
 		\map[overwrite=true]{%
 			\step[fieldsource=publisher,%
 				match={\regexp{(University|(U|u)niversité|(U|u)niversitaires)}},
@@ -1270,7 +1285,7 @@
 	\ifrelatedloop
 		% Long citation for stand-alone references (in citations or bibliography)
 		{\ifdefined\bpl@osurname
-			\usebibmacro{marginyear}%
+			\usebibmacro{bpl:marginyear}%
 		 \else
 			\usebibmacro{author}%
 			\setunit{\labelnamepunct}\newblock
@@ -1293,7 +1308,7 @@
 		 \fi}
 		% Short citation, after the case citation (in citations or bibliography)
 		{\ifdefined\bpl@osurname
-			\usebibmacro{marginyear}%
+			\usebibmacro{bplmarginyear}%
 			\usebibmacro{title}%
 		 \else
 			\printfield{type}%

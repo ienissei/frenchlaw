@@ -78,8 +78,8 @@
 %	Document features
 \newif\if@draft
 	\@draftfalse
-\newif\iflongcv
-	\longcvtrue
+\newif\iflong
+	\longtrue
 \newif\if@paraname
 	\@paranametrue
 \newif\if@precis
@@ -288,9 +288,9 @@
 }
 
 %	Define option <short> for convertible documents
-%	TODO » Renommer \longcv en autre chose, e.g. \iflong
+%	TODO » Renommer \long en autre chose, e.g. \iflong
 \DeclareOptionX{short}{
-	\longcvfalse
+	\longfalse
 }
 
 %	Define options for <outline> & <summary> table of contents
@@ -1292,6 +1292,29 @@
 	\@ifnextchar\par{\@gobblepar\relax}{\relax}}
 
 
+% Créer un compteur pour les \subpara
+\newcounter{subpara}[para]
+\setcounter{para}{0}
+
+%	Créer les commandes pour paramétrer l'apparence du compteur de sous-paragrpahes
+\renewcommand{\thesubpara}{\alph{subpara})}
+\newcommand{\subparanumsep}{.~}
+\newcommand{\subparadash}{.}
+\newcommand{\subparasep}{.\enskip}
+\newcommand{\subparanumstyle}{\bfseries\itshape}
+\newcommand{\subparastyle}{\itshape}
+
+\newcommand{\subpara}[1][]{%
+	\refstepcounter{subpara}%
+	{\subparanumstyle\thepara\subparadash\thesubpara\subparanumsep\if\relax#1\relax\label{para:\thepara-\thesubpara}\else\label{para:#1}\fi}%
+	\if@paraname
+		\if\relax#1\relax\else%
+			\if@marginal%
+				\marginpar{\psubarastyle#1}%
+			\else%
+				{\subparastyle#1\subparasep}%
+	\fi\fi\fi}
+
 % =***======***======***======***======***======***======***======***======***======***=
 
 
@@ -1534,6 +1557,8 @@
 
 %	MINIPAGES
 
+% TODO » Remplacer la redéfinition littérale de \parfillskip par une macro \old@parfillskip définie au début de l'environnement (nécessité de la ligne??)
+
 %	Refefine the <minipage> environment for vertical alignment
 % Thanks @ egreg <http://tex.stackexchange.com/a/34982/10119>
 \newenvironment{minipage*}[2][l]
@@ -1582,7 +1607,6 @@
 \let\old@endmulticols=\endmulticols
 \renewcommand{\multicols}{\@twocolumntrue\old@multicols}
 \renewcommand{\endmulticols}{\@twocolumnfalse\old@endmulticols}
-
 
 % =***======***======***======***======***======***======***======***======***======***=
 
@@ -2466,7 +2490,7 @@
 \newcommand{\note}[1]{#1~(\emph{n.})}% dans les index, utiliser: |note
 
 %	TODO » Créer une commande pour des superscripts utilités dans une exégèse
-\newcommand{\glose}[1]{\emph{#1).~}\ignorespaces}
+\newcommand{\glose}[2][]{\ifx\relax#1\relax\else#1\subparadash\fi\emph{#2).~}\ignorespaces}
 \newcommand{\glosemark}[1]{\textsuperscript{\thinspace\emph{#1)}}}
 
 
@@ -2480,8 +2504,8 @@
 \makeindex[\jobname-law]
 
 
-%	Use the same styling for letter groups with xindy and makeindex
-\newcommand{\lettergroup}[1]{{\centering#1\par}\nopagebreak}
+%	Use the same styling for letter groups with xindy and makeindex (cf. ist file)
+\newcommand{\lettergroup}[1]{{\hfill#1\hfill}\nopagebreak}
 
 %	Définir le style des index
 \setlength{\indexcolsep}{1em}
@@ -2584,7 +2608,7 @@
 		useshortauthor=false,
 		bibstyle=publist,
 		sorting=ddnt,
-		marginyear=false,% TODO » True
+		marginyear=true,% TODO » True
 		% TODO » Avec la versio 2019
 		% plnumbered=reset,
 	\fi
@@ -2626,13 +2650,14 @@
 
 
 %	TODO » Sortir tout ce qu'on peut du \if@vitae -- créer un .bbx exprès qui charge publist et modifie ce qu'il faut
-%	+ Documenter l'option {short} et le switch \iflongcv (=> renommer) à utiliser dans le corps du CV pour délimiter les deux versions du document
+%	+ Documenter l'option {short} et le switch \iflong (=> renommer) à utiliser dans le corps du CV pour délimiter les deux versions du document
 \if@vitae
 	%	Use bibliography headings that fit the rest of the CV
 	\defbibheading{bibliography}[\refname]{\section*{#1}}
 	\defbibheading{subbibliography}[\refname]{\paragraph*{#1}}
 
-	\plauthorname{Vern}% [Flora]{Vern} (mais bug)
+	%	TODO » Automatiser avec le \author ou dans le .conf
+	\plauthorname[Flora]{Vern}% [Flora]{Vern} (mais bug)
 
 	% Use own style for book reviews
 	\DeclareBibliographyAlias{review}{article}
@@ -2641,7 +2666,7 @@
 		\mkpageprefix[bookpagination]{#1}}
 
 	% Improve sirting scheme (use event year)
-	\DeclareSortingScheme{ddnt}{
+	\DeclareSortingTemplate{ddnt}{
 	\sort{\field{presort}}
 	\sort[final]{\field{sortkey}}
 	\sort[direction=descending]{
@@ -2683,29 +2708,29 @@
 
 	% Print the publication {year} in the margin if it is different from the previouw entry, subsidiarily, print the {eventyear} or the {pubstate}.
 	%	TODO » \if@marginyear plante si on n'est pas en mode CV, sans doute car undefined => créer le switch (?)
-	\renewbibmacro*{marginyear}{%
+	\renewbibmacro*{bpl:marginyear}{%
 		%\if@marginyear
-		\ifbibliography
-			{\ifthenelse{	\iffieldundef{pubstate}	}
-				{\ifthenelse{	\iffieldundef{year} \OR
-								\iffieldequals{year}{\bbx@lasthash} }
-					{\ifthenelse{	\iffieldundef{eventyear} \OR
-			 						\iffieldequals{eventyear}{\bbx@lasthash} }
-			 			{}
-			 			{\marginpar{\nopunct\vitaelabel{\printfield{eventyear}}}%
-				 		 \savefield{eventyear}{\bbx@lasthash}}}
-					{\marginpar{\nopunct\vitaelabel{\printfield{year}}}%
-			 		 \savefield{year}{\bbx@lasthash}}}
-				{\iffieldequals{pubstate}{\bbx@lasthash}
-					{}
-					{\marginpar{\nopunct\vitaelabel{\printfield{pubstate}}}}%
-				 \savefield{pubstate}{\bbx@lasthash}}}
-			{}%
+			\ifbibliography
+				{\ifthenelse{	\iffieldundef{pubstate}	}
+					{\ifthenelse{	\iffieldundef{year} \OR
+									\iffieldequals{year}{\bbx@lasthash} }
+						{\ifthenelse{	\iffieldundef{eventyear} \OR
+				 						\iffieldequals{eventyear}{\bbx@lasthash} }
+				 			{}
+				 			{\marginpar{\nopunct\vitaelabel{\printfield{eventyear}}}%
+					 		 \savefield{eventyear}{\bbx@lasthash}}}
+						{\marginpar{\nopunct\vitaelabel{\printfield{year}}}%
+				 		 \savefield{year}{\bbx@lasthash}}}
+					{\iffieldequals{pubstate}{\bbx@lasthash}
+						{}
+						{\marginpar{\nopunct\vitaelabel{\printfield{pubstate}}}}%
+					 \savefield{pubstate}{\bbx@lasthash}}}
+				{}%
 		%\fi%
 		}
 
 	% Do not print the label year, since it is in the margin already
-	\renewbibmacro*{year+labelyear}{}
+	\renewbibmacro*{bpl:year+labelyear}{}
 \fi
 
 % Problèmes:
