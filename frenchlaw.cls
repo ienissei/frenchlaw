@@ -52,6 +52,8 @@
 	\@twelvepointsfalse
 \newif\if@fourteenpoints
 	\@fourteenpointsfalse
+\newif\if@modern
+	\@modernfalse
 \newif\if@sansserif
 	\@sansseriffalse
 
@@ -170,10 +172,18 @@
 	\PassOptionsToClass{14pt}{memoir}
 }
 
+%	Design options for classic (printà) and modern (web + print) styles
+\DeclareOptionX{classic}{
+	\@modernfalse
+}
+\DeclareOptionX{modern}{
+	\@moderntrue
+}
+
+%	Define options for serif or sans font
 \DeclareOptionX{serif}{
 	\@sansseriffalse
 }
-
 \DeclareOptionX{sans-serif}{
 	\@sansseriftrue
 }
@@ -689,12 +699,16 @@
 \if@stationery
 	% Paragraphs are aligned with the left margin in stationery documents
 	\setlength{\parskip}{\baselineskip}
-	\setlength{\parindent}{0em}
+	\setlength{\parindent}{\z@}
+\else\if@modern
+	% Paragraphs are aligned with the left margin in modern-style documents
+	\setlength{\parskip}{\baselineskip}
+	\setlength{\parindent}{\z@}
 \else
 	% Päragraphs are indented in regular documents
 	\setlength{\parskip}{\z@}
 	\setlength{\parindent}{1.5em}
-\fi
+\fi\fi
 
 %	Prevent excessively short or long lines at the end of paragraphs
 \setlength{\parfillskip}{2ex plus \dimexpr\linewidth-3em}
@@ -735,21 +749,21 @@
 \renewcommand*{\cftpartpresnum}{\space}
 \renewcommand*{\cftpartaftersnum}{.}
 \renewcommand*{\cftpartaftersnumb}{}
-\renewcommand*{\cftpartfont}{\large\scshape\hfil}
+\renewcommand*{\cftpartfont}{\if@modern\sffamily\Large\else\large\fi\scshape\hfil}
 \renewcommand*{\cftpartpagefont}{\normalsize}
 \setlength{\cftbeforepartskip}{\baselineskip}
 
 %	Define ToC style for \heading
 \renewcommand{\cftheadingaftersnum}{.}
 \renewcommand{\cftheadingaftersnumb}{\mdseries}
-\renewcommand{\cftheadingfont}{\large\bfseries}
+\renewcommand{\cftheadingfont}{\if@modern\sffamily\Large\else\large\fi\bfseries}
 \renewcommand{\cftheadingleader}{\hfill}
 \setlength{\cftbeforeheadingskip}{\baselineskip}
 
 %	Define ToC style for \subheading
 \renewcommand{\cftsubheadingaftersnum}{.}
 \renewcommand{\cftsubheadingaftersnumb}{\mdseries}
-\renewcommand{\cftsubheadingfont}{\normalsize\bfseries}
+\renewcommand{\cftsubheadingfont}{\if@modern\sffamily\large\else\normalsize\fi\bfseries}
 \renewcommand{\cftsubheadingleader}{\hfill}
 \setlength{\cftbeforesubheadingskip}{\baselineskip}
 
@@ -899,7 +913,7 @@
 \counterwithin*{paragraph}{section}
 
 %	Définir le style des livres dans le texte
-\renewcommand*{\booktitlefont}{\Huge\scshape}
+\renewcommand*{\booktitlefont}{\if@modern\Huge\sffamily\else\Huge\fi\scshape}
 \renewcommand*{\booknamefont}{\booktitlefont}
 \renewcommand*{\booknumfont}{\booktitlefont}
 \renewcommand*{\printbooknum}{%
@@ -908,23 +922,23 @@
 		{\ifnum\value{book}=1	\ordinalstring{book}[m]%
 		 \else					\Roman{book}\fi}
 		{\Roman{book}}}
-\renewcommand{\beforebookskip}{\null\vspace{\baselinestretch\addto@Huge}%
+\renewcommand{\beforebookskip}{\null\vspace{\baselinestretch\if@modern\addto@HUGE\else\addto@Huge\fi}%
 	\vspace{\if@tenpoints 12\baselineskip\else 10\baselineskip\fi}}
-\renewcommand{\midbookskip}{\par\vspace{\baselinestretch\addto@Huge}}
+\renewcommand{\midbookskip}{\par\vspace{\baselinestretch\if@modern\addto@HUGE\else\addto@Huge\fi}}
 
 %	Définir le style des parties dans le texte
 % Babel French gère la numérotation en toutes lettres des parties
 \renewcommand*{\thepart}{\Roman{part}}
-\renewcommand*{\parttitlefont}{\LARGE\scshape}
+\renewcommand*{\parttitlefont}{\if@modern\huge\sffamily\else\LARGE\fi\scshape}
 \renewcommand*{\partnamefont}{\parttitlefont}
 \renewcommand*{\partnumfont}{\parttitlefont}
-\renewcommand{\beforepartskip}{\null\vspace{\baselinestretch\addto@LARGE}%
+\renewcommand{\beforepartskip}{\null\vspace{\baselinestretch\if@modern\addto@huge\else\addto@LARGE\fi}%
 	%	TODO » Si PhD ou Memoir (ou article?)
 	\vspace{\baselineskip}%
 	%	TODO » Sauf PhD ou Memoir (ou article?) + Add: if@elevenpoints
 %	\vspace{\if@tenpoints12\baselineskip\fi\if@twelvepoints10\baselineskip\fi}%
 	}
-\renewcommand{\midpartskip}{\par\vspace{\baselinestretch\addto@LARGE}}
+\renewcommand{\midpartskip}{\par\vspace{\baselinestretch\if@modern\addto@huge\else\addto@LARGE\fi}}
 %	TODO » Seulement si PhD ou Memoir (ou article?), utiliser des options
 \renewcommand{\afterpartskip}{\vspace{2\baselineskip}}
 % Test can be printed after the part title, on the same page
@@ -961,7 +975,7 @@
 
 %	Définir le style des titres dans le texte
 \renewcommand{\theheading}{\Roman{heading}}
-\newcommand{\headtitlefont}{\Large\scshape\centering}
+\newcommand{\headtitlefont}{\if@modern\LARGE\sffamily\else\Large\fi\scshape\centering}
 \newcommand{\headnamefont}{\headtitlefont}
 \newcommand{\headnumfont}{\headtitlefont}
 \newcommand{\afterheadingnum}{\par\nobreak\vskip\midchapskip}
@@ -997,7 +1011,7 @@
 
 %	Définir le style des sous-titres dans le texte
 \renewcommand{\thesubheading}{\Roman{subheading}}
-\newcommand{\subheadtitlefont}{\Large\centering}
+\newcommand{\subheadtitlefont}{\if@modern\LARGE\sffamily\else\Large\fi\centering}
 \newcommand{\subheadnamefont}{\subheadtitlefont}
 \newcommand{\subheadnumfont}{\subheadtitlefont}
 \newcommand{\aftersubheadingnum}{\par\nobreak\vskip\midchapskip}
@@ -1035,7 +1049,7 @@
 % Créer un style, pour pouvoir l'appliquer au mode <article>
 \makechapterstyle{frenchlaw}{
 	\renewcommand{\thechapter}{\Roman{chapter}}
-	\renewcommand{\chaptitlefont}{\Large\scshape\raggedright}
+	\renewcommand{\chaptitlefont}{\if@modern\LARGE\sffamily\else\Large\fi\scshape\raggedright}
 	\renewcommand{\chapnamefont}{\chaptitlefont}
 	\renewcommand{\chapnumfont}{\chaptitlefont}
 	\renewcommand{\chapternamenum}{\space}
@@ -1047,9 +1061,9 @@
 			 \else						\Roman{chapter}\fi}
 			{\Roman{chapter}}\fi}
 	\renewcommand{\afterchapternum}{\par\nobreak\vskip\midchapskip}
-	\setlength{\beforechapskip}{\baselinestretch\addto@Large}
+	\setlength{\beforechapskip}{\baselinestretch\if@modern\addto@LARGE\else\addto@Large\fi}
 	\addtolength{\beforechapskip}{\baselineskip}
-	\setlength{\midchapskip}{\baselinestretch\addto@Large}
+	\setlength{\midchapskip}{\baselinestretch\if@modern\addto@LARGE\else\addto@Large\fi}
 	\setlength{\afterchapskip}{2\baselineskip}
 }
 %	Define additional elements for <article>-style chapters (new page, reduce spacing)
@@ -1150,9 +1164,9 @@
 
 %	Définir le style des sections
 \setsecheadstyle{%
-	\large\scshape\raggedright%
+	\if@modern\Large\sffamily\else\large\fi\scshape\raggedright%
 	\if@vitae\strut\marginpar{\vitaecolor\raisebox{.5ex}{\rule{2cm}{.5ex}}}\fi}% ou: \large\adfhangingflatleafright
-\setlength{\beforesecskip}{\baselinestretch\addto@large}
+\setlength{\beforesecskip}{\baselinestretch\if@modern\addto@Large\else\addto@large\fi}
 \setlength{\aftersecskip}{\baselineskip}
 \if@twocolumn
 	% En mode <twocolumn>, ne pas rajouter un second saut de ligne
@@ -1163,45 +1177,47 @@
 \fi
 
 %	Définit le style des sous-sections
-\setsubsecheadstyle{\scshape\raggedright}
+\setsubsecheadstyle{\if@modern\large\sffamily\fi\scshape\raggedright}
 \setlength{\beforesubsecskip}{\baselineskip}
+\addtolength{\beforesubsecskip}{\if@modern\baselinestretch\addto@large\else\z@\fi}
 \setlength{\aftersubsecskip}{\baselineskip}
 
 %	Définir le style des sous-sous-sections
-\setsubsubsecheadstyle{\itshape\raggedright}
+\setsubsubsecheadstyle{\if@modern\sffamily\fi\itshape\raggedright}
 \setlength{\beforesubsubsecskip}{\baselineskip}
 \setlength{\aftersubsubsecskip}{\baselineskip}
 
 %	Définir le style des paragraphes
 % Vérifier l'indentation, notamment didactic+
-\setparaheadstyle{\scshape}
-\setparaindent{0em}
+% TODO » Trouver autre chose que les small caps?
+\setparaheadstyle{\if@modern\sffamily\fi\scshape}
+\setparaindent{\z@}
 \setlength{\beforeparaskip}{\baselineskip}
 \setlength{\afterparaskip}{\baselineskip}
 
 %	Définir le style des sous-paragraphes
 % Vérifier l'indentation, notamment didactic+
-\setsubparaheadstyle{\itshape}
-\setsubparaindent{0em}
+\setsubparaheadstyle{\if@modern\sffamily\fi\itshape}
+\setsubparaindent{\z@}
 \setlength{\beforesubparaskip}{\baselineskip}
 \setlength{\aftersubparaskip}{\baselineskip}
 
 \if@twocolumn
 	% En mode <twocolumn>, ils sont insérés dans le corps du texte (inline)
 	\setparaheadstyle{\scshape\raggedright\addperiod}
-	\setlength{\afterparaskip}{0em}
+	\setlength{\afterparaskip}{\z@}
 	% Idem pour les sous-paragraphes (inline)
 	\setsubparaheadstyle{\itshape\raggedright\addperiod}
-	\setlength{\aftersubparaskip}{0em}
+	\setlength{\aftersubparaskip}{\z@}
 \else\if@marginal
 	% En mode <marginal>, ils sont placés dans une note marginale
 	\newcommand{\marginparahead}[1]{\marginpar{\itshape#1\if@vitae~:\fi}}
 	\setparaheadstyle{\marginparahead}
-	\setlength{\afterparaskip}{0em}
+	\setlength{\afterparaskip}{\z@}
 	% Idem pour les sous-paragraphes (dans la marge)
 	\newcommand{\marginsubparahead}[1]{\marginpar{\itshape#1\if@vitae~:\fi}}
 	\setsubparaheadstyle{\marginsubparahead}
-	\setlength{\aftersubparaskip}{0em}
+	\setlength{\aftersubparaskip}{\z@}
 \fi\fi
 
 
@@ -1220,8 +1236,9 @@
 \renewcommand{\thepara}{\arabic{para}}
 \newcommand{\paranumsep}{.~}
 \newcommand{\parasep}{.\enskip}
-\newcommand{\paranumstyle}{\bfseries}
-\newcommand{\parastyle}{\if@marginal\footnotesize\itshape\else\normalsize\scshape\fi}
+\newcommand{\paracolor}{}% Blue = \color[HTML]{268BD2}
+\newcommand{\paranumstyle}{\paracolor\bfseries}
+\newcommand{\parastyle}{\paracolor\if@marginal\footnotesize\itshape\else\normalsize\scshape\fi}
 
 %	Créer des commandes pour paramétrer l'apparence dans la table des matières
 \newcommand{\cftparastyle}{\llap}
@@ -1297,12 +1314,13 @@
 \setcounter{para}{0}
 
 %	Créer les commandes pour paramétrer l'apparence du compteur de sous-paragrpahes
-\renewcommand{\thesubpara}{\alph{subpara})}
-\newcommand{\subparanumsep}{.~}
+\renewcommand{\thesubpara}{\alph{subpara}}
+\newcommand{\subparanumsep}{).~}
 \newcommand{\subparadash}{.}
 \newcommand{\subparasep}{.\enskip}
-\newcommand{\subparanumstyle}{\bfseries\itshape}
-\newcommand{\subparastyle}{\itshape}
+\newcommand{\subparacolor}{}% Blue = \color[HTML]{268BD2}
+\newcommand{\subparanumstyle}{\subparacolor\bfseries\itshape}
+\newcommand{\subparastyle}{\subparacolor\itshape}
 
 \newcommand{\subpara}[1][]{%
 	\refstepcounter{subpara}%
@@ -1410,18 +1428,18 @@
 %	SET DEFAULT LIST SPACING
 
 %	Set all vertical space to mutliples of \baselineskip
-\setlength{\parskip}{\z@}
+% \setlength{\parskip}{\z@}%	TODO » Delete (doublon du normal)
 \setlength{\partopsep}{\z@}
 \setlength{\parsep}{\z@}
-\setlength{\parsepi}{\parskip}
-\setlength{\parsepii}{\parskip}
+\setlength{\parsepi}{\if@stationery\z@\else\parskip\fi}
+\setlength{\parsepii}{\if@stationery\z@\else\parskip\fi}
 \setlength{\topsep}{\z@}
 \setlength{\topsepi}{\z@}
 \setlength{\topsepii}{\z@}
 \setlength{\topsepiii}{\z@}
 \setlength{\itemindent}{\z@}
-\setlength{\itemsepi}{\parskip}
-\setlength{\itemsepii}{\parskip}
+\setlength{\itemsepi}{\z@}
+\setlength{\itemsepii}{\z@}
 \setlength{\itemsepiii}{\z@}
 
 %	Set horizontal space to multiples of \parindent
@@ -1468,10 +1486,11 @@
 \renewcommand{\@epitext}[1]{%
 	\begin{minipage*}{\epigraphwidth}#1\end{minipage*}}
 %	Redefine epigraph source format
-\renewcommand{\@episource}[1]{%
-	\begin{minipage*}{\epigraphwidth}%
-		\begin{\sourceflush}---~#1\end{\sourceflush}%
-	\end{minipage*}}
+	\renewcommand{\@episource}[1]{%
+		\parskip=\z@
+		\begin{minipage*}{\epigraphwidth}%
+			\begin{\sourceflush}---~#1\end{\sourceflush}%
+		\end{minipage*}}
 
 %	Redefine the command that prints epigraphs
 \renewcommand{\epigraph}[2]{
@@ -1527,15 +1546,23 @@
 
 %	Define <description> style
 \newcommand{\descriptionlabelstyle}{\scshape}
-\renewcommand{\descriptionlabel}[1]{{\descriptionlabelstyle #1:\enspace}}
-\renewcommand{\blockdescriptionlabel}[1]{{\descriptionlabelstyle #1:\enspace}}
+\newcommand{\descriptionlabelpunct}{:\enspace}
+\newlength{\descriptionlabelwidth}
+% TODO » Documentation: For fixed-width labels, could use:
+%	\newcommand{\descriptionlabelpunct}{.\hfill}
+%	\setlength{\descriptionlabelwidth}{.2\linewidth}
+	\setlength{\descriptionlabelwidth}{\z@}
+\renewcommand{\descriptionlabel}[1]{{%
+	\hspace\labelsep\descriptionlabelstyle{#1\descriptionlabelpunct}}}
+\renewcommand{\blockdescriptionlabel}[1]{{%
+	\hspace\labelsep\descriptionlabelstyle{#1\descriptionlabelpunct}}}
 
 %	Renew <description> environment
 \renewenvironment{description}
 	{\addvspace{\baselineskip}
 	 \list{}{\let\makelabel\descriptionlabel
-			 \setlength{\labelwidth}{\parindent}
-			 \setlength{\leftmargin}{\parindent}}}
+			 \setlength{\labelwidth}{\descriptionlabelwidth}
+			 \setlength{\leftmargin}{\descriptionlabelwidth}}}
 	{\endlist%
 	 \addvspace{\baselineskip}}
 
@@ -1544,8 +1571,8 @@
 	{\addvspace{\baselineskip}
 	 \list{}{\let\makelabel\blockdescriptionlabel
 	 		 \setlength{\parsep}{\baselineskip}
-			 \setlength{\labelwidth}{\parindent}
-			 \setlength{\leftmargin}{\parindent}}}%
+			 \setlength{\labelwidth}{\descriptionlabelwidth}
+			 \setlength{\leftmargin}{\descriptionlabelwidth}}}%
 	{\endlist%
 	 \addvspace{\baselineskip}}
 
@@ -1579,6 +1606,7 @@
 \newcommand{\framerulecolor}{gray}
 
 %	Environment for a box with vertical line along the left side
+%	TODO » Refaire en permettant les paragraphes
 \newsavebox{\fmbox}
 \newenvironment{showcase}[1][]
 	{\addvspace{\baselineskip}%
@@ -1908,6 +1936,45 @@
 		\printcopyright%
 		\cleartorecto
 	\egroup
+}
+
+%	Define a style for modern style books
+\newcommand{\maketitleModern}{%
+	% Send out warnings on empty fields
+	\if\expandafter\@empty\csname @title@\languagename\endcsname\relax
+		\@latex@warning@no@line{No \noexpand\title given}\fi
+	% Create the title page
+	\long\def\printtitle{
+		\reset@twocolumns%
+		\raggedright%
+		\normalize@fontsize%
+		\vspace*{6\baselineskip}
+		{\LARGE\scshape\csname @title@\languagename\endcsname\par}%
+		 \vspace{\baselineskip}%
+		{\if\@empty\csname @subtitle@\languagename\endcsname\relax\else
+		 \Large\csname @subtitle@\languagename\endcsname\par\fi}%
+		{\Large%
+		 \if\@empty\@lecture
+			\vspace{\baselineskip}
+			\if\@empty\@author\else\@author\par%
+			\if\relax\@email\relax\else\emailname:~\@email\par\fi\fi
+		 \else
+			\vspace{\baselineskip}
+			\@lecture\par
+			\if\relax\@email\relax\else\emailname:~\@email\par\fi\par
+			\if\@empty\@seminar\else\seminarname:~\@seminar\par\fi\fi}%
+		{\large\@date\par}}
+	% Print the title page
+	\frontmatter
+	\bgroup
+		\pagestyle{empty}
+		\reset@twocolumns%
+		\sffamily
+		\printtitle%
+		\restore@twocolumns%
+		\cleartorecto\par
+	\egroup
+	\mainmatter
 }
 
 %	Create a style for PhD theses / Dissertations
@@ -2243,6 +2310,7 @@
 
 %	Set the default title page styles
 \titlepagestyle{Book}
+\if@modern\titlepagestyle{Modern}\fi
 \if@article\titlepagestyle{Article}\fi
 \if@vitae\titlepagestyle{CV}\fi
 \if@letter\titlepagestyle{Letter}\fi

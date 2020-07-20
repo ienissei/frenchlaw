@@ -1,18 +1,18 @@
 
 \ifxetex
-	\setsansfont[	SmallCapsFont	= Concourse C3,
-					Scale			= MatchLowercase ]
-					{Concourse T3}
-	\if@sansserif
-		\setlogokern{La}{-.165em}
-		\setlogokern{aT}{-.0485em}
-		\setlogokern{eX}{-.022em}
-		\renewcommand{\frenchlaw}{
-			{\itshape F\kern-.2ex rench}%
-			 L\kern-.5ex%
-			 \raisebox{.25em}{\scshape a}\kern-.2ex%
-			 W\xspace}
-	\fi
+		\setsansfont[	SmallCapsFont	= Concourse C3,
+						Scale			= MatchLowercase ]
+						{Concourse T3}
+		\if@sansserif
+			\setlogokern{La}{-.165em}
+			\setlogokern{aT}{-.0485em}
+			\setlogokern{eX}{-.022em}
+			\renewcommand{\frenchlaw}{
+				{\itshape F\kern-.2ex rench}%
+				 L\kern-.5ex%
+				 \raisebox{.25em}{\scshape a}\kern-.2ex%
+				 W\xspace}
+		\fi
 \fi
 
 % \footnotebypage
