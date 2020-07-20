@@ -114,9 +114,13 @@
 	\ifthenelse{	\ifuseshortauthor \AND\NOT \ifnameundef{shortauthor}	}% TOTO » Create <article> bib option (used with article mode) => if@article and not ifuseshortauthor, deactivate shorttitle (+ shorthand?), except for juristidciotn / legislation / etc.
 		{\boolfalse{citetracker}}
 		{\clearname{shortauthor}%
-		 \if@article% TOTO » Create <article> bib option (used with article mode) => if@article and not ifuseshortauthor, deactivate shorttitle (+ shorthand?), except for juristidciotn / legislation / etc.
-		 	\clearfield{shorttitle}%
-		 	\clearfield{labeltitle}%
+		 \if@article% TOTO » Create <article> bib option (used with article mode)
+		 	\ifthenelse{	\ifentrytype{jurisdiction}\OR
+							\ifentrytype{legislation}\OR
+							\ifentrytype{legal} }
+				{}
+				{\clearfield{shorttitle}%
+				 \clearfield{labeltitle}}%
 		 \fi}%
 	\ifnumless{\value{multicitecount}}{2}
 		{\global\boolfalse{cbx:parens}%
@@ -286,7 +290,7 @@
 			 				\ifentrytype{proceedings} \OR
 			 				\ifentrytype{reference} \AND
 			 				\iffieldundef{shorttitle} }
-			 	{\usebibmacro{byauthor}%
+			 	{\printfield[labelname]{byauthor}%
 				 \newunit\newblock%
 			 	 \usebibmacro{event+venue+date}%
 				 \newunit\newblock
@@ -370,10 +374,16 @@
 
 \newbibmacro*{cite:legal}{%
 	\ifentrytype{legislation}
-		{\ifthenelse{	\iffootnote\AND\NOT
-						\iffieldundef{shorttitle} }
-			{\printfield{shorttitle}}
-			{\usedriver{}{\thefield{entrytype}}}}%
+	% TODO » Créer un switch pour utilsier l'abréviation en note de bas de page + en citep (même dan sle coprs du texte). Essayer un \OR, et vérifier le shorttitle ensuite
+		{\iffieldundef{shorttitle}
+			{\usedriver{}{\thefield{entrytype}}}
+			{\iffootnote
+				{\printfield{shorttitle}}
+				{\if@article
+					\printfield{shorttitle}%
+				 \else
+					\usedriver{}{\thefield{entrytype}}%
+				 \fi}}}%
 		{\ifciteseen
 			{\togglefalse{bbx:related}}
 			{}%

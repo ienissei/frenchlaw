@@ -384,33 +384,37 @@
 	{\noinherit{shorttitle}
 	 \noinherit{shortauthor}}
 
+% TODO » Foreach loop used in DeclareSourceMap (gorup them?)
+\def\do#1{%
+	\ifstrequal{shortauthor}{#1}
+		{}
+		{\ifcsundef{blx@csv@datamodel@names}
+			{\csdef{blx@csv@datamodel@names}{#1}}
+			{\csappto{blx@csv@datamodel@names}{,#1}}}}
+\dolistcsloop{blx@datamodel@names}
+
 %	Abbreviate first names that start with a sequence of consonants (Philip > Ph.)
 % Format all names in .bib file as "Last, First and Last, First", as the comma is used to locate the first name
 \DeclareStyleSourcemap{%
 	\maps[datatype=bibtex]{%
-		% Replace the initial of people's first names with the first consonnants of the name, as per the French typographic rules. Including composite given names (Jean-Pierre)
+		% Replace the initial of people's first names with the first consonnants of the name, as per the French typographic rules. Including composite given names (Jean-Christophe)
 		% Requires name fields to be in the "Last, First" format
-		% TODO » Broken with TeXline 2020 (strips all commands before localising initials)
-		\map[overwrite=true]{%
-			\step[fieldsource=author,%
-				match=\regexp{(\A|\s+and\s+)([a-z'\s]+)?\s*(.+?)\,\s+(Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](?:l|r)|\w)([^\-]+?)(?:(\-(?:Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](?:l|r)|\w))(.+?))?(?=\Z|\s+and\s+)},
-				replace=\regexp{$1 family=$3, prefix=$2\\relax, given=$4$5$6$7, given-i=\{$4$6\}}]
-			\step[fieldsource=editor,%
-				match=\regexp{(\A|\s+and\s+)([a-z'\s]+)?\s*(.+?)\,\s+(Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](?:l|r)|\w)([^\-]+?)(?:(\-(?:Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](?:l|r)|\w))(.+?))?(?=\Z|\s+and\s+)},
-				replace=\regexp{$1 family=$3, prefix=$2\\relax, given=$4$5$6$7, given-i=\{$4$6\}}]
 			%	Regex explanation:
 				% (\A|\s+and\s+) -- Beginning of a name
-				% ([a-z'\s]+)?\s* -- Prefix (von part)
+				% ([a-z'\s]+)?\s* -- Prefix (von part), don't capture last space
 				% (.+?)\,\s+ -- Family name + comma
-				% (Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](?:l|r)|\w) -- Given name initials
-				% ([^\-]+?) -- Rest of frist given name, except compoud names
-				% (?: -- If compound name, same pattern after the dash
-				% 	(\-(?:Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](?:l|r)|\w))
-				% 	(.+?))?
+				% (Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](?:l|r)|(?:À|Â|Ä|Ç|É|È|Ê|Ë|Î|Ï|Ô|Ö|Ù|Û|Ü|Ÿ|Æ|Œ)|\w) -- Given name initials: several consonnants, or accented letter between braces (converted from TeX syntax), or any letter
+				% (.+?) -- Rest of first given name, except compoud names
+				% (?:(\-(?:Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](?:l|r)|(?:À|Â|Ä|Ç|É|È|Ê|Ë|Î|Ï|Ô|Ö|Ù|Û|Ü|Ÿ|Æ|Œ)|\w))(.+?))? -- Same as above, but for the compound part of the first given name (Jean-Claude), if found
 				% (?=\Z|\s+and\s+) -- End of a name
 			% Old system (pre-2020):
 				% match={\regexp{(,\s|-)\b(Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))}},%
 				% replace={\regexp{$1\{\\relax\{\}$2\}}}]
+		\map[foreach=\blx@csv@datamodel@names,overwrite=true]{%
+			\step[fieldsource=\regexp{$MAPLOOP},%
+				match=\regexp{(\A|\s+and\s+)([a-z'\s]+)?\s*(.+?)\,\s+(Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](?:l|r)|\w)(.+?)(?:(\-(?:Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](?:l|r)|(?:À|Â|Ä|Ç|É|È|Ê|(?:À|Â|Ä|Ç|É|È|Ê|Ë|Î|Ï|Ô|Ö|Ù|Û|Ü|Ÿ|Æ|Œ)|Ë|Î|Ï|Ô|Ö|Ù|Û|Ü|Ÿ|Æ|Œ)|\w))(.+?))?(?=\Z|\s+and\s+)},
+				replace=\regexp{$1 family=$3, prefix=$2\\relax, given=$4$5$6$7, given-i=\{$4$6\}}]
+				%match=\regexp{(\A|\s+and\s+)([a-z'\s]+)?\s+(.+?)\,\s+(Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](?:l|r)|\{(?:À|Â|Ä|Ç|É|È|Ê|Ë|Î|Ï|Ô|Ö|Ù|Û|Ü|Ÿ|Æ|Œ)\}|\w)(.+?)(?:(\-(?:Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](?:l|r)|\{(?:À|Â|Ä|Ç|É|È|Ê|Ë|Î|Ï|Ô|Ö|Ù|Û|Ü|Ÿ|Æ|Œ)\}|\w))(.+?))?(?=\Z|\s+and\s+)},
 		}
 		% Replace dots and spaces in abbreviations with the proper macros
 		\map[overwrite=true]{
@@ -439,7 +443,7 @@
 				match={\regexp{([A-ZÉÈ\d][A-ZÉÈ\d]+)}},
 				replace={\regexp{\\acronym\{$1\}}}]
 		}
-			%	Undo pre-processing of the \DH command
+		%	Undo pre-processing of the \DH command
 		\map[overwrite=true]{
 			\step[fieldsource=series,%
 				match={\regexp{Ð}},
@@ -1307,6 +1311,7 @@
 			\usebibmacro{related}
 		 \fi}
 		% Short citation, after the case citation (in citations or bibliography)
+		%	TODO » Inverser l'ordre: Journal + Type + Author (ne pas utiliser Title)
 		{\ifdefined\bpl@osurname
 			\usebibmacro{bplmarginyear}%
 			\usebibmacro{title}%
