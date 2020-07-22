@@ -112,7 +112,7 @@
 		{\boolfalse{citetracker}}
 		{}%
 	\ifthenelse{	\ifuseshortauthor \AND\NOT \ifnameundef{shortauthor}	}% TOTO » Create <article> bib option (used with article mode) => if@article and not ifuseshortauthor, deactivate shorttitle (+ shorthand?), except for juristidciotn / legislation / etc.
-		{\boolfalse{citetracker}}
+		{}% Anc: \boolfalse{citetracker} %% TODO » Vérifier que le nom de l'auteur soit mentionné si la réf. suivante porte sur un autre ouvrage. Ou pas?
 		{\clearname{shortauthor}%
 		 \if@article% TOTO » Create <article> bib option (used with article mode)
 		 	\ifthenelse{	\ifentrytype{jurisdiction}\OR
