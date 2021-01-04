@@ -399,7 +399,7 @@
 
 %	Define the size of the type block depending on the paper size
 % The block proportions follow the golden number, as in the medieval method
-% Use a narrower type block in letters and other stationery documents
+% Use a narrower type block in letters  and other stationery documents
 \if@stockaiv
 	\if@landscape
 		\settypeblocksize{424pt}{*}{1.618}
@@ -1328,7 +1328,7 @@
 	\if@paraname
 		\if\relax#1\relax\else%
 			\if@marginal%
-				\marginpar{\psubarastyle#1}%
+				\marginpar{\subarastyle#1}%
 			\else%
 				{\subparastyle#1\subparasep}%
 	\fi\fi\fi}
@@ -1426,6 +1426,8 @@
 %	##### LIST ENVIRONMENTS	#####
 
 %	SET DEFAULT LIST SPACING
+
+% TODO » Commenter la commande memoir \tightlistss avec modern
 
 %	Set all vertical space to mutliples of \baselineskip
 % \setlength{\parskip}{\z@}%	TODO » Delete (doublon du normal)
@@ -1540,7 +1542,7 @@
 %	LISTS
 
 %	Define <enumerate> style
-\renewcommand{\labelenumii}{\itshape\theenumii).}
+\renewcommand{\labelenumii}{\itshape\theenumii)}
 \renewcommand{\labelenumiii}{\textit{\theenumiii}.}
 \renewcommand{\theenumiv}{\@greek\c@enumiv}
 
@@ -1949,11 +1951,11 @@
 		\raggedright%
 		\normalize@fontsize%
 		\vspace*{6\baselineskip}
-		{\LARGE\scshape\csname @title@\languagename\endcsname\par}%
+		{\huge\scshape\csname @title@\languagename\endcsname\par}%
 		 \vspace{\baselineskip}%
 		{\if\@empty\csname @subtitle@\languagename\endcsname\relax\else
-		 \Large\csname @subtitle@\languagename\endcsname\par\fi}%
-		{\Large%
+		 \LARGE\csname @subtitle@\languagename\endcsname\par\fi}%
+		{\LARGE%
 		 \if\@empty\@lecture
 			\vspace{\baselineskip}
 			\if\@empty\@author\else\@author\par%
@@ -1963,7 +1965,7 @@
 			\@lecture\par
 			\if\relax\@email\relax\else\emailname:~\@email\par\fi\par
 			\if\@empty\@seminar\else\seminarname:~\@seminar\par\fi\fi}%
-		{\large\@date\par}}
+		{\Large\@date\par}}
 	% Print the title page
 	\frontmatter
 	\bgroup
@@ -1975,6 +1977,31 @@
 		\cleartorecto\par
 	\egroup
 	\mainmatter
+}
+
+%	Define a style for modern style books
+\newcommand{\maketitleModernArticle}{%
+	% Send out warnings on empty fields
+	\if\expandafter\@empty\csname @title@\languagename\endcsname\relax
+		\@latex@warning@no@line{No \noexpand\title given}\fi
+	% Create the title page
+	\long\def\printtitle{
+		\reset@twocolumns%
+		\raggedright%
+		\normalize@fontsize%
+		\vspace*{\z@}
+		{\LARGE\scshape\csname @title@\languagename\endcsname\par}%
+		{\if\@empty\csname @subtitle@\languagename\endcsname\relax\else
+		 \Large\csname @subtitle@\languagename\endcsname\par\fi}
+		\vspace{\baselineskip}}
+	% Print the title page
+	\mainmatter
+	\bgroup
+		\reset@twocolumns%
+		\sffamily
+		\printtitle%
+		\restore@twocolumns\par
+	\egroup
 }
 
 %	Create a style for PhD theses / Dissertations
@@ -2123,26 +2150,33 @@
 		\@latex@warning@no@line{No \noexpand\title given}\fi
 	% Create the title page
 	\long\def\printtitle{
+		\cleardoublepage%
 		\reset@twocolumns%
 		\raggedright%
 		\setlength{\parindent}{0em}
 		\normalize@fontsize%
-		\vspace*{2\baselineskip}
+		\if@article
+			\vspace*{0em}
+		\else
+			\vspace*{2\baselineskip}
+		\fi
 		{\Large\scshape\csname @title@\languagename\endcsname\par}%
 		 \vspace{\baselineskip}%
 		{\if\@empty\csname @subtitle@\languagename\endcsname\relax\else
 		 \large\csname @subtitle@\languagename\endcsname\par\fi}%
-		{\if\@empty\@lecture
+		 \if@article\else
+			{\if\@empty\@lecture
+				\vspace{\baselineskip}
+				\if\@empty\@author\else\@author\par%
+				\if\relax\@email\relax\else\emailname:~\@email\par\fi\fi
+			 \else
+				\vspace{\baselineskip}
+				\lecturename:~\@lecture\par
+				\if\relax\@email\relax\else\emailname:~\@email\par\fi\par
+				\if\@empty\@seminar\else\seminarname:~\@seminar\par\fi\fi}%
 			\vspace{\baselineskip}
-			\if\@empty\@author\else\@author\par%
-			\if\relax\@email\relax\else\emailname:~\@email\par\fi\fi
-		 \else
-			\vspace{\baselineskip}
-			\lecturename:~\@lecture\par
-			\if\relax\@email\relax\else\emailname:~\@email\par\fi\par
-			\if\@empty\@seminar\else\seminarname:~\@seminar\par\fi\fi}%
-		\vspace{\baselineskip}
-		{\schoolyearname:~\@date\par}}
+			{\schoolyearname:~\@date\par}
+		\fi}
 	% Print the title page
 	\if@article
 		\bgroup
@@ -2423,15 +2457,15 @@
 	\makeevenfoot{didactichead}
 		{\footnotesize{%
 			\@author%
-			\if\relax\@email\relax\else~(\@email)\fi, %
-			\@date.}}
+			\if\relax\@email\relax\else~(\@email)\fi%
+			\if\relax\@date\relax\else, \@date\fi.}}
 		{}
 		{\ifnum\value{lastpage}>1\relax\thepage\fi}
 	\makeoddfoot{didactichead}
 		{\footnotesize{%
 			\@author%
-			\if\relax\@email\relax\else~(\@email)\fi, %
-			\@date.}}
+			\if\relax\@email\relax\else~(\@email)\fi%
+			\if\relax\@date\relax\else, \@date\fi.}}
 		{}
 		{\ifnum\value{lastpage}>1\relax\thepage\fi}
 
@@ -2558,7 +2592,7 @@
 \newcommand{\note}[1]{#1~(\emph{n.})}% dans les index, utiliser: |note
 
 %	TODO » Créer une commande pour des superscripts utilités dans une exégèse
-\newcommand{\glose}[2][]{\ifx\relax#1\relax\else#1\subparadash\fi\emph{#2).~}\ignorespaces}
+\newcommand{\glose}[2][]{\ifx\relax#1\relax\else#1\subparadash\fi\emph{#2)~}\ignorespaces}
 \newcommand{\glosemark}[1]{\textsuperscript{\thinspace\emph{#1)}}}
 
 
@@ -3011,6 +3045,7 @@
 
 %	TODO » Adde un moyen de choisir entre la page de garde et une couv. perso
 % Ou deux commandes: \makefrontcover et \makefancycover
+% Redéfinir tous les \printtitle@marticle dans le corps de la classe, avec un maketitle qui invoque juste le bon et quelques autres commandes, pour que \printtitle soit disponible à \makefrontcover (en choisissant le bon comme pour maketitle)
 \newcommand{\makefrontcover}{%
 	\cleartorecto
 	\setlrmargins{*}{*}{1}
@@ -3128,7 +3163,7 @@
 %	TODO » Préparer des environnements avec tcolorbox pour les fiches pédagogiques
 %	TODO » Documenter les jeux de notes de bas de page +/- fin de document pour les éditions critiques
 
-\def\point{\addvspace{\baselineskip}\noindent\textrightarrow\enspace\textbf}
+\newcommand\point[1]{\if@modern\par\else\addvspace{\baselineskip}\fi\noindent\textrightarrow\enspace\textit{#1}:}
 
 %	TODO » Rechercher toutes les "color" pour en faire une liste dans la documentation (et éventuellement harmoniser + créer une otiion black/color)
 

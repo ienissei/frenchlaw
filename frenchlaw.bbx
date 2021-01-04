@@ -60,6 +60,7 @@
 
 \DeclareLanguageMapping{french}{frenchlaw-fr}
 \DeclareLanguageMapping{english}{frenchlaw-en}
+\DeclareLanguageMapping{british}{frenchlaw-en}
 
 % #####	SORTING	#####
 
@@ -1040,9 +1041,12 @@
 	\usebibmacro{bibindex}%
 	\usebibmacro{begentry}%
 	% In CV mode, additional author names come after the title
-	\ifdefined\bpl@osurname\else
-		\usebibmacro{author}\fi%
-	\setunit{\labelnamepunct}\newblock
+	\ifdefined\bpl@osurname
+		\usebibmacro{bpl:marginyear}%
+	\else
+		\usebibmacro{author}%
+		\setunit{\labelnamepunct}\newblock
+	\fi%
 	\usebibmacro{title}%
 	% \newunit
 	% \printlist{language}%
@@ -1053,8 +1057,8 @@
 	\usebibmacro{event+venue+date}%
 	\newunit\newblock
 	\usebibmacro{byeditor+others}%
-	% \newunit\newblock
-	% \printfield{note}%
+	\setunit{\nopunct}%
+	\printfield{note}%
 	\setunit{\newblockpunct}\newblock
 	\usebibmacro{publisher+location+date}%
 	\setunit{\newblockpunct}\newblock
