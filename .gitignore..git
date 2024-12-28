@@ -1,3 +1,12 @@
+*.aux
+*.bcf
+*.idx
+*.log
+*.run.xml
+*.toc
 *.sublime-project
 *.sublime-workspace
 .DS_Store
+*.td
+/» Documentation à intégrer
+Signature.pdf
