@@ -1,29 +1,25 @@
-%%
-%%   This is file "frenchlaw-dev.sty", which is part of the "frenchlaw" package
-%%   Copyright 2009--2018: Fora VERN -- ienissei (at) gmail (dot) com
-%% 
-%%   This work may be distributed and/or modified under the conditions of the
-%%   LaTeX Project Public License, either version 1.3 of this license or, at your
-%%   option, any later version.
-%%
-%%   The latest version of the license can be found at:
-%%      http://www.latex-project.org/lppl.txt
-%%   and version 1.3 or later is part of all distributions of LaTeX, 2005/12/01 or later.
-%% 
-%%   This work has the LPPL maintenance status "author-maintained".
-%%   This work consists of the files listed in the README file.
-%%
+%
+%   This is file "frenchlaw-dev.sty", which is part of the "frenchlaw" package
+%   Copyright 2009--2025: Fora VERN -- ienissei (at) gmail (dot) com
+% 
+%   This work may be distributed and/or modified under the conditions of the
+%   LaTeX Project Public License, either version 1.3 of this license or, at your
+%   option, any later version.
+%
+%   The latest version of the license can be found at:
+%      http://www.latex-project.org/lppl.txt
+%   and version 1.3 or later is part of all distributions of LaTeX, 2005/12/01 or later.
+% 
+%   This work has the LPPL maintenance status "author-maintained".
+%   This work consists of the files listed in the README file.
+%
 
-%	WARNING: Please note that this is a style style file for "frenchlaw.cls"
-%	         Its purpose is to write documentations while using the overall class
+%	The associated documentation file <frenchlaw-dev-sty.tex> was produced from this code by simply stripping the double percent signs at the beginning of lines, transforming the code into a LaTeX file.
 
 
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{frenchlaw-dev}%
 	[2018/08/24 v.0.9. Developer macros for the Frenchlaw class]
-
-
-% =***======***======***======***======***======***======***======***======***======***=
 
 
 %	#####	IMPLEMENT GRID OPTION	#####
@@ -56,10 +52,7 @@
 % \renewcommand*\ShowFrameLinethickness{.8pt}
 
 
-% =***======***======***======***======***======***======***======***======***======***=
-
-
-%	IMPLEMENT DEVELOPER OPTION
+% ##### IMPLEMENT DEVELOPER OPTION #####
 
 %	Load <listings> pachage
 \ifxetex
@@ -70,10 +63,16 @@
 \fi
 
 %	Set the default colours for code
-\newcommand{\numbercolor}{\color[HTML]{655643}}% Ash (contrast: white)
-\newcommand{\macrocolor}{\color[HTML]{78948D}}% Teal (contrast: both)
-\newcommand{\commentcolor}{\color[HTML]{BF4D28}}% Saffron (contrast: white)
-\newcommand{\mathcolor}{\color[HTML]{CF872E}}% Ochre (contrast: both)
+\newcommand{\countercolor}{\color[HTML]{4682B4}}% Blue
+\newcommand{\dimencolor}{\color[HTML]{4682B4}}% Blue
+\newcommand{\numbercolor}{\color[HTML]{655643}}% Ash
+\newcommand{\macrocolor}{\color[HTML]{78948D}}% Teal
+\newcommand{\optioncolor}{\color[HTML]{990000}}% Crimson
+\newcommand{\packagecolor}{\color[HTML]{859900}}% Green
+\newcommand{\directivecolor}{\color[HTML]{BF4D28}}% Saffron
+\newcommand{\commentcolor}{\color[HTML]{545454}}% Grey (for comments)
+\newcommand{\stringcolor}{\color[HTML]{CF872E}}% Ochre
+\newcommand{\filecolor}{\color{black}}
 \newcommand{\identifiercolor}{\color{black}}
 \newcommand{\emphcolor}{\color{black}}
 \newcommand{\bracketcolor}{\color{black}}
@@ -94,10 +93,15 @@
 	breakindent=1em,
 	tabsize=2,
 	basicstyle=\ttfamily,
-	texcsstyle=*\macrocolor,
-	commentstyle=\commentcolor\itshape,
 	identifierstyle=\identifiercolor,
-	stringstyle=\mathcolor,
+	commentstyle=\commentcolor\itshape,% Comments
+	keywordstyle=[1]\optioncolor,
+	keywordstyle=[2]\packagecolor,% Class / Package names
+	keywordstyle=[3]\stringcolor,% File names
+	keywordstyle=[4]\dimencolor,% Lengths color
+	texcsstyle=*\macrocolor,
+	stringstyle=\stringcolor,
+	alsoletter={0123456789+-},
 }
 
 \lstdefinestyle{blockcode}{
@@ -151,36 +155,220 @@
 \newcommand{\addemph}[1]{\lstset{emph={#1},}}
 
 
-%%%%%%%%%%   Code Printing Commands & Environments   %%%%%%%%%%
+% ##### Code Printing Commands & Environments #####
+
+\RequirePackage{xstring}
+\RequirePackage{verbatim}
+\let\noprint=\comment
+\let\endnoprint=\endcomment
 
 %	New environment for macro documentation
 \lstnewenvironment{macro}[1][]
-	{\lstset{style=macrocode,emph={#1}}%
+	{\lstset{style=macrocode,keywordstyle=[1]\ttfamily,emph={#1}}% gobble=number
 	  \addvspace{\baselineskip}}
 	{\addvspace{\baselineskip}}
 
 \lstnewenvironment{sample}[1][]
-	{\lstset{emph={#1}}%
+	{\lstset{emph={#1}}% gobble=number
 	  \addvspace{\baselineskip}}
 	{\addvspace{\baselineskip}}
 
 %	Short verbatim for inline code
 \lstMakeShortInline[style=inlinecode]{|}
 
-%	Environment for printing option information
-\newenvironment{option}[1]
-	{\par\addvspace{\baselineskip}%
-	 \setlength{\parindent}{0pt}%
-	 \if@twoside\else\hspace{-.5\marginparwidth}\fi%
-	 \lstinline{#1}\@option}
-	{\par\addvspace{\baselineskip}}
-%
-\newcommand{\@option}[2][]{%
-	  \ifstrempty{#1}{}{\lstinline[{style=macrocode}]{=<#1>}}%
-	  \hfill\ifstrempty{#2}{}{par d{\'e}faut~: \lstinline{#2}}\\}
+%	Describe a command or macro:
+% TODO > Trouver un moyen d'indexer correctement les commandes qui contiennent des caractères spéciaux (? ) / vérifier le résultat.
+% \describe[default value]{list of macros}
+% e.g.: \describe[default]{\option{name}[key-values]{glossary description}}
+\newcommand{\describe}[2][]{%
+	\par\addvspace{\baselineskip}%
+	\noindent#2\hfill%
+	\if\@empty#1\relax\else par d{\'e}faut~: \texttt{#1}\fi\\}
+%	Macro to be used for describing options
+\newcommand{\option}[1]{%
+	\lstinline[{style=macrocode}]{#1}%
+	\optindex{#1}%
+	\@option}
+\newcommand{\@option}[1][]{%
+	\if\@empty#1\relax\else\lstinline[{style=macrocode}]{=<#1>}\fi%
+	\@@option}
+\newcommand{\@@option}[1]{}% Temp. save #1 from \option, then add it with the matching definition (this #1) to the glossary
+%	Macro to be used for descripting various macros and their arguments
+% Describe a control-sequence name
+\renewcommand{\cs}[2]{%
+	\safeverb{#1}%
+	\cmdindex{#1}%
+	%+ Add #2 to the glossary
+}
+% Describe a length
+\renewcommand{\dim}[2]{%
+	\safeverb[\dimencolor\textbackslash]{#1}%
+	\dimindex{#1}%
+	%+ Add #2 to the glossary
+}
+% Describe a counter
+\newcommand{\cnt}[2]{%
+	{\ttfamily\countercolor#1}%
+	\cntindex{#1}%
+	%+ Add #2 to the glossary
+}
+% Describe an optional argument
+\newcommand{\opt}[1]{%
+	\lstinline[{style=macrocode}]{\[<#1>\]}%
+}
+% Describe a mandatory argument
+\renewcommand{\arg}[1]{%
+	\lstinline[{style=macrocode}]{\{<#1>\}}%
+}
+\newcommand{\file}[1]{%
+	{\ttfamily\filecolor#1}%
+}
+
+\newcommand{\safeverb}[2][\macrocolor\textbackslash]{{\ttfamily#1#2}}
 
 %	TODO » Indexation automatique à partir d'une liste CSV pour les options + exemples (?)
+\newcommand{\optindex}[1]{\index{#1@\ttfamily#1\rmfamily~(option)}}
 \newcommand{\cmdindex}[1]{\index{#1@\ttfamily\textbackslash#1\rmfamily}}%
-\newcommand{\dimindex}[1]{\index{#1@\ttfamily\textbackslash#1\rmfamily~(length)}}%
+\newcommand{\dimindex}[1]{\index{#1@\ttfamily\textbackslash#1\rmfamily~(dimension)}}%
 \newcommand{\envindex}[1]{\index{#1@\ttfamily#1\rmfamily~(environnement)}}%
-\newcommand{\optindex}[1]{\index{#1@\ttfamily#1\rmfamily~(option)}}%
+\newcommand{\cntindex}[1]{\index{#1@\ttfamily#1\rmfamily~(compteur)}}%
+
+% Add keywords for options
+\lstset{morekeywords=[1]{a4paper, a5paper, a6paper, oneside, twoside, onecolumn, twocolumn, landscape, marginalia, 10pt, 11pt, 12pt, 14pt, classic, modern, modernsans, serif, sans-serif, linespacing, article, didactic, didactic+, letter, vitae, draft, draft+, final, short, outline, summary, biblatex-style, index, developer, vgrid, british, english, french, german, italian, spanish, greek, latin, colour}}
+
+% Add keywords for packages
+\lstset{morekeywords=[2]{adforn, babel, biblatex, booktabs, csquotes, ebgaramond, environ, etoolbox, fixltxhyph, fmtcount, fontenc, fontspec, frenchlaw-classic, frenchlaw-modern, graphicx, ifthen, ifxetex, inputenc, lmodern, marginnote, mathpazo, memoir, metalogo, microtype, multicol, numprint, perpage, pifont, ragged2e, sourcesanspro, xcolor, xkeyval, xspace, xstring, xurl}}
+
+% Add keywords for files
+\lstset{morekeywords=[3]{frenchlaw-en.ibx,frenchlaw-fr.ibx,frenchlaw.bbx,frenchlaw.bib,frenchlaw.cbx,frenchlaw.cls,frenchlaw.cnf,frenchlaw.dbx,frenchlaw.ist,frenchlaw.xdy}}
+
+% Add keywords for lengths
+\lstset{morekeywords=[4]{baselineskip,linewidth,parindent,parskip,parfillskip,toclabelwidth,tocnumwidth,toccenterwidth}}
+
+% Add keywords for TeX control-sequence names
+\addcs{%
+	addto@huge,
+	addto@Huge,
+	addto@HUGE,
+	addto@large,
+	addto@Large,
+	addto@LARGE,
+	addto@miniscule,
+	addto@tiny,
+	afterepigraphskip,
+	appendix,
+	backmatter,
+	beforeepigraphskip,
+	book,
+	chapter,
+	chapter,
+	clubpenalties,
+	counterwithin,
+	counterwithout,
+	custom@baselinestretch,
+	descriptionlabelstyle,
+	dimexpr,
+	enquote,foreignquote,
+	epigraph,
+	epigraphrule,
+	epigraphwidth,
+	fakechapter,
+	finalhyphendemerits,
+	footmarksep,
+	footmarkstyle,
+	footmarkwidth,
+	footnotebypage,
+	framerulecolor,
+	frenchlaw,
+	frontmatter,
+	heading,
+	HUGE,
+	if@article,
+	if@dev,
+	if@didactic,
+	if@draft,
+	if@elevenpoints,
+	if@fourteenpoints,
+	if@landscape,
+	if@letter,
+	if@marginal,
+	if@modern,
+	if@onecolumn,
+	if@oneside,
+	if@outline,
+	if@sansserif,
+	if@simplespacing,
+	if@stationery,
+	if@stockaiv,
+	if@stockav,
+	if@stockavi,
+	if@summary,
+	if@tenpoints,
+	if@twelvepoints,
+	if@twocolumn,
+	if@twoside,
+	if@vitae,
+	ifdraftdoc,
+	iflong,
+	iflong,
+	includegraphics,
+	listoffigures,
+	listoftables,
+	mainmatter,
+	makeparastyle,
+	maxsecnumdepth,
+	maxtocdepth,
+	midrule,
+	miniscule,
+	no,
+	normalize@fontsize,
+	para,
+	paragraph,
+	paragraph,
+	part,
+	part,
+	qitem,
+	raggedbottom,
+	section,
+	set@biblatexstyle,
+	set@defaultspacing,
+	set@doublespacing,
+	set@medianspacing,
+	set@simplespacing,
+	setcolours,
+	setcolourscheme,
+	setfootnoterule,
+	setlength,
+	setparastyle,
+	shortcontents,
+	showcasestyle,
+	showcasetitle,
+	showcasetitlestyle,
+	showcasetitlestyle,
+	sidebar,
+	subheading,
+	subpara,
+	subparagraph,
+	subparagraph,
+	subsection,
+	subsubsection,
+	symbolfootnote,
+	tableofcontents,
+	widowpenalties,
+	thepara,
+	parasep,
+	paranumsep,
+	paracolour,
+	paranumcolour,
+	parastyle,
+	paranumstyle,
+	thesubpara,
+	subparasep,
+	subparanumsep,
+	subparacolour,
+	subparanumcolour,
+	subparastyle,
+	subparanumstyle,
+	if@colour,
+	if@colourall
+}
