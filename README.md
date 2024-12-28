@@ -88,4 +88,4 @@ It comprises all of the files present in this repository. At present, those file
 
 ---
 
-© 2009–2025 Fora VERN
+© 2009–2025 Flora VERN
