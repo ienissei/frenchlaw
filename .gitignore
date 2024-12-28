@@ -9,4 +9,5 @@
 *.sublime-workspace
 .DS_Store
 *.td
+*.png
 Signature.pdf
