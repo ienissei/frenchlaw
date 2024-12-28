@@ -1,62 +1,84 @@
 Frenchlaw
 =========
 
-1. Licence
-    1. English
-    2. Français
+(French first, English below)
 
+## Project ##
 
-## 1. Licence ##
+Copyright 2009--2025: Fora VERN -- ienissei (at) gmail (dot) com
 
-### i. English ###
+`Frenchlaw` is a LaTeX class and a set of other useful packages and styles developed for use primarily by French lawyers, even though some degree of internationalisation is under way, esp. towards English-speaking jurisdictions.
 
-`Frenchlaw` is a project aiming at the creation of a LaTeX class for french law (for academics and lawyers). The main goals are to implement a reasonable set of typographical good practices, automatise everything that can be (through specific divisions and indexes, special bibliographies, etc.), and provide authoring and review tools that help with the process of proofreading texts.
+It was first developed as a tool which I used in order to write my PhD dissertation.
 
-As such, this project is subject to the LaTeX Project Public Licence (LPPL), and can only be distributed or modified according to the terms of versions 1.3 or later of that licence (which is included in the repository, for reference). The latest version of this license can be found at http://www.latex-project.org/lppl.txt
+The main project for the time being is to write a documentation and, in the process, reorder the code into something cleaner and easier to maintain. This will hopefully led to the publication of this class (eventually…)
 
-Copyright 2009–2018 Flora VERN – ienissei (at) gmail (dot) com
+Please note that this is a work in progress and that it may (does) contain occasional bugs and lack some of its functionalities. All requests and suggestions will, however, be studied, and any help is appreciated.
 
-This work has the LPPL status "author-maintained"
+If you are interested in using the project or contributing to its development, please get in touch.
 
-The work `frenchlaw` comprises the following files:
+-----
 
+Copyright 2009--2025: Fora VERN -- ienissei (at) gmail (dot) com
+
+`Frenchlaw` se compose d'une classe et de plusieurs autres paquets pour LaTeX. Elle est destinée à faciliter l'écriture des juristes francophones, bien qu'un processus d'internationalisation soit en cours, notamment vers les juridictions anglo-saxonnes.
+
+Ce projet est né des besoins d'écriture de ma thèse de doctorat.
+
+L'objectif principal, pour l'heure, est de rédiger la documentation de la classe et, chemin faisant, de réordonner et de clarifier le code. Cela permettra (un jour) la publication officielle de cette classe.
+
+Il s'agit d'un projet en cours de développement qui peut contenir (quelques) bugs et  comprend pas encore toutes ses fonctionnalités définitives. Toutes les questions et suggestions seront étudiées.
+
+Si vous souhaitez utiliser ce logiciel ou contribuer à son développement, merci de prendre contact!
+
+## Licence ##
+
+The `Frenchlaw` software is subject to the LaTeX Project Public Licence (LPPL) and can only be distributed or modified according to the terms of versions 1.3 or later of that licence (which is included in the repository, for reference).
+
+    The latest version of this license can be found at http://www.latex-project.org/lppl.txt
+
+This work has the LPPL status "author-maintained".
+Author and maintainer: Flora VERN -- ienissei (at) gmail (dot) com
+
+It comprises all of the files present in this repository. At present, those files are:
+- `documentation.tex`
+- `documentation.pdf`
 - `frenchlaw.cls`
-- `frenchlaw-dev.sty`
+- `frenchlaw.bib`
 - `frenchlaw.bbx`
 - `frenchlaw.cbx`
+- `frenchlaw.dbx`
 - `frenchlaw-en.lbx`
 - `frenchlaw-fr.lbx`
-- `frenchlaw.dbx`
+- `frenchlaw.ist`
+- `frenchlaw.xdy`
 - `typographie.sty`
+- `frenchlaw-babel.sty`
+- `frenchlaw-dev.sty`
 - `README.MD`
 
-Please note that this is a work in progress and that it may (does) lack some of its core functionalities. All requests and suggestions will, however, be studied, and any help is appreciated. A documentation (in French) will be written and uploaded as soon as possible.
+-----
 
-Also note that this class can be run with LaTeX (standard distribution) or XeLaTeX.
+Le logiciel `Frenchlaw` est, en totalité, soumis à la LaTeX Project Public Licence (LPPL); il ne saurait être distribué ou modifié que suivant les termes stipulés dans la licence, version 1.3 ou ultérieure (celle-ci est incluse dans le dossier, pour information).
 
+La dernière version de la LPPL peut être obtenue à l'adresse suivante : http://www.latex-project.org/lppl.txt
 
-### ii. Français ###
+Le logiciel `frenchlaw` a le statut "author-maintained" au sens de la LPPL.
+Auteur et mainteneur: Flora VERN -- ienissei (at) gmail (dot) com
 
-`Frenchlaw` est un projet dont le but est a création d'un package pour l'écriture juridique (universitaire ou praticienne) sous LaTeX. Les objectifs principaux sont de mettre en œuvre un certain nombre de bonnes pratiques typographiques, d'automatiser les processus d'écriture (divisions juridiques des documents, création des index et bibliographies juridiques, etc.), et de faciliter la relecture ou la collaboration sur les documents grâce à des outils appropriés.
-
-Ce logiciel est, en totalité, soumis à la LaTeX Project Public Licence (LPPL), et ne saurait être distribué ou modifié que suivant les termes stipulés dans la licence, version 1.3 ou ultérieure (celle-ci est incluse dans le dossier, pour information). La dernière version de la LPPL peut être obtenue à l'adresse suivante : http://www.latex-project.org/lppl.txt
-
-Copyright 2009–2018 Flora VERN – ienissei (at) gmail (dot) com
-
-Le logiciel `frenchlaw` a le statut "author-maintained" au sens de la LPPL
-
-Le logiciel `frenchlaw` comprend les fichiers suivants :
-
+Il comporte tous les documents présents sur ce dépôt Git, soit à ce jour :
+- `documentation.tex`
+- `documentation.pdf`
 - `frenchlaw.cls`
-- `frenchlaw-dev.sty`
+- `frenchlaw.bib`
 - `frenchlaw.bbx`
 - `frenchlaw.cbx`
+- `frenchlaw.dbx`
 - `frenchlaw-en.lbx`
 - `frenchlaw-fr.lbx`
-- `frenchlaw.dbx`
+- `frenchlaw.ist`
+- `frenchlaw.xdy`
 - `typographie.sty`
+- `frenchlaw-babel.sty`
+- `frenchlaw-dev.sty`
 - `README.MD`
-
-Merci de bien vouloir noter qu'il s'agit d'un projet en cours de réalisation, et qu'il ne comprend pas encore toutes ses fonctionnalités. Toutes les demandes et suggestions seront étudiées, et toute aide serait grandement appréciée. Une documentation française sera écrite et mise en ligne dès que possible.
-
-Les documents utilisant `frenchlaw` peuvent être compilés sous LaTeX (distribution standard) ou XeLaTeX.
