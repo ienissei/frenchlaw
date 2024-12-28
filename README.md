@@ -40,7 +40,7 @@ La dernière version de la LPPL peut être obtenue à l'adresse suivante : http
 
 Ce logiciel a le statut "author-maintained" au sens de la LPPL.
 
-**Auteur et mainteneur:** Flora VERN -- ienissei (at) gmail (dot) com
+**Auteur et mainteneur:** Flora VERN – ienissei (at) gmail (dot) com
 
 Il comporte tous les documents présents sur ce dépôt Git, soit à ce jour :
 - `documentation.tex`
@@ -67,7 +67,7 @@ The latest version of this license can be found at http://www.latex-project.org/
 
 This work has the LPPL status "author-maintained".
 
-**Author and maintainer:** Flora VERN -- ienissei (at) gmail (dot) com
+**Author and maintainer:** Flora VERN – ienissei (at) gmail (dot) com
 
 It comprises all of the files present in this repository. At present, those files are:
 - `documentation.tex`
