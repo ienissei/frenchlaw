@@ -1,13 +1,13 @@
 Frenchlaw
 =========
 
-(French first, English below)
+Copyright 2009--2025: Fora VERN -- ienissei (at) gmail (dot) com
+
+French first, English below
 
 ## Project ##
 
 ### Version française ###
-
-Copyright 2009--2025: Fora VERN -- ienissei (at) gmail (dot) com
 
 `Frenchlaw` se compose d'une classe et de plusieurs autres paquets pour LaTeX. Elle est destinée à faciliter l'écriture des juristes francophones, bien qu'un processus d'internationalisation soit en cours, notamment vers les juridictions anglo-saxonnes.
 
@@ -20,8 +20,6 @@ Il s'agit d'un projet en cours de développement qui peut contenir (quelques) bu
 Si vous souhaitez utiliser ce logiciel ou contribuer à son développement, merci de prendre contact!
 
 ### English Version ###
-
-Copyright 2009--2025: Fora VERN -- ienissei (at) gmail (dot) com
 
 `Frenchlaw` is a LaTeX class and a set of other useful packages and styles developed for use primarily by French lawyers, even though some degree of internationalisation is under way, esp. towards English-speaking jurisdictions.
 
