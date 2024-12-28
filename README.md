@@ -1,11 +1,8 @@
-Frenchlaw
-=========
-
-![FrenchLaw Logo](frenchlaw-logo.png)
-
-© 2009--2025 Fora VERN – ienissei (at) gmail (dot) com
-
-French first, English below
+<div align="center">
+<img src="frenchlaw-logo.png" alt="FrenchLaw Logo" width=50% height=50%>
+<h3>Frenchlaw: A versatile LaTeX class for lawyers</h3>
+<br/>
+</div>
 
 ## Project ##
 
@@ -33,7 +30,7 @@ Please note that this is a work in progress and that it may (does) contain occas
 
 If you are interested in using the project or contributing to its development, please get in touch.
 
-## Licence ##
+## LPPL Licence ##
 
 ### Version française ###
 
@@ -89,4 +86,4 @@ It comprises all of the files present in this repository. At present, those file
 - `frenchlaw-dev.sty`
 - `README.MD`
 
------
+© 2009–2025 Fora VERN – ienissei (at) gmail (dot) com
