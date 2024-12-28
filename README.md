@@ -86,4 +86,6 @@ It comprises all of the files present in this repository. At present, those file
 - `frenchlaw-dev.sty`
 - `README.MD`
 
+---
+
 © 2009–2025 Fora VERN
