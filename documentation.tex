@@ -1,0 +1,175 @@
+%
+%   This is file "frenchlaw.cls", which is part of the "frenchlaw" package
+%   Copyright 2009--2025: Fora VERN -- ienissei (at) gmail (dot) com
+% 
+%   This work may be distributed and/or modified under the conditions of the
+%   LaTeX Project Public License, either version 1.3 of this license or, at your
+%   option, any later version.
+%
+%   The latest version of the license can be found at:
+%      http://www.latex-project.org/lppl.txt
+%   and version 1.3 or later is part of all distributions of LaTeX, 2005/12/01 or later.
+% 
+%   This work has the LPPL maintenance status "author-maintained".
+%   This work consists of the files listed in the README file.
+%
+
+%	This file incorporates the documentation extracted from the various files comprised in the project by stripping double percent signs at the beginning of lines, transforming the code into a LaTeX file. 
+
+\documentclass[draft+,oneside,developer,vgrid]{frenchlaw}
+
+% \iflong 
+% \RaggedrRight + \noindent sur le premier paragraphe
+% Symbole en marge ± artifice typographique type retrait
+\newenvironment{developer}
+	{\par\addvspace{\baselineskip}%
+	 \sffamily\small%
+	 \list{}{%
+	 	\settowidth{\labelwidth}{\ttfamily\{dév.\}~}%
+	 	\setlength{\leftmargin}{0pt}%
+	 	\addtolength{\leftmargin}{\labelwidth}}%
+	 \item[\ttfamily\{dév.\}]\ignorespaces}
+	{\endlist\par\addvspace{\baselineskip}}
+
+%	Page de titre <dev>
+\title{\frenchlaw}
+\subtitle{\LaTeX\ pour les juristes}
+
+\title[british]{\frenchlaw}
+\subtitle[british]{\LaTeX\ for Lawyers}
+
+\usepackage{soul}
+\subject{\ifnum\value{page}=1\relax Documentation dans l'ordre du code,\\ d'après la méthode de la programmation lettrée\else\textcolor{purple}{\kern-.25ex$/$\kern-.4ex \st{Commentaire}$/$\kern-.25ex}\textcolor{teal}{Documentation} dans l'ordre du code,\\ d'après la méthode \textcolor{purple}{\kern-.25ex$/$\kern-.4ex \st{de l'exégèse}$/$\kern-.25ex}\textcolor{teal}{de la programmation lettrée}\fi}
+
+\author{Flora \textsc{Vern}}
+% \maintainer{}
+\email{fj.vern@gmail.com}
+\package{FrenchLaw}
+\version{1.0}
+\date{2022/11/01}
+% \ctan{}
+% \repository{}
+
+\colophon{%
+	Cette documentation a été produite sous \XeLaTeX\ à partir des différents fichiers de l'extension \frenchlaw, qui contiennent tant le code informatique que son explication, dans le même ordre, suivant les principes de la programmation lettrée développés par Donald~\textsc{Knuth}, créateur du logiciel \TeX.
+
+	\vspace{\baselineskip}
+	Le corps du texte est composé avec la police d'écriture \emph{Junicode} de Peter~S.~\textsc{Baker}, destinée notamment aux médiévistes, et le code informatique avec \emph{\ttfamily Latin Modern Mono} développée par la \LaTeX\ Project Team. Quelques éléments sont composés en sans-serif avec \emph{\sffamily Concourse} de Matthew~\textsc{Butterick}, auteur de plusieurs ouvrages sur la typographie juridique.
+
+	\vspace{\baselineskip}
+	La documentation dans son entier constitue un exemple d'utilisation du logiciel qu'elle présente. Elle est rédigée directement à l'intérieur du code informatique qu'elle commente, dans l'ordre de celui-ci. Un petit script sépare ensuite les deux fichiers pour la distribution, en supprimant le double signe pourcent~(\texttt{\%\%}) au début des lignes du code pour produire les fichiers de documentation.
+	\par\vspace{3\baselineskip}
+	{\centering\Large\frenchlawfleuron\par\vspace{2\baselineskip}}}
+\licensing{%
+	© 2009--2024\enspace Flora \textsc{Vern}
+	\par\vspace{\baselineskip}
+	\frenchlaw et sa documentation sont protégés par le droit d'auteur, et soumis à ce titre à la {\LaTeX\ Project Public Licence}, version~1.3c ou ultérieure, sous le statut \british{author-maintained}:\\ \url{http://www.latex-project.org/lppl/}}
+
+\begin{document}
+
+\maketitle
+
+\cleardoublepage
+\tableofcontents*
+\shortcontents
+
+\mainmatter
+
+\fakechapter{Explication d'un document \LaTeX}
+
+Pour créer un document simple, il suffit de mettre le texte suivant dans un fichier |.tex| et le compiler avec \LaTeX\ ou \XeLaTeX:
+
+\begin{macro}
+\documentclass[<options>]{frenchlaw}
+% Préambule
+\begin{document}
+% Corps du document
+Ceci est un document \TeX.
+Il est composé avec la classe \frenchlaw.
+\end{document}
+\end{macro}
+
+Les éléments colorés commençant par un |backslash|~({\macrocolor|\|}) sont appelés commandes, déclarations ou, de manière générique, macros. 
+
+Les éléments entre |{parenthèses courbes}| sont des arguments obligatoires. Dans les documentations, des |<chevrons>| sont utilisés pour indiquer ce que doivent contenir ces parenthèses courbes~-- selon le contexte, on précisera s'il s'agit d'un texte, d'un nombre, d'une valeur prédéfinie,~etc. Dans |\chapter{<titre du chapitre>}|, par exemple, il faudra remplacer le texte entre chevrons par le titre choisi.
+
+Les arguments placés entre |[crochets]| sont optionnels qui peuvent être omis, ainsi que les crochets. S'ils sont utilisés, les éléments entre |<chevrons>| doivent être remplacés, comme précédemment.
+
+Les éléments en gris sont des |% commentaires|, qui dans cette documentation indiquent généralement la présence d'une explication ou bien la valeur par défaut donnée à une commande. Ces éléments ne sont jamais imprimés dans le document final.
+
+Le fichier |.tex| commence par la déclaration |\documentclass{frenchlaw}|. On appelle \emph{préambule} ce qui se trouve avant |\begin{document}| et \emph{document} ce qui se trouve après celle-ci. Aucun texte ou commande n'est autorisé après |\end{document}|. Le contenu du préambule sera expliqué pour chaque type de document. On peut ajouter, dans le préambule, diverses redéfinitions ou personnalisations qui s'appliqueront uniquement au document concerné.
+
+\frenchlaw est basée sur la classe |memoir| qui propose en outre de nombreuses fonctionnalités utiles pour les documents longs. Ces dernières ne seront pas documentées ici si elles ne présentent pas un intérêt immédiat ou n'ont pas fait l'objet de modifications spéciales. Il peut donc être utile de consulter la documentation, très complète, de la classe de |memoir|. La gestion des langues est assurée par le package |babel| et celle des bibliographies, par |biblatex| dont les documentations pourront aussi être utilement consultées avec profit, tant ces extensions sont complexes.
+
+\fakechapter{Paramètres de compilation pour \frenchlaw}
+
+La classe \frenchlaw a été conçue pour automatiser un maximum d'éléments dans la production de documents juridiques. Afin que le document soit compilé correctement, il est nécessaire de donner les instructions suivantes \latin{via} la ligne de commande ou l'interface graphique de l'éditeur utilisé. Dans tous les cas, remplacer |<filename>| par le nom du fichier à compiler ou, dans un éditeur, par la variable permettant d'y accéder. Pour la génération du document \LaTeX, utiliser:
+
+\begin{macro}
+xelatex <filename>.tex
+\end{macro}
+
+Lorsque le document comprend des références bibliographies, celles-ci doivent être compilées, après une première passe, avec:
+
+\begin{macro}
+biber <filename>.bcf
+\end{macro}
+
+Avec des bibliographies complexes, notamment lorsque certaines entrées contiennent un renvoi vers d'autres entrées~(champs |related|, par exemple), il sera nécessaire de compiler à nouveau avec \XeLaTeX, puis avec |Biber|. Le log indique si cette manipulation est nécessaire.
+
+Il est ensuite possible de générer automatiquement les index des matières~(\latin{rerum}), des auteurs~(\latin{nominum}) et des textes de lois~(\latin{locorum}) grâce aux commandes:
+
+\begin{macro}
+texindy -L french -M lang/french/utf8-lang -M frenchlaw 
+	<filename>.idx
+texindy -L french -M lang/french/utf8-lang -M frenchlaw 
+	<filename>-bib.idx
+texindy -L french -M lang/french/utf8-lang -M frenchlaw 
+	<filename>-law.idx
+\end{macro}
+
+Dans l'éventualité où l'on voudrait utiliser des sous-numéros, lors de la rédaction d'un manuel par exemple, et sous réserve des limitations qui s'appliquent à ce procédé\todo{Réf. à la section dont il s'agit}, on devrait compiler une nouvelle fois les index avec:
+
+\begin{macro}
+makeindex -s frenchlaw <filename>.idx
+\end{macro}
+
+Il sera enfin nécessaire de recompiler le document une ou plusieurs fois avec \XeLaTeX, jusqu'à ce que les tables des matières, les changements de page et les numéros des notes de bas de page se stabilisent. Cela est indiqué dans le log.
+
+\chapter{Introduction générale à \LaTeX}
+
+La première question que pourra se poser le juriste est: Pourquoi \LaTeX? Ce logiciel, initialement créé pour produire des ouvrages de mathématiques, permet de générer des documents d'une très grande qualité typographique et d'automatiser un grand nombre de tâches chronophages~(I).
+
+\LaTeX\ est un langage de programmation qui permet de dissocier le fond de la forme, c'est-à-dire de séparer le texte brut de la mise en page. Il permet en cela d'adopter un mode de rédaction sémantique consistant à décrire la fonction de chaque élément du texte plutôt que ce à quoi il doit ressembler~(II).
+
+Comme tout langage de programmation, \LaTeX\ peut être modifié par son utilisateur qui peut, très facilement, créer de nouvelles commandes ou modifier les existantes afin d'adapter son environnement de rédaction à la sémantique recherchée~(III).
+
+Il est possible de diviser les gros projets~(ouvrages individuels, documents collectifs) en plusieurs fichiers qui seront rassemblés dans un seul document |.pdf|, la continuité des pages, des références bibliographiques et des index étant assurée~(IV).
+
+Le logiciel produit parfois des erreurs ou des avertissements lorsqu'il ne parvient pas à trouver de solution typographiquement correcte, mais parfois aussi lorsque l'utilisateur a introduit des erreurs de syntaxe dans le code, ou lorsque la classe \frenchlaw ou l'une de ses dépendances utilisées contient un bug. Ces erreurs sont signalées dans le log. L'utilisateur peut en résoudre la plupart en suivant des conseils simples~(V).\todo{Rédiger ce chapitre d'introduction}
+
+\section{Pourquoi \LaTeX?}
+
+\todo{Pour tout cela, reprendre l'article GUTenberg + adde quelque chose sur la programmartion lettrée}
+
+\section{Principes de la rédaction sémantique}
+
+\section{Création et modification de commandes}
+
+\section{Structure des fichiers dans les projets complexes}
+
+\section{Correction des erreurs apparaissant dans le log}
+
+\todo{Problème avec le raggedbottom si pas de notes de bas de page > revenir au par défaut --- Overfull et underfull --- Recherche de bugs}
+
+\todo{Section de trucs et astuces à la fin de la documentation sur les paragraphes et autres (looseness --- enlargethispage --- thispagestyle, etc.)}
+
+\input{Documentation/frenchlaw-cls.tex}
+
+% Adde quelque part une intro aux méthodes classiques type \emph, \bfseries, \footnote, \sloppy, \vspace, fills, etc.
+
+% \cite, etc. avant les biblio
+
+\printindex
+
+\end{document} 
