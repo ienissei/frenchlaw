@@ -1,21 +1,20 @@
-%%
-%%   This is file "typography.sty", which is part of the "frenchlaw" package
-%%   Copyright 2009--2018: Fora VERN -- ienissei (at) gmail (dot) com
-%% 
-%%   This work may be distributed and/or modified under the conditions of the
-%%   LaTeX Project Public License, either version 1.3 of this license or, at your
-%%   option, any later version.
-%%
-%%   The latest version of the license can be found at:
-%%      http://www.latex-project.org/lppl.txt
-%%   and version 1.3 or later is part of all distributions of LaTeX, 2005/12/01 or later.
-%% 
-%%   This work has the LPPL maintenance status "author-maintained".
-%%   This work consists of the files listed in the README file.
-%%
+%
+%   This is file "typographie.sty", which is part of the "frenchlaw" package
+%   Copyright 2009--2025: Fora VERN -- ienissei (at) gmail (dot) com
+% 
+%   This work may be distributed and/or modified under the conditions of the
+%   LaTeX Project Public License, either version 1.3 of this license or, at your
+%   option, any later version.
+%
+%   The latest version of the license can be found at:
+%      http://www.latex-project.org/lppl.txt
+%   and version 1.3 or later is part of all distributions of LaTeX, 2005/12/01 or later.
+% 
+%   This work has the LPPL maintenance status "author-maintained".
+%   This work consists of the files listed in the README file.
+%
 
-%	WARNING: Please note that this is style file for "frenchlaw.cls"
-%	         It will be renamed and/or merged with the later at some point
+%	The associated documentation file <typographie-sty.tex> was produced from this code by simply stripping the double percent signs at the beginning of lines, transforming the code into a LaTeX file.
 
 %	Créer une commande pour les noms de famille (petites-capitales, pas de césure)
 \let\lastname=\bsc% Commande <babel>
@@ -49,7 +48,7 @@
 %	Créer les commandes pour afficher les siècles
 % Usage: \siecle{1}, \siecles[et]{1}{2}
 %	TODO » Rajouter les messages d'erreur prévus + configurer pour l'anglais
-
+% TODO > Utiliser la langue courante, pas la langue principale du document... => utiliser une commande babel \centuryname == century ou siècle
 \newcommand{\century}[2][]{% Having a dummy (optional) argument fixes the expansion of \xdot (in \AD and \BC) when used in ToC methods. No idea why. % \ifboolexpr also used for \xdot expansion in all contexts (it scans for next character, \if...\fi don't work).
 	\ifboolexpr{test {\ifnumcomp{#2}{=}{0}}}
 		{ERREUR}
@@ -91,7 +90,7 @@
 
 %	Créer une commande pour afficher les heures
 % Usage: \heure{12}{15} conforme à la norme typographique (dans un texte), \heure*{12}{15} pour afficher l'heure en chiffres uniquement
-%	TODO » Utiliser \hour + Internationaliser
+%	TODO » Utiliser \hour + Internationaliser (GB: 12 noon / 12.30 PM/AM / 12 midnight ++ AM/PM pour tout le reste, donc ajouter un argument sur la version GB -- voire un arg. opt. qui, s'il n'est pas rempli, permet d'utiliser le format 24h)
 \newcommand{\heure}{\@ifstar{\s@heure}{\@heure}}
 \newcommand{\@heure}[2]{%
 	\ifnum#1=0						minuit%
@@ -198,6 +197,8 @@
 \newcommand{\al}{al.\@~}% alinéa
 \newcommand{\anc}{anc.\@\xspace}% ancien
 \newcommand{\Anc}{Anc.\@\xspace}
+\newcommand{\anton}{\emph{anton.\@\xspace}}% antonyme
+\newcommand{\Anton}{\emph{Anton.\@\xspace}}
 \newcommand{\art}{art.\@\xspace}% article
 \newcommand{\Art}{Art.\@\xspace}
 \newcommand{\comp}{comp.\@\xspace}% comparer
@@ -208,6 +209,8 @@
 \newcommand{\Spec}{Spéc.\@\xspace}
 \newcommand{\rappr}{rappr.\@\xspace}% rapprocher
 \newcommand{\Rappr}{Rappr.\@\xspace}
+\newcommand{\syn}{\emph{syn.\@\xspace}}% antonyme
+\newcommand{\Syn}{\emph{Syn.\@\xspace}}
 \renewcommand{\v}{voir\xspace}% Voir (abréger ?)
 \newcommand{\V}{Voir\xspace}
 %
@@ -224,10 +227,11 @@
 \newcommand{\JO}{\acronym{\emph{JO}}\xspace}% Journal officiel de la République fr.
 \newcommand{\JOAN}{\acronym{\emph{JOAN}}\!\xspace}% JO de l'Assemblée nationale
 
+\newcommand{\GAJA}{\acronym{\emph{GAJA}}}
 \newcommand{\GAJC}{\acronym{\emph{GAJC}}}
 \newcommand{\PUF}{\acronym{PUF}}
-\newcommand{\QPC}{\acronym{QPC}}
-\newcommand{\DC}{\acronym{DC}}
+\newcommand{\QPC}{QPC}
+\newcommand{\DC}{DC}
 \newcommand{\SSR}{\relax\acronym{SSR}}% Don't swallow preceding space
 \newcommand{\LGDJ}{\acronym{LGDJ}}
 \newcommand{\HS}{\textsc{hs}}

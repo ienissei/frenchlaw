@@ -1,27 +1,28 @@
-%%
-%%   This is file "frenchlaw-fr.lbx", which is part of the "frenchlaw" package
-%%   Copyright 2009--2018: Fora VERN -- ienissei (at) gmail (dot) com
-%% 
-%%   This work may be distributed and/or modified under the conditions of the
-%%   LaTeX Project Public License, either version 1.3 of this license or, at your
-%%   option, any later version.
-%%
-%%   The latest version of the license can be found at:
-%%      http://www.latex-project.org/lppl.txt
-%%   and version 1.3 or later is part of all distributions of LaTeX, 2005/12/01 or later.
-%% 
-%%   This work has the LPPL maintenance status "author-maintained".
-%%   This work consists of the files listed in the README file.
-%%
+%
+%   This is file "frenchlaw-fr.lbx", which is part of the "frenchlaw" package
+%   Copyright 2009--2025: Fora VERN -- ienissei (at) gmail (dot) com
+% 
+%   This work may be distributed and/or modified under the conditions of the
+%   LaTeX Project Public License, either version 1.3 of this license or, at your
+%   option, any later version.
+%
+%   The latest version of the license can be found at:
+%      http://www.latex-project.org/lppl.txt
+%   and version 1.3 or later is part of all distributions of LaTeX, 2005/12/01 or later.
+% 
+%   This work has the LPPL maintenance status "author-maintained".
+%   This work consists of the files listed in the README file.
+%
 
-%	WARNING: Please note that this is a BibLaTeX language file for "frenchlaw.cls"
+%	The associated documentation file <frenchlaw-fr-lbx.tex> was produced from this code by simply stripping the double percent signs at the beginning of lines, transforming the code into a LaTeX file.
 
 
 \InheritBibliographyExtras{french}
 \InheritBibliographyStrings{french}
 
 \NewBibliographyString{
-	article, fasc, verbo,
+	reviewedby,
+	article, fasc, verbo, signs, words, with,
 	legistype-f, legistype-m, legistype-n, signedat, under,
 	fromdate, fromdates, fromyear, ondate,
 	citeseen, numbers, relax,
@@ -31,10 +32,15 @@
 \DeclareBibliographyStrings{
 	% HEADINGS
 	shorthands		= {{Liste des abréviations}{Abréviations}},
+	% NAMES
+	reviewedby		= {{recension par}{recension par}},
 	% PAGINATION STRINGS
 	article			= {{article}{art\adddotspace}},
 	fasc			= {{fascicule\addspace num\'ero}{fasc\adddotspace n\textsuperscript{o}}},
 	verbo			= {{\emph{verbo}\addspace}{\emph{v\textsuperscript{o}}\addnbspace}},
+	signs			= {{signes}{signes}},
+	words			= {{mots}{mots}},
+	with			= {{avec}{avec}},
 	% LEGISLATION / JURISDICTION STRINGS
 	legistype-f		= {{de la\addspace}{de la\addspace}},
 	legistype-m		= {{du\addspace}{du\addspace}},
@@ -74,6 +80,9 @@
 	commentary      = {{commentaires}{comm\adddot}},
 	compiler		= {{directeur}{dir\adddot}},
 	compilers		= {{directeurs}{dir\adddot}},
+	organizer     = {{coordinateur}{coord\adddot}},
+	organizers    = {{coordinateurs}{coord\adddot}},
+	byorganizer     = {{coordonné par}{coord\adddotspace par}},
 	bycollaborator	= {{avec la collaboration \smartof}{avec}},
 	bycompiler		= {{sous la direction \smartof}{sous la dir\adddotspace \smartof}},
 	byreviser		= {{\'edition revue et augment\'ee par}{rev\adddotspace et augm\adddotspace par}},
@@ -166,3 +175,10 @@
     \textsuperscript{e}%
   \fi
   \endgroup}
+
+\restorecommand\mkbibnamefamily
+
+% Remove the setting that uses small caps for last names, as it will be reinserted in the /bbx only if the 
+% \DeclareBibliographyExtras{
+% 	\protected\def\mkbibnamefamily#1{{\textnohyphenation{#1}}}
+% }%

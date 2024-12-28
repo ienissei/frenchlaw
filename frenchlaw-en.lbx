@@ -1,27 +1,28 @@
-%%
-%%   This is file "frenchlaw-en.lbx", which is part of the "frenchlaw" package
-%%   Copyright 2009--2018: Fora VERN -- ienissei (at) gmail (dot) com
-%% 
-%%   This work may be distributed and/or modified under the conditions of the
-%%   LaTeX Project Public License, either version 1.3 of this license or, at your
-%%   option, any later version.
-%%
-%%   The latest version of the license can be found at:
-%%      http://www.latex-project.org/lppl.txt
-%%   and version 1.3 or later is part of all distributions of LaTeX, 2005/12/01 or later.
-%% 
-%%   This work has the LPPL maintenance status "author-maintained".
-%%   This work consists of the files listed in the README file.
-%%
+%
+%   This is file "frenchlaw-en.lbx", which is part of the "frenchlaw" package
+%   Copyright 2009--2025: Fora VERN -- ienissei (at) gmail (dot) com
+% 
+%   This work may be distributed and/or modified under the conditions of the
+%   LaTeX Project Public License, either version 1.3 of this license or, at your
+%   option, any later version.
+%
+%   The latest version of the license can be found at:
+%      http://www.latex-project.org/lppl.txt
+%   and version 1.3 or later is part of all distributions of LaTeX, 2005/12/01 or later.
+% 
+%   This work has the LPPL maintenance status "author-maintained".
+%   This work consists of the files listed in the README file.
+%
 
-%	WARNING: Please note that this is a BibLaTeX language file for "frenchlaw.cls"
+%	The associated documentation file <frenchlaw-en-lbx.tex> was produced from this code by simply stripping the double percent signs at the beginning of lines, transforming the code into a LaTeX file.
 
 
 \InheritBibliographyExtras{british}
 \InheritBibliographyStrings{british}
 
 \NewBibliographyString{
-	article, fasc, verbo,
+	reviewedby,
+	article, fasc, verbo, signs, words, with,
 	legistype-f, legistype-m, legistype-n, signedat, under,
 	fromdate, fromdates, fromyear, ondate,
 	citeseen, numbers, relax,
@@ -29,14 +30,19 @@
 }
 
 \DeclareBibliographyStrings{
+	% NAMES
+	reviewedby		= {{reviewed by}{reviewed by}},
 	% PAGINATION STRINGS
 	article			= {{article}{art\adddot}},
 	fasc			= {{fascicule\addspace}{fasc.\addspace n\textsuperscript{o}}},
 	verbo			= {{verbo\addspace}{v\textsuperscript{o}\addnbspace}},
+	signs			= {{signs}{signs}},
+	words			= {{words}{words}},
+	with			= {{with}{with}},
 	% LEGISLATION / JURISDICTION STRINGS
-	legistype-f		= {{of the}{of the}},
-	legistype-m		= {{of the}{of the}},
-	legistype-n		= {{of the}{of the}},
+	legistype-f		= {{of the\addspace}{of the\addspace}},
+	legistype-m		= {{of the\addspace}{of the\addspace}},
+	legistype-n		= {{of the\addspace}{of the\addspace}},
 	signedat		= {{signed at}{signed at}},
 	under			= {{under}{under}},
 	% DATE STRINGS
@@ -52,11 +58,14 @@
 	upcoming		= {{upcoming}{upcoming}},
 	% MODOFIED ABBREVIATIONS
 	page			= {{page}{p\adddotspace\addnbspace}},
-	pages			= {{pages}{p\adddotspace\addnbspace}},
+	pages			= {{pages}{pp\adddotspace\addnbspace}},
 	unpublished		= {{unpublished}{unpublished}},
 	% AUTHOR / EDITOR FONCTIONS
 	compiler		= {{director}{ed\adddot}},
 	compilers		= {{directors}{ed\adddot}},
 	bycollaborator	= {{in collaboration with}{with}},
 	bycompiler		= {{directed by}{ed\adddotspace by}},
+	organizer		= {{coordinator}{coord\adddot}},
+	organizers		= {{coordinators}{coord\adddot}},
+	byorganizer		= {{coordinated by}{coord\adddotspace by}},
 }

@@ -1,18 +1,20 @@
-%%
-%%   This is file "frenchlaw.cbx", which is part of the "frenchlaw" package
-%%   Copyright 2009--2018: Fora VERN -- ienissei (at) gmail (dot) com
-%% 
-%%   This work may be distributed and/or modified under the conditions of the
-%%   LaTeX Project Public License, either version 1.3 of this license or, at your
-%%   option, any later version.
-%%
-%%   The latest version of the license can be found at:
-%%      http://www.latex-project.org/lppl.txt
-%%   and version 1.3 or later is part of all distributions of LaTeX, 2005/12/01 or later.
-%% 
-%%   This work has the LPPL maintenance status "author-maintained".
-%%   This work consists of the files listed in the README file.
-%%
+%
+%   This is file "frenchlaw.cbx", which is part of the "frenchlaw" package
+%   Copyright 2009--2025: Fora VERN -- ienissei (at) gmail (dot) com
+% 
+%   This work may be distributed and/or modified under the conditions of the
+%   LaTeX Project Public License, either version 1.3 of this license or, at your
+%   option, any later version.
+%
+%   The latest version of the license can be found at:
+%      http://www.latex-project.org/lppl.txt
+%   and version 1.3 or later is part of all distributions of LaTeX, 2005/12/01 or later.
+% 
+%   This work has the LPPL maintenance status "author-maintained".
+%   This work consists of the files listed in the README file.
+%
+
+%	The associated documentation file <frenchlaw-cbx.tex> was produced from this code by simply stripping the double percent signs at the beginning of lines, transforming the code into a LaTeX file.
 
 %	WARNING: Please note that this is a BibLaTeX style file for "frenchlaw.cls"
 
@@ -41,6 +43,8 @@
 
 % \let\cite\smartcite
 
+% TODO: \mainlang deprecated > use \textmainlang (syntax is different)
+
 %	TODO
 \renewcommand{\bibinitdelim}{\addnbthinspace}% Thin space between initials
 \renewcommand{\bibnamedelimd}{\addnbspace}% Non-breaking space between initials and name
@@ -51,8 +55,8 @@
 %	TODO » Needed?
 \renewcommand*{\mkbibacro}[1]{%
 	\ifcsundef{\f@encoding/\f@family/\f@series/sc}
-	{#1}
-	{\textsc{\MakeLowercase{\MakeCapital{#1}}}}}
+		{#1}
+		{\textsc{\MakeLowercase{\MakeCapital{#1}}}}}
 
 \renewcommand*{\iffinalcitedelim}{%
   \ifnameundef{labelname}
@@ -83,7 +87,7 @@
 % Utilité -- \isdot en cas de {shorttitle}, mais à nettoyer
 \DeclareFieldFormat{citetitle}{\mkbibemph{#1}\isdot}%
 \DeclareFieldFormat[book,reference,inbook,collection,proceedings,thesis]{citetitle}{\mkbibemph{#1}\isdot}%
-\DeclareFieldFormat[article,incollection,inproceedings,patent,unpublished]{citetitle}{\mkbibquote{#1}\isdot}%
+\DeclareFieldFormat[article,commentary,incollection,inproceedings,patent,unpublished,booklaunch]{citetitle}{\mkbibquote{#1}\isdot}%
 \DeclareFieldFormat[suppbook,suppcollection,suppperiodical]{citetitle}{#1\isdot}%
 % Format des abréviations: citetitle = forme longue, citeshorthand = dans le texte (point ajouté dynamiquement), shorthandlist = dans la liste des abréviations (ajouter un point).
 \DeclareFieldFormat[legislation]{citetitle}{#1\isdot}%
@@ -104,24 +108,19 @@
 \DeclareFieldAlias{shorttitle}{citetitle}
 \DeclareFieldAlias{shorthand}{plain}
 
-%	TODO » Bug sur Rec. Fenet, qui imprime une virgule (Rec., Fenet) quand la référence est en bibliographie (bbx) ou en crossref/related (in Rec. Fenet) notamment. => Bug dans le code imprimant shorttitle / shortauthor (donc via les macros principales, qui mettent une virgule alors même que les chaps sont remplacés)
-
 \newbibmacro*{cite:init}{%
 	\global\boolfalse{cbx:loccit}%
-	\ifthenelse{	\ifentrytype{reference} \AND\NOT \iffieldundef{shorttitle}	}
-		{\boolfalse{citetracker}}
-		{}%
-	\ifthenelse{	\ifuseshortauthor \AND\NOT \ifnameundef{shortauthor}	}% TOTO » Create <article> bib option (used with article mode) => if@article and not ifuseshortauthor, deactivate shorttitle (+ shorthand?), except for juristidciotn / legislation / etc.
-		{}% Anc: \boolfalse{citetracker} %% TODO » Vérifier que le nom de l'auteur soit mentionné si la réf. suivante porte sur un autre ouvrage. Ou pas?
-		{\clearname{shortauthor}%
-		 \if@article% TOTO » Create <article> bib option (used with article mode)
-		 	\ifthenelse{	\ifentrytype{jurisdiction}\OR
-							\ifentrytype{legislation}\OR
-							\ifentrytype{legal} }
-				{}
-				{\clearfield{shorttitle}%
-				 \clearfield{labeltitle}}%
-		 \fi}%
+	% \ifthenelse{	\ifentrytype{reference} \AND\NOT \iffieldundef{shorttitle}	}
+	% 	{}% Was: \boolfalse{citetracker}
+	% 	{}%
+	\if@article% TOTO » Create <article> bib option (used with article mode)
+		\ifthenelse{	\ifentrytype{legislation}\OR
+									\ifentrytype{reference}	}
+			{}
+			{\clearname{shortauthor}%
+		 	 \clearfield{shorttitle}%
+		 	 \clearfield{labeltitle}}%
+		 \fi%
 	\ifnumless{\value{multicitecount}}{2}
 		{\global\boolfalse{cbx:parens}%
 		 \global\undef\cbx@lasthash}
@@ -142,9 +141,10 @@
 					{\ifnameundef{labelname}
 						{}
 						{\ifnameundef{shortauthor}
-						 	{\printnames[labelname]{author}
+						 	{\ifdefined\bpl@osurname\else
+								\printnames[labelname]{author}\fi%
 						 	 \ifthenelse{	\value{collaborator}=1	}
-							 	{\bibstring{and}\space}
+							 	{\space\bibstring{and}\space}
 							 	{\newunit}%
 							 \printnames[labelname]{collaborator}}
 							{\printtext[bibhyperref]{\printnames{labelname}}}%
@@ -157,12 +157,11 @@
 					 	 \usebibmacro{cite:related}}}
 					{\iffieldundef{shorttitle}
 						{}
-						{\printtext[bibhyperref]{%
-							\printfield{shorttitle}%
+						{\printtext[bibhyperref]{\printfield{shorttitle}%
 							\ifuseauthor
 							 	{}
 							 	{\setunit{\addnbspace}
-							 	 \printnames{labelname}}}}}}}}%
+							 	 \printnames{shortauthor}}}}}}}}%
 	\usebibmacro{shorthandintro}}
 
 \newbibmacro*{citetitle}{%
@@ -203,7 +202,8 @@
 				 \clearfield{labeltitle}%
 				 \clearfield{title}}}
 			{\ifnameundef{shortauthor}
-				{\printnames[given-family]{author}%
+				{\ifdefined\bpl@osurname\else
+					\printnames[given-family]{author}\fi%
 				 \ifthenelse{	\value{collaborator}=1	}
 					{\bibstring{and}\space}
 					{\newunit}%
@@ -265,32 +265,46 @@
 	\iffieldundef{labeltitle}
 		{\iffieldundef{title}
 			{}
-			{\printtext[bibhyperref]{\printfield{title}}%
-			 \newunit\newblock}}
+			{\ifentrytype{commentary}
+				{\ifdefined\bpl@osurname
+					\printfield[plain]{title}%
+					\setunit*{\addcolon\addspace}\newblock
+					\printfield[citetitle]{titleaddon}%
+					\addnbspace%
+					\mkbibparens{\printfield{type}\unspace}%
+			 		\newunit\newblock%
+				 \else
+					\printtext[bibhyperref]{\printfield{title}}%
+			 		\newunit\newblock%
+			 	 \fi}
+				{\printtext[bibhyperref]{\printfield{title}}%
+				 \newunit\newblock}}}
 		{\printtext[bibhyperref]{\printfield[title]{labeltitle}}%
 		 \newunit\newblock}%
 	% If the work has already been cited, stop there. Else, print verbose citation.
 	\ifthenelse{	\ifciteseen \AND\NOT
-					\ifentrytype{inreference} \AND\NOT
-					\ifentrytype{commentary}	}
+								\ifentrytype{reference} \AND\NOT
+								\ifentrytype{inreference} \AND\NOT
+								\ifentrytype{commentary}	}
 		{\newunit\newblock
 		 \bibstring[\mainlang]{citeseen}}
 		{\ifthenelse{	\iffieldundef{crossref} \OR \ifentrytype{inreference} }
 			{\clearfield{series}%
+			 \clearfield{venue}%
 			 \clearname{editor}%
 			 %	Driver for article type entries
 			 \ifthenelse{	\ifentrytype{article} \OR
-			 				\ifentrytype{commentary} }
-				{\usebibmacro{journal+issue+date}}
+			 							\ifentrytype{commentary} }
+				{\clearfield{issuetitle}%
+				 \usebibmacro{journal+issue+date}}
 				{}%
 			 %	Driver for book / collection / proceedings entries
 			 \ifthenelse{	\ifentrytype{book} \OR
-			 				\ifentrytype{bookinbook} \OR
-			 				\ifentrytype{collection} \OR
-			 				\ifentrytype{proceedings} \OR
-			 				\ifentrytype{reference} \AND
-			 				\iffieldundef{shorttitle} }
-			 	{\printfield[labelname]{byauthor}%
+						 				\ifentrytype{collection} \OR
+						 				\ifentrytype{proceedings} \OR
+						 				\ifentrytype{reference} \AND
+						 				\iffieldundef{shorttitle} }
+			 	{\usebibmacro{byauthor}%
 				 \newunit\newblock%
 			 	 \usebibmacro{event+venue+date}%
 				 \newunit\newblock
@@ -299,8 +313,9 @@
 				 \usebibmacro{publisher+location+date}}
 			 	{}%
 			 \ifthenelse{	\ifentrytype{inbook} \OR
-			 				\ifentrytype{incollection} \OR
-			 				\ifentrytype{inproceedings} }
+						 				\ifentrytype{bookinbook} \OR
+						 				\ifentrytype{incollection} \OR
+						 				\ifentrytype{inproceedings} }
 			 	{\usebibmacro{in:}%
 			 	 \setunit{\addspace}
 				 \usebibmacro{maintitle+booktitle}%
@@ -323,17 +338,20 @@
 				 \newunit\newblock
 				 \printfield{version}%
 				 \newunit\newblock
-			 	 \usebibmacro{publisher+location+date}}
+			 	 \usebibmacro{publisher+location+date}%
+				 \setunit{\newblockpunct}\newblock
+				 \usebibmacro{isbn+doi+eprint+url}}
 			 	{}%
 			 %	For everything except articles
 			 \ifthenelse{	\ifentrytype{article} \OR
-			 				\ifentrytype{commentary} }
+			 							\ifentrytype{commentary} }
 				{}
 				{\newunit\newblock
 				 \usebibmacro{volume+part}%
 				 \newunit\newblock
 				 \usebibmacro{chapter+pages}}}
 			{\clearfield{series}%
+			 \clearfield{venue}%
 			 \clearname{editor}%
 			 \newunit\newblock
 			 \usebibmacro{in:}%
@@ -366,10 +384,10 @@
 			 \printfield{type}%
 			 \setunit{\addspace}
 			 \bibstring{under}%
-		  \fi
 		 \setunit{\addspace}
 		 \usebibmacro{related:init}%
-		 \usebibmacro{related}}
+		 \usebibmacro{related}%
+		 \fi}
 	 	{}}
 
 \newbibmacro*{cite:legal}{%
@@ -580,7 +598,8 @@
 \DeclareCiteCommand{\citejournal}[\boolfalse{citetracker}\boolfalse{pagetracker}]
 	{\usebibmacro{cite:init}}
 	{\iffieldundef{shortjournal}
-		{\usebibmacro{journal}}
+		{\clearfield{issuetitle}%
+		 \usebibmacro{journal}}
 		{\printfield[journal]{shortjournal}\isdot\addnbspace}}%
 	{\setunit{\multicitedelim}}
 	{}
@@ -591,6 +610,37 @@
 	{\setunit{\multicitedelim}}
 	{}
 
+\DeclareNameFormat{given-family}{%
+  \ifgiveninits
+    {\usebibmacro{name:given-family}
+      {\namepartfamily}
+      {\namepartgiveni}
+      {\namepartprefix}
+      {\namepartsuffix}}
+    {\usebibmacro{name:given-family}
+      {\namepartfamily}
+      {\namepartgiven}
+      {\namepartprefix}
+      {\namepartsuffix}}%
+  \usebibmacro{name:andothers}}
+
+\DeclareCiteCommand{\fullcite}
+  {\usebibmacro{prenote}}
+  {\usedriver
+     {\DeclareNameAlias{family-given/given-family}{given-family}}
+     {\thefield{entrytype}}}
+  {\multicitedelim}
+  {\usebibmacro{postnote}}
+
+\DeclareCiteCommand{\footfullcite}[\mkbibfootnote]
+  {\usebibmacro{prenote}}
+  {\usedriver
+     {\DeclareNameAlias{family-given/given-family}{given-family}}
+     {\thefield{entrytype}}%
+    	\ignorespaces\adddot}
+  {\multicitedelim}
+  {\usebibmacro{postnote}}
+
 % Prevent spurrious space by using a \setunit{\addspace} instead of a hard \space
 \renewcommand*{\multicitedelim}{\addsemicolon\setunit{\addspace}}
 
@@ -600,11 +650,13 @@
 \DeclareMultiCiteCommand{\smartcites}[\iffootnote\mkbibparens\mkbibfootnote]
   {\smartcite}{\multicitedelim}
 \DeclareMultiCiteCommand{\textcites}{\textcite}{\multicitedelim}
+\DeclareMultiCiteCommand{\fullcites}{\fullcite}{\multicitedelim}
+\DeclareMultiCiteCommand{\footfullcites}[\mkbibfootnote]{\footfullcite}{\multicitedelim}
 
 %	Définir les raccourcis de citation
 \let\citep=\parencite
 \let\citet=\textcite
 
-\DeclareMultiCiteCommand{\cites}{\cite}{\setunit{\multicitedelim}}
+%\DeclareMultiCiteCommand{\cites}{\cite}{\setunit{\multicitedelim}}
 
 \endinput

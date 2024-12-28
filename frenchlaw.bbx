@@ -1,33 +1,42 @@
-%%
-%%   This is file "frenchlaw.bbx", which is part of the "frenchlaw" package
-%%   Copyright 2009--2018: Fora VERN -- ienissei (at) gmail (dot) com
-%% 
-%%   This work may be distributed and/or modified under the conditions of the
-%%   LaTeX Project Public License, either version 1.3 of this license or, at your
-%%   option, any later version.
-%%
-%%   The latest version of the license can be found at:
-%%      http://www.latex-project.org/lppl.txt
-%%   and version 1.3 or later is part of all distributions of LaTeX, 2005/12/01 or later.
-%% 
-%%   This work has the LPPL maintenance status "author-maintained".
-%%   This work consists of the files listed in the README file.
-%%
+%
+%   This is file "frenchlaw.bbx", which is part of the "frenchlaw" package
+%   Copyright 2009--2025: Fora VERN -- ienissei (at) gmail (dot) com
+% 
+%   This work may be distributed and/or modified under the conditions of the
+%   LaTeX Project Public License, either version 1.3 of this license or, at your
+%   option, any later version.
+%
+%   The latest version of the license can be found at:
+%      http://www.latex-project.org/lppl.txt
+%   and version 1.3 or later is part of all distributions of LaTeX, 2005/12/01 or later.
+% 
+%   This work has the LPPL maintenance status "author-maintained".
+%   This work consists of the files listed in the README file.
+%
 
-%	WARNING: Please note that this is a BibLaTeX style file for "frenchlaw.cls"
+%	The associated documentation file <frenchlaw-bbx.tex> was produced from this code by simply stripping the double percent signs at the beginning of lines, transforming the code into a LaTeX file.
 
 
+%% \begin{noprint}
 \ProvidesFile{frenchlaw.bbx}%
 	[2014/09/30 v.0.9. Bibliography style for French legal documents]
+%% \end{noprint}
 
 %	TODO » Définir une option pour la langue latine, qui reprendrait la langue courante?
 %	Vérifier tous les \{\} (crochets vides) => Le \if est-il bien nécessaire partout? Possibilité de le supprimer en utilisant un \setunit*{} (étoilé) ??
 
 %	TODO » Simplifier au maximum en ajoutant des \ifcitation et \ifbibliography pour éviter de tout reprendre dans le .cbx, au moins pour les cas compliqués (e.g. postnote dans la jurisprudence)
 
-% #####	OPTIONS	#####
+% TODO > Avec \fullcites, \clearfield / \cleaarname semble affecter toutes les références… voir si on peut trouver autre chose que des \clear... en utilisant des conditionnels pour imprimer les champs quand il faut
 
-%	Create bibliography toggles
+% TODO > Problème avec les collections (+ proceedings?), John DOE (ed.). Éditeur (alors que ce devrait être une virgule)
+
+
+% =***======***======***======***======***======***======***======***======***======***=
+
+% #####	BIBLIOGRAPHY OPTIONS	#####
+
+%	Create boolean toggles
 \newtoggle{bbx:isbn}
 \newtoggle{bbx:url}
 \newtoggle{bbx:doi}
@@ -48,67 +57,37 @@
 	\settoggle{bbx:related}{#1}}
 \DeclareBibliographyOption{dashed}[true]{%
 	\settoggle{bbx:dashed}{#1}
-	\iftoggle{bbx:dashed}{\ExecuteBibliographyOptions{pagetracker}}{}}
+	\iftoggle{bbx:dashed}{\ExecuteBibliographyOptions{pagetracker}}{}%
+}
 
 %	Execute bibliography options
-\ExecuteBibliographyOptions{isbn,doi,eprint,url,related,dashed,%
-	sorting=nty,useeditor=true,usetranslator=false,maxnames=5,language=auto}
+\ExecuteBibliographyOptions{%
+	isbn,doi,eprint,url,related,dashed,%
+	sorting=nty,useeditor=true,usetranslator=false,maxnames=5,%
+	language=auto,autolang=hyphen}% langhook=extras
 \ExecuteBibliographyOptions[collection]{useeditor=false}
 \ExecuteBibliographyOptions[reference,proceedings]{useauthor=false,useeditor=false}
 
+
+% =***======***======***======***======***======***======***======***======***======***=
+
 % #####	LANGUAGE FILES	#####
 
+%	Load language files
 \DeclareLanguageMapping{french}{frenchlaw-fr}
 \DeclareLanguageMapping{english}{frenchlaw-en}
 \DeclareLanguageMapping{british}{frenchlaw-en}
 
-% #####	SORTING	#####
+% Toggle French smartof properly
+\settoggle{smartof}{false}
 
-%	Sort entries by {name/institution} + year + day + month + title
-%	TODO » Remplacer par \DeclareSortingTemplate
-\DeclareSortingTemplate{nty}{
-	\sort{\field{presort}}
-	\sort[final]{\field{sortkey}}
-	\sort{\field{sortname}
-		  \field{author}
-		  \field{editor}
-		  \field{translator}
-		  \field{institution}}
-	\sort{\field{collaborator}}
-	\sort{\field{type}}
-	\sort{\field{sorttitle}
-		  \field{title}}
-	\sort{\field{sortyear}
-		  \field{year}}
-	\sort{\field{month}}
-	\sort{\field{day}}
-	\sort{\field{volume}
-		  \literal{0}}
-}
 
-\DeclareSortingTemplate{shortauthor}{
-	\sort{\field{presort}}
-	\sort[final]{\field{sortkey}}
-	\sort{\field{labelname}
-		  \literal{ZZ}}
-	\sort{\field{sorttitle}
-		  \field{title}}
-	\sort{\field{sortyear}
-		  \field{year}}
-}
+% =***======***======***======***======***======***======***======***======***======***=
 
-\DeclareSortingTemplate{abbreviations}{
-	\sort{\field{presort}}
-	\sort[final]{\field{sortkey}}
-	\sort{\field{shortjournal}
-		  \field{shorttitle}}
-	\sort[direction=descending]{
-		\field{year}}
-	\sort{\field{journaltitle}
-		  \field{title}}
-}
+% #####	PRESENTATION RULES #####
 
-% #####	FIELD FORMATS	#####
+
+% ===== Field Formats	=====
 
 %	Define aliases for bibliography drivers
 \DeclareBibliographyAlias{review}{article}
@@ -143,6 +122,7 @@
 			{#1}}}
 \DeclareFieldFormat[thesis]{title}{\mkbibemph{#1}}
 \DeclareFieldFormat[review]{title}{#1}
+\DeclareFieldFormat[booklaunch]{title}{\mkbibquote{#1}}
 \DeclareFieldFormat[article]{title}{\mkbibquote{#1}}
 \DeclareFieldFormat[commentary]{title}{\mkbibquote{#1}}
 \DeclareFieldFormat[legal]{title}{#1}
@@ -151,9 +131,9 @@
 \DeclareFieldFormat{titleaddon}{#1}
 \DeclareFieldFormat{journaltitle}{\mkbibemph{#1}}
 \DeclareFieldFormat{shortjournal}{\mkbibemph{#1}\isdot}
-\DeclareFieldFormat[legislation]{shorttitle}{#1\isdot}%
+\DeclareFieldFormat[legislation]{shorttitle}{#1\isdot}
 
-\DeclareFieldFormat{url}{\\<\,\url{#1}>}
+\DeclareFieldFormat{url}{<\,\url{#1}>}
 
 % Define volume fields
 \DeclareFieldFormat*{volume}{%
@@ -167,15 +147,15 @@
 			{\bibstring{numbers}\addnbthinspace\mkcomprange{#1}}}
 		{#1\isdot}}
 % TODO » For adding a plural form, check with biber if the field contains a comma, then add a keyword or whatever
-\DeclareFieldFormat[legal,legislation,jurisdiction]{number}{%
-	\bibstring{number}\addnbthinspace#1}
 \DeclareFieldFormat[inreference]{number}{%
 	\addnbthinspace\mkcomprange{#1}}
+\DeclareFieldFormat[legal,legislation,jurisdiction]{number}{%
+	\bibstring{number}\addnbthinspace\MakeLowercase{\scshape#1}}
 
 % The <pages> field should only print the first page
 % Except in CV mode, for which we print the page span
 \DeclareFieldFormat[article,commentary,review]{pages}{%
-	\mkfirstpage*[\mkpageprefix]{#1}\psq}
+	\mkfirstpage*{\bibstring{pages}#1}\psq}
 
 \DeclareFieldFormat{noprefix}{%
 	\let\psq\relax%
@@ -186,7 +166,7 @@
 \DeclareRangeCommands*{\bibrangeslast}
 
 \newrobustcmd{\bibrangeslast}{%
-	\psq\addspace\bibstring{and}\addspace\mkpageprefix}%
+	\psq\addspace\bibstring{and}\addspace\bibstring{pages}}%
 \newrobustcmd{\sq}{\addnbspace\bibstring{sequens}\xspace}%
 
 \renewcommand{\bibrangessep}{%
@@ -199,11 +179,11 @@
 \setcounter{mincomprange}{1000}
 
 
-% #####	NAME FORMATS	#####
+% ===== Name Formats	=====
 
 %	Use French formatting for all last names (language independent)
-\protected\def\mkbibnamefamily#1{%
-    \textsc{\textnohyphenation{#1}}}%
+\iflanguage{french}
+	{\protected\def\mkbibnamefamily#1{\textsc{\textnohyphenation{#1}}}}
 
 % \renewbibmacro*{index:name}[5]{%
 %   \usebibmacro{index:entry}{#1}{%
@@ -213,6 +193,7 @@
 %   	\actualoperator%
 %   	\mkbibindexname{\textsc{#2}}{#3}{#4}{#5}}}
 
+% TODO Vérifier que le \textsc soit bien au bon endroit / indexe-t-on les prénoms aussi?
 \DeclareIndexNameFormat{default}{%
   \usebibmacro{index:name}
     {\bibindex}
@@ -257,18 +238,20 @@
 \DeclareNameAlias{editor}{family-given/given-family}
 \DeclareNameAlias{translator}{family-given/given-family}
 \DeclareNameAlias[commentary]{author}{commentator}
+\DeclareNameAlias{byeditor}{labelname}
 
 %\DeclareNameAlias[jurisdiction]{institution}{sortname}%	TODO	» Utilité?
 
 %	TODO » NameFormat given-family if bbx:related -- insérer dans une commande \DeclareNameFormat{author}
 % Utiliser \ifbibliography pour trier entre les auteurs alphabétiques et ceux dans l'ordre normal (?)
 
-% #####	PUNCTUATION	#####
+
+% ===== Punctuation Rules	=====
 
 %	Redefine punctuation
 \renewcommand*{\newunitpunct}{\addcomma\space}
 \renewcommand*{\newblockpunct}{\addperiod\space}
-\renewcommand*{\labelnamepunct}{\addperiod\space}
+\renewcommand*{\labelnamepunct}{\ifbibliography{\addperiod\space}{\addcomma\space}}% Add period when in bibliography, but add comma in fullcites
 \renewcommand*{\subtitlepunct}{\addcolon\space}
 \renewcommand*{\intitlepunct}{\addspace}
 \renewcommand*{\relatedpunct}{\addsemicolon\addspace}
@@ -278,45 +261,13 @@
 
 %	TODO » Create commands, e.g. for commas or colons
 
-% #####	VERTICAL ALIGNMENT	#####
 
-\setlength{\bibitemsep}{0pt}
-\setlength{\bibnamesep}{0pt}
-\setlength{\bibinitsep}{0pt}
-\setlength{\bibparsep}{0pt}
+% =***======***======***======***======***======***======***======***======***======***=
 
-%	TODO » Utilité ? Alignement vertical ?
-% \defbibheading{subbibliography}[\refname]{%
-% 	\setlength{\beforesecskip}{2\baselineskip}
-% 	\renewcommand*{\large}{\fontsize{14}{14.5}\selectfont}
-% 	\section*{#1}%
-% 	\if@twoside\markright{\MakeUppercase{#1}}\fi}
-
-% \defbibheading{subbibintoc}[\refname]{%
-% 	\setlength{\beforesecskip}{2\baselineskip}
-% 	\renewcommand*{\large}{\fontsize{14}{14.5}\selectfont}
-% 	\section*{#1}%
-% 	\addcontentsline{toc}{section}{#1}%
-% 	\if@twoside\markright{\MakeUppercase{#1}}\fi}
+% #####	BIBLIOGRAPHY ENVIRONMENTS #####
 
 
-% #####	CITATION PROCESSORS	#####
-
-%	Set up a citation command for cross-references
-% TODO: Supprime aussi le nom de la crossref s'il est différent du nom de l'auteur => Utilsier un authortype si besoin (et intégrer ça dans le code)
-\DeclareCiteCommand{\bbx@crossref}
-	{}
-	{\ifthenelse{	\ifnameundef{labelname} \OR
-					\ifnamesequal{labelname}{author} \OR
-					\ifnamesequal{labelname}{editor} }
-		{\printfield[title]{labeltitle}%
-		 \newunit\newblock
-		 \printnames[labelname]{shortauthor}}
-		{\printnames[labelname]{labelname}%
-		 \newunit\newblock
-		 \printfield[title]{labeltitle}}}
-	{}
-	{}
+% ===== Environments & Checks =====
 
 \defbibenvironment{shortauthor}
 	{\list
@@ -376,9 +327,105 @@
 					{\strfield{shortjournal}=\strfield{journaltitle}}}}}}
 
 
-% #####	BIBER PROCESSORS	#####
+% ===== Entry Sorting	=====
+
+%	Sort entries by {name/institution} + year + day + month + title for generic bibliographies
+\DeclareSortingTemplate{nty}{
+	\sort{\field{presort}}
+	\sort[final]{\field{sortkey}}
+	\sort{\field{sortname}
+		  \field{author}
+		  \field{editor}
+		  \field{translator}
+		  \field{institution}}
+	\sort{\field{collaborator}}
+	\sort{\field{type}}
+	\sort{\field{sorttitle}
+		  \field{title}}
+	\sort{\field{sortyear}
+		  \field{year}}
+	\sort{\field{month}}
+	\sort{\field{day}}
+	\sort{\field{volume}
+		  \literal{0}}
+}
+
+% Sort entries by shortauthor for the shortauthor environemnt
+\DeclareSortingTemplate{shortauthor}{
+	\sort{\field{presort}}
+	\sort[final]{\field{sortkey}}
+	\sort{\field{labelname}
+		  \literal{ZZ}}
+	\sort{\field{sorttitle}
+		  \field{title}}
+	\sort{\field{sortyear}
+		  \field{year}}
+}
+
+% Sort entries by shortjournal for the abbreviations environent
+\DeclareSortingTemplate{abbreviations}{
+	\sort{\field{presort}}
+	\sort[final]{\field{sortkey}}
+	\sort{\field{shortjournal}
+		  \field{shorttitle}}
+	\sort[direction=descending]{
+		\field{year}}
+	\sort{\field{journaltitle}
+		  \field{title}}
+}
+
+
+
+% ===== Vertical Alignment	=====
+
+\setlength{\bibitemsep}{0pt}
+\setlength{\bibnamesep}{0pt}
+\setlength{\bibinitsep}{0pt}
+\setlength{\bibparsep}{0pt}
+
+%	TODO » Utilité ? Alignement vertical ?
+% \defbibheading{subbibliography}[\refname]{%
+% 	\setlength{\beforesecskip}{2\baselineskip}
+% 	\renewcommand*{\large}{\fontsize{14}{14.5}\selectfont}
+% 	\section*{#1}%
+% 	\if@twoside\markright{\MakeUppercase{#1}}\fi}
+
+% \defbibheading{subbibintoc}[\refname]{%
+% 	\setlength{\beforesecskip}{2\baselineskip}
+% 	\renewcommand*{\large}{\fontsize{14}{14.5}\selectfont}
+% 	\section*{#1}%
+% 	\addcontentsline{toc}{section}{#1}%
+% 	\if@twoside\markright{\MakeUppercase{#1}}\fi}
+
+
+% =***======***======***======***======***======***======***======***======***======***=
+
+% #####	CITATION PROCESSORS	#####
+
+%	Set up a citation command for cross-references
+% Fonction ??
+% TODO: Supprime aussi le nom de la crossref s'il est différent du nom de l'auteur => Utilsier un authortype si besoin (et intégrer ça dans le code)
+\DeclareCiteCommand{\bbx@crossref}
+	{}
+	{\ifthenelse{	\ifnameundef{labelname} \OR
+					\ifnamesequal{labelname}{author} \OR
+					\ifnamesequal{labelname}{editor} }
+		{\printfield[title]{labeltitle}%
+		 \setunit{\addspace}%
+		 \printnames[labelname]{shortauthor}}
+		{\printnames[labelname]{labelname}%
+		 \newunit\newblock
+		 \printfield[title]{labeltitle}}}
+	{}
+	{}
+
+
+% =***======***======***======***======***======***======***======***======***======***=
+
+% #####	BIBER PRE-PROCESSOR	#####
 
 % Ajouter un remplacement de " (" par une espace isnécable (?)
+% TODO > Ajouter une modifiation pour hyphenation english=american et latin=??
 
 % Never inherit shorttitle fields
 \DeclareDataInheritance{*}{*}
@@ -396,6 +443,9 @@
 
 %	Abbreviate first names that start with a sequence of consonants (Philip > Ph.)
 % Format all names in .bib file as "Last, First and Last, First", as the comma is used to locate the first name
+% TODO > Dans le code du prénom, essayer de parser les initiales des seconds prénoms (juste une lettre, juste avnat le groupe \Z etc.) et créer une option qui affiche soit la première initiale correctement abrégée, soit toutes les initiales du prénom (espace après la première initiale si plusieurs consonnes), peut-être avec un \delim... qui sera redéfini en \@gobble au besoin, pour supprimer les seconds prénoms. Et à appliquer en fonction de la langue
+% Et option avec le prénom complet + initiale des prénoms suivants == refédinir ainsi le nom principal et faire comme précédemment pour les initiales
+% OU: utiliser le même stratagème avec un truc un peu plus complexe, du genre: \first{Thomas} \second{Henry}, qui s'affichent ou non selon le cas ++ la même chose en initiales, et le nameformat choisit ce quo'n affiche dans tout ça
 \DeclareStyleSourcemap{%
 	\maps[datatype=bibtex]{%
 		% Replace the initial of people's first names with the first consonnants of the name, as per the French typographic rules. Including composite given names (Jean-Christophe)
@@ -411,12 +461,18 @@
 			% Old system (pre-2020):
 				% match={\regexp{(,\s|-)\b(Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](l|r))}},%
 				% replace={\regexp{$1\{\\relax\{\}$2\}}}]
+		\if@french
 		\map[foreach=\blx@csv@datamodel@names,overwrite=true]{%
-			\step[fieldsource=\regexp{$MAPLOOP},%
-				match=\regexp{(\A|\s+and\s+)([a-z'\s]+)?\s*(.+?)\,\s+(Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](?:l|r)|\w)(.+?)(?:(\-(?:Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](?:l|r)|(?:À|Â|Ä|Ç|É|È|Ê|(?:À|Â|Ä|Ç|É|È|Ê|Ë|Î|Ï|Ô|Ö|Ù|Û|Ü|Ÿ|Æ|Œ)|Ë|Î|Ï|Ô|Ö|Ù|Û|Ü|Ÿ|Æ|Œ)|\w))(.+?))?(?=\Z|\s+and\s+)},
-				replace=\regexp{$1 family=$3, prefix=$2\\relax, given=$4$5$6$7, given-i=\{$4$6\}}]
-				%match=\regexp{(\A|\s+and\s+)([a-z'\s]+)?\s+(.+?)\,\s+(Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](?:l|r)|\{(?:À|Â|Ä|Ç|É|È|Ê|Ë|Î|Ï|Ô|Ö|Ù|Û|Ü|Ÿ|Æ|Œ)\}|\w)(.+?)(?:(\-(?:Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](?:l|r)|\{(?:À|Â|Ä|Ç|É|È|Ê|Ë|Î|Ï|Ô|Ö|Ù|Û|Ü|Ÿ|Æ|Œ)\}|\w))(.+?))?(?=\Z|\s+and\s+)},
-		}
+		    \step[fieldsource=\regexp{$MAPLOOP},%
+		        match=\regexp{(\A|\s+and\s+)([a-z'\s]+)?\s*(.+?)\,\s+(Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](?:l|r)|(?:À|Â|Ä|Ç|É|È|Ê|Ë|Î|Ï|Ô|Ö|Ù|Û|Ü|Ÿ|Æ|Œ)|\w)(.+?)(?:(\-(?:Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](?:l|r)|(?:À|Â|Ä|Ç|É|È|Ê|Ë|Î|Ï|Ô|Ö|Ù|Û|Ü|Ÿ|Æ|Œ)|\w))(.+?))?(?=\Z|\s+and\s+)},
+		        replace=\regexp{$1 family=$3, prefix=$2, given=$4$5$6$7, given-i=\{$4$6\}}]
+		    \step[fieldsource=\regexp{$MAPLOOP},
+		        match=\regexp{(prefix=\,)},
+		        replace=\regexp{}]
+		    % Essayer de rajouter un \\bibnamedelima après le texte du préfixsi non vide et non apostrophe
+		    % Essayer de gérer les initiales (option )
+    }
+    \fi
 		% Replace dots and spaces in abbreviations with the proper macros
 		\map[overwrite=true]{
 			\step[fieldsource=shortjournal,%
@@ -456,6 +512,9 @@
 			\pertype{collection}
 			\pertype{proceedings}
 			\pertype{reference}
+			\pertype{incollection}
+			\pertype{inproceedings}
+			\pertype{inreference}
 			\step[fieldset=editortype, fieldvalue={compiler}]
 		}
 		% 	Always print collected works (CW) first in bibliography
@@ -558,6 +617,8 @@
 % match=\regexp{(\A|\s+and\s+)([a-z'\s]+)?\s*(.+?)\,\s+(Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](?:l|r)|\w(?=\w+-))([\w\s]+)(?:(-)(Chr?|Th|Ph|[B-DF-HJ-NP-TV-XZ](?:l|r)|\w)([\w\s]+))?(?=\Z|\s+and\s+)},
 
 
+% =***======***======***======***======***======***======***======***======***======***=
+
 % #####	BIBLIOGRAPHY DRIVERS	#####
 
 % Noter dans la doc quel est le type de chaque champ, e.g. <institution> est une liste, donc pour les cotutelles, séparer par "and"
@@ -575,15 +636,17 @@
 		\usebibmacro{author/translator+others}\fi%
 	\setunit{\labelnamepunct}\newblock
 	\ifentrytype{review}
-		{\printtext{\bibstring{reviewof}}
-		 \setunit{\addcolon\addspace}}
+		{\printtext{\bibstring{reviewof}}%
+		 \addcolon\addspace}
 		{}%
 	\usebibmacro{title}%
 	% \newunit
 	% \printlist{language}%
 	\ifdefined\bpl@osurname
-		\setunit*{\nopunct}%
-		\usebibmacro{author/translator+others}\fi%
+		\ifnum\value{nonplauthors}>0
+			\setunit{\nopunct}
+			\usebibmacro{author/translator+others}%
+	\fi\fi
 	\newunit\newblock
 	\usebibmacro{byauthor}%
 	% \newunit\newblock
@@ -616,10 +679,11 @@
 	\usebibmacro{maintitle+title}%
 	% \newunit%
 	% \printlist{language}%
-	% In CV mode, additional author names come after the title
 	\ifdefined\bpl@osurname
-		\setunit*{\nopunct}%
-		\usebibmacro{author/editor+others/translator+others}\fi%
+		\ifnum\value{nonplauthors}>0
+			\setunit{\nopunct}
+			\usebibmacro{author/translator+others}%
+	\fi\fi
 	\newunit\newblock
 	\usebibmacro{byauthor}%
 	\setunit{\bibpagespunct}\newblock
@@ -660,8 +724,10 @@
 	% \newunit%
 	% \printlist{language}%
 	\ifdefined\bpl@osurname
-		\setunit*{\nopunct}%
-		\usebibmacro{author/editor+others/translator+others}\fi%
+		\ifnum\value{nonplauthors}>0
+			\setunit{\nopunct}
+			\usebibmacro{author/translator+others}%
+	\fi\fi
 	\newunit\newblock
 	\usebibmacro{byauthor}%
 	\setunit{\bibpagespunct}\newblock
@@ -702,10 +768,12 @@
 	% \newunit
 	% \printlist{language}%
 	\ifdefined\bpl@osurname
-		\setunit*{\nopunct}%
-		\usebibmacro{author/editor+others/translator+others}\fi%
+		\ifnum\value{nonplauthors}>0
+			\setunit{\nopunct}
+			\usebibmacro{author/translator+others}%
+	\fi\fi
 	\newunit\newblock
-	\usebibmacro{event+venue+date}%%
+	\usebibmacro{event+venue+date}%
 	%\setunit{\newblockpunct}\newblock
 	% \usebibmacro{edition}%
 	\newunit\newblock% [= Instead of printing the edition]
@@ -743,8 +811,10 @@
 	% \newunit%
 	% \printlist{language}%
 	\ifdefined\bpl@osurname
-		\setunit*{\nopunct}%
-		\usebibmacro{author/editor+others/translator+others}\fi%
+		\ifnum\value{nonplauthors}>0
+			\setunit{\nopunct}
+			\usebibmacro{author/translator+others}%
+	\fi\fi
 	\newunit\newblock
 	\usebibmacro{byauthor}%
 	\newunit\newblock
@@ -787,8 +857,10 @@
 	% \newunit
 	% \printlist{language}%
 	\ifdefined\bpl@osurname
-		\setunit*{\nopunct}%
-		\usebibmacro{author/translator+others}\fi%
+		\ifnum\value{nonplauthors}>0
+			\setunit{\nopunct}
+			\usebibmacro{author/translator+others}%
+	\fi\fi
 	\newunit\newblock
 	\usebibmacro{byauthor}%
 	\iffieldundef{crossref}
@@ -802,6 +874,8 @@
 		 \usebibmacro{byeditor+others}%
 		 % \newunit\newblock
 		 % \printfield{note}%
+		 \setunit{\newblockpunct}\newblock
+		 \printfield{booktitleaddon}%
 		 \setunit{\newblockpunct}\newblock
 		 \usebibmacro{publisher+location+date}%
 		 \setunit{\newblockpunct}\newblock
@@ -838,8 +912,10 @@
 	% \newunit
 	% \printlist{language}%
 	\ifdefined\bpl@osurname
-		\setunit*{\nopunct}%
-		\usebibmacro{author/translator+others}\fi%
+		\ifnum\value{nonplauthors}>0
+			\setunit{\nopunct}
+			\usebibmacro{author/translator+others}%
+	\fi\fi
 	\newunit\newblock
 	\usebibmacro{byauthor}%
 	\iffieldundef{crossref}%
@@ -853,6 +929,8 @@
 		 \usebibmacro{byeditor+others}%
 		 % \newunit\newblock
 		 % \printfield{note}%
+		 \setunit{\newblockpunct}\newblock
+		 \printfield{booktitleaddon}%
 		 \setunit{\newblockpunct}\newblock
 		 \usebibmacro{publisher+location+date}}
 		{\newunit\newblock
@@ -889,8 +967,10 @@
 	% \newunit
 	% \printlist{language}%
 	\ifdefined\bpl@osurname
-		\setunit*{\nopunct}%
-		\usebibmacro{author/translator+others}\fi%
+		\ifnum\value{nonplauthors}>0
+			\setunit{\nopunct}
+			\usebibmacro{author/translator+others}%
+	\fi\fi
 	\newunit\newblock
 	\usebibmacro{byauthor}%
 	\iffieldundef{crossref}%
@@ -905,6 +985,8 @@
 		 \usebibmacro{byeditor+others}%
 		 % \newunit\newblock
 		 % \printfield{note}%
+		 \setunit{\newblockpunct}\newblock
+		 \printfield{booktitleaddon}%
 		 \setunit{\newblockpunct}\newblock
 		 \usebibmacro{publisher+location+date}}
 		{\newunit\newblock
@@ -936,7 +1018,9 @@
 	\ifdefined\bpl@osurname\else
 		\usebibmacro{author/translator+others}\fi%
 	\setunit{\labelnamepunct}\newblock
-	\ifnameundef{author}
+	%		Apply different style to periodical entries (Répertoire Dalloz, Jurisclasseur) and to texts from a reference work
+	\iffieldundef{journal}%
+		% Periodical entries (Répertoire Dalloz, Jurisclasseur)
 		{\printfield{title}%
 		 % \newunit
 		 % \printlist{language}%
@@ -947,14 +1031,16 @@
 			 \usebibmacro{in:}%
 			 \usebibmacro{maintitle+booktitle}%
 			 \ifdefined\bpl@osurname
-				\setunit*{\nopunct}%
-				\usebibmacro{author/translator+others}\fi%
+				\ifnum\value{nonplauthors}>0
+					\setunit{\nopunct}
+					\usebibmacro{author/translator+others}%
+			 \fi\fi
 			 \newunit\newblock
 			 \usebibmacro{bybookauthor}%
 			 \setunit{\newblockpunct}\newblock
 			 \usebibmacro{edition}%
 			 \usebibmacro{byeditor+others}%
-			 % \newunit\newblock
+			 % \newunit\newblock\
 			 % \printfield{note}%
 			 \setunit{\newblockpunct}\newblock
 			 \usebibmacro{publisher+location+date}}
@@ -978,6 +1064,7 @@
 			 \usebibmacro{related:init}%
 			 \usebibmacro{related}}
 			{}}
+		% Extracts from reference works
 		{\printfield{title}%
 		 \setunit{\nopunct\addspace}
 		 \printtext[parens]{\usebibmacro{date}}%
@@ -1007,9 +1094,6 @@
 	\usebibmacro{title}%
 	% \newunit
 	% \printlist{language}%
-	\ifdefined\bpl@osurname
-		\setunit*{\nopunct}%
-		\usebibmacro{author}\fi%
 	\newunit\newblock
 	\iflistundef{publisher}
 		{\printfield{type}%
@@ -1041,9 +1125,7 @@
 	\usebibmacro{bibindex}%
 	\usebibmacro{begentry}%
 	% In CV mode, additional author names come after the title
-	\ifdefined\bpl@osurname
-		\usebibmacro{bpl:marginyear}%
-	\else
+	\ifdefined\bpl@osurname\else
 		\usebibmacro{author}%
 		\setunit{\labelnamepunct}\newblock
 	\fi%
@@ -1051,13 +1133,49 @@
 	% \newunit
 	% \printlist{language}%
 	\ifdefined\bpl@osurname
-		\setunit*{\nopunct}%
-		\usebibmacro{author}\fi%
+		\ifnum\value{nonplauthors}>0
+			\setunit{\nopunct}
+			\usebibmacro{author/translator+others}%
+	\fi\fi
 	\newunit\newblock
 	\usebibmacro{event+venue+date}%
 	\newunit\newblock
 	\usebibmacro{byeditor+others}%
-	\setunit{\nopunct}%
+	\setunit{\newblockpunct}%
+	\printfield{note}%
+	\setunit{\newblockpunct}\newblock
+	\usebibmacro{publisher+location+date}%
+	\setunit{\newblockpunct}\newblock
+	\usebibmacro{isbn+doi+eprint+url}%
+	\iftoggle{bbx:related}
+		{\setunit{\relatedpunct}\newblock
+		 \usebibmacro{related:init}%
+		 \usebibmacro{related}}
+	{}%
+	\usebibmacro{finentry}}
+
+%	Define a driver for <booklaunch> entries
+\DeclareBibliographyDriver{booklaunch}{%
+	\usebibmacro{bibindex}%
+	\usebibmacro{begentry}%
+	% In CV mode, additional author names come after the title
+	\ifdefined\bpl@osurname\else
+		\usebibmacro{author}%
+		\setunit{\labelnamepunct}\newblock
+	\fi%
+	\usebibmacro{title}%
+	% \newunit
+	% \printlist{language}%
+	\ifdefined\bpl@osurname
+		\ifnum\value{nonplauthors}>0
+			\setunit{\nopunct}
+			\usebibmacro{author/translator+others}%
+	\fi\fi
+	\newunit\newblock
+	\usebibmacro{event+venue+date}%
+	\newunit\newblock
+	\usebibmacro{byeditor+others}%
+	\setunit{\newblockpunct}%
 	\printfield{note}%
 	\setunit{\newblockpunct}\newblock
 	\usebibmacro{publisher+location+date}%
@@ -1082,8 +1200,10 @@
 	% \newunit
 	% \printlist{language}%
 	\ifdefined\bpl@osurname
-		\setunit*{\nopunct}%
-		\usebibmacro{author/editor+others/translator+others}\fi%
+		\ifnum\value{nonplauthors}>0
+			\setunit{\nopunct}
+			\usebibmacro{author/translator+others}%
+	\fi\fi
 	\newunit\newblock
 	\usebibmacro{byauthor}%
 	\newunit\newblock
@@ -1094,7 +1214,7 @@
 	\printfield{type}%
 	\newunit
 	\printfield{version}%
-	\newunit\newblock
+	\setunit{\newblockpunct}
 	\printfield{note}%
 	\setunit{\newblockpunct}\newblock
 	\usebibmacro{publisher+location+date}%
@@ -1162,6 +1282,8 @@
 	\usebibmacro{finentry}}
 
 %	Define a driveer for <legislation> entries
+% TODO » British acts + Find a way to add which country's code it is when writing for a different audience (different entries? biber overriding?)
+% TODO > utiliser pagination pour insérer art., §, s., etc. -- si prenote est vide --
 \DeclareBibliographyDriver{legislation}{%
 	\usebibmacro{bibindex}%
 	\usebibmacro{begentry}%
@@ -1274,13 +1396,13 @@
 	\usebibmacro{cite:postnote}%
 	% Primary citations and references print the series and commentaries
 	\iftoggle{bbx:related}
-		{\iffieldundef{series}
-			{}
-			{\ifkeyword{UK}
-				{\setunit{\addcomma\addspace}\newblock}%
+		{\ifkeyword{UK}
+				{\setunit{\addcomma\addspace}\newblock}
 				{\setunit{\addcolon\addspace}\newblock}%
-			 \printfield{series}%
-			 \setunit{\relateddelim}\newblock}%
+		 \iffieldundef{series}
+			{}
+			{\printfield{series}%
+			 \setunit*{\relateddelim}\newblock}%
 		 \usebibmacro{related:init}%
 		 \usebibmacro{related}}
 		{}%
@@ -1294,31 +1416,45 @@
 		% Long citation for stand-alone references (in citations or bibliography)
 		{\ifdefined\bpl@osurname
 			\usebibmacro{bpl:marginyear}%
+			\printfield[plain]{title}%
+			\setunit*{\addcolon\addspace}\newblock
+			\printfield[title]{titleaddon}%
+			\addhighpenspace%
+			\mkbibparens{\printfield{type}\unspace}%
+			\if@british\iffieldundef{origtitle}
+				{}
+				{\setunit{\addspace}
+				 \printfield{origtitle}}%
+			\fi
 		 \else
 			\usebibmacro{author}%
 			\setunit{\labelnamepunct}\newblock
+		  \usebibmacro{title}%
 		 \fi
-		 \usebibmacro{title}%
 		 % \ifdefined\bpl@osurname
 			% \setunit*{\nopunct}%
 			% \usebibmacro{author}\fi%
 		 \newunit\newblock
 		 \usebibmacro{journal+issue+date}%
 		 \ifdefined\bpl@osurname\else
-			\newunit\newblock
-			\printfield{type}%
-			\setunit{\addspace}
-			\bibstring{under}%
-			\setunit{\addspace}
-			\settoggle{bbx:related}{false}%
-			\usebibmacro{related:init}%
-			\usebibmacro{related}
-		 \fi}
+			 \newunit\newblock
+			 \printfield{type}%
+			 \setunit{\addspace}
+			 \bibstring{under}%
+			 \setunit{\addspace}
+				\settoggle{bbx:related}{false}%
+				\usebibmacro{related:init}%
+				\usebibmacro{related}
+			\fi}
 		% Short citation, after the case citation (in citations or bibliography)
 		%	TODO » Inverser l'ordre: Journal + Type + Author (ne pas utiliser Title)
 		{\ifdefined\bpl@osurname
-			\usebibmacro{bplmarginyear}%
-			\usebibmacro{title}%
+			\usebibmacro{bpl:marginyear}%
+			\printfield[plain]{title}%
+			\setunit*{\addcolon\addspace}\newblock
+			\printfield[title]{titleaddon}%
+			\addhighpenspace%
+			\mkbibparens{\printfield{type}\unspace}%
 		 \else
 			\printfield{type}%
 			% Don't allow line breaks between "n. AUTHOR" in footnotes -- be a bit more tolerant in bibliographies
@@ -1333,6 +1469,11 @@
 	\usebibmacro{pubstate+addendum}%
 	\newunit\newblock
 	\usebibmacro{isbn+doi+eprint+url}
+	\ifdefined\bpl@osurname
+		\settoggle{bbx:related}{false}%
+		\usebibmacro{related:init}%
+		\usebibmacro{related}%
+	\fi%
 	\usebibmacro{finentry}}
 
 %	Define a driver for <shortjournal> abreviations
@@ -1369,8 +1510,7 @@
 	\setunit{\addspace}}
 
 \newbibmacro*{see:}{%
-	\bibstring{see}%
-	\setunit{\addspace}}
+	\bibstring{see}\space}
 
 \newbibmacro*{relax:}{%
 	\bibstring{relax}%
@@ -1379,10 +1519,10 @@
 %	Create a macro for collection/proceedings editors
 \newbibmacro*{compiler}{%
 	\ifthenelse{	\iffieldequalstr{editortype}{compiler}\AND\NOT
-					\ifnameundef{editor}}
+								\ifnameundef{editor}}
 		{\printnames[labelname]{editor}%
 		 \clearname{editor}
-		 \setunit{\addnbspace}
+		 \setunit{\addspace\nolinebreak[3]}
 		 %	TODO » Ne marche pas, toujours singulier
 		 \ifthenelse{	\value{editor}=1 }
 			{\printtext[parens]{\bibstring{compiler}}}
@@ -1431,6 +1571,13 @@
 		 \usebibmacro{maintitle}}}
 
 \newbibmacro*{maintitle+booktitle}{%
+	\ifdefined\bpl@osurname
+		\ifthenelse{ \ifentrytype{incollection} \OR
+								 \ifentrytype{inproceedings} }
+			{}
+			{\usebibmacro{bpl:marginyear}%
+			 \setunit{\addspace}}%
+	\fi
 	\iffieldsequal{maintitle}{booktitle}
 		{\clearfield{maintitle}%
 		 \clearfield{mainsubtitle}%
@@ -1444,6 +1591,9 @@
 	\usebibmacro{compiler}}
 
 \renewbibmacro*{title}{%
+	\ifdefined\bpl@osurname
+	\usebibmacro{bpl:marginyear}%
+	\fi
 	\iffieldundef{title}
 		{}
 		{\printtext[title]{%
@@ -1453,7 +1603,14 @@
 		 \ifentrytype{commentary}
 			{\newunit\newblock}
 			{\setunit{\newblockpunct}}}%
-	\printfield{titleaddon}}
+	\printfield{titleaddon}%
+	\ifdefined\bpl@osurname
+		\if@british\iffieldundef{origtitle}
+			{}
+			{\setunit{\nopunct\addspace}
+			 \printfield{origtitle}%
+			 \addcomma\addspace}%
+		\fi\fi}
 
 \renewbibmacro*{booktitle}{%
 	\iffieldundef{booktitle}
@@ -1462,12 +1619,18 @@
 			\printfield[titlecase]{booktitle}%
 			\setunit{\subtitlepunct}%
 			\printfield[titlecase]{booksubtitle}}%
-		 \setunit{\newblockpunct}}%
-	\printfield{booktitleaddon}}
+		 \setunit{\newblockpunct}}}
 
 %	Create a macro for journal titles + citation in French and English
 %	TODO » Vérifier et corriger le bug quand un titre d'article (ou ouvrage?) se termine par un ... (et autres signes?). Ajouter un \isdot (?) ou préciser d'ajouter \@ dans le fichier .bib
 \newbibmacro*{journal+issue+date}{%
+	% When writing in English,  use full journal name instead of abbreviation
+	%	TODO Improve… test whether english laguage + paper NOT in English
+	\if@french\else
+		\iffieldequalstr{langid}{french}
+			{\clearfield{shortjournal}}
+			{}%
+	\fi
 	\iffieldequalstr{langid}{english}
 		%	For english language journals, print volume first
 		{\printfield[plain]{volume}%
@@ -1496,10 +1659,11 @@
 			{\newunit
 			 \printfield[plain]{part}%
 			 \isdot\newunit}%
-		 \iffieldundef{number}
-		 	{\printfield[noprefix]{pages}}
-		 	{\printfield[plain]{number}}}
-		%	For entries that are either not in French or have no <part> field
+			\iffieldundef{number}
+			 	{\printfield[noprefix]{pages}}
+			 	{\printfield[plain]{number}}}
+	% End of the specifically French part
+	%	For entries that are either not in French or have no <part> field
 		{\ifthenelse{	\iffieldundef{number} \AND
 						\iffieldundef{volume} \AND
 						\iffieldundef{month} }
@@ -1515,41 +1679,53 @@
 			 \clearfield{issue}}
 			%	If a <volume>, <number> or <month> is specified
 			{\ifthenelse{	\iffieldequalstr{langid}{english} \AND\NOT
-							\iffieldundef{volume} }
+								\iffieldundef{volume} }
+				% TODO > prévoir quelque chose pour le cas où l'année et le volume sont identiques (cf. styles de citation)
 				%	For english language journals, print date at the end
 				% Ex: 123 Harv. L.J. 12 (2015)
 				{\setunit{\nopunct\addabbrvspace}
 				 \printfield[noprefix]{pages}%
 				 \ifthenelse{	\iffieldundef{year} \AND
-								\iffieldundef{number} \AND
-								\iffieldundef{issue} }
+											\iffieldundef{number} \AND
+											\iffieldundef{issue} }
 					{}
-					{\setunit{\addspace}
-					 \printtext[parens]{%
-						\usebibmacro{date}%
-						\newunit
-						\printfield{number}%
-						\newunit
-						\usebibmacro{issue}}}}
-				%	For all other languages, use verbose style reference
-				% Ex: Gaz. Pal., 5 janv. 2015, n°123, p. 123
-				% --- Arch. phil. dr., 2015/4, n°123, p. 123
-				% --- Past and Present, 2015, n°123, p. 123
+					{\iffieldundef{pages}
+						{\setunit*{\addspace}
+						 \printtext[parens]{%
+							\usebibmacro{date}}%
+						 \newunit
+						 \printfield{number}}
+						{\setunit*{\addspace}
+						 \printtext[parens]{%
+							\usebibmacro{date}%
+							\iffieldundef{number}
+								{}
+								{/\printfield[plain]{number}}}}}%
+					 \newunit
+					 \usebibmacro{issue}}
+					%	For all other languages, use verbose style reference
+					% Ex: Gaz. Pal., 5 janv. 2015, n°123, p. 123
+					% --- Arch. phil. dr., 2015/4, n°123, p. 123
+					% --- Past and Present, 2015, n°123, p. 123
 				{\usebibmacro{date}%
 				 \newunit
 				 \printfield{volume}%
 				 \newunit
 				 \ifthenelse{	\iffieldundef{pages} \AND
-								\iffieldundef{url} \AND
-								\iffieldundef{pubstate} }
-				 	{\printfield[plain]{number}}%
-				 	{\printfield{number}}
-				 \iffieldundef{issue}
-				 	{}
-					{\setunit{\addspace}
-					 \printtext[parens]{\usebibmacro{issue}}}%
+											\iffieldundef{url} \AND
+											\iffieldundef{pubstate} }
+					{\printfield[plain]{number}}%
+					{\printfield{number}}
+				 \ifthenelse{	\iffieldundef{issuetitle} \AND \ifnameundef{editor}	}
+					 {}
+					{\setunit{\addcolon\addspace}
+					 \usebibmacro{issue}%
+					 \setunit{\addcomma\addspace}
+					 \usebibmacro{byeditor}}%
 				 \newunit\newblock
-				 \usebibmacro{pages}}}}%
+				 \printfield{pages}}}}%
+	\newunit
+	\printfield{doi}
 	\newunit
 	\printfield{eid}}
 
@@ -1562,8 +1738,12 @@
 					\iffieldundef{eventmonth} \OR
 					\iffieldundef{eventday} }
 		{}
-		{\iffieldundef{eventendday}
-			{\bibstring{fromdate}}
+		{\midsentence%
+		 \iffieldundef{eventendday}
+			{\ifentrytype{booklaunch}
+				{\newunit
+				 \bibstring{ondate}}
+				{\bibstring{fromdate}}}
 			{\bibstring{fromdates}}%
 		 \setunit{\addspace}%
 		 \printeventdate}
@@ -1590,7 +1770,7 @@
 	\usebibmacro{date}%
 	\iffieldundef{series}
 		{}
-		{\setunit{\addspace}
+		{\nopunct\setunit{\addspace}
 		 \usebibmacro{series+number}}}
 
 \newbibmacro*{organization}{%
@@ -1779,31 +1959,10 @@
 	 			{\ifthenelse{	\ifnameundef{savededitor} \AND
 				 				\ifnamesequal{editor}{savededitor}	}
 	 					{\clearname{editor}}
-	 					{}}
+	 					{}}%
 	 			{\ifnamesequal{author}{savedauthor}
 	 				{\clearname{author}}
 	 				{}}%
-	 		 \ifthenelse{	\ifentrytype{article} \AND
-	 		 				\iffieldsequal{journaltitle}{savedjournaltitle} \AND
-	 		 				\iffieldsequal{title}{savedtitle} }
-	 		 	{\iffieldequalstr{langid}{english}
-	 		 		{}
-	 		 		{\clearfield{journaltitle}%
-	 		 		 \clearfield{shortjournal}}%
-	 		 	 \ifthenelse{	\iffieldsequal{day}{savedday} \AND
-	 		 	 				\iffieldsequal{month}{savedmonth} \AND
-	 		 	 				\iffieldsequal{year}{savedyear} }
-	 		 	 	{\clearfield{year}%
-	 		 	 	 \clearfield{month}%
-	 		 	 	 \clearfield{year}}
-	 		 	 	{}%
-	 		 	 \iffieldsequal{number}{savednumber}
-	 		 	 	{\clearfield{number}}
-	 		 	 	{}%
-	 		 	 \iffieldsequal{volume}{savedvolume}
-	 		 	 	{\clearfield{volume}}
-	 		 	 	{}}
-	 		 	{}%
 	 		 \iffieldsequal{title}{savedtitle}
 	 		 	{\clearfield{title}}
 	 		 	{}%

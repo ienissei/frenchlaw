@@ -1,0 +1,18 @@
+
+(define-location-class "arabic-page-numbers" ("arabic-numbers") :min-range-length 1)
+(markup-range :sep "--")
+
+;;; (markup-locclass-list :open "\dotfill " :sep ", ")
+
+;;; (define-location-class-order (
+;;; 	"arabic-page-numbers"
+;;; 	"see"
+;;; 	"seealso"))
+
+(define-attributes (("note")))
+(markup-locref :open "\note{\hyperpage{" :close "}}" :attr "note")
+
+(define-attributes (("subXindex")))
+(markup-locref :open "\subXindex{\hyperpage{" :close "}}" :attr "subXindex")
+
+(markup-locref :open "\hyperpage{" :close "}" :attr "default")

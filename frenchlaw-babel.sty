@@ -1,21 +1,20 @@
-%%
-%%   This is file "frenchlaw-languages.sty", which is part of the "frenchlaw" package
-%%   Copyright 2009--2018: Fora VERN -- ienissei (at) gmail (dot) com
-%% 
-%%   This work may be distributed and/or modified under the conditions of the
-%%   LaTeX Project Public License, either version 1.3 of this license or, at your
-%%   option, any later version.
-%%
-%%   The latest version of the license can be found at:
-%%      http://www.latex-project.org/lppl.txt
-%%   and version 1.3 or later is part of all distributions of LaTeX, 2005/12/01 or later.
-%% 
-%%   This work has the LPPL maintenance status "author-maintained".
-%%   This work consists of the files listed in the README file.
-%%
+%
+%   This is file "frenchlaw-babel.sty", which is part of the "frenchlaw" package
+%   Copyright 2009--2025: Fora VERN -- ienissei (at) gmail (dot) com
+% 
+%   This work may be distributed and/or modified under the conditions of the
+%   LaTeX Project Public License, either version 1.3 of this license or, at your
+%   option, any later version.
+%
+%   The latest version of the license can be found at:
+%      http://www.latex-project.org/lppl.txt
+%   and version 1.3 or later is part of all distributions of LaTeX, 2005/12/01 or later.
+% 
+%   This work has the LPPL maintenance status "author-maintained".
+%   This work consists of the files listed in the README file.
+%
 
-%	WARNING: Please note that this is style file for "frenchlaw.cls"
-%	         It will be renamed and/or merged with the later at some point
+%	The associated documentation file <frenchlaw-babel-sty.tex> was produced from this code by simply stripping the double percent signs at the beginning of lines, transforming the code into a LaTeX file.
 
 
 % =***======***======***======***======***======***======***======***======***======***=
@@ -54,7 +53,7 @@
 	\def\bookname{Livre}%
 	\def\cftbookname{Livre}%
 	\def\bookrefname{Livre}%
-	\def\partname{\Ordinalstring{part}[f]\space partie\def\thepart{}}%
+	\def\partname{partie}%
 	\def\cftpartname{Partie}%
 	\def\partrefname{Partie}%
 	\def\headingname{Titre}%
@@ -66,21 +65,12 @@
 	\def\chaptername{Chapitre}%
 	\def\cftchaptername{\toclabelbox{Chapitre}}%
 	\def\chapterrefname{Chapitre}%
-	\if@article%
-		\def\sectionname{}%
-		\def\cftsectionname{}%
-		\def\sectionrefname{}%
-		\def\subsectionname{}%
-		\def\cftsubsectionname{}%
-		\def\subsectionrefname{}%
-	\else%
-		\def\sectionname{Section}%
-		\def\cftsectionname{\toclabelbox{Section}}%
-		\def\sectionrefname{Section}%
-		\def\subsectionname{\S}%
-		\def\cftsubsectionname{\toclabelbox{\S}}%
-		\def\subsectionrefname{\S}%
-	\fi%
+	\def\sectionname{Section}%
+	\def\cftsectionname{\toclabelbox{Section}}%
+	\def\sectionrefname{Section}%
+	\def\subsectionname{\scshape\S}%
+	\def\cftsubsectionname{\toclabelbox{\S}}%
+	\def\subsectionrefname{\S}%
 	\def\appendixname{Annexe}%
 	\def\cftappendixname{\toclabelbox{Annexe}}%
 	\def\appendixpagename{Annexe}% TODO » Quelle utilité???
@@ -88,6 +78,7 @@
 	\def\bibname{Bibliographie}%
 	\def\refname{R{\'e}f{\'e}rences}%
 	\def\indexname{Index}%
+	% Adde index rerum, nominum locorum (textes)
 	\def\glossaryname{Glossaire}%
 	\def\figurename{{\scshape Figure}}%
 	\def\cftfigurename{Figure}%
@@ -114,7 +105,8 @@
 	\def\phonename{Tél.}
 	\def\faxname{Fax.}
 	\def\lecturename{Cours magistral}
-	\def\seminarname{Travaux dirigés}
+	\def\tutorialname{Travaux dirigés}
+	\def\seminarname{Séminaires de recherche}
 	\def\schoolyearname{Année universitaire}%
 	\def\subjectname{Objet}% Lettres
 	\def\subjecttext{Doctorat en}% Thèse pour le doctorat en
@@ -123,6 +115,14 @@
 	\def\drafttext{Version du}% Date du manuscrit (draft)
 	\def\advisortext{Thèse dirigée par:}% Sous la direction de
 	\def\jurytext{Membres du jury:}% Membres du jury
+	\def\invoicename{Facture}% Facture
+	\def\registrationnoname{Siret}
+	\def\invoicedatename{Date d'émission}
+	\def\duedatename{Date limite de paiement}
+	\def\paiddebtname{Facture acquittée}
+	\def\paymenttypename{par}
+	\def\conferencename{conférence}
+	\def\publicationname{publié}
 }
 
 
@@ -148,5 +148,14 @@
 	\def\phonename{Phone}
 	\def\faxname{Fax.}
 	\def\subjectname{Subject}% Lettres
+	\def\lecturename{Lecture Notes}
+	\def\tutorialname{Tutorial Notes}
+	% TODO » Changer quand on aura chargé le .cnf au bon endroit
+	\def\seminarname{LLB Honours Seminars}
+	\def\schoolyearname{Academic Year}
+	\def\conferencename{talk}
+	\def\publicationname{paper}
 }
 \let\captionsbritish=\captionsenglish
+
+% =***======***======***======***======***======***======***======***======***======***=

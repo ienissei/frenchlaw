@@ -1,0 +1,12 @@
+
+heading_prefix "{\\scshape\\hfill "
+heading_suffix "\\hfill}\\nopagebreak\n"
+headings_flag 1
+
+delim_0 ", " % \\dotfill
+delim_1 ", "
+delim_2 ", "
+
+item_2 "; "
+item_12 "; "
+item_x2 ": "
