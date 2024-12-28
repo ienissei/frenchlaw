@@ -1,7 +1,7 @@
 Frenchlaw
 =========
 
-<img alt="FrenchLaw Logo" src="frenchlaw-logo.png" width=50% height=50%>
+![FrenchLaw Logo](frenchlaw-logo.png)
 
 © 2009--2025 Fora VERN – ienissei (at) gmail (dot) com
 
