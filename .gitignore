@@ -1,7 +1,12 @@
-doc/
-frenchlaw.bib
-frenchlaw.ist
-frenchlaw.xdy
+*.aux
+*.bcf
+*.cnf
+*.idx
+*.log
+*.run.xml
+*.toc
 *.sublime-project
 *.sublime-workspace
 .DS_Store
+*.td
+Signature.pdf

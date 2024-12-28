@@ -1,5 +1,6 @@
 *.aux
 *.bcf
+*.cnf
 *.idx
 *.log
 *.run.xml
@@ -8,5 +9,4 @@
 *.sublime-workspace
 .DS_Store
 *.td
-/» Documentation à intégrer
 Signature.pdf
