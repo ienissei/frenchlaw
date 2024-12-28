@@ -5,6 +5,8 @@ Frenchlaw
 
 ## Project ##
 
+### Version française ###
+
 Copyright 2009--2025: Fora VERN -- ienissei (at) gmail (dot) com
 
 `Frenchlaw` se compose d'une classe et de plusieurs autres paquets pour LaTeX. Elle est destinée à faciliter l'écriture des juristes francophones, bien qu'un processus d'internationalisation soit en cours, notamment vers les juridictions anglo-saxonnes.
@@ -17,7 +19,7 @@ Il s'agit d'un projet en cours de développement qui peut contenir (quelques) bu
 
 Si vous souhaitez utiliser ce logiciel ou contribuer à son développement, merci de prendre contact!
 
----
+### English Version ###
 
 Copyright 2009--2025: Fora VERN -- ienissei (at) gmail (dot) com
 
@@ -31,9 +33,9 @@ Please note that this is a work in progress and that it may (does) contain occas
 
 If you are interested in using the project or contributing to its development, please get in touch.
 
------
-
 ## Licence ##
+
+### Version française ###
 
 Le logiciel `Frenchlaw` est, en totalité, soumis à la LaTeX Project Public Licence (LPPL); il ne saurait être distribué ou modifié que suivant les termes stipulés dans la licence, version 1.3 ou ultérieure (celle-ci est incluse dans le dossier, pour information).
 
@@ -59,11 +61,11 @@ Il comporte tous les documents présents sur ce dépôt Git, soit à ce jour :
 - `frenchlaw-dev.sty`
 - `README.MD`
 
----
+### English Version ###
 
 The `Frenchlaw` software is subject to the LaTeX Project Public Licence (LPPL) and can only be distributed or modified according to the terms of versions 1.3 or later of that licence (which is included in the repository, for reference).
 
-    The latest version of this license can be found at http://www.latex-project.org/lppl.txt
+The latest version of this license can be found at http://www.latex-project.org/lppl.txt
 
 This work has the LPPL status "author-maintained".
 Author and maintainer: Flora VERN -- ienissei (at) gmail (dot) com
