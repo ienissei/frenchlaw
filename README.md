@@ -1,7 +1,9 @@
 Frenchlaw
 =========
 
-Copyright 2009--2025: Fora VERN -- ienissei (at) gmail (dot) com
+<img alt="FrenchLaw Logo" src="frenchlaw-logo.png" width=50% height=50%>
+
+© 2009--2025 Fora VERN – ienissei (at) gmail (dot) com
 
 French first, English below
 
@@ -39,8 +41,9 @@ Le logiciel `Frenchlaw` est, en totalité, soumis à la LaTeX Project Public Lic
 
 La dernière version de la LPPL peut être obtenue à l'adresse suivante : http://www.latex-project.org/lppl.txt
 
-Le logiciel `frenchlaw` a le statut "author-maintained" au sens de la LPPL.
-Auteur et mainteneur: Flora VERN -- ienissei (at) gmail (dot) com
+Ce logiciel a le statut "author-maintained" au sens de la LPPL.
+
+**Auteur et mainteneur:** Flora VERN -- ienissei (at) gmail (dot) com
 
 Il comporte tous les documents présents sur ce dépôt Git, soit à ce jour :
 - `documentation.tex`
@@ -66,7 +69,8 @@ The `Frenchlaw` software is subject to the LaTeX Project Public Licence (LPPL) a
 The latest version of this license can be found at http://www.latex-project.org/lppl.txt
 
 This work has the LPPL status "author-maintained".
-Author and maintainer: Flora VERN -- ienissei (at) gmail (dot) com
+
+**Author and maintainer:** Flora VERN -- ienissei (at) gmail (dot) com
 
 It comprises all of the files present in this repository. At present, those files are:
 - `documentation.tex`
