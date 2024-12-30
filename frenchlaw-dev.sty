@@ -65,6 +65,7 @@
 %	Set the default colours for code
 \newcommand{\countercolor}{\color[HTML]{4682B4}}% Blue
 \newcommand{\dimencolor}{\color[HTML]{4682B4}}% Blue
+\newcommand{\envcolor}{\color[HTML]{BF4D28}}% Blue
 \newcommand{\numbercolor}{\color[HTML]{655643}}% Ash
 \newcommand{\macrocolor}{\color[HTML]{78948D}}% Teal
 \newcommand{\optioncolor}{\color[HTML]{990000}}% Crimson
@@ -200,6 +201,12 @@
 	\cmdindex{#1}%
 	%+ Add #2 to the glossary
 }
+% Describe an environement
+\newcommand{\env}[2]{%
+	\safeverb[\envcolor]{#1}%
+	\envindex{#1}%
+	%+ Add #2 to the glossary
+}
 % Describe a length
 \renewcommand{\dim}[2]{%
 	\safeverb[\dimencolor\textbackslash]{#1}%
@@ -234,7 +241,7 @@
 \newcommand{\cntindex}[1]{\index{#1@\ttfamily#1\rmfamily~(compteur)}}%
 
 % Add keywords for options
-\lstset{morekeywords=[1]{a4paper, a5paper, a6paper, oneside, twoside, onecolumn, twocolumn, landscape, marginalia, 10pt, 11pt, 12pt, 14pt, classic, modern, modernsans, serif, sans-serif, linespacing, article, didactic, didactic+, letter, vitae, draft, draft+, final, short, outline, summary, biblatex-style, index, developer, vgrid, british, english, french, german, italian, spanish, greek, latin, colour}}
+\lstset{morekeywords=[1]{a4paper, a5paper, a6paper, oneside, twoside, onecolumn, twocolumn, landscape, marginalia, 10pt, 11pt, 12pt, 14pt, classic, modern, modernsans, serif, sans-serif, linespacing, article, didactic, didactic+, letter, vitae, draft, draft+, final, short, outline, summary, biblatex-style, index, developer, vgrid, british, english, french, german, italian, spanish, greek, latin, color, colorall, colour, colourall}}
 
 % Add keywords for packages
 \lstset{morekeywords=[2]{adforn, babel, biblatex, booktabs, csquotes, ebgaramond, environ, etoolbox, fixltxhyph, fmtcount, fontenc, fontspec, frenchlaw-classic, frenchlaw-modern, graphicx, ifthen, ifxetex, inputenc, lmodern, marginnote, mathpazo, memoir, metalogo, microtype, multicol, numprint, perpage, pifont, ragged2e, sourcesanspro, xcolor, xkeyval, xspace, xstring, xurl}}
