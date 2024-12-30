@@ -2228,41 +2228,128 @@
 
 %% \chapter{Sommaires et tables}\label{tables-of-contents}
 
-%% Une fois passé le préambule, il convient de structurer le document en chapitres, sections ou paragraphes, dont les intitulés seront reproduits automatiquement dans les tables des matières que \LaTeX\ permet de générer automatiquement. Cette fonctionnalité a été étendue dans la classe \frenchlaw pour permettre la production d'un sommaire au début de l'ouvrage, ainsi que celle de tables extrêmement détaillées comportant la liste de tous les paragraphes ou même des blocs pris dans le corps du texte.
-
-%% \section{Fonctionnalités classiques}
-
-%% \frenchlaw permet d'insérer les diverses tables que l'on trouve usuellement dans les documents, depuis la classique table des matières jusqu'au sommaire plus réduit. \todo{en passant par une table miniature pour les articles, ou encore une table des illustrations.}
-
-%% \subsection{Table des matières}
-
-%% \frenchlaw permet classiquement d'insérer une table des matières avec la commande: \cs{tableofcontents}{Commande permettant d'insérer une table des matières~(\LaTeX\ et classe \safeverb[\packagecolor]{memoir}).} Il existe une version étoilée de cette commande qui n'est pas référencée au sein de la table des matières, que le lecteur a probablement trouvée s'il l'utilise: \cs{tableofcontents*}{Commande permettant d'insérer une table des matières, sans référencer celle-ci~(\LaTeX\ et classe \safeverb[\packagecolor]{memoir}.}.
+% TODO » Create a minitoc for articles (and possibly also for chapters / sections)
 
 
-% ===== Table of Contents Styling =====
+% ===== Table of Contents Methods =====
 
-%% L'apparence de la table des matières est configurée en utilisant les outils fournis par la classe |memoir|, auxquels le lecteur pourra se référer. Outre ces derniers, pour des modifications plus modestes, on notera spécialement:
+%% Les divisions du document présentées dans le chapitre précédent doivent être intégrées aux sommaires et tables des matières que l'on insère généralement en début ou en fin d'ouvrage. \frenchlaw permet d'automatiser le processus et fournit plusieurs commandes à cet effet. Elles sont détaillées dans ce chapitre, ainsi que les différents paramètres qu'il peut être utile de modifier.
+
+%% Les différentes commandes proposées par \frenchlaw permettent d'insérer les diverses tables que l'on trouve usuellement dans les documents, depuis la classique table des matières jusqu'au sommaire plus réduit, en passant par différents types de précis. La classe permet également d'insérer des listes de figures ou de tableaux\todo{, ainsi que~-- ce qui pourra être plus utile aux praticiens~-- des listes de pièces d'un dossier}.
+
+%% \section{Table des matières}
+
+%% Toutes les tables des matières et assimilés sont gérées au moyen de quelques commandes standard, invoquées à l'endroit où la table doit appraître. Pour composer ces tables, \LaTeX écrit un certain nombre d'informations dans un fichier auxiliaire lors de chaque compilation, puis compose les tables en relisant ce fichier lors de la compilation suivante. En somme, cela signifie qu'il faudra toujours \emph{compiler deux fois} le document pour que les tables apparaissent ou, si elles sont déjà présentes, se stabilisent avec les bons numéros de pages.
+
+%% La commande la plus utile aux juristes sera indubitablement \cs{tableofcontents}{Commande permettant de composer une table des matières.} qui permet d'insécrer une table des matières:
 
 %% \begin{macro}
-%% \maxtocdepth{<toc depth>}% Par défaut: subparagraph
+	%% \tableofcontents % Référencée dans la table des matières
+	%% \tableofcontents* % Non référencée dans la table des matières
 %% \end{macro}
 
-%% La commande \cs{maxtocdepth}{Commande permettant de définir le dernier niveau de subdivision à référencer dans la table des matières~(\safeverb[\packagecolor]{memoir}).} permet de définir la dernière subdivision logique à afficher au sein de la table des matière. Par défaut, toutes les subdivisions sont référencées. Il est possible de modifier ce comportement en indiquant le nom d'une autre subdivision.
+%% La seule différence entre les deux versions de la commande tient à ce que \cs{tableofcontents}{Commande permettant d'insérer une table des matières~(\LaTeX\ et classe \safeverb[\packagecolor]{memoir}).} s'auto-référence dans la table des matières, où elle sera renseignée ainsi que son numéro de page. Par contraste, \cs{tableofcontents*}{Commande permettant d'insérer une table des matières, sans référencer celle-ci~(\LaTeX\ et classe \safeverb[\packagecolor]{memoir}.} ne sera pas mentionnée dans la table~-- ce qui semble plus logique.
+
+%% La table des matières classique peut être augmentée de deux manières. En premier lieu, l'option |precis|, évoquée précédemment, permet de renseigner les numéros et titres de paragraphes dans la table des matières. Ceux-ci ne seront pas suivis d'un numéro de page et seront, par défaut, présentés sous forme d'un paragraphe, à la manière des précis traditionnels destinés à donner ua lecteur un aperçu des thèmes abordés. Ce mode de présentation pourra être utile tant pour la composition d'ouvrages soignés que pour la correction de documents~(thèses, manuscrits)\todo{Réf. à la section corrections}.
+
+%% Il est également possible d'insérer dans la table des matières des blocs de texte avec less options |outline| et |summary|. Ces fonctionnalités permettent de reproduire, dans la table des matières, des éléments directement issus du corps de texte, lesquels seront donc présents aux deux endroits. En choisissant bien les éléments à reproduire, il est possible de préparer un résumé structuré des diverses hypothèses et conclusions de l'ouvrage. Ces fonctionnalités sont présentées avec les autres outils de correction et de relecture de documents\todo{Réf. à la section corrections}.
+
+%% La principale commande permettant de paramétrer la table des matières est \cs{maxtocdepth}{Commande permettant de définir le dernier niveau de subdivision à référencer dans la table des matières~(\safeverb[\packagecolor]{memoir}).}, qui permet de définir la dernière subdivision logique à afficher au sein de la table des matière. Par défaut, toutes les subdivisions sont référencées. Il est possible de modifier ce comportement en indiquant le nom d'une autre subdivision.
+
+%% \begin{macro}
+%% \maxtocdepth{<subdivision>}% Par défaut: subparagraph
+%% \end{macro}
 
 %% \begin{noprint}
 %	Define max ToC numbering
+% TODO > Change wheen new subdivision levels are added
 \maxtocdepth{subparagraph}
 %% \end{noprint}
 
 %% \begin{developer}
-%% Les titres et sous-titres~(|\heading| et |\subheading|) se situent au même niveau que les parties~(|\part|) dans la table des matières, soit au niveau |-1|, en raison du volume de code de la classe |memoir| qu'il faudrait modifier pour parvenir à un résultat plus satisfaisant pour l'esprit~(\latin{supra}, \pageref{tab:Sectionning}). Concrètement, cela a pour incidence que les titres et sous-titres s'affichent dans la table des matières lorsque |\tocdepth| est supérieur ou égal à |0|, c'est-à-dire en même temps que les chapitres~(|\chapter|).
+%% Les titres et sous-titres~(|\heading| et |\subheading|) se situent au même niveau que les parties~(|\part|) dans la table des matières, soit au niveau |-1|, en raison du volume de code de la classe |memoir| qu'il faudrait modifier pour parvenir à un résultat plus satisfaisant pour l'esprit~(\latin{supra}, p.~\pageref{tab:Sectionning}). Cela ne semble pas avooir d'incidence déterminante, puisque l'on imagine mal une table tronquée avant ce niveau.
 %% \end{developer}
 
-%% La classe |memoir| permet de modifier tous les éléments de la table des matières, depuis l'affichage des intitulés jusqu'à la numérotation des pages ou les lignes de points qui en facilitent la lecture, et même les espacements horizontaux et verticaux entre différents éléments. Ces éléments de configuration ne seront pas détaillés ici, et chacun pourra en modifier l'apparence en utilisant la documentation de cette classe.
+%% \section{Sommaire}
 
-% TODO » Reprendre -- notamment les ToC modern (aligner les parties / titres à gauche et tout mettre en sans sérif)
-% TODO > Tester les \para et \subpara dans le fichier test (avec ToC)
-% TODO » Mini-ToC (pour la section en cours) ?
+%% En plus de la table des matières classique, \frenchlaw permet de composer un sommaire, plus court, qui ne descend pas au-delà du chapitre. De tels sommaires sont notamment utlisés dans les pages liminaires des thèses et manuels. Il est d'usage que les sommaires ne comportent pas de numéros de pages. La commande \cs{shortcontents}{Commande permettant de composer un sommaire.} s'utilise exactement comme la précédente, avec une version ordinaire (référencée dans la table des matières) et une version étoilée (non référencée).
+
+%% \begin{macro}
+	%% \shortcontents
+	%% \shortcontents*
+%% \end{macro}
+
+%% La commande admet un argument optionnel permettant de choisir le dernier niveau de subdivision à inclure dans le sommaire. Cet argument prend la forme d'un chiffre (aussi appelé |\tocdepth|) correspondant au \enquote{degré} de subdivision. Les chapitres sont associés à une valeur de |1|. Pour chaque niveau de subdivision inférieure au chapitre, ce chiffre est augmenté, de sorte que les sections sont de rang |2|, etc. En sens inverse, les subdivisions supérieures au chapitres utilisent |0| (parties, titres et sous-titres) ou |-1| (livres). On pourra ainsi utiliser |\shortcontents[2]| pour include les titres des sections dans le sommaire.
+
+%% \begin{noprint}
+%	Create a command for short table of content, allowing for a starred version
+% TODO » On both macros, add new subdivision levels when implemented
+\newcommand{\shortcontents}{\@ifstar{\s@shortcontents}{\@shortcontents}}
+
+%	Starred version of \shortcontents (not in ToC)
+% The macro takes an optional argument allowing the user to choose a \tocdepth
+\newcommand{\s@shortcontents}[1][0]{%
+	\bgroup
+		% Reset all necessary commands and remove page numbers
+		\let\contentsname=\shortcontentsname
+		\cftpagenumbersoff{heading}
+		\cftpagenumbersoff{subheading}
+		\cftpagenumbersoff{chapter}
+		\cftpagenumbersoff{section}
+		\cftpagenumbersoff{subsection}
+		\cftpagenumbersoff{subsubsection}
+		\cftpagenumbersoff{paragraph}
+		\cftpagenumbersoff{subparagraph}
+		% Save tocdepth value
+		\newcounter{save@tocdepth}
+		\setcounter{save@tocdepth}{\value{tocdepth}}
+		\setcounter{tocdepth}{#1}
+		% Rajouter un RaggedRight (+package ragged2e)
+		% Print the table of contents and restore tocdepth
+		\tableofcontents*
+		\setcounter{tocdepth}{\value{save@tocdepth}}
+		\clearpage
+	\egroup}
+
+% Unstarred version of \shortcontents (in ToC)
+% The macro takes an optional argument allowing the user to choose a \tocdepth
+\newcommand{\@shortcontents}[1][0]{%
+	\bgroup
+		% Reset all necessary commands and remove page numbers
+		\let\contentsname=\shortcontentsname
+		\cftpagenumbersoff{heading}
+		\cftpagenumbersoff{subheading}
+		\cftpagenumbersoff{chapter}
+		\cftpagenumbersoff{section}
+		\cftpagenumbersoff{subsection}
+		\cftpagenumbersoff{subsubsection}
+		\cftpagenumbersoff{paragraph}
+		\cftpagenumbersoff{subparagraph}
+		% Save tocdepth value
+		\newcounter{save@tocdepth}
+		\setcounter{save@tocdepth}{\value{tocdepth}}
+		\setcounter{tocdepth}{#1}
+		% Rajouter un RaggedRight (+package ragged2e)
+		% Print the table of contents and restore tocdepth
+		\tableofcontents
+		\setcounter{tocdepth}{\value{save@tocdepth}}
+		\clearpage
+	\egroup}
+%% \end{noprint}
+
+%% \begin{developer}
+%% La commmande |\shortcontents| enregistre la valeur actuelle de |\tocdepth|, la modifie pour composer une table à l'aide de la commande |\tableofcontents|, puis restaure |\tocdepth|. Il n'est donc pas possible en l'état d'utiliser des styles différents pour le sommaire et la table des matières; au demeurant, cela ne semblerait as judicieux.
+%% \end{developer}
+
+%% \section{Liste des talbeaux et illustrations}
+
+%% Moins utiles pour les juristes, diverses tables peuvent être créées pour référencer les tableaux et illustrations présents dans le document. Les deux fonctionnalités classiques sont \cs{listoftables}{Commande permettant de composer une liste des tableaux.} et \cs{listoffigures}{Commande permettant de composer une liste des illustrations (figures).}. Ces commendes produisent des tables pour tous les tableaux insérés dans un environnement \env{table}{Environnement destiné à accueillir des tableaux.}, et tous les illustrations ou autres supports non-textuels placés dans un environnement \env{figure}{Environnement destiné à accueillir des figures ou éléments non-textuels.}. La classe |memoir| permet également de créer de nouvelles listes associées à d'autres environnements. Sur tous ces éléments relativement moins utilisés par les juristes, nous renvoyons le lecteur à la documentation de la classe |memoir|.
+
+
+% ===== Table of Contents Styling =====
+
+% TODO » Reprendre -- notamment, revoir les ToC modern (aligner les parties / titres à gauche et tout mettre en sans sérif)
+% TODO > Tester les \para et \subpara dans le fichier test (avec ToC) -- ToC + Sommaire. Peut-être nécessaire de désactiver le précis explicitement pour les dommaires (pour précis + outline + summary)
 
 % 		> TODO : Reprendre les styles de ToC en normal et modern + documenter proprement --- et documenter pour les \cftpara... :
 % \newcommand{\cftparastyle}{\llap}
@@ -2272,6 +2359,10 @@
 % \newcommand{\cftparaleader}{p.~}
 % \newcommand{\cftparaafterpnum}{.}
 % \newcommand{\cftparasep}{\par}
+
+%% L'apparence de la table des matières est configurée en utilisant les outils fournis par la classe |memoir|
+
+%% La classe |memoir| permet de modifier tous les éléments de la table des matières, depuis l'affichage des intitulés jusqu'à la numérotation des pages ou les lignes de points qui en facilitent la lecture, et même les espacements horizontaux et verticaux entre différents éléments. Ces éléments de configuration ne seront pas détaillés ici, et chacun pourra en modifier l'apparence en utilisant la documentation de cette classe.
 
 %% \begin{noprint}
 %	Configure ToC dotted lines
@@ -2465,38 +2556,10 @@
 %% \end{noprint}
 
 
-%	===== Alternate Tables of Contents =====
-
-%% \subsection{Sommaire}
-
-%	Create a command for short table of contents
-\newcommand{\shortcontents}[1][0]{%
-	\bgroup
-		% Reset all necessary commands and remove page numbers
-		\let\contentsname=\shortcontentsname
-		\cftpagenumbersoff{heading}
-		\cftpagenumbersoff{subheading}
-		\cftpagenumbersoff{chapter}
-		% Save tocdepth value
-		\newcounter{save@tocdepth}
-		\setcounter{save@tocdepth}{\value{tocdepth}}
-		\setcounter{tocdepth}{#1}
-		% Rajouter un RaggedRight (+package ragged2e)
-		% Print the table of contents and restore tocdepth
-		\tableofcontents*
-		\setcounter{tocdepth}{\value{save@tocdepth}}
-		\clearpage
-	\egroup}
-
-%	TODO » Create minitoc for articles
-
-%% \subsection{Table des illustrations}
-%	TODO » Tester et docuementer les LOT et LOF
 
 %% \subsection{Précis}
 
-% == pour la table des matières principale (mais tester pour voir si ça s'imprime aussi dans le sommaire => désactiver localement précis et autres switches)
-% == Précis et autres ajouts
+
 
 
 % =***======***======***======***======***======***======***======***======***======***=
@@ -3924,6 +3987,8 @@
 % TODO » Ou imprimer tous les \para + \paraname à la suite dans la ToC, en forme de précis.
 
 % TODO > Corrspondent à des options de classe > supprimer? ou Ajouter dans la doc des helper macros, comme alternatives
+
+% NB! Cf. la doc sur les tables des matières: détailler les deux mécanismes avec les modes de correction
 %	Créer un switch pour imprimer ou non les \outline dans la table des matières
 \newcommand{\outlinetoc}{\@outlinetrue}
 \newcommand{\nooutlinetoc}{\@outlinefalse}
