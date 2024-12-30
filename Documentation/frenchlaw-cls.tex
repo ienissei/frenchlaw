@@ -340,7 +340,8 @@ L'interligne est défini par la macro \cs{custom@baselinestretch}{Macro interne 
 \newcommand{\set@<opt-name>spacing}{%
   \def\custom@baselinestretch{<value>}}
 \end{macro}\par
-En outre, la composition du texte en interligne simple étant susceptible requérir des ajustements, l'opérateur conditionnel \cs{if@simplespacing}{Opérateur conditionnel attaché à l'option |linespacing=single|.} a également été créé.
+\vspace{-\baselineskip}
+\noindent En outre, la composition du texte en interligne simple étant susceptible requérir des ajustements, l'opérateur conditionnel \cs{if@simplespacing}{Opérateur conditionnel attaché à l'option |linespacing=single|.} a également été créé.
 \end{developer}
 
 \begin{noprint}
@@ -513,7 +514,7 @@ Il est possible d'en modifier le comportement grâce à l'opérateur \cs{iflong}
 \end{noprint}
 
 \describe[false]{%
-\option{color|colour}{Option utilisée pour utiliser un peu de couleur lors de la composition du document.}
+\option{color|colour}{Option utilisée pour utiliser un peu de couleur lors de la composition du document.} (ou) 
 \option{colorall|colourall}{Option utilisée pour utiliser beaucoup de couleur lors de la composition du document.}}
 Ces options permettent de produire un document en couleurs. On notera que les graphies anglaise et américaine sont acceptées. L'option |colour| ne met en couleurs que les éléments essentiels, alors que |colourall| est plus généreuse. La configuration fine du comportement de ces deux options est expliquée \emph{infra} en p.~\pageref{Couleurs}.
 
@@ -536,8 +537,8 @@ Ces options permettent de produire un document en couleurs. On notera que les gr
 
 \describe[false]{%
 \option{precis}{Option utilisée pour composer les numéros et titres des paragraphes coulés dans la table des matières.},
-\option{summary}{Option utilisée pour composer des éléments indiqués dans l'environnement \texttt{summary} dans la table des matières.}}
-\option{outline}{Option utilisée pour composer des éléments présents dans l'environnement \texttt{outline} dans la table des matières.},
+\option{summary}{Option utilisée pour composer des éléments indiqués dans l'environnement \texttt{summary} dans la table des matières.}, 
+\option{outline}{Option utilisée pour composer des éléments présents dans l'environnement \texttt{outline} dans la table des matières.}}
 Ces options permettent d'imprimer des éléments supplémentaires dans la table des matières, principalement dans le but de générer un document donnant une vision d'ensemble du manuscrit. Les numéros et les noms des paragraphes sont ajoutés à la table, ainsi que le texte placé dans des environnements spéciaux. Sur ces deux options, voir \todo{Renvoyer à la page de la doc.}.
 
 \begin{developer}
@@ -1305,7 +1306,7 @@ Il sera parfois utile de modifier ces paramètres directement dans le préambule
 % Pour un texte en alinéas :
 \setlength{\parskip}{0pt}% Pas d'espace entre les paragraphes
 \setlength{\parindent}{1.5em}% Première ligne en alinéa
-
+ 
 % Pour un texte avec des sauts de lignes :
 \setlength{\parskip}{\baselineskip}% Espace entre les paragraphes
 \setlength{\parindent}{0em}% Pas de mise en alinéa
@@ -1347,6 +1348,7 @@ La classe \frenchlaw permet de colorer automatiquement certains éléments du do
 
 \begin{developer}
 Un jeu de couleurs peut être créé avec la commande \cs{setcolourscheme}{Commande permettant d'associer un nom à un jeu de couleurs à utiliser dans le document.}, qui permet d'associer un nom à deux couleurs: la première sera considérée comme principale; l'autre est une couleur de contraste, en principe plus claire.\par
+\vspace{-\baselineskip}
 \begin{macro}
 \setcolourscheme{<name>}{<hex colour code>}{<hex colour code>}
 \end{macro}
@@ -1777,7 +1779,7 @@ La composition des nombreuses subdivisions correspondant aux sections, sous-sect
 
 Il est possible de créer de nouveaux styles de chapitres~(et de subdivisions en général) en utilisant les commandes de la classe |memoir|, à la documentation de laquelle le lecteur est renvoyé.
 
-Les subdivisions disponibles dans la classe \frenchlaw sont: \cs{book}{Commande permettant d'insérer une subdivision hiérarchique pour les livres.}, \cs{part}{Commande permettant d'insérer une subdivision hiérarchique pour les parties, à l'intérieur des livres éventuels d'un ouvrage.}, \cs{heading}{Commande permettant d'insérer une subdivision hiérarchique pour les titres, à l'intérieur des parties d'un ouvrage.}, \cs{subheading}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-titres, à l'intérieur des titres d'un ouvrage.}, \cs{chapter}{Commande permettant d'insérer une subdivision hiérarchique pour les chapitres, à l'intérieur des parties ou des (sous-)titres d'un ouvrage.}, \cs{section}{Commande permettant d'insérer une subdivision hiérarchique pour les sections, à l'intérieur des chapitres éventuels d'un ouvrage.}, \cs{subsection}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-sections, à l'intérieur des sections d'un ouvrage.}, \cs{subsubsection}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-sous-sections, à l'intérieur des sous-sections d'un ouvrage.}, \cs{paragraph}{Commande permettant d'insérer une subdivision hiérarchique pour les paragraphes, généralement à l'intérieur des sous-sous-sections d'un ouvrage.}, \cs{subparagraph}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-paragraphes, à l'intérieur des paragraphes d'un ouvrage.}. \todo{\Adde les subdivisions supplémentaires.} Les commandes correspondantes peuvent être employées comme suit:
+Les subdivisions disponibles dans la classe \frenchlaw sont les suivantes: \cs{book}{Commande permettant d'insérer une subdivision hiérarchique pour les livres.}, \cs{part}{Commande permettant d'insérer une subdivision hiérarchique pour les parties, à l'intérieur des livres éventuels d'un ouvrage.}, \cs{heading}{Commande permettant d'insérer une subdivision hiérarchique pour les titres, à l'intérieur des parties d'un ouvrage.}, \cs{subheading}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-titres, à l'intérieur des titres d'un ouvrage.}, \cs{chapter}{Commande permettant d'insérer une subdivision hiérarchique pour les chapitres, à l'intérieur des parties ou des (sous-)titres d'un ouvrage.}, \cs{section}{Commande permettant d'insérer une subdivision hiérarchique pour les sections, à l'intérieur des chapitres éventuels d'un ouvrage.}, \cs{subsection}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-sections, à l'intérieur des sections d'un ouvrage.}, \cs{subsubsection}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-sous-sections, à l'intérieur des sous-sections d'un ouvrage.}, \cs{paragraph}{Commande permettant d'insérer une subdivision hiérarchique pour les paragraphes, généralement à l'intérieur des sous-sous-sections d'un ouvrage.}, \cs{subparagraph}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-paragraphes, à l'intérieur des paragraphes d'un ouvrage.}. \todo{\Adde les subdivisions supplémentaires.} Les commandes correspondantes peuvent être employées ainsi:
 
 \begin{macro}
 \book{<title>}% Livre
@@ -2129,7 +2131,7 @@ Le compteur \cnt{precis}{Numéro du paragraphe dans la subdivision courante} con
 \counterwithin{precis}{subparagraph}
 \end{noprint}
 
-Les commandes permettant de composer les numéros de paragraphes dans la table des matières peuvent également être insérées dans un style de paragraph. Elles sont documentées dans le chapitre sur les tables et sommaires~(\pageref{tables-of-contents}).
+Les commandes permettant de composer les numéros de paragraphes dans la table des matières peuvent également être insérées dans un style de paragraphe. Elles sont documentées dans le chapitre sur les tables et sommaires~(\pageref{tables-of-contents}).
 
 \begin{noprint}
 %	Create macros used for styling paragraphes in the table of contents
@@ -2144,10 +2146,10 @@ Les commandes permettant de composer les numéros de paragraphes dans la table d
 \end{noprint}
 
 Chaque numéro de paragraphe et sous-paragraphe est automatiquement associé à un \enquote{label}, qui permettra d'y faire référence ailleurs dans le texte. La commande |\label{<label>}|, utilisée en interne, permet de créer une balise dans le texte et d'enregistrer à quel numéro de page et dans quel paragraphe elle se trouve. La commande |\ref{<label>}| permet à l'utilisateur d'imprimer le numéro de paragraphe sous lequel se trouve la balise, alors que |\pageref{<label>}| renverra au numéro de page en question~(sur ces questions, voir \todo{TODO, explication des labels}). Les labels associés aux paragraphes et sous-paragraphes ont toujours la forme |para:<titre>| ou, si aucun titre n'est donné, |para:<numéro>|~(le numéro risque alors de changer si de nouveaux paragraphes sont ajoutées). La syntaxe pour renvoyer à un numéro de paragraphe est, classiquement, la suivante:
-
-Pour un paragraphe auquel aucun titre n'est donné~(|\para|, sans argument optionnel), on utilisera par exemple |\ref{para:12}|, s'il s'agit du paragraphe \no 12, pour imprimer ce numéro, ou |\pageref{para:12}| pour renvoyer à la page correspondante.
-
-Pour un paragraphe auquel un titre est donné~(|\para[Le titre]|), on utilisera de la même manière |\ref{para:Le titre}| pour imprimer le numéro du paragraphe, ou |\pageref{para:Le titre}| pour renvoyer à la page à laquelle il se trouve.
+\begin{enumerate}
+\item Pour un paragraphe auquel aucun titre n'est donné~(|\para|, sans argument optionnel), on utilisera par exemple |\ref{para:12}|, s'il s'agit du paragraphe \no 12, pour imprimer ce numéro, ou |\pageref{para:12}| pour renvoyer à la page correspondante.
+\item Pour un paragraphe auquel un titre est donné~(|\para[Le titre]|), on utilisera de la même manière |\ref{para:Le titre}| pour imprimer le numéro du paragraphe, ou |\pageref{para:Le titre}| pour renvoyer à la page à laquelle il se trouve.
+\end{enumerate}
 
 Le système fonctionne de la même manière pour les sous-paragraphes, à une différence près. Si, par exemple, après le |\para| numéro 3, un sous-paragraple est créé~(|\subpara[Le titre]|), la commande |\ref{para:Le titre}| imprimera le numéro \enquote{3-1}, qui est également celui que l'on trouvera au début de ce sous-paragraphe, qui est le premier à l'intérieur du troisème paragraphe.
 

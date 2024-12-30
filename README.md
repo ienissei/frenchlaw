@@ -1,5 +1,5 @@
 <div align="center">
-<img src="frenchlaw-logo.png" alt="FrenchLaw Logo" width=50% height=50%>
+<img src="frenchlaw-logo.png" alt="FrenchLaw: LaTeX pour les juristes" width=50% height=50%>
 <h3>Frenchlaw: A versatile LaTeX class for lawyers</h3>
 <br/>
 </div>
