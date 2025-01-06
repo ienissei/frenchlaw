@@ -1,10 +1,16 @@
-\documentclass[vgrid]{frenchlaw}
+\documentclass[precis,vgrid]{frenchlaw}
 
 % This is a sample file for <frenchlaw/cls> class and associated files. It is aimed at showcasing possible outputs of that class.
+
+%\subprecis
 
 \usepackage{lipsum}
 
 \begin{document}
+
+\tableofcontents*
+
+\shortcontents*
 
 \book{Exemple de livre I}
 
@@ -22,36 +28,52 @@
 
 \subheading{Exemple de sous-titre II}
 
+%\chapter*{Starred Chapter}
+
+\fakechapter{Fake Chapter}
+
+\fakechapter[Titled]{Fake Chapter}
+
 \chapter{Exemple de chapitre I}
 
 \section{Exemple de section}
 
 \chapter{Exemple de chapitre II}
 
+\para Non numéroté
+
 \para[Titre du premier paragraphe coulé] \lipsum[1]
 
-\section{Exemple de section}
+\subpara[A subpara]
+
+\subpara[A subpara too]
 
 \para[Titre du deuxème paragraphe coulé] \lipsum[2]
 
-\subsection{Exemple de sous-section}
-
 \para[Titre du troisième paragraphe coulé] \lipsum[3]
 
-\subsubsection{Exemple de sous-sous-section}
+\section{Exemple de section}
 
 \para[Titre du quatrième paragraphe coulé] \lipsum[4]
 
-\paragraph{Exemple de paragraphe}
-
 \para[Titre du cinquième paragraphe coulé] \lipsum[5]
-
-\subparagraph{Exemple de sous-paragraphe}
 
 \para[Titre du sixième paragraphe coulé] \lipsum[6]
 
-\chapter{Exemple de chapitre I}
+\section{Exemple de section}
 
-\tableofcontents*
+\section{Exemple de section}
+
+\subsection{Exemple de sous-section}
+
+\subsubsection{Exemple de sous-sous-section}
+
+\paragraph{Exemple de paragraphe}
+
+\subparagraph{Exemple de sous-paragraphe}
+
+\chapter{Exemple de chapitre III}
+
+\section{Exemple de section}
 
 \end{document}
