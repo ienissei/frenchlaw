@@ -2317,34 +2317,18 @@
 % TODO » On both macros, add new subdivision levels when implemented
 \newcommand{\shortcontents}{\@ifstar{\s@shortcontents}{\@shortcontents}}
 
-%	Starred version of \shortcontents (not in ToC)
+%	Define two versions of \shortcontents (starred or not)
 % The macro takes an optional argument allowing the user to choose a \tocdepth
+% Both macros point to \@@shortcontents, feeding different arguments into it
 \newcommand{\s@shortcontents}[1][0]{%
-	\bgroup
-		% Reset all necessary commands and remove page numbers
-		\let\contentsname=\shortcontentsname
-		\cftpagenumbersoff{heading}
-		\cftpagenumbersoff{subheading}
-		\cftpagenumbersoff{chapter}
-		\cftpagenumbersoff{section}
-		\cftpagenumbersoff{subsection}
-		\cftpagenumbersoff{subsubsection}
-		\cftpagenumbersoff{paragraph}
-		\cftpagenumbersoff{subparagraph}
-		% Save tocdepth value
-		\newcounter{save@tocdepth}
-		\setcounter{save@tocdepth}{\value{tocdepth}}
-		\setcounter{tocdepth}{#1}
-		% Rajouter un RaggedRight (+package ragged2e)
-		% Print the table of contents and restore tocdepth
-		\tableofcontents*
-		\setcounter{tocdepth}{\value{save@tocdepth}}
-		\clearpage
-	\egroup}
-
-% Unstarred version of \shortcontents (in ToC)
-% The macro takes an optional argument allowing the user to choose a \tocdepth
+	\@@shortcontents[#1]{\tableofcontents*}
+}
 \newcommand{\@shortcontents}[1][0]{%
+	\@@shortcontents[#1]{\tableofcontents}
+}
+
+%	Create the generic \@@shortcontents macro
+\newcommand{\@@shortcontents}[2][]{
 	\bgroup
 		% Reset all necessary commands and remove page numbers
 		\let\contentsname=\shortcontentsname
@@ -2376,43 +2360,16 @@
 %% La commmande |\shortcontents| enregistre la valeur actuelle de |\tocdepth|, la modifie pour composer une table à l'aide de la commande |\tableofcontents|, puis restaure |\tocdepth|. Il n'est donc pas possible en l'état d'utiliser des styles différents pour le sommaire et la table des matières; au demeurant, cela ne semblerait as judicieux.
 %% \end{developer}
 
-%% \section{Liste des talbeaux et illustrations}
+%% \section{Talbeaux et illustrations}
 
 %% Moins utiles pour les juristes, diverses tables peuvent être créées pour référencer les tableaux et illustrations présents dans le document. Les deux fonctionnalités classiques sont \cs{listoftables}{Commande permettant de composer une liste des tableaux.} et \cs{listoffigures}{Commande permettant de composer une liste des illustrations (figures).}. Ces commendes produisent des tables pour tous les tableaux insérés dans un environnement \env{table}{Environnement destiné à accueillir des tableaux.}, et tous les illustrations ou autres supports non-textuels placés dans un environnement \env{figure}{Environnement destiné à accueillir des figures ou éléments non-textuels.}. La classe |memoir| permet également de créer de nouvelles listes associées à d'autres environnements. Sur tous ces éléments relativement moins utilisés par les juristes, nous renvoyons le lecteur à la documentation de la classe |memoir|.
 
 
 % ===== Table of Contents Styling =====
 
-% TODO » Reprendre -- notamment, revoir les ToC modern (aligner les parties / titres à gauche et tout mettre en sans sérif)
-% TODO > Tester les \para et \subpara dans le fichier test (avec ToC) -- ToC + Sommaire. Peut-être nécessaire de désactiver le précis explicitement pour les dommaires (pour précis + outline + summary)
+%% \section{Apparence des tables et sommaires}
 
-% 		> TODO : Reprendre les styles de ToC en normal et modern + documenter proprement --- et documenter pour les \cftpara... :
-% \newcommand{\cftparastyle}{\llap}
-% \newcommand{\cftparanumstyle}{\bfseries}
-% \newcommand{\cftparaaftersnum}{.\enskip}
-% \newcommand{\cftparanumsep}{,~}
-% \newcommand{\cftparaleader}{p.~}
-% \newcommand{\cftparaafterpnum}{.}
-% \newcommand{\cftparasep}{\par}
-
-%% L'apparence de la table des matières est configurée en utilisant les outils fournis par la classe |memoir|
-
-%% La classe |memoir| permet de modifier tous les éléments de la table des matières, depuis l'affichage des intitulés jusqu'à la numérotation des pages ou les lignes de points qui en facilitent la lecture, et même les espacements horizontaux et verticaux entre différents éléments. Ces éléments de configuration ne seront pas détaillés ici, et chacun pourra en modifier l'apparence en utilisant la documentation de cette classe.
-
-%% \begin{noprint}
-%	Configure ToC dotted lines
-\renewcommand*{\cftdotsep}{2}
-% Do not print page numbers or dots in ToC for <book> and <part>, which are centered
-\cftpagenumbersoff{book}
-\cftpagenumbersoff{part}
-%% \end{noprint}
-
-%% \begin{noprint}
-%	Ensure ToC starts on a new page (like a chapter)
-\if@article\else
-	\pretocmd{\tableofcontents}{\clearforchapter}{}{}
-\fi
-%% \end{noprint}
+%% L'apparence de la table des matières est configurée en utilisant les outils fournis par la classe |memoir|. Celle-ci explique en détail comment modifier tous les éléments de la table des matières, depuis l'affichage des intitulés jusqu'à la numérotation des pages ou les lignes de points qui en facilitent la lecture, et même les espacements horizontaux et verticaux entre différents éléments. Ces éléments de configuration ne seront pas détaillés ici, et chacun pourra en modifier l'apparence des différentes subdivisions en utilisant la documentation de cette classe.
 
 %% \begin{noprint}
 %	Define ToC style for \book
@@ -2689,6 +2646,9 @@
 	\addtocontents{lot}{\protect\ifnum\protect\value{tocdepth}=0\protect\relax\vspace*{-.5\baselineskip}\protect\fi}
 	\addtocontents{lof}{\protect\ifnum\protect\value{tocdepth}=0\protect\relax\vspace*{-.5\baselineskip}\protect\fi}}
 %% \end{noprint}
+
+% + Documener un \addtocontents pour supprimer la ligne supplémentaire: \addtocontents{toc}{\protect\addvspace{...}
+% --- ou voir si on peut supprimer tout l'espace vertical et ajouer un: \addtocontents{toc}{\protect\addvspace{...}}
 
 %% \begin{noprint}
 %	Ensure that the ToC ends the paragraph properly
