@@ -106,6 +106,8 @@
 	\@paranametrue
 \newif\if@precis
 	\@precisfalse
+\newif\if@subprecis % This switch is not currently associated with a class option
+	\@subprecisfalse
 \newif\if@outline
 	\@outlinefalse
 \newif\if@summary
@@ -542,7 +544,7 @@
 %% Ces options permettent d'imprimer des éléments supplémentaires dans la table des matières, principalement dans le but de générer un document donnant une vision d'ensemble du manuscrit. Les numéros et les noms des paragraphes sont ajoutés à la table, ainsi que le texte placé dans des environnements spéciaux. Sur ces deux options, voir \todo{Renvoyer à la page de la doc.}.
 
 %% \begin{developer}
-%% Il est possible de vérifier quelle option a été chargée et d'en modifier le comportement grâce aux opérateurs: \cs{if@outline}{Opérateur conditionnel attaché à l'option |outline|.}, \cs{if@summary}{Opérateur conditionnel attaché à l'option |summary|.}.
+%% Il est possible de vérifier quelle option a été chargée et d'en modifier le comportement grâce aux opérateurs: \cs{if@precis}{Opérateur conditionnel attaché à l'option |precis|.}, \cs{if@outline}{Opérateur conditionnel attaché à l'option |outline|.}, \cs{if@summary}{Opérateur conditionnel attaché à l'option |summary|.}.
 %% \end{developer}
 
 %% \begin{noprint}
@@ -2103,13 +2105,16 @@
 }
 %% \end{noprint}
 
-%% Les numéros de paragraphe peuvent être intégrés à la table des matières pour former un \enquote{précis}. Cette fonctionnalité pourra être utilisée pour la table des matières de certains ouvrages, mais aussi, par exemple, pendant la phase d'édition et de relecture d'un ouvrage, pour en percevoir plus clairement la structure. Elle peut être invoquée par l'option de classe |precis|. Les commandes \cs{precis}{Afficher les numéros et titres de de paragraphes coulés dans la table des matières} et \cs{noprecis}{Ne pas aficher les numéros et titres de de paragraphes coulés dans la table des matières} permettent également de produire le même résultat.
+%% Les numéros de paragraphe peuvent être intégrés à la table des matières pour former un \enquote{précis}. Cette fonctionnalité pourra être utilisée pour la table des matières de certains ouvrages, mais aussi, par exemple, pendant la phase d'édition et de relecture d'un ouvrage, pour en percevoir plus clairement la structure. Elle peut être invoquée par l'option de classe |precis|. Les commandes \cs{precis}{Afficher les numéros et titres de paragraphes coulés dans la table des matières} et \cs{noprecis}{Ne pas aficher les numéros et titres de paragraphes coulés dans la table des matières} permettent également de produire le même résultat. Une commande \cs{subprecis}{Afficher les numéros et titres de sous-paragraphes coulés dans la table des matières} a été créée pour permettre l'insertion des |\subpara| dans la table des matières, mais cette fonctionnalité, dont l'usage semble restreint, n'est pas incluse par défaut dans les options de la classe.
+
+% TODO > La fonction \subprecis (\subpara dans la ToC) est actuellement sous-développée, car sans doute peu utile
 
 %% \begin{noprint}
 %	Create macros that swirch on or off the precis conditional
 % This is redundant with class option <precis>, but can prove useful sometimes.
 \newcommand{\precis}{\@precistrue}
-\newcommand{\noprecis}{\@precisfalse}
+\newcommand{\subprecis}{\@subprecistrue}
+\newcommand{\noprecis}{\@precisfalse\@subprecisfalse}
 %% \end{noprint}
 
 %% \begin{developer}
@@ -2133,18 +2138,6 @@
 
 %% Les commandes permettant de composer les numéros de paragraphes dans la table des matières peuvent également être insérées dans un style de paragraphe. Elles sont documentées dans le chapitre sur les tables et sommaires~(\pageref{tables-of-contents}).
 
-%%	\begin{noprint}
-%	Create macros used for styling paragraphes in the table of contents
-% These macros are more thoroughly documented in the section on table of contents, which explains how to redefine them.
-\newcommand{\cftparastyle}{\llap}
-\newcommand{\cftparanumstyle}{\bfseries}
-\newcommand{\cftparaaftersnum}{.\enskip}
-\newcommand{\cftparanumsep}{,~}
-\newcommand{\cftparaleader}{p.~}
-\newcommand{\cftparaafterpnum}{.}
-\newcommand{\cftparasep}{\par}
-%%	\end{noprint}
-
 %% Chaque numéro de paragraphe et sous-paragraphe est automatiquement associé à un \enquote{label}, qui permettra d'y faire référence ailleurs dans le texte. La commande |\label{<label>}|, utilisée en interne, permet de créer une balise dans le texte et d'enregistrer à quel numéro de page et dans quel paragraphe elle se trouve. La commande |\ref{<label>}| permet à l'utilisateur d'imprimer le numéro de paragraphe sous lequel se trouve la balise, alors que |\pageref{<label>}| renverra au numéro de page en question~(sur ces questions, voir \todo{TODO, explication des labels}). Les labels associés aux paragraphes et sous-paragraphes ont toujours la forme |para:<titre>| ou, si aucun titre n'est donné, |para:<numéro>|~(le numéro risque alors de changer si de nouveaux paragraphes sont ajoutées). La syntaxe pour renvoyer à un numéro de paragraphe est, classiquement, la suivante:
 %% \begin{enumerate}
 %% \item Pour un paragraphe auquel aucun titre n'est donné~(|\para|, sans argument optionnel), on utilisera par exemple |\ref{para:12}|, s'il s'agit du paragraphe \no 12, pour imprimer ce numéro, ou |\pageref{para:12}| pour renvoyer à la page correspondante.
@@ -2154,7 +2147,7 @@
 %% Le système fonctionne de la même manière pour les sous-paragraphes, à une différence près. Si, par exemple, après le |\para| numéro 3, un sous-paragraple est créé~(|\subpara[Le titre]|), la commande |\ref{para:Le titre}| imprimera le numéro \enquote{3-1}, qui est également celui que l'on trouvera au début de ce sous-paragraphe, qui est le premier à l'intérieur du troisème paragraphe.
 
 %% \begin{developer}
-%% Les commandes |\para| et |\subpara|, décrites plus haut, gèrent la composition des numéros et titres de (sous-)paragraphes, la création des labels correspondants, ainsi que l'insertion éventuelle dans la table des matières en mode |precis|.
+%% Les commandes |\para| et |\subpara|, décrites plus haut, gèrent la composition des numéros et titres de (sous-)paragraphes, la création des labels correspondants, ainsi que l'insertion éventuelle dans la table des matières d'un précis, avec l'option correspondante (|precis|).
 %% \end{developer}
 
 %%	\begin{noprint}
@@ -2162,7 +2155,6 @@
 \newcommand{\para}[1][]{%
 	% Increase \para and \precis counters
 	\refstepcounter{para}%
-	\refstepcounter{precis}%
 	% \def\@currentlabel{\thepara}% TODO > Delete?
 	\paraskip%
 	% Print para number and title, define corresponding label
@@ -2176,15 +2168,20 @@
 				{\paracolour\paratitlestyle{#1\parasep}}%
 	\fi\fi\fi%
 	% Print para number and title in ToC if precis mode is enabled
-	\if@precis
+	\if\relax#1\relax\else
+		\refstepcounter{precis}
 		\addtocontents{toc}{%
-			\ifnum\value{precis}>1\vskip-\lastskip\cftparasep\else%
-				\vskip\baselineskip\par\fi%
-				\protect\noindent%
-				{\cftparastyle{\cftparanumstyle\thepara\cftparaaftersnum}
-					\if\relax#1\relax\else#1\cftparanumsep\fi\cftparaleader\thepage\cftparaafterpnum}\vskip\baselineskip\par
+			\protect\if@precis%
+				% Invoke styling macros depending on whether this is the first precis in the section (skip vertical space and format paragraph) or a subsequent paragraph (add separation)
+				\ifnum\value{precis}>1\cftprecissep\else\cftbeforeprecis\fi%
+				% Print precis number and title
+				{\cftprecisstyle{\cftprecisnumstyle\thepara\cftprecisaftersnum}%
+				#1\cftprecisnumsep\cftprecisleader\thepage\cftprecisafterpnum}%
+			\protect\fi%
+			% Invoke a styling macro when it is time to end the precis section of the ToC
+			\protect\@ifnextchar\protect\contentsline{\protect\cftafterprecis}{}%
 			}%
-	\fi%
+	\fi
 	% Gobble empty paragraph skip
 	\@ifnextchar\par{\@gobblepar\relax}{\relax}}
 %%	\end{noprint}
@@ -2196,25 +2193,31 @@
 	\refstepcounter{subpara}%
 	\subparaskip%
 	% Print subpara number and title, define corresponding label
-	{\subparanumcolour\subparanumstyle\thepara\subparanumdash\thesubpara\subparanumsep%
+	{\subparanumcolour\subparanumstyle{\thepara\subparanumdash\thesubpara\subparanumsep}%
 	 \if\relax#1\relax\label{para:\thepara-\thesubpara}\else\label{para:#1}\fi}%
 	\if@paraname
 		\if\relax#1\relax\else%
 			\if@marginalia%
-				\marginpar{\subparacolour\subparastyle#1}%
+				\marginpar{\subparacolour\subparastyle{#1}}%
 			\else%
-				{\subparacolour\subparatitlestyle#1\subparasep}%
-	\fi\fi\fi
-	% Print subpara number and title in ToC if precis mode is enabled
-	\if@precis
+				{\subparacolour\subparatitlestyle{#1\subparasep}}%
+	\fi\fi\fi	% Print para number and title in ToC if precis mode is enabled
+	\if\relax#1\relax\else
+		\refstepcounter{precis}
 		\addtocontents{toc}{%
-			\ifnum\value{precis}>1\vskip-\lastskip\cftparasep\else%
-				\vskip\baselineskip\par\fi%
-				\protect\noindent%
-				{\cftparastyle{\cftparanumstyle\theparaa\subparanumdash\thesubpara\cftparaaftersnum}
-					\if\relax#1\relax\else#1\cftparanumsep\fi\cftparaleader\thepage\cftparaafterpnum}\vskip\baselineskip\par
+			\protect\if@subprecis%
+				% Invoke styling macros depending on whether this is the first precis in the section (skip vertical space and format paragraph) or a subsequent paragraph (add separation)
+				\ifnum\value{precis}>1\cftprecissep\else\cftbeforeprecis\fi%
+				% Print precis number and title
+				{\cftprecisstyle{%
+	 				\cftprecisnumstyle\thepara%
+	 				\subparanumdash\thesubpara\cftprecisaftersnum}
+				#1\cftprecisnumsep\cftprecisleader\thepage\cftprecisafterpnum}%
+			\protect\fi%
+			% Invoke a styling macro when it is time to end the precis section of the ToC
+			\protect\@ifnextchar\protect\contentsline{\protect\cftafterprecis}{}%
 			}%
-	\fi%
+	\fi
 	% Gobble empty paragraph skip
 	\@ifnextchar\par{\@gobblepar\relax}{\relax}}
 %%	\end{noprint}
@@ -2325,13 +2328,17 @@
 		\cftpagenumbersoff{subsubsection}
 		\cftpagenumbersoff{paragraph}
 		\cftpagenumbersoff{subparagraph}
+		% Reset precis and other additional contents
+		% TODO > Add outline and summary
+		\@precisfalse
+		\let\cftafterprecis=\relax
+		\let\cftbeforeprecis=\relax
 		% Save tocdepth value
 		\newcounter{save@tocdepth}
 		\setcounter{save@tocdepth}{\value{tocdepth}}
 		\setcounter{tocdepth}{#1}
-		% Rajouter un RaggedRight (+package ragged2e)
 		% Print the table of contents and restore tocdepth
-		\tableofcontents
+		#2
 		\setcounter{tocdepth}{\value{save@tocdepth}}
 		\clearpage
 	\egroup}
@@ -2467,10 +2474,117 @@
 \setlength{\cftbeforesubparagraphskip}{\z@}
 %% \end{noprint}
 
+%% \frenchlaw crée de nouvelles commandes pour configurer la présentation des précis dans la table des matières. Pour mémoire, il est possible de composer les numéros et titres des paragraphes directement dans la table des matières\todo{Réf. section sur les para}, dont il s'agit ici de paramétrer l'apparence au moyen de styles prédéfinis. La commande \cs{makeprecisstyle}{Commande permettant de créer un nouveau style pour les précis composés dans la table des matières.} permet de définir un nouveau style de précis.
+
+%%	\begin{noprint}
+%	Create the commands that define and apply precis styles
+\newcommand{\makeprecisstyle}[2]{\expandafter\gdef\csname @precisstyle@#1\endcsname{#2}}
+\newcommand{\precisstyle}[1]{\csname @precisstyle@#1\endcsname}
+%%	\end{noprint}
+
+%% Pour définir et sélectionner un nouveau style de numéros, il suffit de redéfinir, à l'intérieur de |\makeparastyle|, tout les paramètres que l'on souhaite modifier parmi la liste suivante:
+
+%% \begin{macro}
+%% \makeprecisstyle{<nom du style>}{ % Création du style
+%%   % Style général du précis (taille du texte, variante de police, etc.)
+%%   \newcommand{\cftprecisstyle}{<...>}
+%%   % Style des numéros de paragraphes (s'ajoute au précédent)
+%%   \newcommand{\cftprecisnumstyle}{<...>}
+%%   % Séparateur après les numéros de paragraphes
+%%   \newcommand{\cftprecisaftersnum}{<...>}
+%%   % Séparateur entre le titre et le numéro de page
+%%   \newcommand{\cftprecisnumsep}{,~}
+%%   % Texte placé avant le numéro de page (ex: p.)
+%%   \newcommand{\cftprecisleader}{}
+%%   % Ponctuation éventuelle après le numéro de page
+%%   \newcommand{\cftprecisafterpnum}{.}
+%%   % Séparateur inséré entre deux numéros
+%%   \newcommand{\cftprecissep}{~--- }
+%% }
+%% \end{macro}
+
+%%	\begin{noprint}
+%	Create macros used for styling the precis (\para and \subpara) in ToC
+\newcommand{\cftprecisstyle}{}
+\newcommand{\cftprecisnumstyle}{}
+\newcommand{\cftprecisaftersnum}{}
+\newcommand{\cftprecisnumsep}{}
+\newcommand{\cftprecisleader}{}
+\newcommand{\cftprecisafterpnum}{}
+\newcommand{\cftprecissep}{ }
+%%	\end{noprint}
+
+% TODO > Documenter / Indexer chacune des commandes ci-dessus
+
+%%	\begin{developer}
+%%	Les macros \cs{cftbeforeprecis}{Macro permettant de façonner horizontalement et verticalement les précis dans la table des matières. Toujours employée en conjonction avec |cftafterprecis|.} et \cs{cftafterprecis}{Macro permettant de façonner horizontalement et verticalement les précis dans la table des matières. Toujours employée en conjonction avec |cftbeforeprecis|.} permettent de transformer les différentes entrées du précis en un bloc de texte unique dans chaque section de la table des matières. Ces macros, qui doivent être utilisées et modifiées ensemble (utilisation d'un environnement), déterminent l'espacement vertical avant et après le précis, ainsi que son positionnement horizontal sur la ligne.
+%%	\end{developer}
+
+%%	\begin{noprint}
+%	Separate the precis from surrounding ToC elements
+% The two following macros insert vertical space before and after the precis bloc, as well as create a minipage the size and position of which match the textblock used in ToC.
+% With respect to implementation, see the code in \para and \subpara. Essentially, both macros are (\protect) invoked when inputing the precis data in the ToC. The first one works by texting whether this is the first precis item in the current section (simple <precis> counter), while the second one is triggered when the next ToC item is a proper sectionning unit, which always starts with \contentsline (this is tested using \@ifnextchar).
+\newcommand{\cftbeforeprecis}{%
+	\vskip.5\baselineskip\par%
+	\noindent\hspace{\dimexpr\toclabelwidth+\tocnumwidth}%
+	\begin{minipage*}{\dimexpr\textwidth-\toclabelwidth-\tocnumwidth-\@pnumwidth}}
+\newcommand{\cftafterprecis}{%
+	\end{minipage*}%
+	\vskip.5\baselineskip\par}
+%%	\end{noprint}
+
+%% \frenchlaw crée un style |default|, appliqué automatiquement, qui présente le précis comme un bloc de texte en italiques dans la table des matières. Un style spécial est également créé et appliqué automatiquement avec l'option |draft|, qui place chaque numéro sur une ligne distincte pour faciliter la relecture et l'identification de titres répétitifs, fautifs ou peu clairs. 
+
+%%	\begin{noprint}
+\makeprecisstyle{default}{
+	\renewcommand{\cftprecisstyle}{\footnotesize\itshape}
+	\renewcommand{\cftprecisnumstyle}{}
+	\renewcommand{\cftprecisaftersnum}{.\space}
+	\renewcommand{\cftprecisnumsep}{,~}
+	\renewcommand{\cftprecisleader}{\normalfont p.~}
+	\renewcommand{\cftprecisafterpnum}{.}
+	\renewcommand{\cftprecissep}{~--- }	
+}
+\precisstyle{default}
+
+\makeprecisstyle{draft}{
+	\renewcommand{\cftprecisstyle}{\small}
+	\renewcommand{\cftprecisnumstyle}{\bfseries}
+	\renewcommand{\cftprecisaftersnum}{.\enskip}
+	% Do NOT remove or comment extra line below. Explicit \par does NOT work
+	\renewcommand{\cftprecissep}{
+
+	}
+}
+\if@draft\precisstyle{draft}\fi
+%%	\end{noprint}
+
+%% La classe opère, enfin, quelques choix par défaut, comme celui de ne pas composer les numéros de page des livres et des parties dans la table des matières, ce qui permet notamment de centrer les titres sur la page\todo{Renvi à la section suivante}.
+
+% TODO > Documenter ces macros de memoir
+
+%% \begin{noprint}
+%	Configure ToC dotted lines
+\renewcommand*{\cftdotsep}{2}
+% Do not print page numbers or dots in ToC for <book> and <part>, which are centered
+\cftpagenumbersoff{book}
+\cftpagenumbersoff{part}
+%% \end{noprint}
+
+%% \begin{noprint}
+%	Ensure ToC starts on a new page (like a chapter) for books
+\if@article\else
+	\pretocmd{\tableofcontents}{\clearforchapter}{}{}
+\fi
+%% \end{noprint}
+
 
 % ===== Table of Contents Horizontal Spacing =====
 
 % TODO >  Préciser que les méhodes ToC = Memoir
+
+% TODO » Reprendre -- notamment, revoir les ToC modern (aligner les parties / titres à gauche et tout mettre en sans sérif)
+% Créer une version sans label box, mais avec légère intentation des sections suiv., type .5 em. -- Voire créer deux templates (et un sélecteur)
 
 %% \begin{developer}
 %% Pour paramétrer l'apparence de chaque ligne de la table des matières, et particulièrement l'espacement horizontal entre le numéro de section et le titre de celle-ci, \frenchlaw crée plusieurs nouvelles longueurs:
