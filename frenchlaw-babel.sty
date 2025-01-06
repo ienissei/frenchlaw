@@ -38,6 +38,7 @@
 }
 
 %	Use the superscript macro from Babel French
+% TODO> Virer les \toclabelbox et les intégrer dans la classe
 \let\textsuperscript=\fup
 
 %	Configure French language babel captions
@@ -148,6 +149,8 @@
 	\def\phonename{Phone}
 	\def\faxname{Fax.}
 	\def\subjectname{Subject}% Lettres
+	\def\cftchaptername{\toclabelbox{Chapitre}}%
+	\def\cftsectionname{\toclabelbox{}}%
 	\def\lecturename{Lecture Notes}
 	\def\tutorialname{Tutorial Notes}
 	% TODO » Changer quand on aura chargé le .cnf au bon endroit

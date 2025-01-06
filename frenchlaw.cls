@@ -1428,8 +1428,10 @@
 \newlistentry[heading]{subheading}{toc}{-1}
 %% \end{noprint}
 
+% TODO > Starred version sans tout recopier? (heading et subheading)
 %% \begin{noprint}
 %	Create a macro for instering headings (built on \chapter)
+% Note: There is no starred version of this command, as it did not seem very useful to have one.
 \newcommand{\heading}[2][]{
 	\begingroup
 		\if@article\else\cleardoublepage\fi
@@ -1452,6 +1454,7 @@
 
 %% \begin{noprint}
 %	Create a macro for instering subheadings (built on \chapter)
+% Note: There is no starred version of this command, as it did not seem very useful to have one.
 \newcommand{\subheading}[2][]{
 	\begingroup
 		\if@article\else\cleardoublepage\fi
@@ -1687,7 +1690,7 @@
 
 %% \begin{noprint}
 %	Style <section> headings
-% Create a macro for styling elements specific to <vitae>
+% Create a helper macro for styling elements specific to <vitae>
 \newcommand{\sechead@vitae}{%
 	\strut\marginpar{\vitaecolour\raisebox{.5ex}{\rule{2cm}{.5ex}}}}
 % Set section heading styles
@@ -1701,6 +1704,7 @@
 % Skip two lines before a new section, except in <twocolumn> mode
 \if@twocolumn\addtolength{\beforesecskip}{\z@}
 	\else\addtolength{\beforesecskip}{\baselineskip}\fi
+% Skip one line after a new section
 \setlength{\aftersecskip}{\baselineskip}
 %% \end{noprint}
 
@@ -2010,15 +2014,15 @@
 %%   % Mode de numérotation (ici, chiffres arabes):
 %%   \renewcommand{\thepara}{\arabic{para}}
 %%   % Espace à insérer avant chaque paragraphe:
-%%   \renewcommand{\paraskip}{0pt}
+%%   \renewcommand{\paraskip}{<...>}
 %%   % Ponctuation et espace après le titre associé au numéro:
 %%   \renewcommand{\parasep}{<...>}
 %%   % Ponctuation et espace après le numéro:
 %%   \renewcommand{\paranumsep}{<...>}
-%%   % Couleur du titre:
+%%   % Couleur du titre (ici, les couleurs par défaut):
 %%   \renewcommand{\paracolour}{\if@colourall\maincolour\fi}
-%%   % Couleur du numéro:
-%%   \renewcommand{\paranumcolour}{\paracolour}
+%%   % Couleur du numéro (ici, les couleurs par défaut):
+%%   \renewcommand{\paranumcolour}{\if@colourall\paracolour\fi}
 %%   % Style du titre (ajouter par exemple \bfseries ou \scshape):
 %%   \renewcommand{\paratitlestyle}[1]{<...>#1}
 %%   % Style du numéro (idem):
@@ -2669,11 +2673,7 @@
 	\addtocontents{lof}{\par}}
 %% \end{noprint}
 
-
-
-%% \subsection{Précis}
-
-
+% Récupérer outline / summary et les intégrer dans les méthodes ToC supra + dans les styles de précis, e.g. italiques ou autres
 
 
 % =***======***======***======***======***======***======***======***======***======***=
@@ -3172,6 +3172,7 @@
 	\expandafter\gdef\csname @subtitle@\languagename\endcsname{\@empty}
 \newcommand{\subject}[1]{\gdef\@subject{#1}}
 	\newcommand{\@subject}{\@empty}
+% TODO > Utiliser ces conditionnels + \ifmaterials \ifquestions, cf. le cours de droit comparé des biens (reprendre et nettoyer dans ce fichier là)
 \newif\iflecture\lecturefalse
 \newif\ifseminar\seminarfalse
 \newif\iftutorial\tutorialfalse
