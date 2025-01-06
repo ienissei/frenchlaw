@@ -1785,7 +1785,7 @@
 
 %% Il est possible de créer de nouveaux styles de chapitres~(et de subdivisions en général) en utilisant les commandes de la classe |memoir|, à la documentation de laquelle le lecteur est renvoyé.
 
-%% Les subdivisions disponibles dans la classe \frenchlaw sont les suivantes: \cs{book}{Commande permettant d'insérer une subdivision hiérarchique pour les livres.}, \cs{part}{Commande permettant d'insérer une subdivision hiérarchique pour les parties, à l'intérieur des livres éventuels d'un ouvrage.}, \cs{heading}{Commande permettant d'insérer une subdivision hiérarchique pour les titres, à l'intérieur des parties d'un ouvrage.}, \cs{subheading}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-titres, à l'intérieur des titres d'un ouvrage.}, \cs{chapter}{Commande permettant d'insérer une subdivision hiérarchique pour les chapitres, à l'intérieur des parties ou des (sous-)titres d'un ouvrage.}, \cs{section}{Commande permettant d'insérer une subdivision hiérarchique pour les sections, à l'intérieur des chapitres éventuels d'un ouvrage.}, \cs{subsection}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-sections, à l'intérieur des sections d'un ouvrage.}, \cs{subsubsection}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-sous-sections, à l'intérieur des sous-sections d'un ouvrage.}, \cs{paragraph}{Commande permettant d'insérer une subdivision hiérarchique pour les paragraphes, généralement à l'intérieur des sous-sous-sections d'un ouvrage.}, \cs{subparagraph}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-paragraphes, à l'intérieur des paragraphes d'un ouvrage.}. \todo{\Adde les subdivisions supplémentaires.} Les commandes correspondantes peuvent être employées ainsi:
+%% Les subdivisions disponibles dans la classe \frenchlaw sont les suivantes: \cs{book}{Commande permettant d'insérer une subdivision hiérarchique pour les livres.}, \cs{part}{Commande permettant d'insérer une subdivision hiérarchique pour les parties, à l'intérieur des livres éventuels d'un ouvrage.}, \cs{heading}{Commande permettant d'insérer une subdivision hiérarchique pour les titres, à l'intérieur des parties d'un ouvrage.}, \cs{subheading}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-titres, à l'intérieur des titres d'un ouvrage.}, \cs{chapter}{Commande permettant d'insérer une subdivision hiérarchique pour les chapitres, à l'intérieur des parties ou des (sous-)titres d'un ouvrage.}, \cs{section}{Commande permettant d'insérer une subdivision hiérarchique pour les sections, à l'intérieur des chapitres éventuels d'un ouvrage.}\footnote{L'alignement vertical du texte sur la page est sera modifié si une \texttt{\textbackslash section} est placée immédiatement à la suite d'un chapitre, sans aucun texte introductif.}, \cs{subsection}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-sections, à l'intérieur des sections d'un ouvrage.}, \cs{subsubsection}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-sous-sections, à l'intérieur des sous-sections d'un ouvrage.}, \cs{paragraph}{Commande permettant d'insérer une subdivision hiérarchique pour les paragraphes, généralement à l'intérieur des sous-sous-sections d'un ouvrage.}, \cs{subparagraph}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-paragraphes, à l'intérieur des paragraphes d'un ouvrage.}. \todo{\Adde les subdivisions supplémentaires.} Les commandes correspondantes peuvent être employées ainsi:
 
 %% \begin{macro}
 %% \book{<title>}% Livre
@@ -1836,21 +1836,30 @@
 	\refstepcounter{chapter}}
 %% \end{noprint}
 
-%% \frenchlaw crée, en outre, la commande \cs{fakechapter}{Commande permettant d'insérer un chapitre non numéroté, susceptible de comporter n'importe quelle chaîne de caractères en lieu et place du texte \enquote{Chapitre \emph{n}}, et présenté dans la table des matières comme une section.}, qui mérite une explication. Elle permet de créer un chapitre non numéroté, mais elle comporte deux particularités: \glose{1} il est possible d'insérer un texte en lieu et place du numéro de chapitre~(par exemple \enquote{Chapitre liminaire} ou \enquote{Avant-propos}, suivis d'un titre plus substantiel); \glose{2} ce chapitre est renseigné dans la table des matières comme s'il s'agissait d'une section. Cette commande est particulièrement utile pour les chapitres non numérotés que l'on trouve en tout début ou en fin d'ouvrage, par exemple une préface, une liste d'abréviations, une bibliographie ou un index. Lorsque plusieurs chapitres non numérotés se suivent~-- ce qui est fréquent~--, la commande |\fakechapter| produit un résultat visuellement plus harmonieux dans la table des matières.
+%% \frenchlaw crée, en outre, la commande \cs{fakechapter}{Commande permettant d'insérer un chapitre non numéroté, susceptible de comporter n'importe quelle chaîne de caractères en lieu et place du texte \enquote{Chapitre \emph{n}}, et présenté dans la table des matières comme une section.}, qui mérite une explication. Elle permet de créer un chapitre non numéroté, mais elle comporte deux particularités: \glose{1} il est possible d'insérer un texte en lieu et place du numéro de chapitre; \glose{2} ce chapitre est renseigné dans la table des matières comme s'il s'agissait d'une section. Cette commande est particulièrement utile pour les chapitres non numérotés que l'on trouve en tout début ou en fin d'ouvrage, par exemple une préface, une liste d'abréviations, une bibliographie ou un index. Lorsque plusieurs chapitres non numérotés se suivent~-- ce qui est fréquent~--, la commande |\fakechapter| produit un résultat visuellement plus harmonieux dans la table des matières.
+
+%% \begin{macro}
+%% \fakechapter{<title>}
+%% \fakechapter[<chapter-type>]{<title>}
+%% \end{macro}
+
+%% On pourra, par exemple, utiliser la commande |\fakechapter{Introduction}| pour créer un chapitre non numéroté du même nom, lequel apparaîtra dans la table des matières au même niveau et avec la même apparence que les sections. L'argument optionnel peut être employé, par exemple, dans |\fakechapter[Chapitre liminaire]{<Titre du chapitre>}|. Cela permettra de remplacer \enquote{Chapitre N} par le texte de l'argument optionnel dans le corps du texte. Ce chapitre est toujours inséré dans la table des matières au même niveau que les sections, l'argument optionnel remplaçant ici \enquote{Section N}.
+
+%% On notera la différence entre |\fakechapter| et le traditionnel |\chapter*{<titre>}|, qui ne reproduit pas d'argument optionnel en lieu et place du numéro de chapitre, et crée une entrée dans la table des matières au même noveau que les chapitres. La différence est palpable, par exemple, lorsque le style de table des matières prévoit des sauts de lignes avant les chapitres, ce qui peut rendre inesthétiques les chapitres liminaires ou conclusifs lorsqu'ils sont nombreux.
 
 %% \begin{noprint}
+%	Create a command for insertinf a "fake" chapter
+% TODO » Revoir: Marche bien avec le style de ToC de la thèse, mais pas avec les ToC plus classiques (indentation des sections, ce chapitre en étant une pour la ToC), ni s'il y a des sections dnas le fake chapter.
+% Peut-être déf. comme une chapitre, mais utiliser les styles de texte des chapitres, en plaçant #1 et #2 dans le corps du texte (avec les styles correspondants, ou d'uatres)
+% Rendre adaptables à d'autres styles de ToC
 \newcommand{\fakechapter}[2][]{%
 	\clearforchapter
 	\thispagestyle{chapter}
 	\@schapter{\if\relax#1\relax\else\if@modern\MakeLowercase{#1}\else#1\fi\afterchapternum\fi#2}
 	\chaptermark{#1}
 	\phantomsection
-	\addcontentsline{toc}{section}{\if\relax#1\relax\else#1\cftchapteraftersnum\cftchapteraftersnumb~\fi#2}}
+	\addcontentsline{toc}{section}{\unskip\hspace{\cftchapterindent}\if\relax#1\relax\else#1\cftchapteraftersnum\cftchapteraftersnumb~\fi#2}}
 %% \end{noprint}
-
-%% \begin{macro}
-%% \fakechapter[<short-title>]{<title>}
-%% \end{macro}
 
 %% Une fois insérées dans le document, les différentes subdivisions hiérarchiques sont numérotées différemment, selon que l'on se trouve dans un document long ou que l'on utilise l'option |article|. Le tableau suivant indique le niveau de chaque subdivision dans la table des matières, qui pourra être utile aux développeurs, ainsi que son mode de numérotation en fonction de l'option sélectionnée~(\textsc{Tableau}~\ref{tab:Sectionning}).
 %% \begin{table}
@@ -2601,9 +2610,11 @@
 
 %% \begin{noprint}
 %	Ser ToC label to the width of “chapter” label, which is the longest
+% TODO > Ne marche pas sur les \fakechapter avec des sections en-dessous
 \newlength{\toclabelwidth}
 	\settowidth{\toclabelwidth}{\cftchapterfont\chaptername\space}
 %	Set ToC number to the width of roman numeral 20 or 30 (reasonable longest)
+% Redéfinir pour Modern
 \newlength{\tocnumwidth}
 \if@article
 	\settowidth{\tocnumwidth}{\cftsectionfont XX\space}
