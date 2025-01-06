@@ -2392,6 +2392,10 @@
 \setlength{\cftbeforepartskip}{\baselineskip}
 %% \end{noprint}
 
+%% \begin{developer}
+%% On notera toutefoisl'ajout par \frenchlaw de commandes permettant de modifier l'apparence des titres et sous-titres, sui obéissent aux mêmes règles de nommage que celles issues de la classe |memoir|, à savoir la longue série des |\cft...|.
+%% \end{developer}
+
 %% \begin{noprint}
 %	Define ToC style for \heading
 \renewcommand{\cftheadingaftersnum}{.}
@@ -2755,34 +2759,36 @@
 % ===== General List Spacing =====
 
 % TODO » Commenter la commande memoir \tightlistss avec modern (mais vérifier l'alignement sur la grille)
-
 %	Set all vertical space to mutliples of \baselineskip
 % \setlength{\parskip}{\z@}%	TODO » Delete (doublon du normal)
-\setlength{\partopsep}{\z@}
-\setlength{\parsep}{\z@}
-\setlength{\parsepi}{\if@stationery\z@\else\parskip\fi}
-\setlength{\parsepii}{\if@stationery\z@\else\parskip\fi}
-\setlength{\topsep}{\z@}
-\setlength{\topsepi}{\z@}
-\setlength{\topsepii}{\z@}
-\setlength{\topsepiii}{\z@}
-\setlength{\itemindent}{\z@}
-\setlength{\itemsepi}{\z@}
-\setlength{\itemsepii}{\z@}
-\setlength{\itemsepiii}{\z@}
+% Some package redefines list environments \AtBeginDocument, so this needs to be overriden
+\AtBeginDocument{
+	\setlength{\partopsep}{\z@}
+	\setlength{\parsep}{\z@}
+	\setlength{\parsepi}{\z@}% TODO > Augmenter manuellement pour les descriptions
+	\setlength{\parsepii}{\z@}
+	\setlength{\topsep}{\z@}
+	\setlength{\topsepi}{\z@}
+	\setlength{\topsepii}{\z@}
+	\setlength{\topsepiii}{\z@}
+	\setlength{\itemindent}{\z@}
+	\setlength{\itemsepi}{\z@}
+	\setlength{\itemsepii}{\z@}
+	\setlength{\itemsepiii}{\z@}
 
-%	Set horizontal space to multiples of \parindent
-\setlength{\listparindent}{\parindent}
-\setlength{\everylistparindent}{\listparindent}
-%\setlength{\labelsep}{.5em}
-\setlength{\leftmargin}{\z@}
-\setlength{\rightmargin}{\z@}
-\setlength{\leftmargini}{\if@twocolumn 1em \else 1.5em \fi}
-\setlength{\leftmarginii}{\if@twocolumn 1em \else 1.5em \fi}
-\setlength{\leftmarginiii}{\if@twocolumn 1em \else 1.5em \fi}
-\setlength{\leftmarginiv}{\if@twocolumn 1em \else 1.5em \fi}
-\setlength{\leftmarginv}{\if@twocolumn 1em \else 1.5em \fi}
-\setlength{\leftmarginvi}{\if@twocolumn 1em \else 1.5em \fi}
+	%	Set horizontal space to multiples of \parindent
+	\setlength{\listparindent}{\parindent}
+	\setlength{\everylistparindent}{\listparindent}
+	%\setlength{\labelsep}{.5em}
+	\setlength{\leftmargin}{\z@}
+	\setlength{\rightmargin}{\z@}
+	\setlength{\leftmargini}{\if@twocolumn 1em \else 1.5em \fi}
+	\setlength{\leftmarginii}{\if@twocolumn 1em \else 1.5em \fi}
+	\setlength{\leftmarginiii}{\if@twocolumn 1em \else 1.5em \fi}
+	\setlength{\leftmarginiv}{\if@twocolumn 1em \else 1.5em \fi}
+	\setlength{\leftmarginv}{\if@twocolumn 1em \else 1.5em \fi}
+	\setlength{\leftmarginvi}{\if@twocolumn 1em \else 1.5em \fi}
+}
 
 
 % ===== Quotations =====
@@ -3108,16 +3114,17 @@
 \newcommand{\spanish}[1]{\foreignlanguage{spanish}{\emph{#1}}}
 
 %	Fleuron pour séparer les sections + harmoniser avec celui utilisé pour la doc
+% TODO > Baser sur la longueur de parskip > 0, pas sur @modern
 \newcommand{\sectionbreak}[1][\adfast{3}\quad\adfast{3}\quad\adfast{3}]{%
 	\needspace{\baselineskip}
-	\addvspace{\baselineskip}
+	\if@modern\else\addvspace{\baselineskip}\fi
 	{\noindent\centering#1\par}%
-	 \addvspace{\baselineskip}}
+	 \if@modern\else\addvspace{\baselineskip}\fi}
 \newcommand{\chapterbreak}[1][\adforn{21}\quad\adfast{3}\quad\adforn{49}]{%
 	\needspace{\baselineskip}
-	\addvspace{\baselineskip}
+	\if@modern\else\addvspace{\baselineskip}\fi
 	{\noindent\centering#1\par}%
-	\addvspace{\baselineskip}}
+	\if@modern\else\addvspace{\baselineskip}\fi}
 \newcommand{\frenchlawfleuron}{\adforn{25}\,\adforn{63}~\adforn{53}}
 
 
