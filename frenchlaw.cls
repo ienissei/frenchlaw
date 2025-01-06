@@ -2041,30 +2041,30 @@
 %%  % Utiliser les mêmes commandes en remplaçant par "subpara" pour les \subpara
 
 %%	\begin{noprint}
-%	Define basic styling macros for the \para command
+%	Define basic styling macros for the \para and \subpara commands
 % Styling commands for \para
-\renewcommand{\thepara}{\arabic{para}}
-\newcommand{\paraskip}{\relax}
-\newcommand{\parasep}{.\enskip}
-\newcommand{\paranumsep}{.~}
-\newcommand{\paracolour}{\if@colourall\maincolour\fi}
-\newcommand{\paranumcolour}{\paracolour}
-\newcommand{\paratitlestyle}[1]{\bfseries#1}
-\newcommand{\paranumstyle}[1]{\bfseries#1}
+\newcommand{\paraskip}{}
+\newcommand{\parasep}{}
+\newcommand{\paranumsep}{}
+\newcommand{\paracolour}{}
+\newcommand{\paranumcolour}{}
+\newcommand{\paratitlestyle}[1]{#1}
+\newcommand{\paranumstyle}[1]{#1}
 
 % Styling commands for \subpara
-\renewcommand{\thesubpara}{\alph{subpara}}
-\newcommand{\subparaskip}{\relax}
-\newcommand{\subparasep}{.\enskip}
-\newcommand{\subparanumsep}{).~}
-\newcommand{\subparanumdash}{.}
+\newcommand{\subparaskip}{}
+\newcommand{\subparasep}{}
+\newcommand{\subparanumsep}{}
+\newcommand{\subparanumdash}{}
 \newcommand{\subparacolour}{}
-\newcommand{\subparanumcolour}{\if@colourall\maincolour\fi}
-\newcommand{\subparatitlestyle}[1]{\itshape#1}
-\newcommand{\subparanumstyle}[1]{\bfseries\itshape#1}
+\newcommand{\subparanumcolour}{}
+\newcommand{\subparatitlestyle}[1]{#1}
+\newcommand{\subparanumstyle}[1]{#1}
 %% \end{noprint}
 
-%% Pour sélectionner un style de paragraphe, il est nécessaire de l'indiquer au moyen de la commande \cs{makeparastyle}{Commande permettant de sélectionner un style pour les numéros de paragraphes |\para| et |\subpara|.}. Plusieurs styles sont déjà définis par \frenchlaw. Le style |default|, chargé automatiquement, compose, sans originalité, les numéros et titres de paragraphes en petites capitales~(|classic|) ou en gras (|modern|). Le style |textbook| compose les numéros de paragraphe en gros dans la marge.
+% TODO > Indexer / documenter chacune des commandes ci-dessus
+
+%% Pour sélectionner un style de paragraphe, il est nécessaire de l'indiquer au moyen de la commande \cs{parastyle}{Commande permettant de sélectionner un style pour les numéros de paragraphes |\para| et |\subpara|.}. Plusieurs styles sont déjà définis par \frenchlaw. Le style |default|, chargé automatiquement, compose, sans originalité, les numéros et titres de paragraphes en petites capitales~(|classic|) ou en gras (|modern|). Le style |textbook| compose les numéros de paragraphe en gros dans la marge.
 
 %% \begin{macro}
 	%% \parastyle{<nom du style>} % Sélection du style
@@ -2078,11 +2078,25 @@
 %	Define generic \para and \subapara styles
 \makeparastyle{default}{%
 	% Styling commands for \para
+	\renewcommand{\thepara}{\arabic{para}}
+	\renewcommand{\paraskip}{\relax}
+	\renewcommand{\parasep}{.\enskip}
+	\renewcommand{\paranumsep}{.~}
+	\renewcommand{\paracolour}{\if@colourall\maincolour\fi}
+	\renewcommand{\paranumcolour}{\if@colourall\paracolour\fi}
 	\renewcommand{\paratitlestyle}[1]{%
 		\if@marginalia\footnotesize\itshape\else%
 		\if@modern\sffamily\bfseries\else\scshape\fi\fi##1}
 	\renewcommand{\paranumstyle}[1]{\if@modern\sffamily\fi\bfseries##1}
+
 	% Styling commands for \subpara
+	\renewcommand{\thesubpara}{\alph{subpara}}
+	\renewcommand{\subparaskip}{\relax}
+	\renewcommand{\subparasep}{.\enskip}
+	\renewcommand{\subparanumsep}{).~}
+	\renewcommand{\subparanumdash}{.}
+	\renewcommand{\subparacolour}{}
+	\renewcommand{\subparanumcolour}{\if@colourall\maincolour\fi}
 	\renewcommand{\subparatitlestyle}[1]{%
 		\if@marginalia\footnotesize\itshape\else%
 		\if@modern\sffamily\fi\fi\itshape##1}
@@ -2108,6 +2122,7 @@
 	\renewcommand{\paranumstyle}[1]{%
 		\citereset\noindent%
 		\llap{\raisebox{0pt}[0pt][0pt]{\huge\itshape##1}}}
+
 	% Styling commands for \subpara
 	\renewcommand{\subparanumcolour}{\if@colour\maincolour\fi}
 	\renewcommand{\subparatitlestyle}[1]{%
