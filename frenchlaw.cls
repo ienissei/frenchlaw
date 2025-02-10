@@ -1622,7 +1622,6 @@
 
 	%	Style <chapter> titles with option <modern>
 	% In <memoir> chapters must be entirely redefined for each style
-	\renewcommand{\thechapter}{\roman{chapter}}
 	\renewcommand{\chaptitlefont}{\raggedright\Large\chaptercolour\sffamily\scshape}
 	\renewcommand{\chapnamefont}{\chaptitlefont}
 	\renewcommand{\chapnumfont}{\chaptitlefont}
@@ -1632,8 +1631,8 @@
 		\ifanappendix					\Alph{chapter}%
 		\else\ifdefstring{\languagename}{french}
 			{\ifnum\value{chapter}=1	\ordinalstring{chapter}[m]%
-			 \else						\thechapter\fi}
-			{\thechapter}\fi}
+			 \else						\MakeLowercase{\thechapter}\fi}
+			{\MakeLowercase{\thechapter}}\fi}
 	\renewcommand{\@chapapp}{\chapnamefont\MakeLowercase\chaptername}
 	\renewcommand{\printchaptertitle}[1]{\chaptitlefont\MakeUppercase{##1}}
 	\renewcommand{\afterchapternum}{\par\nobreak\vskip\midchapskip}
