@@ -21,6 +21,8 @@
 
 % \citet des {legislation}, supprimer le legistype- (gender)
 
+%% TODO > \citet ne marche pas (?) -- \textcite semble avoir un problème d'initiales… si deuxième éditeur
+
 \ProvidesFile{frenchlaw.cbx}%
 	[2014/09/30 v.0.9. Bibliography style for French legal documents]
 
@@ -46,6 +48,9 @@
 % TODO: \mainlang deprecated > use \textmainlang (syntax is different)
 
 %	TODO
+% Reprendre en fonction du main language --- peut-être à rajouter dans la réécriture des noms par biber :> bibnamedelimi explicite (vérifier ce qui se passe en supprimant la modification des noms)
+% \renewcommand{\bibnamedelimi}{}% ?
+% \renewcommand{\bibinitperiod}{}% ?
 \renewcommand{\bibinitdelim}{\addnbthinspace}% Thin space between initials
 \renewcommand{\bibnamedelimd}{\addnbspace}% Non-breaking space between initials and name
 \renewcommand{\bibnamedelimi}{\addnbspace}% Non-breaking space between initials and name
@@ -93,6 +98,7 @@
 \DeclareFieldFormat[legislation]{citetitle}{#1\isdot}%
 
 \DeclareFieldFormat{postnote}{#1\isdot}
+% Essayer: \DeclareFieldFormat{postnote}{\mknormrange{#1}} ou \DeclareFieldFormat{postnote}{#1} (dash entre les numéros de pages, mais quid du texte autour)
 
 % Needed?
 \DeclareFieldFormat[customa]{citetitle}{\mkbibemph{#1}}
