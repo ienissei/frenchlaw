@@ -1171,7 +1171,7 @@
 
 %% Une solution aussi radicale n'est toutefois pas requise pour le droit, et \frenchlaw essaie de trouver un équilibre raisonnable entre respecter \emph{pour l'essentiel} le système traditionnel de composition sur la grille, et autoriser des entorses à cette règle chaque fois qu'elle produirait des résultats franchement sous-optimaux. Les éléments qui rompent l'alignement vertical sont, par ailleurs et chaque fois que cela est possible, placés en bas de page pour minimiser la gêne visuelle que cela pourrait causer au lecteur. Ce prélude permet d'expliquer les choix techniques qui ont été faits dans le code.
 
-%% En plus d'établir une échelle typographique, la classe garantit autant que faire se peut le respect d'une grille verticale, ce qui signifie que l'espacement des lignes doit rester le même~-- ou un multiple de l'espacement standard~-- peu importe la taille des caractères. Cela peut se vérifier avec l'option |vgrid|. Toutefois, dans le souci de trouver un équilibre harmonieux, il est également nécessaire de pouvoir violer ce principe: si l'on pense à un titre de chapitre s'étalant sur deux lignes, il sera souvent très laid d'espacer excessivement ces deux lignes dans le seul but de retomber sur la grille verticale.
+%% En plus d'établir une échelle typographique, la classe garantit autant que faire se peut le respect d'une grille verticale, ce qui signifie que l'espacement des lignes doit rester le même~-- ou un multiple de l'espacement standard~-- peu importe la taille des caractères. Cela peut se vérifier avec l'option |vgrid|. Toutefois, dans le souci de trouver un équilibre harmonieux, il est également nécessaire de pouvoir déroger à ce principe: si l'on pense à un titre de chapitre s'étalant sur deux lignes, il sera souvent très laid d'espacer excessivement ces deux lignes dans le seul but de retomber sur la grille verticale.
 
 %% Dans l'échelle établie ci-dessus, les titres des subdivisions, comme les chapitres ou les sections, seront composés dans un corps plus gros, ce qui rompra l'alignement vertical sur la grille: la hauteur des caractères et de leur interlignage n'est pas un multiple de la hauteur des lignes composées en corps normal. \frenchlaw s'applique ensuite à atténuer cet effet. La solution qui a été retenue ici consiste à associer à chaque taille de caractères un interligne confortable et agréable à lire, tout en prévoyant deux mécanismes pour forcer l'alignement sur la grille, avec plus ou moins de subtilité.
 
@@ -1666,7 +1666,7 @@
 	{\vskip\@tempskipa\vskip-\parskip}
 	{\addvspace{\@tempskipa}\addvspace{-\parskip}}
 	{}
-	{\typeout{WARNING! Patching \noexpand\@xsect failed!}}
+	{\@latex@warning@no@line{Failed to patch \noexpand\@xsect.}}
 %% \end{noprint}
 
 %% \begin{noprint}
@@ -1802,7 +1802,7 @@
 
 %% L'argument obligatoire \arg{title} contient le titre de la subdivision dont il s'agit. Le premier argument optionnel \opt{toc-title} permet d'indiquer un titre différent~-- par exemple, plus court~-- à utiliser dans la table des matières. Quant au second argument optionnel, \opt{head-title}, il permet s'il y a lieu, de préciser un titre différent à utiliser dans l'en-tête de la page. Pour les commandes |\heading| et |\subheading|, l'argument \opt{short-title} est utilisé à la fois dans la table des matières et dans les en-têtes.
 
-%% Certaines subdivisions existent également sous une forme étoilée, qui n'est alors pas numérotée ni~(en principe) intégrée automatiquement à la table des matières. La classe \frenchlaw modifie toutefois ce comportement pour ajouter automatiquement à la table des matières les chapitres créés avec |\chapter*|, afin d'épargner à l'utilisateur la nécessité de réaliser manuellement cet ajout à chaque fois. Les commandes étoilées sont les suivantes:
+%% Certaines subdivisions existent également sous une forme étoilée, qui n'est alors pas numérotée ni~(en principe) intégrée automatiquement à la table des matières. Ces commandes sont les suivantes:
 
 %% \begin{macro}
 %% \chapter*[<short-title>]{<title>}% Chapitre
@@ -1812,6 +1812,8 @@
 %% \paragraph*{<title>}% Paragrpahe
 %% \paragraph*{<title>}% Sous-paragraphe
 %% \end{macro}
+
+%% La classe \frenchlaw modifie ce comportement pour ajouter automatiquement à la table des matières les chapitres créés avec |\chapter*|, afin d'épargner à l'utilisateur la nécessité de réaliser manuellement cet ajout à chaque fois. Il est toutefois recommandé de n'utiliser cette commande étoilée que dans des contextes bien particuliers. Il pourra être utile d'en comparer les effets avec la commande |\fakechapter|, présentée et comparée ci-dessous.
 
 %% \begin{noprint}
 \renewcommand{\chapter}{%
@@ -1845,7 +1847,7 @@
 
 %% On pourra, par exemple, utiliser la commande |\fakechapter{Introduction}| pour créer un chapitre non numéroté du même nom, lequel apparaîtra dans la table des matières au même niveau et avec la même apparence que les sections. L'argument optionnel peut être employé, par exemple, dans |\fakechapter[Chapitre liminaire]{<Titre du chapitre>}|. Cela permettra de remplacer \enquote{Chapitre N} par le texte de l'argument optionnel dans le corps du texte. Ce chapitre est toujours inséré dans la table des matières au même niveau que les sections, l'argument optionnel remplaçant ici \enquote{Section N}.
 
-%% On notera la différence entre |\fakechapter| et le traditionnel |\chapter*{<titre>}|, qui ne reproduit pas d'argument optionnel en lieu et place du numéro de chapitre, et crée une entrée dans la table des matières au même noveau que les chapitres. La différence est palpable, par exemple, lorsque le style de table des matières prévoit des sauts de lignes avant les chapitres, ce qui peut rendre inesthétiques les chapitres liminaires ou conclusifs lorsqu'ils sont nombreux.
+%% On notera la différence entre cette commande et le traditionnel |\chapter*{<titre>}|, qui ne reproduit pas d'argument optionnel en lieu et place du numéro de chapitre et qui crée une entrée dans la table des matières au même noveau que les chapitres,. La différence est palpable, par exemple, lorsque le style de table des matières prévoit des sauts de lignes avant les chapitres, ce qui peut rendre inesthétiques les chapitres liminaires ou conclusifs lorsqu'ils sont nombreux.
 
 %% \begin{noprint}
 %	Create a command for insertinf a "fake" chapter
@@ -1916,7 +1918,7 @@
 \fi\fi
 %% \end{noprint}
 
-%% Les subdivisions hiérarchiques seront composées en couleurs avec la combinaison des options |modern| et |colourall|. Certains styles peuvent comporter des variations plus complexes. Il est possible de modifier la couleur de certaines subdivisions seulement~-- par exemple, si l'on veut repasser en noir en-deçà d'un certain niveau~-- grâce aux commandes |\Xcolour|, où |X| peut être remplacé par le nom de la subdivision en question. On pourra ainsi redéfinir, par exemple, la commande pour les chapitres, grâce au code suivant:
+%% Les subdivisions hiérarchiques seront composées en couleurs avec la combinaison des options |modern| et |colourall| dans le corps du texte. Certains styles peuvent comporter des variations plus complexes. Il est possible de modifier la couleur de certaines subdivisions seulement~-- par exemple, si l'on veut repasser en noir en-deçà d'un certain niveau~-- grâce aux commandes |\Xcolour|, où |X| peut être remplacé par le nom de la subdivision en question. On pourra ainsi redéfinir, par exemple, la commande pour les chapitres, grâce au code suivant:
 
 %% \begin{macro}
 %% \renewcommand{\chaptercolour}{}% Chapitres toujours en noir.
@@ -2007,7 +2009,7 @@
 \newcommand{\noparanames}{\@paranamefalse}
 %%	\end{noprint}
 
-%% La mise en forme des numéros de paragraphes est réalisée au moyen de styles prédéfinis, auxquels l'utilisateur pourra ajouter sa griffe. La commande \cs{makeparastyle}{Commande permettant de créer un nouveau style pour les numéros de paragraphes |\para| et |\subpara|.} permet de définir un nouveau style de paragraphe, alors que la commande \cs{setparastyle}{Commande permettant de sélectionner un style pour les numéros de paragraphes |\para| et |\subpara|.}
+%% La mise en forme des numéros de paragraphes est réalisée au moyen de styles prédéfinis, auxquels l'utilisateur pourra ajouter sa griffe. La commande \cs{makeparastyle}{Commande permettant de créer un nouveau style pour les numéros de paragraphes |\para| et |\subpara|.} permet de définir un nouveau style de paragraphe, alors que la commande \cs{parastyle}{Commande permettant de sélectionner un style pour les numéros de paragraphes |\para| et |\subpara|.}
 
 %% \begin{noprint}
 %	Create the commands that define and apply paragraph styles
@@ -2360,7 +2362,7 @@
 %% La commmande |\shortcontents| enregistre la valeur actuelle de |\tocdepth|, la modifie pour composer une table à l'aide de la commande |\tableofcontents|, puis restaure |\tocdepth|. Il n'est donc pas possible en l'état d'utiliser des styles différents pour le sommaire et la table des matières; au demeurant, cela ne semblerait as judicieux.
 %% \end{developer}
 
-%% \section{Talbeaux et illustrations}
+%% \section{Tableaux et illustrations}
 
 %% Moins utiles pour les juristes, diverses tables peuvent être créées pour référencer les tableaux et illustrations présents dans le document. Les deux fonctionnalités classiques sont \cs{listoftables}{Commande permettant de composer une liste des tableaux.} et \cs{listoffigures}{Commande permettant de composer une liste des illustrations (figures).}. Ces commendes produisent des tables pour tous les tableaux insérés dans un environnement \env{table}{Environnement destiné à accueillir des tableaux.}, et tous les illustrations ou autres supports non-textuels placés dans un environnement \env{figure}{Environnement destiné à accueillir des figures ou éléments non-textuels.}. La classe |memoir| permet également de créer de nouvelles listes associées à d'autres environnements. Sur tous ces éléments relativement moins utilisés par les juristes, nous renvoyons le lecteur à la documentation de la classe |memoir|.
 
@@ -2512,7 +2514,7 @@
 %%	\begin{noprint}
 %	Separate the precis from surrounding ToC elements
 % The two following macros insert vertical space before and after the precis bloc, as well as create a minipage the size and position of which match the textblock used in ToC.
-% With respect to implementation, see the code in \para and \subpara. Essentially, both macros are (\protect) invoked when inputing the precis data in the ToC. The first one works by texting whether this is the first precis item in the current section (simple <precis> counter), while the second one is triggered when the next ToC item is a proper sectionning unit, which always starts with \contentsline (this is tested using \@ifnextchar).
+% With respect to implementation, see the code in \para and \subpara. Essentially, both macros are (\protect)-invoked when inputing the precis data in the ToC. The first one works by testing whether this is the first precis item in the current section (using a simple <precis> counter), while the second one is triggered when the next ToC item is a proper sectionning unit, which always starts with \contentsline (this is tested using \@ifnextchar).
 \newcommand{\cftbeforeprecis}{%
 	\vskip.5\baselineskip\par%
 	\noindent\hspace{\dimexpr\toclabelwidth+\tocnumwidth}%
@@ -2548,9 +2550,7 @@
 \if@draft\precisstyle{draft}\fi
 %%	\end{noprint}
 
-%% La classe opère, enfin, quelques choix par défaut, comme celui de ne pas composer les numéros de page des livres et des parties dans la table des matières, ce qui permet notamment de centrer les titres sur la page\todo{Renvi à la section suivante}.
-
-% TODO > Documenter ces macros de memoir
+%% La classe opère, enfin, quelques choix par défaut, comme celui de ne pas composer les numéros de page des livres et des parties dans la table des matières, ce qui permet notamment de centrer les titres sur la page. Ce paramétrage est documenté dans la classe |memoir|.
 
 %% \begin{noprint}
 %	Configure ToC dotted lines
@@ -2993,6 +2993,9 @@
 % =***======***======***======***======***======***======***======***======***======***=
 
 %	#####	TABLES & FIGURES	#####
+
+% TODO > Reprendre le package grid.sty et voir ce qu'on peut faire pour mesurer les figures…
+% Idem pour {gridset} et {returntogrid}, qui permettent apparemment d'ajouter un skip jusqu'à la prochaine ligne
 
 %	TABULARS
 
@@ -4266,6 +4269,7 @@
 	mincrossrefs=2,
 	autolang=other*]{biblatex}
 
+% Reprendre + uniquement piur les références .cbx
 \if@french
 	\ExecuteBibliographyOptions{giveninits=false,}
 \else
