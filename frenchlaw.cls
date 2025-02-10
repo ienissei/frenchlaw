@@ -2667,20 +2667,26 @@
 %% Quelques autres mécanismes mis en œuvre dans les tables des matières ne paraissent pas mériter de documentation approfondie, mais sont détaillés dans le code de la classe. Ils sont utilisés pour ajuster l'espace vertical au sein des tables des matières et tables des figures, en particulier pour la première et la dernière entrées de la table.
 %% \end{developer}
 
-% TOD > VÉRIFIER + Documenter cela: \fakechapter ou \section pour l'introduction / préface
-
 %% \begin{noprint}
-%	Adjust vertical spacing in ToC and other lists
-% When the ToC doesn't go below chapter level (e.g. \shortcontents), remove the extra line skip from chapter / heading / part / book contents line
-% When the ToC goes below chapter level, hope the book starts with a section or a \fakechapter (treated as section), otherwise the ToC contents will start below the level of the first line of text in regular chapters.
-\AtBeginDocument{%
-	\addtocontents{toc}{\protect\ifnum\protect\value{tocdepth}=0\protect\relax\protect\vspace*{-.5\baselineskip}\protect\fi}
-	\addtocontents{lot}{\protect\ifnum\protect\value{tocdepth}=0\protect\relax\vspace*{-.5\baselineskip}\protect\fi}
-	\addtocontents{lof}{\protect\ifnum\protect\value{tocdepth}=0\protect\relax\vspace*{-.5\baselineskip}\protect\fi}}
+%	Correct annoying memoir bug: add proper \addvspace before chapters (and heading) content lines, so the first ToC entry does not drop one or two lines below the start of normal chapters
+% TODO > Add messages (success / failure), last two args
+\patchcmd{\l@chapapp}
+	{\vskip \cftbeforechapterskip}
+	{\addvspace{\cftbeforechapterskip}}
+	{}{\@latex@warning@no@line{Failed to patch \noexpand\l@chapapp.}}
+\patchcmd{\l@heading}
+	{\vskip \@nameuse {cftbeforeheadingskip}}
+	{\addvspace{\cftbeforeheadingskip}}
+	{}{\@latex@warning@no@line{Failed to patch \noexpand\l@heading.}}
+\patchcmd{\l@subheading}
+	{\vskip \@nameuse {cftbeforesubheadingskip}}
+	{\addvspace{\cftbeforeheadingskip}}
+	{}{\@latex@warning@no@line{Failed to patch \noexpand\l@subheading.}}
+% \patchcmd{\newlistentry}
+%	{\vskip \@nameuse{cftbefore#2skip}}
+%	{\addvspace{\@nameuse{cftbefore#2skip}}}
+%	{}{\@latex@warning@no@line{Failed to patch \newlistentry.}
 %% \end{noprint}
-
-% + Documener un \addtocontents pour supprimer la ligne supplémentaire: \addtocontents{toc}{\protect\addvspace{...}
-% --- ou voir si on peut supprimer tout l'espace vertical et ajouer un: \addtocontents{toc}{\protect\addvspace{...}}
 
 %% \begin{noprint}
 %	Ensure that the ToC ends the paragraph properly
