@@ -1258,6 +1258,8 @@
 \raggedbottom
 %% \end{noprint}
 
+%% Quelques autres commandes et mécanismes sont susceptibles de rompre l'alignement vertical sur la page en cours. On notera notamment l'espacement d'un demi interligne inséré avant les chapitres dans la table des matières~(\pageref{grid:cftbeforechapterskip}).\todo{Et autres?}
+
 
 % ===== Paragraph Typosetting =====
 
@@ -2377,7 +2379,7 @@
 \renewcommand*{\cftbookpresnum}{\space}
 \renewcommand*{\cftbookaftersnum}{.}
 \renewcommand*{\cftbookaftersnumb}{\space}
-\renewcommand*{\cftbookfont}{\if@modern\sffamily\LARGE\else\large\fi\scshape\hfil}
+\renewcommand*{\cftbookfont}{\if@modern\sffamily\fi\Large\scshape\hfil}
 \renewcommand*{\cftbookpagefont}{\normalsize}
 \setlength{\cftbeforebookskip}{2\baselineskip}
 %% \end{noprint}
@@ -2388,20 +2390,20 @@
 \renewcommand*{\cftpartpresnum}{\space}
 \renewcommand*{\cftpartaftersnum}{.}
 \renewcommand*{\cftpartaftersnumb}{\space}
-\renewcommand*{\cftpartfont}{\if@modern\sffamily\Large\else\large\fi\scshape\hfil}
+\renewcommand*{\cftpartfont}{\if@modern\sffamily\fi\large\scshape\hfil}
 \renewcommand*{\cftpartpagefont}{\normalsize}
 \setlength{\cftbeforepartskip}{\baselineskip}
 %% \end{noprint}
 
 %% \begin{developer}
-%% On notera toutefoisl'ajout par \frenchlaw de commandes permettant de modifier l'apparence des titres et sous-titres, sui obéissent aux mêmes règles de nommage que celles issues de la classe |memoir|, à savoir la longue série des |\cft...|.
+%% On notera l'ajout par \frenchlaw de commandes permettant de modifier l'apparence des titres (|\heading) et sous-titres~(|\subheading|), qui obéissent aux mêmes règles de nommage que celles issues de la classe |memoir|, à savoir la longue série des |\cft...|.
 %% \end{developer}
 
 %% \begin{noprint}
 %	Define ToC style for \heading
 \renewcommand{\cftheadingaftersnum}{.}
-\renewcommand{\cftheadingaftersnumb}{\upshape\mdseries}
-\renewcommand{\cftheadingfont}{\if@modern\sffamily\Large\scshape\else\large\bfseries\fi}
+\renewcommand{\cftheadingaftersnumb}{\mdseries}
+\renewcommand{\cftheadingfont}{\if@modern\sffamily\fi\large\bfseries}
 \renewcommand{\cftheadingleader}{\hfill}
 \setlength{\cftbeforeheadingskip}{\baselineskip}
 %% \end{noprint}
@@ -2409,17 +2411,19 @@
 %% \begin{noprint}
 %	Define ToC style for \subheading
 \renewcommand{\cftsubheadingaftersnum}{.}
-\renewcommand{\cftsubheadingaftersnumb}{\upshape\mdseries}
-\renewcommand{\cftsubheadingfont}{\if@modern\sffamily\large\scshape\else\normalsize\bfseries\fi}
+\renewcommand{\cftsubheadingaftersnumb}{\mdseries}
+\renewcommand{\cftsubheadingfont}{\if@modern\sffamily\fi\bfseries}
 \renewcommand{\cftsubheadingleader}{\hfill}
 \setlength{\cftbeforesubheadingskip}{\baselineskip}
 %% \end{noprint}
 
+%% Le choix a été fait, pour des raisons esthériques, de faire précéder les chapitres d'un espace vertical correspondant à la moitié de l'interligne utilisé dans la table des matières~(aucun espace n'est rajouté dans les sommaires). Ce choix a pour conséquence de rompre l'alignement vertical de la page pour un chapitre sur deux. ce comportement peut être modifié en redéfinissant la longueur |\cftbeforechapterskip|\label{grid:cftbeforechapterskip}.
+
 %% \begin{noprint}
 %	Define ToC style for \chapter
 \renewcommand*{\cftchapteraftersnum}{.}
-\renewcommand*{\cftchapteraftersnumb}{\upshape\mdseries}
-\renewcommand{\cftchapterfont}{\if@modern\sffamily\scshape\else\bfseries\fi}
+\renewcommand*{\cftchapteraftersnumb}{\mdseries}
+\renewcommand{\cftchapterfont}{\if@modern\sffamily\fi\bfseries}
 \renewcommand*{\cftchapterpagefont}{\normalsize}
 \setlength{\cftbeforechapterskip}{\ifnum\value{tocdepth}=0\relax\baselineskip\else.5\baselineskip\fi}
 %% \end{noprint}
@@ -2427,40 +2431,40 @@
 %% \begin{noprint}
 %	Define ToC style for \section
 \renewcommand*{\cftsectionaftersnum}{.}
-\renewcommand*{\cftsectionaftersnumb}{\upshape\mdseries}
-\renewcommand*{\cftsectionfont}{\if@modern\sffamily\scshape\else\bfseries\fi}
+\renewcommand*{\cftsectionaftersnumb}{\mdseries}
+\renewcommand*{\cftsectionfont}{\if@modern\sffamily\fi\bfseries}
 \setlength{\cftbeforesectionskip}{\z@}
 %% \end{noprint}
 
 %% \begin{noprint}
 %	Define ToC style for \subsection
 \renewcommand*{\cftsubsectionaftersnum}{.}
-\renewcommand*{\cftsubsectionaftersnumb}{\upshape\mdseries}
-\renewcommand*{\cftsubsectionfont}{\footnotesize\if@modern\sffamily\scshape\else\bfseries\fi}
+\renewcommand*{\cftsubsectionaftersnumb}{\mdseries}
+\renewcommand*{\cftsubsectionfont}{\footnotesize\if@modern\sffamily\fi\bfseries}
 \setlength{\cftbeforesubsectionskip}{\z@}
 %% \end{noprint}
 
 %% \begin{noprint}
 %	Define ToC style for \subsubsection
 \renewcommand*{\cftsubsubsectionaftersnum}{.}
-\renewcommand*{\cftsubsubsectionaftersnumb}{\upshape\mdseries}
-\renewcommand*{\cftsubsubsectionfont}{\footnotesize\if@modern\sffamily\scshape\else\bfseries\fi}
+\renewcommand*{\cftsubsubsectionaftersnumb}{\mdseries}
+\renewcommand*{\cftsubsubsectionfont}{\footnotesize\if@modern\sffamily\fi\bfseries}
 \setlength{\cftbeforesubsubsectionskip}{\z@}
 %% \end{noprint}
 
 %% \begin{noprint}
 %	Define ToC style for \paragraph
 \renewcommand*{\cftparagraphaftersnum}{.}
-\renewcommand*{\cftparagraphaftersnumb}{\upshape\mdseries}
-\renewcommand*{\cftparagraphfont}{\footnotesize\if@modern\sffamily\scshape\else\bfseries\fi}
+\renewcommand*{\cftparagraphaftersnumb}{\mdseries}
+\renewcommand*{\cftparagraphfont}{\footnotesize\if@modern\sffamily\fi\bfseries}
 \setlength{\cftbeforeparagraphskip}{\z@}
 %% \end{noprint}
 
 %% \begin{noprint}
 %	Define ToC style for \subparagraph
 \renewcommand*{\cftsubparagraphaftersnum}{.}
-\renewcommand*{\cftsubparagraphaftersnumb}{\upshape\mdseries}
-\renewcommand*{\cftsubparagraphfont}{\footnotesize\if@modern\sffamily\scshape\else\bfseries\fi}
+\renewcommand*{\cftsubparagraphaftersnumb}{\mdseries}
+\renewcommand*{\cftsubparagraphfont}{\footnotesize\if@modern\sffamily\fi\bfseries}
 \setlength{\cftbeforesubparagraphskip}{\z@}
 %% \end{noprint}
 
