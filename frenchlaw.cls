@@ -2563,23 +2563,41 @@
 \cftpagenumbersoff{part}
 %% \end{noprint}
 
+%% Les tables des matières sont, enfin, configurées pour se comporter comme des chapitres dans les monographies, et comme des sections dans les articles. Dans un ouvrage, la table commencera ainsi sur une nouvelle page.
+
 %% \begin{noprint}
 %	Ensure ToC starts on a new page (like a chapter) for books
 \if@article\else
-	\pretocmd{\tableofcontents}{\clearforchapter}{}{}
+	\pretocmd{\tableofcontents}
+		{\clearforchapter}
+		{}{\@latex@warning@no@line{Failed to patch \noexpand\tableofcontents.}}
 \fi
 %% \end{noprint}
 
 
 % ===== Table of Contents Horizontal Spacing =====
 
-% TODO >  Préciser que les méhodes ToC = Memoir
+%% L'apparence globale de la table des matières peut être modifiée en utilisant des styles. La commande \cs{makeptoctyle}{Commande permettant de créer un nouveau style pour les tables des matières et sommaires.} permet de définir un nouveau style de pour les tables et sommaires, alors que la commande \cs{tocstyle}{Commande permettant de sélectionner un style pour les tables des matières et sommaires.}
 
-% TODO » Reprendre -- notamment, revoir les ToC modern (aligner les parties / titres à gauche et tout mettre en sans sérif)
-% Créer une version sans label box, mais avec légère intentation des sections suiv., type .5 em. -- Voire créer deux templates (et un sélecteur)
+%% \begin{noprint}
+%	Create the commands that define and apply ToC styles
+\newcommand{\maketocstyle}[2]{\expandafter\gdef\csname @tocstyle@#1\endcsname{#2}}
+\newcommand{\tocstyle}[1]{\csname @tocstyle@#1\endcsname}
+%%	\end{noprint}
+
+%% Un nouveau style de tables et sommaires peut être défini à l'intérieur de |\maketocstyle|, puis sélectionné avec |\tocstyle|.
+
+%% \begin{macro}
+%% % Définition du style:
+%% \maketocstyle{<nom du style>}{ % Création du style
+%%  ...
+%% }
+%% \end{macro}
+%% % Application du style:
+%% \tocstyle{<nom du style>}
 
 %% \begin{developer}
-%% Pour paramétrer l'apparence de chaque ligne de la table des matières, et particulièrement l'espacement horizontal entre le numéro de section et le titre de celle-ci, \frenchlaw crée plusieurs nouvelles longueurs:
+%% Pour paramétrer l'apparence de chaque ligne de la table des matières, et particulièrement l'espacement horizontal entre le numéro de section et le titre de celle-ci, \frenchlaw crée plusieurs nouvelles longueurs susceptibles d'être utilisées dans les styles:
 %% \begin{itemize}
 %% 	\item\dim{toclabelwidth}{Dimension de l'étiquette des noms de chapitres, sections, etc. dans la table des matières.} détermine la longueur de l'étiquette précédant le numéro de subdivision, qui est précisément déterminée par la longueur du mot \enquote{Chapitre}, pour permettre ensuite l'alignement des numéros et des intitulés des différentes subdivisions;
 %% 	\item\dim{tocnumwidth}{Dimension de la boîte contenant le numéro (ou autre) de la subdivision dans la table des matières.} détermine la longueur de la boîte contenant le numéro de subdivision, qui est fixée au chiffre romain XX pour l'option |article| et XXX pour les monographies;
@@ -2588,7 +2606,7 @@
 %% \end{developer}
 
 %% \begin{noprint}
-%	Ser ToC label to the width of “chapter” label, which is the longest
+%	Set ToC label to the width of 'chapter' label, which is the longest
 % TODO > Ne marche pas sur les \fakechapter avec des sections en-dessous
 \newlength{\toclabelwidth}
 	\settowidth{\toclabelwidth}{\cftchapterfont\chaptername\space}
@@ -2606,32 +2624,39 @@
 	\addtolength{\toccenterwidth}{\toclabelwidth}
 %% \end{noprint}
 
+% TODO:
+% - Utiliser \maketocstyle + \tocstyle pour créer des styles, donc peut-être un aligné basique + ajouter des couleurs dans le style moderne (supra) ?
+
 %% \begin{noprint}
-%	Set up ToC components indentation using the previously defined lengths
-\cftsetindents{book}{\toccenterwidth}{\tocnumwidth}
-\cftsetindents{part}{\toccenterwidth}{\tocnumwidth}
-\cftsetindents{heading}{\z@}{\tocnumwidth}
-\cftsetindents{subheading}{\z@}{\tocnumwidth}
-\cftsetindents{chapter}{\z@}{\tocnumwidth}
-\cftsetindents{section}{\z@}{\tocnumwidth}
-\cftsetindents{subsection}{%
-	\if@article\tocnumwidth\else\z@\fi}{\tocnumwidth}
-\cftsetindents{subsubsection}{%
-	\if@article 2\tocnumwidth\else\toclabelwidth\fi}{\tocnumwidth}
-\cftsetindents{paragraph}{%
-	\if@article 3\tocnumwidth\else\dimexpr\toclabelwidth+\tocnumwidth\relax\fi}
-	{\if@article\tocnumwidth\else.5\tocnumwidth\fi}
-\cftsetindents{subparagraph}{%
-	\if@article 4\tocnumwidth\else\dimexpr\toclabelwidth+1.5\tocnumwidth\relax\fi}
-	{\if@article\tocnumwidth\else.5\tocnumwidth\fi}
+\maketocstyle{frenchlaw}{
+	%	Set up ToC components indentation using the previously defined lengths
+	\cftsetindents{book}{\toccenterwidth}{\tocnumwidth}
+	\cftsetindents{part}{\toccenterwidth}{\tocnumwidth}
+	\cftsetindents{heading}{\z@}{\tocnumwidth}
+	\cftsetindents{subheading}{\z@}{\tocnumwidth}
+	\cftsetindents{chapter}{\z@}{\tocnumwidth}
+	\cftsetindents{section}{\z@}{\tocnumwidth}
+	\cftsetindents{subsection}{%
+		\if@article\tocnumwidth\else\z@\fi}{\tocnumwidth}
+	\cftsetindents{subsubsection}{%
+		\if@article 2\tocnumwidth\else\toclabelwidth\fi}{\tocnumwidth}
+	\cftsetindents{paragraph}{%
+		\if@article 3\tocnumwidth\else\dimexpr\toclabelwidth+\tocnumwidth\relax\fi}
+		{\if@article\tocnumwidth\else.5\tocnumwidth\fi}
+	\cftsetindents{subparagraph}{%
+		\if@article 4\tocnumwidth\else\dimexpr\toclabelwidth+1.5\tocnumwidth\relax\fi}
+		{\if@article\tocnumwidth\else.5\tocnumwidth\fi}
+}
+\tocstyle{frenchlaw}
 %% \end{noprint}
 
 %% \begin{developer}
-%% La commande \cs{toclabelbox}{Commande permettant de créer une boîte dont la largeur est égale à \safeverb{toclabelwidth}, pour composer les étiquettes des subdivisions principales dans la table des matières.} permet de placer les étiquettes des subdivisions principales~(les mots \emph{Chapitre}, \emph{Section}, \emph{§}, etc.) dans une boîte insérée juste à gauche du numéro de la subdivision. Cette commande est utilisée dans le fichier \todo{nom définitif du fichier babel + typo}. Cela permet essentiellement d'aligner tous les numéros, peu important la dénomination~(ou non) de la subdivision.
+%% La commande \cs{toclabelbox}{Commande permettant de créer une boîte dont la largeur est égale à \safeverb{toclabelwidth}, pour composer les étiquettes des subdivisions principales dans la table des matières.} permet de placer les étiquettes des subdivisions principales~(les mots \emph{Chapitre}, \emph{Section}, \emph{§}, etc.) dans une boîte insérée juste à gauche du numéro de la subdivision. Cette commande est utilisée dans le fichier \todo{nom définitif du fichier babel + typo}. Elle permet essentiellement d'aligner tous les numéros, peu important la dénomination~(ou non) de la subdivision.
 %% \end{developer}
 
 %% \begin{noprint}
-%	Create a command that formats ToC labels into a box (used in frenchlaw-babel.sty)
+%	Create a command that formats ToC labels into a box
+% Thos macro is used when defining babel language strings for ToC names
 \newcommand{\toclabelbox}[1]{\makebox[\toclabelwidth]{\hfill\llap{#1\normalsize\space}}}
 %% \end{noprint}
 
