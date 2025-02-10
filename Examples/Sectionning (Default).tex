@@ -1,4 +1,4 @@
-\documentclass[precis,vgrid]{frenchlaw}
+\documentclass[precis,colourall]{frenchlaw}
 
 % This is a sample file for <frenchlaw/cls> class and associated files. It is aimed at showcasing possible outputs of that class.
 
@@ -7,6 +7,10 @@
 \usepackage{lipsum}
 
 \begin{document}
+
+% \makeatletter
+% \show\l@heading
+% \makeatother
 
 \tableofcontents*
 
@@ -28,11 +32,17 @@
 
 \subheading{Exemple de sous-titre II}
 
-%\chapter*{Starred Chapter}
+\chapter*{Starred Chapter}
 
-\fakechapter{Fake Chapter}
+\para Non numéroté
 
-\fakechapter[Titled]{Fake Chapter}
+\fakechapter{Introduction}
+
+\para Non numéroté
+
+\section{Test}
+
+\fakechapter[Avant propos]{Titre de l'avant-propos}
 
 \chapter{Exemple de chapitre I}
 
