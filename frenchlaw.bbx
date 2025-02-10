@@ -62,7 +62,7 @@
 
 %	Execute bibliography options
 \ExecuteBibliographyOptions{%
-	isbn,doi,eprint,url,related,dashed,%
+	isbn,doi,eprint,related,dashed,% url (?)
 	sorting=nty,useeditor=true,usetranslator=false,maxnames=5,%
 	language=auto,autolang=hyphen}% langhook=extras
 \ExecuteBibliographyOptions[collection]{useeditor=false}
@@ -147,6 +147,7 @@
 			{\bibstring{numbers}\addnbthinspace\mkcomprange{#1}}}
 		{#1\isdot}}
 % TODO » For adding a plural form, check with biber if the field contains a comma, then add a keyword or whatever
+% Ou utiliser page, comme normalement, avec la pagination (cf. mknormrange et mkcomprange dans la doc)
 \DeclareFieldFormat[inreference]{number}{%
 	\addnbthinspace\mkcomprange{#1}}
 \DeclareFieldFormat[legal,legislation,jurisdiction]{number}{%
@@ -154,26 +155,26 @@
 
 % The <pages> field should only print the first page
 % Except in CV mode, for which we print the page span
-\DeclareFieldFormat[article,commentary,review]{pages}{%
-	\mkfirstpage*{\bibstring{pages}#1}\psq}
-
+%% Original
+% \DeclareFieldFormat[article,commentary,review]{pages}{%
+% 	\mkfirstpage*{\bibstring{pages}#1}\psq}
+%% Repris dans la doc (± commande de pagination? cf. la doc sur les commandes utilisées) -- Créer deux styles: un pour page-range et un pour page-first (renommer), en plus de page-noprefix (renommer)
+\DeclareFieldFormat{pages}{\mkfirstpage[{\mkpageprefix}]{#1} \psq}
 \DeclareFieldFormat{noprefix}{%
 	\let\psq\relax%
 	\let\mkpageprefix\relax%
 	\mkfirstpage*{#1}}
-
-%\NumCheckSetup{\def\&{\psq\addspace\bibstring{and}\addspace\mkpageprefix}}
-\DeclareRangeCommands*{\bibrangeslast}
-
-\newrobustcmd{\bibrangeslast}{%
-	\psq\addspace\bibstring{and}\addspace\bibstring{pages}}%
 \newrobustcmd{\sq}{\addnbspace\bibstring{sequens}\xspace}%
 
-\renewcommand{\bibrangessep}{%
-	\ifthenelse{	\iffieldequalstr{langid}{french} \OR
-		 			\iffieldundef{langid}	}
-		{\psq\addcomma\addspace}
-		{\addcomma\addspace}}
+% Biber overwrite causes multiple page ranges not to work properly
+% \DeclareRangeCommands*{\bibrangeslast}
+% \newrobustcmd{\bibrangeslast}{%
+% 	\psq\addspace\bibstring{and}\addspace}%
+% \renewcommand{\bibrangessep}{%
+% 	\ifthenelse{	\iffieldequalstr{langid}{french} \OR
+% 		 			\iffieldundef{langid}	}
+% 		{\psq\addcomma\addspace}
+% 		{\addcomma\addspace}}
 
 % Page, number, volume ranges should not be truncated under 1000
 \setcounter{mincomprange}{1000}
@@ -572,12 +573,13 @@
 			\pertype{legislation}
 			\step[fieldset=relatedoptions, fieldvalue={skipbiblist=false}]
 		}
-		% When there are several pages, use a special delimiter for the last one
-		\map[overwrite=true]{%
-			\step[fieldsource=pages,%
-				match={\regexp{,(?!.*,)}},
-				replace={\regexp{ \\bibrangeslast }}]
-		}
+%		% When there are several pages, use a special delimiter for the last one
+%		\map[overwrite=true]{%
+%			\step[fieldsource=pages,%
+%				match={\regexp{,(?!.*,)}},
+%				replace={\regexp{ \\bibrangeslast }}]
+%		}
+%% This causes multiple page ranges to not be recognised properly
 		% Overwrite <abstract> and <annotation> fields, to prevent overflowing TeX capacity.
 		\map[overwrite=true]{%
 			\step[fieldset=abstract, fieldvalue={}]
@@ -1627,7 +1629,7 @@
 %	TODO » Vérifier et corriger le bug quand un titre d'article (ou ouvrage?) se termine par un ... (et autres signes?). Ajouter un \isdot (?) ou préciser d'ajouter \@ dans le fichier .bib
 \newbibmacro*{journal+issue+date}{%
 	% When writing in English,  use full journal name instead of abbreviation
-	%	TODO Improve… test whether english laguage + paper NOT in English
+	%	TODO Improve: test main language vs. hyphenation language of the entry in general
 	\if@french\else
 		\iffieldequalstr{langid}{french}
 			{\clearfield{shortjournal}}
@@ -1635,11 +1637,13 @@
 	\fi
 	\iffieldequalstr{langid}{english}
 		%	For english language journals, print volume first
-		{\printfield[plain]{volume}%
-		 \iffieldsequal{year}{volume}
-			 {\clearfield{year}}
-			 {}%
-		 \setunit{\addspace}}
+		{\iffieldundef{volume}
+			{}
+			{\printfield[plain]{volume}%
+			 \iffieldsequal{year}{volume}
+				 {\clearfield{year}}
+				 {}%
+			 \setunit{\addspace}}}
 		{}%
 	\iffieldundef{shortjournal}
 		{\usebibmacro{journal}}
