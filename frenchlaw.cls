@@ -2258,6 +2258,7 @@
 
 %	TODO » Commande type \setcounter pour modifier le numéro de paragraphe et réserver des numéros (traités) --- au moins à documenter ici, e.g. \setpara{} ou \setparanum
 
+
 % =***======***======***======***======***======***======***======***======***======***=
 
 %	#####	TABLES OF CONTENTS	#####
@@ -2349,6 +2350,7 @@
 		% Reset precis and other additional contents
 		% TODO > Add outline and summary
 		\@precisfalse
+		\@subprecisfalse
 		\let\cftafterprecis=\relax
 		\let\cftbeforeprecis=\relax
 		% Save tocdepth value
@@ -2600,6 +2602,27 @@
 %% \tocstyle{<nom du style>}
 
 %% \begin{developer}
+%% Pour la mise en œuvre des styles de table des matières, qui peuvent requérir des manipulations sur le contenu des variables |\cftXname|, la commande \cs{maketoclabel}{Commande-outil contenant seulement l'étiquette des noms de chapitres, sections, etc. pour le paramétrage de |babel|, susceptible d'être redéfinie par les styles de table des matières.}~-- qui ne fait rien~-- est ajoutée dans la définition de |\cftXname| et destinée à être remplacée par une commande contenant des instructions de formattage. \frenchlaw définit deux commandes à cet effet: \cs{toclabelnobox}{Commande utilisée par les styles de tables des matières pour formatter les noms des subdivisions principales de manière classique.}, utilisée pour composer simplement le nom de la subdivision, et \cs{toclabelbox}{Commande utilisée par les styles de tables des matières pour formatter les noms des subdivisions principales dans une boîte de largeur fixe.}, pour composer les noms des subdivisions dans des boîtes de largeur fixe. On pourra, par exemple, utiliser:
+%% \par\vspace{-\baselineskip}
+%% \begin{macro}
+%% % Dans les définitions de <babel>:
+%% \def\cftchaptername{\maketoclabel{Chapitre}}
+%% % Dans le style de table des matières:
+%% \let\maketoclabel=\toclabelbox
+%% \end{macro} 
+%% \end{developer}
+
+%% \begin{noprint}
+%	Create the \maketoclabel placeholder command
+\newcommand{\maketoclabel}[1]{#1}
+
+%	Create a command that formats ToC labels into a box
+\newcommand{\toclabelbox}[1]{\makebox[\toclabelwidth]{\hfill\llap{#1\normalsize\space}}}
+%	Create a command that formats ToC labels for general use
+\newcommand{\toclabelnobox}[1]{#1\normalsize\space}
+%% \end{noprint}
+
+%% \begin{developer}
 %% Pour paramétrer l'apparence de chaque ligne de la table des matières, et particulièrement l'espacement horizontal entre le numéro de section et le titre de celle-ci, \frenchlaw crée plusieurs nouvelles longueurs susceptibles d'être utilisées dans les styles:
 %% \begin{itemize}
 %% 	\item\dim{toclabelwidth}{Dimension de l'étiquette des noms de chapitres, sections, etc. dans la table des matières.} détermine la longueur de l'étiquette précédant le numéro de subdivision, qui est précisément déterminée par la longueur du mot \enquote{Chapitre}, pour permettre ensuite l'alignement des numéros et des intitulés des différentes subdivisions;
@@ -2610,28 +2633,52 @@
 
 %% \begin{noprint}
 %	Set ToC label to the width of 'chapter' label, which is the longest
-% TODO > Ne marche pas sur les \fakechapter avec des sections en-dessous
 \newlength{\toclabelwidth}
 	\settowidth{\toclabelwidth}{\cftchapterfont\chaptername\space}
+
 %	Set ToC number to the width of roman numeral 20 or 30 (reasonable longest)
-% Redéfinir pour Modern
+% TODO > Redéfinir pour modern?
 \newlength{\tocnumwidth}
 \if@article
 	\settowidth{\tocnumwidth}{\cftsectionfont XX\space}
 \else
 	\settowidth{\tocnumwidth}{\cftchapterfont XXX\space}
 \fi
-% Centered headings will take into account the label + number lengths
+
+%	Centered headings will take into account the label + number lengths
 \newlength{\toccenterwidth}
 	\setlength{\toccenterwidth}{\tocnumwidth}
 	\addtolength{\toccenterwidth}{\toclabelwidth}
 %% \end{noprint}
 
-% TODO:
-% - Utiliser \maketocstyle + \tocstyle pour créer des styles, donc peut-être un aligné basique + ajouter des couleurs dans le style moderne (supra) ?
+%% Un style de tables et sommaires nommé |basic| est défini, mais n'est pas utilisé par défaut. Il compose les tables de manière très classiques, par retraits successifs, assez semblables à ce que proposent par défaut tous les logiciels de mise en pages.
 
 %% \begin{noprint}
+%	Create the <basic> ToC style
+\maketocstyle{basic}{
+	%	Redefine \maketoclabel to \toclabelnobox (format ToC labels)
+	\let\maketoclabel=\toclabelnobox
+	%	Set up ToC components indentation
+	\cftsetindents{book}{\toccenterwidth}{\tocnumwidth}
+	\cftsetindents{part}{\toccenterwidth}{\tocnumwidth}
+	\cftsetindents{heading}{\z@}{\tocnumwidth}
+	\cftsetindents{subheading}{\z@}{\tocnumwidth}
+	\cftsetindents{chapter}{\z@}{\tocnumwidth}
+	\cftsetindents{section}{\if@article\z@\else 1em \fi}{\tocnumwidth}
+	\cftsetindents{subsection}{\if@article 1em \else 2em \fi}{\tocnumwidth}
+	\cftsetindents{subsubsection}{\if@article 2em \else 3em \fi}{\tocnumwidth}
+	\cftsetindents{paragraph}{\if@article 3em \else 4em \fi}{\tocnumwidth}
+	\cftsetindents{subparagraph}{\if@article 4em \else 5em \fi}{\tocnumwidth}
+}
+%% \end{noprint}
+
+%% Le style |frenchlaw| est sélectionné par défaut. La table se présente visuellement en deux colonnes, celle de gauche comportant les noms des subdivisions s'il y a lieu (chapitre, section, etc.), et celle de droite les titres. Les numéros des chapitres, sections et § sont alignés; ceux des subdivisions inférieures sont placés en retrait. Tout en restant très classique, ce style aère et dynamise les tables des matières.
+
+%% \begin{noprint}
+%	Create the frenchlaw> ToC style
 \maketocstyle{frenchlaw}{
+	%	Redefine \maketoclabel to \toclabelbox (format ToC labels into a box)
+	\let\maketoclabel=\toclabelbox
 	%	Set up ToC components indentation using the previously defined lengths
 	\cftsetindents{book}{\toccenterwidth}{\tocnumwidth}
 	\cftsetindents{part}{\toccenterwidth}{\tocnumwidth}
@@ -2639,68 +2686,48 @@
 	\cftsetindents{subheading}{\z@}{\tocnumwidth}
 	\cftsetindents{chapter}{\z@}{\tocnumwidth}
 	\cftsetindents{section}{\z@}{\tocnumwidth}
-	\cftsetindents{subsection}{%
-		\if@article\tocnumwidth\else\z@\fi}{\tocnumwidth}
+	\cftsetindents{subsection}{\if@article\tocnumwidth\else\z@\fi}{\tocnumwidth}
 	\cftsetindents{subsubsection}{%
-		\if@article 2\tocnumwidth\else\toclabelwidth\fi}{\tocnumwidth}
+		\if@article 2\tocnumwidth\else\toclabelwidth\fi}{\if@article.5\tocnumwidth\else\tocnumwidth\fi}
 	\cftsetindents{paragraph}{%
 		\if@article 3\tocnumwidth\else\dimexpr\toclabelwidth+\tocnumwidth\relax\fi}
-		{\if@article\tocnumwidth\else.5\tocnumwidth\fi}
+		{.5\tocnumwidth}
 	\cftsetindents{subparagraph}{%
 		\if@article 4\tocnumwidth\else\dimexpr\toclabelwidth+1.5\tocnumwidth\relax\fi}
-		{\if@article\tocnumwidth\else.5\tocnumwidth\fi}
+		{\if@article.75\tocnumwidth\else.5\tocnumwidth\fi}
 }
 \tocstyle{frenchlaw}
 %% \end{noprint}
 
-%% \begin{developer}
-%% La commande \cs{toclabelbox}{Commande permettant de créer une boîte dont la largeur est égale à \safeverb{toclabelwidth}, pour composer les étiquettes des subdivisions principales dans la table des matières.} permet de placer les étiquettes des subdivisions principales~(les mots \emph{Chapitre}, \emph{Section}, \emph{§}, etc.) dans une boîte insérée juste à gauche du numéro de la subdivision. Cette commande est utilisée dans le fichier \todo{nom définitif du fichier babel + typo}. Elle permet essentiellement d'aligner tous les numéros, peu important la dénomination~(ou non) de la subdivision.
-%% \end{developer}
-
-%% \begin{noprint}
-%	Create a command that formats ToC labels into a box
-% Thos macro is used when defining babel language strings for ToC names
-\newcommand{\toclabelbox}[1]{\makebox[\toclabelwidth]{\hfill\llap{#1\normalsize\space}}}
-%% \end{noprint}
+% TODO > Create new ToC styles?
 
 
 % ===== Table of Contents Vertical Spacing =====
 
-%% \begin{developer}
-%% Quelques autres mécanismes mis en œuvre dans les tables des matières ne paraissent pas mériter de documentation approfondie, mais sont détaillés dans le code de la classe. Ils sont utilisés pour ajuster l'espace vertical au sein des tables des matières et tables des figures, en particulier pour la première et la dernière entrées de la table.
-%% \end{developer}
+%% Quelques autres mécanismes ne paraissent pas mériter de documentation approfondie, mais sont détaillés dans le code de la classe. Ils permettent, essentiellement, de corriger deux problèmes présents dans \LaTeX, qui affectent la première et la dernière ligne des tables des matières et des figures.
 
 %% \begin{noprint}
-%	Correct annoying memoir bug: add proper \addvspace before chapters (and heading) content lines, so the first ToC entry does not drop one or two lines below the start of normal chapters
-% TODO > Add messages (success / failure), last two args
-\patchcmd{\l@chapapp}
-	{\vskip \cftbeforechapterskip}
-	{\addvspace{\cftbeforechapterskip}}
-	{}{\@latex@warning@no@line{Failed to patch \noexpand\l@chapapp.}}
-\patchcmd{\l@heading}
-	{\vskip \@nameuse {cftbeforeheadingskip}}
-	{\addvspace{\cftbeforeheadingskip}}
-	{}{\@latex@warning@no@line{Failed to patch \noexpand\l@heading.}}
-\patchcmd{\l@subheading}
-	{\vskip \@nameuse {cftbeforesubheadingskip}}
-	{\addvspace{\cftbeforeheadingskip}}
-	{}{\@latex@warning@no@line{Failed to patch \noexpand\l@subheading.}}
-% \patchcmd{\newlistentry}
-%	{\vskip \@nameuse{cftbefore#2skip}}
-%	{\addvspace{\@nameuse{cftbefore#2skip}}}
-%	{}{\@latex@warning@no@line{Failed to patch \newlistentry.}
+%	Correct an old LaTeX 2.09 bug: use \addvspace (instead of \vskip) before chapters (and heading) content lines, so the first ToC entry does not drop one or two lines below the start of normal chapters
+% The bug is corrected using a command inserted in <memoir> to that effect
+\setcftvspacecmd{\addvspace}
 %% \end{noprint}
 
 %% \begin{noprint}
-%	Ensure that the ToC ends the paragraph properly
-% Solves a bug that happens sometimes
+%	Ensure that the ToC ends the paragraph properly. Solves an issue that happens if a \par is not inserted and LaTeX was expecting the paragraph to have ended.
+% This is done by explicitly adding a \par at the end of each of the tables at the end of the LaTeX run
+% TODO > Needed?
 \AtEndDocument{%
 	\addtocontents{toc}{\par}%
 	\addtocontents{lot}{\par}%
 	\addtocontents{lof}{\par}}
 %% \end{noprint}
 
-% Récupérer outline / summary et les intégrer dans les méthodes ToC supra + dans les styles de précis, e.g. italiques ou autres
+% TODO > Récupérer outline / summary et les intégrer dans les méthodes ToC supra + dans les styles de précis, e.g. italiques ou autres
+
+
+% =***======***======***======***======***======***======***======***======***======***=
+%% \part{Composition du texte}
+% =***======***======***======***======***======***======***======***======***======***=
 
 
 % =***======***======***======***======***======***======***======***======***======***=
