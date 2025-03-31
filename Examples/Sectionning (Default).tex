@@ -1,18 +1,34 @@
-\documentclass[precis,colourall]{frenchlaw}
+\documentclass[precis,colourall,vgrid]{frenchlaw}
 
 % This is a sample file for <frenchlaw/cls> class and associated files. It is aimed at showcasing possible outputs of that class.
 
-%\subprecis
+% Test:
+% 	article
+% 	classic, modern, modernsans
+% 	colour, colourall
+% 	precis, summary, outline == Fichier de démo ToC
+
+% 	onecolumn, twocolumn
+% 	marginalia
+% 	10pt, 11pt, 12pt, 14pt (ToC / headings)
+% 	linespacing
+	
+% 	didactic, didactic+ (garder?)
+% 	letter, vitae (+ styles spéciaux)
 
 \usepackage{lipsum}
 
+\subprecis
+
 \begin{document}
 
-% \makeatletter
-% \show\l@heading
-% \makeatother
+\fakechapter[Préambule]{Explication du document}
 
-\tableofcontents*
+Cette page montre l'utilisation de la commande |\fakechapter| pour un chapitre spécial, susceptible de trouver sa place en début ou fin d'ouvrage. Dans la table des matières, il se comporte comme une section tout en conservant les codes typographiques associés aux chapitres. Il n'est, par suite, pas intégré au sommaire lorsque celui-ci s'arrête au niveau du chapitre.
+
+Par contraste, |\chapter*| est composé comme un vrai chapitre, mais dépourvu de numérotation, comme l'illustre l'exemple situé en fin de document. Dans la table des matières et le sommaire, il se comporte comme un chapitre normal.
+
+Les pages suivantes comportent des exemples de tous les types de subdivisions disponibles dans \frenchlaw. Elles illustrent notamment l'utilisation de la numérotation classique, qui utilise le mot \enquote{premier} en toutes lettres pour les divisions principales.
 
 \shortcontents*
 
@@ -32,47 +48,27 @@
 
 \subheading{Exemple de sous-titre II}
 
-\chapter*{Starred Chapter}
-
-\para Non numéroté
-
-\fakechapter{Introduction}
-
-\para Non numéroté
-
-\section{Test}
-
-\fakechapter[Avant propos]{Titre de l'avant-propos}
-
 \chapter{Exemple de chapitre I}
-
-\section{Exemple de section}
 
 \chapter{Exemple de chapitre II}
 
-\para Non numéroté
+\para (Exemple de paragraphe coulé (|\para|) sans titre, qui ne sera pas intégré dans le |précis| de la table des matières).
 
-\para[Titre du premier paragraphe coulé] \lipsum[1]
+\para[Exemple de paragraphe coulé] (ce |\para| avec titre sera intégré au |précis|).
 
-\subpara[A subpara]
+\section{Exemple de section 2: Divisions logiques}
 
-\subpara[A subpara too]
+\para[Titre du paragraphe coulé] \lipsum[1]
 
-\para[Titre du deuxème paragraphe coulé] \lipsum[2]
+\para[Titre du paragraphe coulé] \lipsum[2]
 
-\para[Titre du troisième paragraphe coulé] \lipsum[3]
+\subpara[Un sous-paragraphe coulé] (On notera que les osus-paragraphes ne sont pas, par défaut, inclus dans le |précis|, mais peuvent l'être avec l'option |\subprecis| utilisée ici).
 
-\section{Exemple de section}
+\subpara[Un sous-paragraphe coulé] \lipsum[3]
 
-\para[Titre du quatrième paragraphe coulé] \lipsum[4]
+\para[Titre du paragraphe coulé] \lipsum[4]
 
-\para[Titre du cinquième paragraphe coulé] \lipsum[5]
-
-\para[Titre du sixième paragraphe coulé] \lipsum[6]
-
-\section{Exemple de section}
-
-\section{Exemple de section}
+\section{Exemple de section 1: Divisions hiérarchiques}
 
 \subsection{Exemple de sous-section}
 
@@ -82,8 +78,8 @@
 
 \subparagraph{Exemple de sous-paragraphe}
 
-\chapter{Exemple de chapitre III}
+\chapter*[Conclusion]{Un chapitre non numéroté}
 
-\section{Exemple de section}
+\tableofcontents*
 
 \end{document}
