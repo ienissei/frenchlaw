@@ -532,9 +532,11 @@
 }
 %	Define option <colorall|colourall> for heavily coloured documents
 \DeclareOptionX{colorall}{
+	\@colourtrue
 	\@colouralltrue
 }
 \DeclareOptionX{colourall}{
+	\@colourtrue
 	\@colouralltrue
 }
 %% \end{noprint}
@@ -1350,6 +1352,8 @@
 \newcommand{\setcolours}[1]{%
 	\gdef\maincolour{\csname setmaincolour@#1\endcsname}%
 	\gdef\subcolour{\csname setsubcolour@#1\endcsname}}
+% Define a command to reset colours
+\newcommand{\defaultcolour}{\color{black}}
 %% \end{noprint}
 
 %% \begin{developer}
@@ -2036,7 +2040,7 @@
 %%   % Couleur du titre (ici, les couleurs par défaut):
 %%   \renewcommand{\paracolour}{\if@colourall\maincolour\fi}
 %%   % Couleur du numéro (ici, les couleurs par défaut):
-%%   \renewcommand{\paranumcolour}{\if@colourall\paracolour\fi}
+%%   \renewcommand{\paranumcolour}{\if@colour\maincolour\fi}
 %%   % Style du titre (ajouter par exemple \bfseries ou \scshape):
 %%   \renewcommand{\paratitlestyle}[1]{<...>#1}
 %%   % Style du numéro (idem):
@@ -2088,7 +2092,7 @@
 	\renewcommand{\parasep}{.\enskip}
 	\renewcommand{\paranumsep}{.~}
 	\renewcommand{\paracolour}{\if@colourall\maincolour\fi}
-	\renewcommand{\paranumcolour}{\if@colourall\paracolour\fi}
+	\renewcommand{\paranumcolour}{\if@colour\maincolour\fi}
 	\renewcommand{\paratitlestyle}[1]{%
 		\if@marginalia\footnotesize\itshape\else%
 		\if@modern\sffamily\bfseries\else\scshape\fi\fi##1}
@@ -2101,7 +2105,7 @@
 	\renewcommand{\subparanumsep}{).~}
 	\renewcommand{\subparanumdash}{.}
 	\renewcommand{\subparacolour}{}
-	\renewcommand{\subparanumcolour}{\if@colourall\maincolour\fi}
+	\renewcommand{\subparanumcolour}{\if@colour\maincolour\fi}
 	\renewcommand{\subparatitlestyle}[1]{%
 		\if@marginalia\footnotesize\itshape\else%
 		\if@modern\sffamily\fi\fi\itshape##1}
@@ -2121,15 +2125,12 @@
 	\renewcommand{\paraskip}{\par\addvspace{\baselineskip}}
 	\renewcommand{\parasep}{.\enspace}
 	\renewcommand{\paranumsep}{.\enspace}
-	\renewcommand{\paracolour}{\if@colour\maincolour\fi}
-	\renewcommand{\paranumcolour}{\paracolour}
 	\renewcommand{\paratitlestyle}[1]{\sffamily\bfseries##1}
 	\renewcommand{\paranumstyle}[1]{%
 		\citereset\noindent%
 		\llap{\raisebox{0pt}[0pt][0pt]{\huge\itshape##1}}}
 
 	% Styling commands for \subpara
-	\renewcommand{\subparanumcolour}{\if@colour\maincolour\fi}
 	\renewcommand{\subparatitlestyle}[1]{%
 		\if@marginalia\footnotesize\itshape\else%
 		\if@modern\sffamily\fi\fi\itshape##1}
@@ -2398,14 +2399,14 @@
 %% \end{noprint}
 
 %% \begin{developer}
-%% On notera l'ajout par \frenchlaw de commandes permettant de modifier l'apparence des titres (|\heading) et sous-titres~(|\subheading|), qui obéissent aux mêmes règles de nommage que celles issues de la classe |memoir|, à savoir la longue série des |\cft...|.
+%% On notera l'ajout par \frenchlaw de commandes permettant de modifier l'apparence des titres (|\heading|) et sous-titres~(|\subheading|), qui obéissent aux mêmes règles de nommage que celles issues de la classe |memoir|, à savoir la longue série des |\cft...|.
 %% \end{developer}
 
 %% \begin{noprint}
 %	Define ToC style for \heading
 \renewcommand{\cftheadingaftersnum}{.}
-\renewcommand{\cftheadingaftersnumb}{\mdseries}
-\renewcommand{\cftheadingfont}{\if@modern\sffamily\fi\large\bfseries}
+\renewcommand{\cftheadingaftersnumb}{\mdseries\defaultcolour}
+\renewcommand{\cftheadingfont}{\if@modern\sffamily\if@colourall\maincolour\fi\fi\large\bfseries}
 \renewcommand{\cftheadingleader}{\hfill}
 \setlength{\cftbeforeheadingskip}{\baselineskip}
 %% \end{noprint}
@@ -2413,8 +2414,8 @@
 %% \begin{noprint}
 %	Define ToC style for \subheading
 \renewcommand{\cftsubheadingaftersnum}{.}
-\renewcommand{\cftsubheadingaftersnumb}{\mdseries}
-\renewcommand{\cftsubheadingfont}{\if@modern\sffamily\fi\bfseries}
+\renewcommand{\cftsubheadingaftersnumb}{\mdseries\defaultcolour}
+\renewcommand{\cftsubheadingfont}{\if@modern\sffamily\if@colourall\maincolour\fi\fi\bfseries}
 \renewcommand{\cftsubheadingleader}{\hfill}
 \setlength{\cftbeforesubheadingskip}{\baselineskip}
 %% \end{noprint}
@@ -2424,49 +2425,49 @@
 %% \begin{noprint}
 %	Define ToC style for \chapter
 \renewcommand*{\cftchapteraftersnum}{.}
-\renewcommand*{\cftchapteraftersnumb}{\mdseries}
-\renewcommand{\cftchapterfont}{\if@modern\sffamily\fi\bfseries}
+\renewcommand*{\cftchapteraftersnumb}{\mdseries\defaultcolour}
+\renewcommand{\cftchapterfont}{\if@modern\sffamily\if@colourall\maincolour\fi\fi\bfseries}
 \renewcommand*{\cftchapterpagefont}{\normalsize}
-\setlength{\cftbeforechapterskip}{\ifnum\value{tocdepth}=0\relax\baselineskip\else.5\baselineskip\fi}
+\setlength{\cftbeforechapterskip}{\if@modern\baselineskip\else.5\baselineskip\fi}
 %% \end{noprint}
 
 %% \begin{noprint}
 %	Define ToC style for \section
 \renewcommand*{\cftsectionaftersnum}{.}
-\renewcommand*{\cftsectionaftersnumb}{\mdseries}
-\renewcommand*{\cftsectionfont}{\if@modern\sffamily\fi\bfseries}
+\renewcommand*{\cftsectionaftersnumb}{\mdseries\defaultcolour}
+\renewcommand*{\cftsectionfont}{\if@modern\sffamily\if@colourall\maincolour\fi\fi\bfseries}
 \setlength{\cftbeforesectionskip}{\z@}
 %% \end{noprint}
 
 %% \begin{noprint}
 %	Define ToC style for \subsection
 \renewcommand*{\cftsubsectionaftersnum}{.}
-\renewcommand*{\cftsubsectionaftersnumb}{\mdseries}
-\renewcommand*{\cftsubsectionfont}{\footnotesize\if@modern\sffamily\fi\bfseries}
+\renewcommand*{\cftsubsectionaftersnumb}{\mdseries\defaultcolour}
+\renewcommand*{\cftsubsectionfont}{\footnotesize\if@modern\sffamily\if@colourall\maincolour\fi\fi\bfseries}
 \setlength{\cftbeforesubsectionskip}{\z@}
 %% \end{noprint}
 
 %% \begin{noprint}
 %	Define ToC style for \subsubsection
 \renewcommand*{\cftsubsubsectionaftersnum}{.}
-\renewcommand*{\cftsubsubsectionaftersnumb}{\mdseries}
-\renewcommand*{\cftsubsubsectionfont}{\footnotesize\if@modern\sffamily\fi\bfseries}
+\renewcommand*{\cftsubsubsectionaftersnumb}{\mdseries\defaultcolour}
+\renewcommand*{\cftsubsubsectionfont}{\footnotesize\if@modern\sffamily\if@colourall\maincolour\fi\fi\bfseries}
 \setlength{\cftbeforesubsubsectionskip}{\z@}
 %% \end{noprint}
 
 %% \begin{noprint}
 %	Define ToC style for \paragraph
 \renewcommand*{\cftparagraphaftersnum}{.}
-\renewcommand*{\cftparagraphaftersnumb}{\mdseries}
-\renewcommand*{\cftparagraphfont}{\footnotesize\if@modern\sffamily\fi\bfseries}
+\renewcommand*{\cftparagraphaftersnumb}{\mdseries\defaultcolour}
+\renewcommand*{\cftparagraphfont}{\footnotesize\if@modern\sffamily\if@colourall\maincolour\fi\fi\bfseries}
 \setlength{\cftbeforeparagraphskip}{\z@}
 %% \end{noprint}
 
 %% \begin{noprint}
 %	Define ToC style for \subparagraph
 \renewcommand*{\cftsubparagraphaftersnum}{.}
-\renewcommand*{\cftsubparagraphaftersnumb}{\mdseries}
-\renewcommand*{\cftsubparagraphfont}{\footnotesize\if@modern\sffamily\fi\bfseries}
+\renewcommand*{\cftsubparagraphaftersnumb}{\mdseries\defaultcolour}
+\renewcommand*{\cftsubparagraphfont}{\footnotesize\if@modern\sffamily\if@colourall\maincolour\fi\fi\bfseries}
 \setlength{\cftbeforesubparagraphskip}{\z@}
 %% \end{noprint}
 
@@ -2534,7 +2535,7 @@
 %%	\begin{noprint}
 \makeprecisstyle{default}{
 	\renewcommand{\cftprecisstyle}{\footnotesize\itshape}
-	\renewcommand{\cftprecisnumstyle}{}
+	\renewcommand{\cftprecisnumstyle}{\if@modern\if@colourall\maincolour\fi\fi}
 	\renewcommand{\cftprecisaftersnum}{.\space}
 	\renewcommand{\cftprecisnumsep}{,~}
 	\renewcommand{\cftprecisleader}{\normalfont p.~}
