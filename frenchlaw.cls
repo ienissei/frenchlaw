@@ -213,7 +213,7 @@
 %% Cette option permet de composer la page au format paysage, également dit \emph{à l'italienne}. Elle est simplement adaptée de la classe |memoir|.
 
 %% \begin{developer}
-%% Il est possible de modifier le comportement de l'option grâce à l'opérateur \cs{if@landscape}{Opérateur conditionnel attaché à l'option |landscape|.}.
+%% Il est possible de modifier le comportement de l'option grâce à \cs{if@landscape}{Opérateur conditionnel attaché à l'option |landscape|.}.
 %% \end{developer}
 
 %% \begin{noprint}
@@ -229,7 +229,7 @@
 %% L'option |marginal| permet d'augmenter la taille de l'une des marges latérales: à droite pour les documents en mode |oneside| et en alternance en mode |twoside|. La marge est alors utilisée pour imprimer notamment les titres des subdivisions secondaires~(|\paragraph|, |\subparagraph| et |\para|). Elle est désactivée par l'option |twocolumn| avec laquelle elle est incompatible.
 
 %% \begin{developer}
-%% Il est possible de modifier le comportement de l'option grâce à l'opérateur \cs{if@marginalia}{Opérateur conditionnel attaché à l'option |marginalia|.}.
+%% Il est possible de modifier le comportement de l'option grâce à \cs{if@marginalia}{Opérateur conditionnel attaché à l'option |marginalia|.}.
 %% \end{developer}
 
 %% \begin{noprint}
@@ -254,7 +254,7 @@
 %% Taille de la police utilisée pour le corps du texte. Celle-ci est de |12pt| par défaut avec |a4paper|. Pour les autres tailles de papier, la police est de |11pt| avec |a5paper| et |10pt| avec |a6paper|.
 
 %% \begin{developer}
-%% Il est possible de vérifier quelle option a été chargée et d'en modifier le comportement grâce aux quatre opérateurs suivants: \cs{if@tenpoints}{Opérateur conditionnel attaché à l'option |10pt|.}, \cs{if@elevenpoints}{Opérateur conditionnel attaché à l'option |11pt|.}, \cs{if@twelvepoints}{Opérateur conditionnel attaché à l'option |12pt|.} et \cs{if@fourteenpoints}{Opérateur conditionnel attaché à l'option |14pt|.}.
+%% Il est possible de vérifier si une option a été chargée grâce aux quatre opérateurs suivants: \cs{if@tenpoints}{Opérateur conditionnel attaché à l'option |10pt|.}, \cs{if@elevenpoints}{Opérateur conditionnel attaché à l'option |11pt|.}, \cs{if@twelvepoints}{Opérateur conditionnel attaché à l'option |12pt|.} et \cs{if@fourteenpoints}{Opérateur conditionnel attaché à l'option |14pt|.}.
 %% \end{developer}
 
 %% \begin{noprint}
@@ -283,12 +283,12 @@
 
 %% \describe[classic]{%
 %%	\option{classic}{Option de classe utilisée pour composer un document respectant les canons de l'imprimerie traditionnelle: police d'écriture à empattements, paragraphes en retrait.}, 
-%%	\option{modern}{Option de classe utilisée pour composer un document dans un style contemporain adapté à un usage mixte imprimé et numérique: police sans-serif de contraste et saut de ligne entre les paragraphes.}}
-%%	\option{modernsans}{Option de classe utilisée pour composer un document dans un style contemporain adapté à un usage principalement numérique: tout le document est composé dans une police sans-serif, avec des sauts de lignes entre les paragraphes.}
-%% L'option |classic|~(par défaut) est utilisée pour composer un document respectant les canons de l'imprimerie traditionnelle: police d'écriture à empattements, paragraphes en retrait. L'option |modern| embrasse les standards contemporains adaptés à un usage mixte imprimé et numérique. Une police sans-serif est utilisée pour contraster la police à empattements, notamment dans les titres; les paragraphes sont séparés par des sauts de ligne plutôt que par un retrait. L'option |modernsans| reprend les mêmes caractéristiques, mais elle utilise une police sans-serif pour la totalité du texte.
+%%	\option{modern}{Option de classe utilisée pour composer un document dans un style contemporain adapté à un usage mixte imprimé et numérique: police sans-serif de contraste et saut de ligne entre les paragraphes.},
+%%	\option{modernsans}{Option de classe utilisée pour composer un document dans un style contemporain adapté à un usage principalement numérique: tout le document est composé dans une police sans-serif, avec des sauts de lignes entre les paragraphes.}}
+%% L'option |classic|~(par défaut) est utilisée pour composer un document respectant les canons de l'imprimerie traditionnelle: police d'écriture à empattements, paragraphes en retrait. L'option |modern| embrasse les standards contemporains adaptés à un usage mixte imprimé et numérique. Une police sans-serif est utilisée pour contraster la police à empattements, notamment dans les titres; les paragraphes sont séparés par des sauts de ligne plutôt que par un retrait. L'option |modernsans| reprend les mêmes caractéristiques, mais elle charge l'option |sans-serif| et utilise ainsi une police sans-serif pour la totalité du texte.
 
 %% \begin{developer}
-%% Il est possible de modifier le comportement des deux options grâce aux l'opérateur \cs{if@modern}{Opérateur conditionnel attaché aux options |modern| et \latin{a~contrario} |classic|.}.
+%% Il est possible de modifier le comportement de ces options grâce à \cs{if@modern}{Opérateur conditionnel attaché aux options |modern| et (si la condition n'est pas remplie) |classic|.}.
 %% \end{developer}
 
 %% \begin{noprint}
@@ -311,7 +311,7 @@
 %% Une police d'écriture avec empattements~(|serif|) est utilisée pour les documents rédigés, alors qu'une police plus épurée~(|sans-serif|) est employée pour la correspondance.
 
 %% \begin{developer}
-%% Il est possible de modifier le comportement des deux options grâce à l'opérateur \cs{if@sansserif}{Opérateur conditionnel attaché aux options |sans-serif| et \latin{a~contrario} |serif|.}.
+%% Il est possible de modifier le comportement des deux options grâce à \cs{if@sansserif}{Opérateur conditionnel attaché aux options |sans-serif| et (si la condition n'est pas remplie) |serif|.}.
 %% \end{developer}
 
 %% \begin{noprint}
@@ -328,6 +328,7 @@
 %% \describe[default]{%
 %%	\option{linespacing}[simple, default, median, double]{Option permettant de définir l'interligne du document à partir de valeurs standard fréquemment exigées pour les manuscrits: interligne simple~(\texttt{12/13,8pt}), interligne médian (\texttt{12/18pt}), interligne double~(\texttt{12/24pt}). Outre ces options, l'interligne utilisé par défaut optimise la lisibilité~(\texttt{12/16,5pt}).}}
 %% L'option |linespacing| permet de d'ajuster l'interligne par rapport aux valeurs standard en redéfinissant la valeur de |\baselinestretch|. L'option permet de modifier l'interligne pour l'une des valeurs prédéfinies suivantes:
+
 %% \begin{itemize}
 %% \item Interligne par défaut (ratio de 1,375 ou \texttt{12pt/16,5pt})
 %% \item Interligne simple (espacement minimal sans chevauchements, ou \texttt{12pt/13,8pt})
@@ -336,7 +337,8 @@
 %% \end{itemize}
 
 %% \begin{developer}
-%% L'interligne est défini par la macro \cs{custom@baselinestretch}{Macro interne contenant la valeur de |\baselinestretch| choisie dans les options de classe.}\arg{value}. Pour chaque option, cette cette définition est contenue dans les macros suivantes: \cs{set@defaultspacing}{Macro interne stockant la valeur à donner à |\baselinestretch| lors que l'interligne |default| est sélectionné dans les options de classe.}, \cs{set@medianspacing}{Macro interne stockant la valeur à donner à |\baselinestretch| lors que l'interligne |median| est sélectionné dans les options de classe.}, \cs{set@simplespacing}{Macro interne stockant la valeur à donner à |\baselinestretch| lors que l'interligne |simple| est sélectionné dans les options de classe.} et \cs{set@doublespacing}{Macro interne stockant la valeur à donner à |\baselinestretch| lors que l'interligne |double| est sélectionné dans les options de classe.}. On applique ensuite la valeur de |\custom@baselinestretch| correspondant à l'option sélectionnée. Il est possible de créer une nouvelle option |linespacing=<opt-name>| avec le code:\par
+%% L'interligne est défini par la macro \cs{custom@baselinestretch}{Macro interne contenant la valeur de |\baselinestretch| choisie dans les options de classe.}\arg{value}. Pour chaque option, cette définition est contenue dans les macros suivantes: \cs{set@defaultspacing}{Macro interne stockant la valeur à donner à |\baselinestretch| lors que l'interligne |default| est sélectionné dans les options de classe.}, \cs{set@medianspacing}{Macro interne stockant la valeur à donner à |\baselinestretch| lors que l'interligne |median| est sélectionné dans les options de classe.}, \cs{set@simplespacing}{Macro interne stockant la valeur à donner à |\baselinestretch| lors que l'interligne |simple| est sélectionné dans les options de classe.} et \cs{set@doublespacing}{Macro interne stockant la valeur à donner à |\baselinestretch| lors que l'interligne |double| est sélectionné dans les options de classe.}. On applique ensuite la valeur de |\custom@baselinestretch| correspondant à l'option sélectionnée. Il est possible de créer une nouvelle option |linespacing=<opt-name>| avec le code:\par
+
 %% \vspace{-\baselineskip}
 %% \begin{macro}
 %%	\newcommand{\set@<opt-name>spacing}{%
@@ -568,12 +570,12 @@
 %% Cette option permet de configurer le style utilisé par |biblatex| pour composer les bibliographies. Par défaut, le style associé à la classe \frenchlaw est utilisé, mais il est possible d'en choisir un autre pour s'adapter au style exigé par certains organismes ou éditeurs.
 
 %% \begin{developer}
-%% Le nom du style sélectionné est passé dans la macro interne \cs{set@biblatexstyle}{acro interne stockant le nom du style |biblatex sélectionné|.}.
+%% Le nom du style sélectionné est passé dans la macro interne \cs{@biblatexstyle}{Macro interne stockant le nom du style |biblatex| sélectionné.}.
 %% \end{developer}
 
 %% \begin{noprint}
 \DeclareOptionX{biblatex-style}[frenchlaw]{
-	\def\set@biblatexstyle{#1}
+	\def\@biblatexstyle{#1}
 }
 %% \end{noprint}
 
@@ -1786,7 +1788,7 @@
 
 %% Il est possible de créer de nouveaux styles de chapitres~(et de subdivisions en général) en utilisant les commandes de la classe |memoir|, à la documentation de laquelle le lecteur est renvoyé.
 
-%% Les subdivisions disponibles dans la classe \frenchlaw sont les suivantes: \cs{book}{Commande permettant d'insérer une subdivision hiérarchique pour les livres.}, \cs{part}{Commande permettant d'insérer une subdivision hiérarchique pour les parties, à l'intérieur des livres éventuels d'un ouvrage.}, \cs{heading}{Commande permettant d'insérer une subdivision hiérarchique pour les titres, à l'intérieur des parties d'un ouvrage.}, \cs{subheading}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-titres, à l'intérieur des titres d'un ouvrage.}, \cs{chapter}{Commande permettant d'insérer une subdivision hiérarchique pour les chapitres, à l'intérieur des parties ou des (sous-)titres d'un ouvrage.}, \cs{section}{Commande permettant d'insérer une subdivision hiérarchique pour les sections, à l'intérieur des chapitres éventuels d'un ouvrage.}\footnote{L'alignement vertical du texte sur la page est sera modifié si une \texttt{\textbackslash section} est placée immédiatement à la suite d'un chapitre, sans aucun texte introductif.}, \cs{subsection}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-sections, à l'intérieur des sections d'un ouvrage.}, \cs{subsubsection}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-sous-sections, à l'intérieur des sous-sections d'un ouvrage.}, \cs{paragraph}{Commande permettant d'insérer une subdivision hiérarchique pour les paragraphes, généralement à l'intérieur des sous-sous-sections d'un ouvrage.}, \cs{subparagraph}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-paragraphes, à l'intérieur des paragraphes d'un ouvrage.}. \todo{\Adde les subdivisions supplémentaires.} Les commandes correspondantes peuvent être employées ainsi:
+%% Les subdivisions disponibles sont les suivantes: \cs{book}{Commande permettant d'insérer une subdivision hiérarchique pour les livres.}, \cs{part}{Commande permettant d'insérer une subdivision hiérarchique pour les parties, à l'intérieur des livres éventuels d'un ouvrage.}, \cs{heading}{Commande permettant d'insérer une subdivision hiérarchique pour les titres, à l'intérieur des parties d'un ouvrage.}, \cs{subheading}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-titres, à l'intérieur des titres d'un ouvrage.}, \cs{chapter}{Commande permettant d'insérer une subdivision hiérarchique pour les chapitres, à l'intérieur des parties ou des (sous-)titres d'un ouvrage.}, \cs{section}{Commande permettant d'insérer une subdivision hiérarchique pour les sections, à l'intérieur des chapitres éventuels d'un ouvrage.}\footnote{L'alignement vertical du texte sur la page est sera modifié si une \texttt{\textbackslash section} est placée immédiatement à la suite d'un chapitre, sans aucun texte introductif.}, \cs{subsection}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-sections, à l'intérieur des sections d'un ouvrage.}, \cs{subsubsection}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-sous-sections, à l'intérieur des sous-sections d'un ouvrage.}, \cs{paragraph}{Commande permettant d'insérer une subdivision hiérarchique pour les paragraphes, généralement à l'intérieur des sous-sous-sections d'un ouvrage.}, \cs{subparagraph}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-paragraphes, à l'intérieur des paragraphes d'un ouvrage.}. \todo{\Adde les subdivisions supplémentaires.} Les commandes correspondantes peuvent être employées ainsi:
 
 %% \begin{macro}
 %% \book{<title>}% Livre
@@ -1811,7 +1813,7 @@
 %% \subsection*{<title>}% Sous-section
 %% \subsubsection*{<title>}% Sous-sous-section
 %% \paragraph*{<title>}% Paragrpahe
-%% \paragraph*{<title>}% Sous-paragraphe
+%% \subparagraph*{<title>}% Sous-paragraphe
 %% \end{macro}
 
 %% La classe \frenchlaw modifie ce comportement pour ajouter automatiquement à la table des matières les chapitres créés avec |\chapter*|, afin d'épargner à l'utilisateur la nécessité de réaliser manuellement cet ajout à chaque fois. Il est toutefois recommandé de n'utiliser cette commande étoilée que dans des contextes bien particuliers. Il pourra être utile d'en comparer les effets avec la commande |\fakechapter|, présentée et comparée ci-dessous.
@@ -1919,7 +1921,7 @@
 \fi\fi
 %% \end{noprint}
 
-%% Les subdivisions hiérarchiques seront composées en couleurs avec la combinaison des options |modern| et |colourall| dans le corps du texte. Certains styles peuvent comporter des variations plus complexes. Il est possible de modifier la couleur de certaines subdivisions seulement~-- par exemple, si l'on veut repasser en noir en-deçà d'un certain niveau~-- grâce aux commandes |\Xcolour|, où |X| peut être remplacé par le nom de la subdivision en question. On pourra ainsi redéfinir, par exemple, la commande pour les chapitres, grâce au code suivant:
+%% Les subdivisions hiérarchiques seront composées en couleurs avec la combinaison des options |modern| et |colourall|. Certains styles peuvent comporter des variations plus complexes. Il est possible de modifier la couleur de certaines subdivisions seulement~-- par exemple, si l'on veut repasser en noir en-deçà d'un certain niveau~-- grâce aux commandes |\Xcolour|, où |X| peut être remplacé par le nom de la subdivision en question. On pourra ainsi redéfinir, par exemple, la commande pour les chapitres, grâce au code suivant:
 
 %% \begin{macro}
 %% \renewcommand{\chaptercolour}{}% Chapitres toujours en noir.
@@ -1966,7 +1968,7 @@
 
 %% La déclaration \cs{mainmatter}{Déclaration indiquant la partie centrale d'un document.} met fin aux dérogations instaurées pour les pages liminaires; les subdivisions hiérarchiques sont désormais numérotées normalement et la numérotation des pages, qui est remise à zéro, se fait en chiffres arabes. Pour les mémoires et thèses, \frenchlaw fait en sorte que la numérotation des pages ne soit pas affectée par l'usage de cette commande. La déclaration est également incluse juste après le titre des documents autres que les monographies.
 
-%% Les annexes, s'il y en a, doivent être intégrées au corps de l'ouvrage grâce à la déclaration \cs{appendix}{Déclaration indiquant le passage aux annexes à l'intérieur du corps de l'ouvrage.}, qui modifie la dénomination et la numérotation des chapitres, lesquels deviendront par exemple une \enquote{Annexe A}. Il est également possible de faire précéder ces annexes d'une page reprenant le style d'une partie~(|part|) grâce à la commande \cs{appendixpage}{Commande permettant d'insérer une page annonçant les annexes.}.
+%% Les annexes, s'il y en a, doivent être intégrées au corps de l'ouvrage grâce à la déclaration \cs{appendix}{Déclaration indiquant le passage aux annexes à l'intérieur du corps de l'ouvrage.}, qui modifie la dénomination et la numérotation des chapitres, lesquels deviendront par exemple une \enquote{Annexe A}. Il est également possible de faire précéder ces annexes d'une page reprenant le style d'une partie~(|\part|) grâce à la commande \cs{appendixpage}{Commande permettant d'insérer une page annonçant les annexes.}.
 
 %% Enfin, le \cs{backmatter}{Déclaration indiquant la partie terminale d'une monographie.} contient toutes les sections terminales de l'ouvrage, parmi lesquelles on compte, le plus souvent, les bibliographies, les index et la table des matières. Ces sections ne sont pas numérotées.
 
@@ -2167,7 +2169,7 @@
 \counterwithin{precis}{subparagraph}
 %%	\end{noprint}
 
-%% Les commandes permettant de composer les numéros de paragraphes dans la table des matières peuvent également être insérées dans un style de paragraphe. Elles sont documentées dans le chapitre sur les tables et sommaires~(\pageref{tables-of-contents}).
+%% Les commandes permettant de composer les numéros de paragraphes dans la table des matières peuvent également être insérées dans un style de paragraphe. Elles sont documentées dans le chapitre sur les tables et sommaires~(p.~\pageref{tables-of-contents}).
 
 %% Chaque numéro de paragraphe et sous-paragraphe est automatiquement associé à un \enquote{label}, qui permettra d'y faire référence ailleurs dans le texte. La commande |\label{<label>}|, utilisée en interne, permet de créer une balise dans le texte et d'enregistrer à quel numéro de page et dans quel paragraphe elle se trouve. La commande |\ref{<label>}| permet à l'utilisateur d'imprimer le numéro de paragraphe sous lequel se trouve la balise, alors que |\pageref{<label>}| renverra au numéro de page en question~(sur ces questions, voir \todo{TODO, explication des labels}). Les labels associés aux paragraphes et sous-paragraphes ont toujours la forme |para:<titre>| ou, si aucun titre n'est donné, |para:<numéro>|~(le numéro risque alors de changer si de nouveaux paragraphes sont ajoutées). La syntaxe pour renvoyer à un numéro de paragraphe est, classiquement, la suivante:
 %% \begin{enumerate}
@@ -2282,13 +2284,13 @@
 	%% \tableofcontents* % Non référencée dans la table des matières
 %% \end{macro}
 
-%% La seule différence entre les deux versions de la commande tient à ce que \cs{tableofcontents}{Commande permettant d'insérer une table des matières~(\LaTeX\ et classe \safeverb[\packagecolor]{memoir}).} s'auto-référence dans la table des matières, où elle sera renseignée ainsi que son numéro de page. Par contraste, \cs{tableofcontents*}{Commande permettant d'insérer une table des matières, sans référencer celle-ci~(\LaTeX\ et classe \safeverb[\packagecolor]{memoir}.} ne sera pas mentionnée dans la table~-- ce qui semble plus logique.
+%% La différence entre les deux versions de la commande tient à ce que \cs{tableofcontents}{Commande permettant d'insérer une table des matières~(\LaTeX\ et classe \safeverb[\packagecolor]{memoir}).} s'auto-référence dans la table des matières, où elle sera renseignée ainsi que son numéro de page. Par contraste, \cs{tableofcontents*}{Commande permettant d'insérer une table des matières, sans référencer celle-ci~(\LaTeX\ et classe \safeverb[\packagecolor]{memoir}.} ne sera pas mentionnée dans la table~-- ce qui semble plus logique.
 
 %% La table des matières classique peut être augmentée de deux manières. En premier lieu, l'option |precis|, évoquée précédemment, permet de renseigner les numéros et titres de paragraphes dans la table des matières. Ceux-ci ne seront pas suivis d'un numéro de page et seront, par défaut, présentés sous forme d'un paragraphe, à la manière des précis traditionnels destinés à donner ua lecteur un aperçu des thèmes abordés. Ce mode de présentation pourra être utile tant pour la composition d'ouvrages soignés que pour la correction de documents~(thèses, manuscrits)\todo{Réf. à la section corrections}.
 
 %% Il est également possible d'insérer dans la table des matières des blocs de texte avec less options |outline| et |summary|. Ces fonctionnalités permettent de reproduire, dans la table des matières, des éléments directement issus du corps de texte, lesquels seront donc présents aux deux endroits. En choisissant bien les éléments à reproduire, il est possible de préparer un résumé structuré des diverses hypothèses et conclusions de l'ouvrage. Ces fonctionnalités sont présentées avec les autres outils de correction et de relecture de documents\todo{Réf. à la section corrections}.
 
-%% La principale commande permettant de paramétrer la table des matières est \cs{maxtocdepth}{Commande permettant de définir le dernier niveau de subdivision à référencer dans la table des matières~(\safeverb[\packagecolor]{memoir}).}, qui permet de définir la dernière subdivision logique à afficher au sein de la table des matière. Par défaut, toutes les subdivisions sont référencées. Il est possible de modifier ce comportement en indiquant le nom d'une autre subdivision.
+%% La principale commande pour paramétrer la table des matières est \cs{maxtocdepth}{Commande permettant de définir le dernier niveau de subdivision à référencer dans la table des matières~(\safeverb[\packagecolor]{memoir}).}, qui permet de définir la dernière subdivision logique à afficher au sein de la table des matière. Par défaut, toutes les subdivisions sont référencées. Il est possible de modifier ce comportement en indiquant le nom d'une autre subdivision.
 
 %% \begin{macro}
 %% \maxtocdepth{<subdivision>}% Par défaut: subparagraph
