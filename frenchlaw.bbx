@@ -850,6 +850,7 @@
 	\usebibmacro{finentry}}
 
 %	Define a driver for <inbook> entries
+%% TODo > Ne pas abréger le nombre de pages sauf si un numéro de chapitre est indiqué
 \DeclareBibliographyDriver{inbook}{%
 	\usebibmacro{bibindex}%
 	\usebibmacro{begentry}%
@@ -1349,6 +1350,7 @@
 	\printlist{institution}%
 	\ifkeyword{CEDH}
 		% Define ECHR case citations
+		% IF ECHR
 		{\newunit\newblock
 		 \printfield{title}%
 		 \iffieldundef{type}
@@ -1361,8 +1363,10 @@
 		 	{}
 		 	{\newunit\newblock
 		 	 \printfield{number}}}%
+		% ELSE (If NOT ECHR)
 		{\ifthenelse{	\ifkeyword{CC}\OR\ifkeyword{CConst} }
-			% Define CJEU and Constitutional Court case citations
+			% Define ECJ and Constitutional Court case citations
+			% IF ECJ or Constitutional Court
 			{\newunit\newblock
 			 \printfield{type}%
 			 \setunit{\addcomma\addspace}
@@ -1373,10 +1377,12 @@
 			 	{}
 			 	{\newunit\newblock
 			 	 \printfield{title}}}%
+			% ELSE (if NOT ECJ or onstittuional Court)
 			{\ifkeyword{UK}
 			 % Define UK case law citation (basic support)
 				% Use <title> and <date> (if not included in report reference)
 				% Use <series> to add the full report reference on first citation
+				% IF UK
 				{\newunit
 				 \printfield{title}%
 				 \setunit{\addspace}
@@ -1384,6 +1390,7 @@
 				 	{}
 				 	{\printtext[parens]{\usebibmacro{date}}}}
 				% Define generic case law citation (French)
+				% ELSE (oif NOT UK) -- French:
 				{\newunit
 				 \printfield{type}%
 				 \newunit
@@ -1596,7 +1603,7 @@
 
 \renewbibmacro*{title}{%
 	\ifdefined\bpl@osurname
-	\usebibmacro{bpl:marginyear}%
+		\usebibmacro{bpl:marginyear}%
 	\fi
 	\iffieldundef{title}
 		{}

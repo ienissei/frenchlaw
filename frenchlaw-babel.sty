@@ -38,7 +38,7 @@
 }
 
 %	Use the superscript macro from Babel French
-% TODO> Virer les \toclabelbox et les intégrer dans la classe
+% TODO> Virer les \maketoclabel et les intégrer dans la classe
 \let\textsuperscript=\fup
 
 %	Configure French language babel captions
@@ -58,22 +58,22 @@
 	\def\cftpartname{Partie}%
 	\def\partrefname{Partie}%
 	\def\headingname{Titre}%
-	\def\cftheadingname{\toclabelbox{Titre}}%
+	\def\cftheadingname{\maketoclabel{Titre}}%
 	\def\headingrefname{Titre}%
 	\def\subheadingname{Sous-titre}%
-	\def\cftsubheadingname{\toclabelbox{Sous-titre}}%
+	\def\cftsubheadingname{\maketoclabel{Sous-titre}}%
 	\def\subheadingrefname{Sous-titre}%
 	\def\chaptername{Chapitre}%
-	\def\cftchaptername{\toclabelbox{Chapitre}}%
+	\def\cftchaptername{\maketoclabel{Chapitre}}%
 	\def\chapterrefname{Chapitre}%
 	\def\sectionname{Section}%
-	\def\cftsectionname{\toclabelbox{Section}}%
+	\def\cftsectionname{\if@article\else\maketoclabel{Section}\fi}%
 	\def\sectionrefname{Section}%
 	\def\subsectionname{\scshape\S}%
-	\def\cftsubsectionname{\toclabelbox{\S}}%
+	\def\cftsubsectionname{\if@article\else\maketoclabel{\S}\fi}%
 	\def\subsectionrefname{\S}%
 	\def\appendixname{Annexe}%
-	\def\cftappendixname{\toclabelbox{Annexe}}%
+	\def\cftappendixname{\maketoclabel{Annexe}}%
 	\def\appendixpagename{Annexe}% TODO » Quelle utilité???
 	\def\appendixrefname{Annexe}%
 	\def\bibname{Bibliographie}%
@@ -149,8 +149,8 @@
 	\def\phonename{Phone}
 	\def\faxname{Fax.}
 	\def\subjectname{Subject}% Lettres
-	\def\cftchaptername{\toclabelbox{Chapitre}}%
-	\def\cftsectionname{\toclabelbox{}}%
+	\def\cftchaptername{\maketoclabel{Chapitre}}%
+	\def\cftsectionname{\maketoclabel{}}%
 	\def\lecturename{Lecture Notes}
 	\def\tutorialname{Tutorial Notes}
 	% TODO » Changer quand on aura chargé le .cnf au bon endroit

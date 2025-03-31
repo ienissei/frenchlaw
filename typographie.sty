@@ -250,11 +250,13 @@
 	{\cite{#2}#1}
 	{\citetitle{#2}\@\xspace}}
 
+% Créer une commande pour automatiser (?)
 \newcommand{\JACC}{\citejournal{JACC}}% Journal des audiences de la Cour de cassation (1791--1824) [= Dalloz]
-\newcommand{\D}{\citejournal{D}}% Recueil Dalloz: Jurisprudence générale (1825--1902)
+%% Utiliser le modèle pour le Dalloz, qui marche:
+\newcommand{\D}{\nocite{D}\emph{D.}\space}% Recueil Dalloz: Jurisprudence générale (1825--1902)
 \newcommand{\DP}{\citejournal{DP}}% Recueil Dalloz périodique (1903--1944)
 \newcommand{\DA}{\citejournal{DA}}% Recueil Dalloz anlytique et critique (1945--1955)
-\renewcommand{\DH}{\citejournal{DH}}% Recueil Dalloz hebdomadaire --- Remplace un genre de D polonais
+\renewcommand{\DH}{\nocite{DH}\emph{DH}\space}% Recueil Dalloz hebdomadaire --- Remplace un genre de D polonais
 \newcommand{\Sirey}{\citejournal{S}}% Recueil Sirey des lois et arrêts (1791--1954)
 \newcommand{\GP}{\citejournal{GazPal}}
 \newcommand{\JCP}{\citejournal{JCP}}
