@@ -4316,8 +4316,8 @@
 
 %	Charger <biblatex> avec les options
 \RequirePackage[
-	style=\set@biblatexstyle,
-	citestyle=authortitle,
+	style=\@biblatexstyle,
+	citestyle=\@biblatexstyle,
 	\if@vitae
 	%	useshortauthor=false,
 		bibstyle=publist,
