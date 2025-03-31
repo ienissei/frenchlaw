@@ -213,7 +213,7 @@ Il est possible de vérifier quelle option a été chargée et d'en modifier le 
 Cette option permet de composer la page au format paysage, également dit \emph{à l'italienne}. Elle est simplement adaptée de la classe |memoir|.
 
 \begin{developer}
-Il est possible de modifier le comportement de l'option grâce à l'opérateur \cs{if@landscape}{Opérateur conditionnel attaché à l'option |landscape|.}.
+Il est possible de modifier le comportement de l'option grâce à \cs{if@landscape}{Opérateur conditionnel attaché à l'option |landscape|.}.
 \end{developer}
 
 \begin{noprint}
@@ -229,7 +229,7 @@ Il est possible de modifier le comportement de l'option grâce à l'opérateur \
 L'option |marginal| permet d'augmenter la taille de l'une des marges latérales: à droite pour les documents en mode |oneside| et en alternance en mode |twoside|. La marge est alors utilisée pour imprimer notamment les titres des subdivisions secondaires~(|\paragraph|, |\subparagraph| et |\para|). Elle est désactivée par l'option |twocolumn| avec laquelle elle est incompatible.
 
 \begin{developer}
-Il est possible de modifier le comportement de l'option grâce à l'opérateur \cs{if@marginalia}{Opérateur conditionnel attaché à l'option |marginalia|.}.
+Il est possible de modifier le comportement de l'option grâce à \cs{if@marginalia}{Opérateur conditionnel attaché à l'option |marginalia|.}.
 \end{developer}
 
 \begin{noprint}
@@ -254,7 +254,7 @@ Les options suivantes permettent de configurer la manière dont le texte sera co
 Taille de la police utilisée pour le corps du texte. Celle-ci est de |12pt| par défaut avec |a4paper|. Pour les autres tailles de papier, la police est de |11pt| avec |a5paper| et |10pt| avec |a6paper|.
 
 \begin{developer}
-Il est possible de vérifier quelle option a été chargée et d'en modifier le comportement grâce aux quatre opérateurs suivants: \cs{if@tenpoints}{Opérateur conditionnel attaché à l'option |10pt|.}, \cs{if@elevenpoints}{Opérateur conditionnel attaché à l'option |11pt|.}, \cs{if@twelvepoints}{Opérateur conditionnel attaché à l'option |12pt|.} et \cs{if@fourteenpoints}{Opérateur conditionnel attaché à l'option |14pt|.}.
+Il est possible de vérifier si une option a été chargée grâce aux quatre opérateurs suivants: \cs{if@tenpoints}{Opérateur conditionnel attaché à l'option |10pt|.}, \cs{if@elevenpoints}{Opérateur conditionnel attaché à l'option |11pt|.}, \cs{if@twelvepoints}{Opérateur conditionnel attaché à l'option |12pt|.} et \cs{if@fourteenpoints}{Opérateur conditionnel attaché à l'option |14pt|.}.
 \end{developer}
 
 \begin{noprint}
@@ -283,12 +283,12 @@ Il est possible de vérifier quelle option a été chargée et d'en modifier le 
 
 \describe[classic]{%
 \option{classic}{Option de classe utilisée pour composer un document respectant les canons de l'imprimerie traditionnelle: police d'écriture à empattements, paragraphes en retrait.}, 
-\option{modern}{Option de classe utilisée pour composer un document dans un style contemporain adapté à un usage mixte imprimé et numérique: police sans-serif de contraste et saut de ligne entre les paragraphes.}}
-\option{modernsans}{Option de classe utilisée pour composer un document dans un style contemporain adapté à un usage principalement numérique: tout le document est composé dans une police sans-serif, avec des sauts de lignes entre les paragraphes.}
-L'option |classic|~(par défaut) est utilisée pour composer un document respectant les canons de l'imprimerie traditionnelle: police d'écriture à empattements, paragraphes en retrait. L'option |modern| embrasse les standards contemporains adaptés à un usage mixte imprimé et numérique. Une police sans-serif est utilisée pour contraster la police à empattements, notamment dans les titres; les paragraphes sont séparés par des sauts de ligne plutôt que par un retrait. L'option |modernsans| reprend les mêmes caractéristiques, mais elle utilise une police sans-serif pour la totalité du texte.
+\option{modern}{Option de classe utilisée pour composer un document dans un style contemporain adapté à un usage mixte imprimé et numérique: police sans-serif de contraste et saut de ligne entre les paragraphes.},
+\option{modernsans}{Option de classe utilisée pour composer un document dans un style contemporain adapté à un usage principalement numérique: tout le document est composé dans une police sans-serif, avec des sauts de lignes entre les paragraphes.}}
+L'option |classic|~(par défaut) est utilisée pour composer un document respectant les canons de l'imprimerie traditionnelle: police d'écriture à empattements, paragraphes en retrait. L'option |modern| embrasse les standards contemporains adaptés à un usage mixte imprimé et numérique. Une police sans-serif est utilisée pour contraster la police à empattements, notamment dans les titres; les paragraphes sont séparés par des sauts de ligne plutôt que par un retrait. L'option |modernsans| reprend les mêmes caractéristiques, mais elle charge l'option |sans-serif| et utilise ainsi une police sans-serif pour la totalité du texte.
 
 \begin{developer}
-Il est possible de modifier le comportement des deux options grâce aux l'opérateur \cs{if@modern}{Opérateur conditionnel attaché aux options |modern| et \latin{a~contrario} |classic|.}.
+Il est possible de modifier le comportement de ces options grâce à \cs{if@modern}{Opérateur conditionnel attaché aux options |modern| et (si la condition n'est pas remplie) |classic|.}.
 \end{developer}
 
 \begin{noprint}
@@ -311,7 +311,7 @@ Il est possible de modifier le comportement des deux options grâce aux l'opéra
 Une police d'écriture avec empattements~(|serif|) est utilisée pour les documents rédigés, alors qu'une police plus épurée~(|sans-serif|) est employée pour la correspondance.
 
 \begin{developer}
-Il est possible de modifier le comportement des deux options grâce à l'opérateur \cs{if@sansserif}{Opérateur conditionnel attaché aux options |sans-serif| et \latin{a~contrario} |serif|.}.
+Il est possible de modifier le comportement des deux options grâce à \cs{if@sansserif}{Opérateur conditionnel attaché aux options |sans-serif| et (si la condition n'est pas remplie) |serif|.}.
 \end{developer}
 
 \begin{noprint}
@@ -328,6 +328,7 @@ Il est possible de modifier le comportement des deux options grâce à l'opérat
 \describe[default]{%
 \option{linespacing}[simple, default, median, double]{Option permettant de définir l'interligne du document à partir de valeurs standard fréquemment exigées pour les manuscrits: interligne simple~(\texttt{12/13,8pt}), interligne médian (\texttt{12/18pt}), interligne double~(\texttt{12/24pt}). Outre ces options, l'interligne utilisé par défaut optimise la lisibilité~(\texttt{12/16,5pt}).}}
 L'option |linespacing| permet de d'ajuster l'interligne par rapport aux valeurs standard en redéfinissant la valeur de |\baselinestretch|. L'option permet de modifier l'interligne pour l'une des valeurs prédéfinies suivantes:
+
 \begin{itemize}
 \item Interligne par défaut (ratio de 1,375 ou \texttt{12pt/16,5pt})
 \item Interligne simple (espacement minimal sans chevauchements, ou \texttt{12pt/13,8pt})
@@ -336,7 +337,8 @@ L'option |linespacing| permet de d'ajuster l'interligne par rapport aux valeurs 
 \end{itemize}
 
 \begin{developer}
-L'interligne est défini par la macro \cs{custom@baselinestretch}{Macro interne contenant la valeur de |\baselinestretch| choisie dans les options de classe.}\arg{value}. Pour chaque option, cette cette définition est contenue dans les macros suivantes: \cs{set@defaultspacing}{Macro interne stockant la valeur à donner à |\baselinestretch| lors que l'interligne |default| est sélectionné dans les options de classe.}, \cs{set@medianspacing}{Macro interne stockant la valeur à donner à |\baselinestretch| lors que l'interligne |median| est sélectionné dans les options de classe.}, \cs{set@simplespacing}{Macro interne stockant la valeur à donner à |\baselinestretch| lors que l'interligne |simple| est sélectionné dans les options de classe.} et \cs{set@doublespacing}{Macro interne stockant la valeur à donner à |\baselinestretch| lors que l'interligne |double| est sélectionné dans les options de classe.}. On applique ensuite la valeur de |\custom@baselinestretch| correspondant à l'option sélectionnée. Il est possible de créer une nouvelle option |linespacing=<opt-name>| avec le code:\par
+L'interligne est défini par la macro \cs{custom@baselinestretch}{Macro interne contenant la valeur de |\baselinestretch| choisie dans les options de classe.}\arg{value}. Pour chaque option, cette définition est contenue dans les macros suivantes: \cs{set@defaultspacing}{Macro interne stockant la valeur à donner à |\baselinestretch| lors que l'interligne |default| est sélectionné dans les options de classe.}, \cs{set@medianspacing}{Macro interne stockant la valeur à donner à |\baselinestretch| lors que l'interligne |median| est sélectionné dans les options de classe.}, \cs{set@simplespacing}{Macro interne stockant la valeur à donner à |\baselinestretch| lors que l'interligne |simple| est sélectionné dans les options de classe.} et \cs{set@doublespacing}{Macro interne stockant la valeur à donner à |\baselinestretch| lors que l'interligne |double| est sélectionné dans les options de classe.}. On applique ensuite la valeur de |\custom@baselinestretch| correspondant à l'option sélectionnée. Il est possible de créer une nouvelle option |linespacing=<opt-name>| avec le code:\par
+
 \vspace{-\baselineskip}
 \begin{macro}
 \newcommand{\set@<opt-name>spacing}{%
@@ -530,9 +532,11 @@ Ces options permettent de produire un document en couleurs. On notera que les gr
 }
 %	Define option <colorall|colourall> for heavily coloured documents
 \DeclareOptionX{colorall}{
+	\@colourtrue
 	\@colouralltrue
 }
 \DeclareOptionX{colourall}{
+	\@colourtrue
 	\@colouralltrue
 }
 \end{noprint}
@@ -568,12 +572,12 @@ Il est possible de vérifier quelle option a été chargée et d'en modifier le 
 Cette option permet de configurer le style utilisé par |biblatex| pour composer les bibliographies. Par défaut, le style associé à la classe \frenchlaw est utilisé, mais il est possible d'en choisir un autre pour s'adapter au style exigé par certains organismes ou éditeurs.
 
 \begin{developer}
-Le nom du style sélectionné est passé dans la macro interne \cs{set@biblatexstyle}{acro interne stockant le nom du style |biblatex sélectionné|.}.
+Le nom du style sélectionné est passé dans la macro interne \cs{@biblatexstyle}{Macro interne stockant le nom du style |biblatex| sélectionné.}.
 \end{developer}
 
 \begin{noprint}
 \DeclareOptionX{biblatex-style}[frenchlaw]{
-	\def\set@biblatexstyle{#1}
+	\def\@biblatexstyle{#1}
 }
 \end{noprint}
 
@@ -1171,7 +1175,7 @@ Les logiciels de la famille \TeX\ ont été pensés pour l'écriture mathématiq
 
 Une solution aussi radicale n'est toutefois pas requise pour le droit, et \frenchlaw essaie de trouver un équilibre raisonnable entre respecter \emph{pour l'essentiel} le système traditionnel de composition sur la grille, et autoriser des entorses à cette règle chaque fois qu'elle produirait des résultats franchement sous-optimaux. Les éléments qui rompent l'alignement vertical sont, par ailleurs et chaque fois que cela est possible, placés en bas de page pour minimiser la gêne visuelle que cela pourrait causer au lecteur. Ce prélude permet d'expliquer les choix techniques qui ont été faits dans le code.
 
-En plus d'établir une échelle typographique, la classe garantit autant que faire se peut le respect d'une grille verticale, ce qui signifie que l'espacement des lignes doit rester le même~-- ou un multiple de l'espacement standard~-- peu importe la taille des caractères. Cela peut se vérifier avec l'option |vgrid|. Toutefois, dans le souci de trouver un équilibre harmonieux, il est également nécessaire de pouvoir violer ce principe: si l'on pense à un titre de chapitre s'étalant sur deux lignes, il sera souvent très laid d'espacer excessivement ces deux lignes dans le seul but de retomber sur la grille verticale.
+En plus d'établir une échelle typographique, la classe garantit autant que faire se peut le respect d'une grille verticale, ce qui signifie que l'espacement des lignes doit rester le même~-- ou un multiple de l'espacement standard~-- peu importe la taille des caractères. Cela peut se vérifier avec l'option |vgrid|. Toutefois, dans le souci de trouver un équilibre harmonieux, il est également nécessaire de pouvoir déroger à ce principe: si l'on pense à un titre de chapitre s'étalant sur deux lignes, il sera souvent très laid d'espacer excessivement ces deux lignes dans le seul but de retomber sur la grille verticale.
 
 Dans l'échelle établie ci-dessus, les titres des subdivisions, comme les chapitres ou les sections, seront composés dans un corps plus gros, ce qui rompra l'alignement vertical sur la grille: la hauteur des caractères et de leur interlignage n'est pas un multiple de la hauteur des lignes composées en corps normal. \frenchlaw s'applique ensuite à atténuer cet effet. La solution qui a été retenue ici consiste à associer à chaque taille de caractères un interligne confortable et agréable à lire, tout en prévoyant deux mécanismes pour forcer l'alignement sur la grille, avec plus ou moins de subtilité.
 
@@ -1257,6 +1261,8 @@ La composition sur une grille typographique interdit à \LaTeX\ d'insérer des e
 %	Always use raggedbottom (prevents underfull \vbox warnings)
 \raggedbottom
 \end{noprint}
+
+Quelques autres commandes et mécanismes sont susceptibles de rompre l'alignement vertical sur la page en cours. On notera notamment l'espacement d'un demi interligne inséré avant les chapitres dans la table des matières~(\pageref{grid:cftbeforechapterskip}).\todo{Et autres?}
 
 
 % ===== Paragraph Typosetting =====
@@ -1346,6 +1352,8 @@ La classe \frenchlaw permet de colorer automatiquement certains éléments du do
 \newcommand{\setcolours}[1]{%
 	\gdef\maincolour{\csname setmaincolour@#1\endcsname}%
 	\gdef\subcolour{\csname setsubcolour@#1\endcsname}}
+% Define a command to reset colours
+\newcommand{\defaultcolour}{\color{black}}
 \end{noprint}
 
 \begin{developer}
@@ -1622,7 +1630,6 @@ La classe \frenchlaw définit ensuite le style de chaque niveau de subdivision e
 
 	%	Style <chapter> titles with option <modern>
 	% In <memoir> chapters must be entirely redefined for each style
-	\renewcommand{\thechapter}{\roman{chapter}}
 	\renewcommand{\chaptitlefont}{\raggedright\Large\chaptercolour\sffamily\scshape}
 	\renewcommand{\chapnamefont}{\chaptitlefont}
 	\renewcommand{\chapnumfont}{\chaptitlefont}
@@ -1632,8 +1639,8 @@ La classe \frenchlaw définit ensuite le style de chaque niveau de subdivision e
 		\ifanappendix					\Alph{chapter}%
 		\else\ifdefstring{\languagename}{french}
 			{\ifnum\value{chapter}=1	\ordinalstring{chapter}[m]%
-			 \else						\thechapter\fi}
-			{\thechapter}\fi}
+			 \else						\MakeLowercase{\thechapter}\fi}
+			{\MakeLowercase{\thechapter}}\fi}
 	\renewcommand{\@chapapp}{\chapnamefont\MakeLowercase\chaptername}
 	\renewcommand{\printchaptertitle}[1]{\chaptitlefont\MakeUppercase{##1}}
 	\renewcommand{\afterchapternum}{\par\nobreak\vskip\midchapskip}
@@ -1666,7 +1673,7 @@ La composition des nombreuses subdivisions correspondant aux sections, sous-sect
 	{\vskip\@tempskipa\vskip-\parskip}
 	{\addvspace{\@tempskipa}\addvspace{-\parskip}}
 	{}
-	{\typeout{WARNING! Patching \noexpand\@xsect failed!}}
+	{\@latex@warning@no@line{Failed to patch \noexpand\@xsect.}}
 \end{noprint}
 
 \begin{noprint}
@@ -1704,7 +1711,7 @@ La composition des nombreuses subdivisions correspondant aux sections, sous-sect
 % Skip two lines before a new section, except in <twocolumn> mode
 \if@twocolumn\addtolength{\beforesecskip}{\z@}
 	\else\addtolength{\beforesecskip}{\baselineskip}\fi
-% Skip one line adter a new section
+% Skip one line after a new section
 \setlength{\aftersecskip}{\baselineskip}
 \end{noprint}
 
@@ -1785,7 +1792,7 @@ La composition des nombreuses subdivisions correspondant aux sections, sous-sect
 
 Il est possible de créer de nouveaux styles de chapitres~(et de subdivisions en général) en utilisant les commandes de la classe |memoir|, à la documentation de laquelle le lecteur est renvoyé.
 
-Les subdivisions disponibles dans la classe \frenchlaw sont les suivantes: \cs{book}{Commande permettant d'insérer une subdivision hiérarchique pour les livres.}, \cs{part}{Commande permettant d'insérer une subdivision hiérarchique pour les parties, à l'intérieur des livres éventuels d'un ouvrage.}, \cs{heading}{Commande permettant d'insérer une subdivision hiérarchique pour les titres, à l'intérieur des parties d'un ouvrage.}, \cs{subheading}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-titres, à l'intérieur des titres d'un ouvrage.}, \cs{chapter}{Commande permettant d'insérer une subdivision hiérarchique pour les chapitres, à l'intérieur des parties ou des (sous-)titres d'un ouvrage.}, \cs{section}{Commande permettant d'insérer une subdivision hiérarchique pour les sections, à l'intérieur des chapitres éventuels d'un ouvrage.}\footnote{L'alignement vertical du texte sur la page est sera modifié si une \texttt{\textbackslash section} est placée immédiatement à la suite d'un chapitre, sans aucun texte introductif.}, \cs{subsection}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-sections, à l'intérieur des sections d'un ouvrage.}, \cs{subsubsection}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-sous-sections, à l'intérieur des sous-sections d'un ouvrage.}, \cs{paragraph}{Commande permettant d'insérer une subdivision hiérarchique pour les paragraphes, généralement à l'intérieur des sous-sous-sections d'un ouvrage.}, \cs{subparagraph}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-paragraphes, à l'intérieur des paragraphes d'un ouvrage.}. \todo{\Adde les subdivisions supplémentaires.} Les commandes correspondantes peuvent être employées ainsi:
+Les subdivisions disponibles sont les suivantes: \cs{book}{Commande permettant d'insérer une subdivision hiérarchique pour les livres.}, \cs{part}{Commande permettant d'insérer une subdivision hiérarchique pour les parties, à l'intérieur des livres éventuels d'un ouvrage.}, \cs{heading}{Commande permettant d'insérer une subdivision hiérarchique pour les titres, à l'intérieur des parties d'un ouvrage.}, \cs{subheading}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-titres, à l'intérieur des titres d'un ouvrage.}, \cs{chapter}{Commande permettant d'insérer une subdivision hiérarchique pour les chapitres, à l'intérieur des parties ou des (sous-)titres d'un ouvrage.}, \cs{section}{Commande permettant d'insérer une subdivision hiérarchique pour les sections, à l'intérieur des chapitres éventuels d'un ouvrage.}\footnote{L'alignement vertical du texte sur la page est sera modifié si une \texttt{\textbackslash section} est placée immédiatement à la suite d'un chapitre, sans aucun texte introductif.}, \cs{subsection}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-sections, à l'intérieur des sections d'un ouvrage.}, \cs{subsubsection}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-sous-sections, à l'intérieur des sous-sections d'un ouvrage.}, \cs{paragraph}{Commande permettant d'insérer une subdivision hiérarchique pour les paragraphes, généralement à l'intérieur des sous-sous-sections d'un ouvrage.}, \cs{subparagraph}{Commande permettant d'insérer une subdivision hiérarchique pour les sous-paragraphes, à l'intérieur des paragraphes d'un ouvrage.}. \todo{\Adde les subdivisions supplémentaires.} Les commandes correspondantes peuvent être employées ainsi:
 
 \begin{macro}
 \book{<title>}% Livre
@@ -1802,7 +1809,7 @@ Les subdivisions disponibles dans la classe \frenchlaw sont les suivantes: \cs{b
 
 L'argument obligatoire \arg{title} contient le titre de la subdivision dont il s'agit. Le premier argument optionnel \opt{toc-title} permet d'indiquer un titre différent~-- par exemple, plus court~-- à utiliser dans la table des matières. Quant au second argument optionnel, \opt{head-title}, il permet s'il y a lieu, de préciser un titre différent à utiliser dans l'en-tête de la page. Pour les commandes |\heading| et |\subheading|, l'argument \opt{short-title} est utilisé à la fois dans la table des matières et dans les en-têtes.
 
-Certaines subdivisions existent également sous une forme étoilée, qui n'est alors pas numérotée ni~(en principe) intégrée automatiquement à la table des matières. La classe \frenchlaw modifie toutefois ce comportement pour ajouter automatiquement à la table des matières les chapitres créés avec |\chapter*|, afin d'épargner à l'utilisateur la nécessité de réaliser manuellement cet ajout à chaque fois. Les commandes étoilées sont les suivantes:
+Certaines subdivisions existent également sous une forme étoilée, qui n'est alors pas numérotée ni~(en principe) intégrée automatiquement à la table des matières. Ces commandes sont les suivantes:
 
 \begin{macro}
 \chapter*[<short-title>]{<title>}% Chapitre
@@ -1810,8 +1817,10 @@ Certaines subdivisions existent également sous une forme étoilée, qui n'est a
 \subsection*{<title>}% Sous-section
 \subsubsection*{<title>}% Sous-sous-section
 \paragraph*{<title>}% Paragrpahe
-\paragraph*{<title>}% Sous-paragraphe
+\subparagraph*{<title>}% Sous-paragraphe
 \end{macro}
+
+La classe \frenchlaw modifie ce comportement pour ajouter automatiquement à la table des matières les chapitres créés avec |\chapter*|, afin d'épargner à l'utilisateur la nécessité de réaliser manuellement cet ajout à chaque fois. Il est toutefois recommandé de n'utiliser cette commande étoilée que dans des contextes bien particuliers. Il pourra être utile d'en comparer les effets avec la commande |\fakechapter|, présentée et comparée ci-dessous.
 
 \begin{noprint}
 \renewcommand{\chapter}{%
@@ -1845,7 +1854,7 @@ Certaines subdivisions existent également sous une forme étoilée, qui n'est a
 
 On pourra, par exemple, utiliser la commande |\fakechapter{Introduction}| pour créer un chapitre non numéroté du même nom, lequel apparaîtra dans la table des matières au même niveau et avec la même apparence que les sections. L'argument optionnel peut être employé, par exemple, dans |\fakechapter[Chapitre liminaire]{<Titre du chapitre>}|. Cela permettra de remplacer \enquote{Chapitre N} par le texte de l'argument optionnel dans le corps du texte. Ce chapitre est toujours inséré dans la table des matières au même niveau que les sections, l'argument optionnel remplaçant ici \enquote{Section N}.
 
-On notera la différence entre |\fakechapter| et le traditionnel |\chapter*{<titre>}|, qui ne reproduit pas d'argument optionnel en lieu et place du numéro de chapitre, et crée une entrée dans la table des matières au même noveau que les chapitres. La différence est palpable, par exemple, lorsque le style de table des matières prévoit des sauts de lignes avant les chapitres, ce qui peut rendre inesthétiques les chapitres liminaires ou conclusifs lorsqu'ils sont nombreux.
+On notera la différence entre cette commande et le traditionnel |\chapter*{<titre>}|, qui ne reproduit pas d'argument optionnel en lieu et place du numéro de chapitre et qui crée une entrée dans la table des matières au même noveau que les chapitres,. La différence est palpable, par exemple, lorsque le style de table des matières prévoit des sauts de lignes avant les chapitres, ce qui peut rendre inesthétiques les chapitres liminaires ou conclusifs lorsqu'ils sont nombreux.
 
 \begin{noprint}
 %	Create a command for insertinf a "fake" chapter
@@ -1963,7 +1972,7 @@ La déclaration \cs{frontmatter}{Déclaration indiquant la partie liminaire d'un
 
 La déclaration \cs{mainmatter}{Déclaration indiquant la partie centrale d'un document.} met fin aux dérogations instaurées pour les pages liminaires; les subdivisions hiérarchiques sont désormais numérotées normalement et la numérotation des pages, qui est remise à zéro, se fait en chiffres arabes. Pour les mémoires et thèses, \frenchlaw fait en sorte que la numérotation des pages ne soit pas affectée par l'usage de cette commande. La déclaration est également incluse juste après le titre des documents autres que les monographies.
 
-Les annexes, s'il y en a, doivent être intégrées au corps de l'ouvrage grâce à la déclaration \cs{appendix}{Déclaration indiquant le passage aux annexes à l'intérieur du corps de l'ouvrage.}, qui modifie la dénomination et la numérotation des chapitres, lesquels deviendront par exemple une \enquote{Annexe A}. Il est également possible de faire précéder ces annexes d'une page reprenant le style d'une partie~(|part|) grâce à la commande \cs{appendixpage}{Commande permettant d'insérer une page annonçant les annexes.}.
+Les annexes, s'il y en a, doivent être intégrées au corps de l'ouvrage grâce à la déclaration \cs{appendix}{Déclaration indiquant le passage aux annexes à l'intérieur du corps de l'ouvrage.}, qui modifie la dénomination et la numérotation des chapitres, lesquels deviendront par exemple une \enquote{Annexe A}. Il est également possible de faire précéder ces annexes d'une page reprenant le style d'une partie~(|\part|) grâce à la commande \cs{appendixpage}{Commande permettant d'insérer une page annonçant les annexes.}.
 
 Enfin, le \cs{backmatter}{Déclaration indiquant la partie terminale d'une monographie.} contient toutes les sections terminales de l'ouvrage, parmi lesquelles on compte, le plus souvent, les bibliographies, les index et la table des matières. Ces sections ne sont pas numérotées.
 
@@ -2007,7 +2016,7 @@ En principe, le titre du paragraphe coulé est composé à côté du numéro de 
 \newcommand{\noparanames}{\@paranamefalse}
 \end{noprint}
 
-La mise en forme des numéros de paragraphes est réalisée au moyen de styles prédéfinis, auxquels l'utilisateur pourra ajouter sa griffe. La commande \cs{makeparastyle}{Commande permettant de créer un nouveau style pour les numéros de paragraphes |\para| et |\subpara|.} permet de définir un nouveau style de paragraphe, alors que la commande \cs{setparastyle}{Commande permettant de sélectionner un style pour les numéros de paragraphes |\para| et |\subpara|.}
+La mise en forme des numéros de paragraphes est réalisée au moyen de styles prédéfinis, auxquels l'utilisateur pourra ajouter sa griffe. La commande \cs{makeparastyle}{Commande permettant de créer un nouveau style pour les numéros de paragraphes |\para| et |\subpara|.} permet de définir un nouveau style de paragraphe, alors que la commande \cs{parastyle}{Commande permettant de sélectionner un style pour les numéros de paragraphes |\para| et |\subpara|.}
 
 \begin{noprint}
 %	Create the commands that define and apply paragraph styles
@@ -2031,7 +2040,7 @@ Pour définir et sélectionner un nouveau style de numéros, il suffit de redéf
   % Couleur du titre (ici, les couleurs par défaut):
   \renewcommand{\paracolour}{\if@colourall\maincolour\fi}
   % Couleur du numéro (ici, les couleurs par défaut):
-  \renewcommand{\paranumcolour}{\if@colourall\paracolour\fi}
+  \renewcommand{\paranumcolour}{\if@colour\maincolour\fi}
   % Style du titre (ajouter par exemple \bfseries ou \scshape):
   \renewcommand{\paratitlestyle}[1]{<...>#1}
   % Style du numéro (idem):
@@ -2083,7 +2092,7 @@ Le style |default|, chargé automatiquement, compose très classiquement les num
 	\renewcommand{\parasep}{.\enskip}
 	\renewcommand{\paranumsep}{.~}
 	\renewcommand{\paracolour}{\if@colourall\maincolour\fi}
-	\renewcommand{\paranumcolour}{\if@colourall\paracolour\fi}
+	\renewcommand{\paranumcolour}{\if@colour\maincolour\fi}
 	\renewcommand{\paratitlestyle}[1]{%
 		\if@marginalia\footnotesize\itshape\else%
 		\if@modern\sffamily\bfseries\else\scshape\fi\fi##1}
@@ -2096,7 +2105,7 @@ Le style |default|, chargé automatiquement, compose très classiquement les num
 	\renewcommand{\subparanumsep}{).~}
 	\renewcommand{\subparanumdash}{.}
 	\renewcommand{\subparacolour}{}
-	\renewcommand{\subparanumcolour}{\if@colourall\maincolour\fi}
+	\renewcommand{\subparanumcolour}{\if@colour\maincolour\fi}
 	\renewcommand{\subparatitlestyle}[1]{%
 		\if@marginalia\footnotesize\itshape\else%
 		\if@modern\sffamily\fi\fi\itshape##1}
@@ -2116,15 +2125,12 @@ Le style |textbook| utilise un design un peu plus élaboré, dans un but à la f
 	\renewcommand{\paraskip}{\par\addvspace{\baselineskip}}
 	\renewcommand{\parasep}{.\enspace}
 	\renewcommand{\paranumsep}{.\enspace}
-	\renewcommand{\paracolour}{\if@colour\maincolour\fi}
-	\renewcommand{\paranumcolour}{\paracolour}
 	\renewcommand{\paratitlestyle}[1]{\sffamily\bfseries##1}
 	\renewcommand{\paranumstyle}[1]{%
 		\citereset\noindent%
 		\llap{\raisebox{0pt}[0pt][0pt]{\huge\itshape##1}}}
 
 	% Styling commands for \subpara
-	\renewcommand{\subparanumcolour}{\if@colour\maincolour\fi}
 	\renewcommand{\subparatitlestyle}[1]{%
 		\if@marginalia\footnotesize\itshape\else%
 		\if@modern\sffamily\fi\fi\itshape##1}
@@ -2164,7 +2170,7 @@ Le compteur \cnt{precis}{Numéro du paragraphe dans la subdivision courante} con
 \counterwithin{precis}{subparagraph}
 \end{noprint}
 
-Les commandes permettant de composer les numéros de paragraphes dans la table des matières peuvent également être insérées dans un style de paragraphe. Elles sont documentées dans le chapitre sur les tables et sommaires~(\pageref{tables-of-contents}).
+Les commandes permettant de composer les numéros de paragraphes dans la table des matières peuvent également être insérées dans un style de paragraphe. Elles sont documentées dans le chapitre sur les tables et sommaires~(p.~\pageref{tables-of-contents}).
 
 Chaque numéro de paragraphe et sous-paragraphe est automatiquement associé à un \enquote{label}, qui permettra d'y faire référence ailleurs dans le texte. La commande |\label{<label>}|, utilisée en interne, permet de créer une balise dans le texte et d'enregistrer à quel numéro de page et dans quel paragraphe elle se trouve. La commande |\ref{<label>}| permet à l'utilisateur d'imprimer le numéro de paragraphe sous lequel se trouve la balise, alors que |\pageref{<label>}| renverra au numéro de page en question~(sur ces questions, voir \todo{TODO, explication des labels}). Les labels associés aux paragraphes et sous-paragraphes ont toujours la forme |para:<titre>| ou, si aucun titre n'est donné, |para:<numéro>|~(le numéro risque alors de changer si de nouveaux paragraphes sont ajoutées). La syntaxe pour renvoyer à un numéro de paragraphe est, classiquement, la suivante:
 \begin{enumerate}
@@ -2252,6 +2258,7 @@ Les commandes |\para| et |\subpara|, décrites plus haut, gèrent la composition
 
 %	TODO » Commande type \setcounter pour modifier le numéro de paragraphe et réserver des numéros (traités) --- au moins à documenter ici, e.g. \setpara{} ou \setparanum
 
+
 % =***======***======***======***======***======***======***======***======***======***=
 
 %	#####	TABLES OF CONTENTS	#####
@@ -2279,13 +2286,13 @@ La commande la plus utile aux juristes sera indubitablement \cs{tableofcontents}
 	\tableofcontents* % Non référencée dans la table des matières
 \end{macro}
 
-La seule différence entre les deux versions de la commande tient à ce que \cs{tableofcontents}{Commande permettant d'insérer une table des matières~(\LaTeX\ et classe \safeverb[\packagecolor]{memoir}).} s'auto-référence dans la table des matières, où elle sera renseignée ainsi que son numéro de page. Par contraste, \cs{tableofcontents*}{Commande permettant d'insérer une table des matières, sans référencer celle-ci~(\LaTeX\ et classe \safeverb[\packagecolor]{memoir}.} ne sera pas mentionnée dans la table~-- ce qui semble plus logique.
+La différence entre les deux versions de la commande tient à ce que \cs{tableofcontents}{Commande permettant d'insérer une table des matières~(\LaTeX\ et classe \safeverb[\packagecolor]{memoir}).} s'auto-référence dans la table des matières, où elle sera renseignée ainsi que son numéro de page. Par contraste, \cs{tableofcontents*}{Commande permettant d'insérer une table des matières, sans référencer celle-ci~(\LaTeX\ et classe \safeverb[\packagecolor]{memoir}.} ne sera pas mentionnée dans la table~-- ce qui semble plus logique.
 
 La table des matières classique peut être augmentée de deux manières. En premier lieu, l'option |precis|, évoquée précédemment, permet de renseigner les numéros et titres de paragraphes dans la table des matières. Ceux-ci ne seront pas suivis d'un numéro de page et seront, par défaut, présentés sous forme d'un paragraphe, à la manière des précis traditionnels destinés à donner ua lecteur un aperçu des thèmes abordés. Ce mode de présentation pourra être utile tant pour la composition d'ouvrages soignés que pour la correction de documents~(thèses, manuscrits)\todo{Réf. à la section corrections}.
 
 Il est également possible d'insérer dans la table des matières des blocs de texte avec less options |outline| et |summary|. Ces fonctionnalités permettent de reproduire, dans la table des matières, des éléments directement issus du corps de texte, lesquels seront donc présents aux deux endroits. En choisissant bien les éléments à reproduire, il est possible de préparer un résumé structuré des diverses hypothèses et conclusions de l'ouvrage. Ces fonctionnalités sont présentées avec les autres outils de correction et de relecture de documents\todo{Réf. à la section corrections}.
 
-La principale commande permettant de paramétrer la table des matières est \cs{maxtocdepth}{Commande permettant de définir le dernier niveau de subdivision à référencer dans la table des matières~(\safeverb[\packagecolor]{memoir}).}, qui permet de définir la dernière subdivision logique à afficher au sein de la table des matière. Par défaut, toutes les subdivisions sont référencées. Il est possible de modifier ce comportement en indiquant le nom d'une autre subdivision.
+La principale commande pour paramétrer la table des matières est \cs{maxtocdepth}{Commande permettant de définir le dernier niveau de subdivision à référencer dans la table des matières~(\safeverb[\packagecolor]{memoir}).}, qui permet de définir la dernière subdivision logique à afficher au sein de la table des matière. Par défaut, toutes les subdivisions sont référencées. Il est possible de modifier ce comportement en indiquant le nom d'une autre subdivision.
 
 \begin{macro}
 \maxtocdepth{<subdivision>}% Par défaut: subparagraph
@@ -2343,6 +2350,7 @@ La commande admet un argument optionnel permettant de choisir le dernier niveau 
 		% Reset precis and other additional contents
 		% TODO > Add outline and summary
 		\@precisfalse
+		\@subprecisfalse
 		\let\cftafterprecis=\relax
 		\let\cftbeforeprecis=\relax
 		% Save tocdepth value
@@ -2360,7 +2368,7 @@ La commande admet un argument optionnel permettant de choisir le dernier niveau 
 La commmande |\shortcontents| enregistre la valeur actuelle de |\tocdepth|, la modifie pour composer une table à l'aide de la commande |\tableofcontents|, puis restaure |\tocdepth|. Il n'est donc pas possible en l'état d'utiliser des styles différents pour le sommaire et la table des matières; au demeurant, cela ne semblerait as judicieux.
 \end{developer}
 
-\section{Talbeaux et illustrations}
+\section{Tableaux et illustrations}
 
 Moins utiles pour les juristes, diverses tables peuvent être créées pour référencer les tableaux et illustrations présents dans le document. Les deux fonctionnalités classiques sont \cs{listoftables}{Commande permettant de composer une liste des tableaux.} et \cs{listoffigures}{Commande permettant de composer une liste des illustrations (figures).}. Ces commendes produisent des tables pour tous les tableaux insérés dans un environnement \env{table}{Environnement destiné à accueillir des tableaux.}, et tous les illustrations ou autres supports non-textuels placés dans un environnement \env{figure}{Environnement destiné à accueillir des figures ou éléments non-textuels.}. La classe |memoir| permet également de créer de nouvelles listes associées à d'autres environnements. Sur tous ces éléments relativement moins utilisés par les juristes, nous renvoyons le lecteur à la documentation de la classe |memoir|.
 
@@ -2376,7 +2384,7 @@ L'apparence de la table des matières est configurée en utilisant les outils fo
 \renewcommand*{\cftbookpresnum}{\space}
 \renewcommand*{\cftbookaftersnum}{.}
 \renewcommand*{\cftbookaftersnumb}{\space}
-\renewcommand*{\cftbookfont}{\if@modern\sffamily\LARGE\else\large\fi\scshape\hfil}
+\renewcommand*{\cftbookfont}{\if@modern\sffamily\fi\Large\scshape\hfil}
 \renewcommand*{\cftbookpagefont}{\normalsize}
 \setlength{\cftbeforebookskip}{2\baselineskip}
 \end{noprint}
@@ -2387,20 +2395,20 @@ L'apparence de la table des matières est configurée en utilisant les outils fo
 \renewcommand*{\cftpartpresnum}{\space}
 \renewcommand*{\cftpartaftersnum}{.}
 \renewcommand*{\cftpartaftersnumb}{\space}
-\renewcommand*{\cftpartfont}{\if@modern\sffamily\Large\else\large\fi\scshape\hfil}
+\renewcommand*{\cftpartfont}{\if@modern\sffamily\fi\large\scshape\hfil}
 \renewcommand*{\cftpartpagefont}{\normalsize}
 \setlength{\cftbeforepartskip}{\baselineskip}
 \end{noprint}
 
 \begin{developer}
-On notera toutefoisl'ajout par \frenchlaw de commandes permettant de modifier l'apparence des titres et sous-titres, sui obéissent aux mêmes règles de nommage que celles issues de la classe |memoir|, à savoir la longue série des |\cft...|.
+On notera l'ajout par \frenchlaw de commandes permettant de modifier l'apparence des titres (|\heading|) et sous-titres~(|\subheading|), qui obéissent aux mêmes règles de nommage que celles issues de la classe |memoir|, à savoir la longue série des |\cft...|.
 \end{developer}
 
 \begin{noprint}
 %	Define ToC style for \heading
 \renewcommand{\cftheadingaftersnum}{.}
-\renewcommand{\cftheadingaftersnumb}{\upshape\mdseries}
-\renewcommand{\cftheadingfont}{\if@modern\sffamily\Large\scshape\else\large\bfseries\fi}
+\renewcommand{\cftheadingaftersnumb}{\mdseries\defaultcolour}
+\renewcommand{\cftheadingfont}{\if@modern\sffamily\if@colourall\maincolour\fi\fi\large\bfseries}
 \renewcommand{\cftheadingleader}{\hfill}
 \setlength{\cftbeforeheadingskip}{\baselineskip}
 \end{noprint}
@@ -2408,58 +2416,60 @@ On notera toutefoisl'ajout par \frenchlaw de commandes permettant de modifier l'
 \begin{noprint}
 %	Define ToC style for \subheading
 \renewcommand{\cftsubheadingaftersnum}{.}
-\renewcommand{\cftsubheadingaftersnumb}{\upshape\mdseries}
-\renewcommand{\cftsubheadingfont}{\if@modern\sffamily\large\scshape\else\normalsize\bfseries\fi}
+\renewcommand{\cftsubheadingaftersnumb}{\mdseries\defaultcolour}
+\renewcommand{\cftsubheadingfont}{\if@modern\sffamily\if@colourall\maincolour\fi\fi\bfseries}
 \renewcommand{\cftsubheadingleader}{\hfill}
 \setlength{\cftbeforesubheadingskip}{\baselineskip}
 \end{noprint}
 
+Le choix a été fait, pour des raisons esthériques, de faire précéder les chapitres d'un espace vertical correspondant à la moitié de l'interligne utilisé dans la table des matières~(aucun espace n'est rajouté dans les sommaires). Ce choix a pour conséquence de rompre l'alignement vertical de la page pour un chapitre sur deux. ce comportement peut être modifié en redéfinissant la longueur |\cftbeforechapterskip|\label{grid:cftbeforechapterskip}.
+
 \begin{noprint}
 %	Define ToC style for \chapter
 \renewcommand*{\cftchapteraftersnum}{.}
-\renewcommand*{\cftchapteraftersnumb}{\upshape\mdseries}
-\renewcommand{\cftchapterfont}{\if@modern\sffamily\scshape\else\bfseries\fi}
+\renewcommand*{\cftchapteraftersnumb}{\mdseries\defaultcolour}
+\renewcommand{\cftchapterfont}{\if@modern\sffamily\if@colourall\maincolour\fi\fi\bfseries}
 \renewcommand*{\cftchapterpagefont}{\normalsize}
-\setlength{\cftbeforechapterskip}{\ifnum\value{tocdepth}=0\relax\baselineskip\else.5\baselineskip\fi}
+\setlength{\cftbeforechapterskip}{\if@modern\baselineskip\else.5\baselineskip\fi}
 \end{noprint}
 
 \begin{noprint}
 %	Define ToC style for \section
 \renewcommand*{\cftsectionaftersnum}{.}
-\renewcommand*{\cftsectionaftersnumb}{\upshape\mdseries}
-\renewcommand*{\cftsectionfont}{\if@modern\sffamily\scshape\else\bfseries\fi}
+\renewcommand*{\cftsectionaftersnumb}{\mdseries\defaultcolour}
+\renewcommand*{\cftsectionfont}{\if@modern\sffamily\if@colourall\maincolour\fi\fi\bfseries}
 \setlength{\cftbeforesectionskip}{\z@}
 \end{noprint}
 
 \begin{noprint}
 %	Define ToC style for \subsection
 \renewcommand*{\cftsubsectionaftersnum}{.}
-\renewcommand*{\cftsubsectionaftersnumb}{\upshape\mdseries}
-\renewcommand*{\cftsubsectionfont}{\footnotesize\if@modern\sffamily\scshape\else\bfseries\fi}
+\renewcommand*{\cftsubsectionaftersnumb}{\mdseries\defaultcolour}
+\renewcommand*{\cftsubsectionfont}{\footnotesize\if@modern\sffamily\if@colourall\maincolour\fi\fi\bfseries}
 \setlength{\cftbeforesubsectionskip}{\z@}
 \end{noprint}
 
 \begin{noprint}
 %	Define ToC style for \subsubsection
 \renewcommand*{\cftsubsubsectionaftersnum}{.}
-\renewcommand*{\cftsubsubsectionaftersnumb}{\upshape\mdseries}
-\renewcommand*{\cftsubsubsectionfont}{\footnotesize\if@modern\sffamily\scshape\else\bfseries\fi}
+\renewcommand*{\cftsubsubsectionaftersnumb}{\mdseries\defaultcolour}
+\renewcommand*{\cftsubsubsectionfont}{\footnotesize\if@modern\sffamily\if@colourall\maincolour\fi\fi\bfseries}
 \setlength{\cftbeforesubsubsectionskip}{\z@}
 \end{noprint}
 
 \begin{noprint}
 %	Define ToC style for \paragraph
 \renewcommand*{\cftparagraphaftersnum}{.}
-\renewcommand*{\cftparagraphaftersnumb}{\upshape\mdseries}
-\renewcommand*{\cftparagraphfont}{\footnotesize\if@modern\sffamily\scshape\else\bfseries\fi}
+\renewcommand*{\cftparagraphaftersnumb}{\mdseries\defaultcolour}
+\renewcommand*{\cftparagraphfont}{\footnotesize\if@modern\sffamily\if@colourall\maincolour\fi\fi\bfseries}
 \setlength{\cftbeforeparagraphskip}{\z@}
 \end{noprint}
 
 \begin{noprint}
 %	Define ToC style for \subparagraph
 \renewcommand*{\cftsubparagraphaftersnum}{.}
-\renewcommand*{\cftsubparagraphaftersnumb}{\upshape\mdseries}
-\renewcommand*{\cftsubparagraphfont}{\footnotesize\if@modern\sffamily\scshape\else\bfseries\fi}
+\renewcommand*{\cftsubparagraphaftersnumb}{\mdseries\defaultcolour}
+\renewcommand*{\cftsubparagraphfont}{\footnotesize\if@modern\sffamily\if@colourall\maincolour\fi\fi\bfseries}
 \setlength{\cftbeforesubparagraphskip}{\z@}
 \end{noprint}
 
@@ -2487,7 +2497,7 @@ Pour définir et sélectionner un nouveau style de numéros, il suffit de redéf
   \newcommand{\cftprecisleader}{}
   % Ponctuation éventuelle après le numéro de page
   \newcommand{\cftprecisafterpnum}{.}
-  % Sépaeatzur inséré entre deux numéros
+  % Séparateur inséré entre deux numéros
   \newcommand{\cftprecissep}{~--- }
 }
 \end{macro}
@@ -2512,7 +2522,7 @@ Les macros \cs{cftbeforeprecis}{Macro permettant de façonner horizontalement et
 \begin{noprint}
 %	Separate the precis from surrounding ToC elements
 % The two following macros insert vertical space before and after the precis bloc, as well as create a minipage the size and position of which match the textblock used in ToC.
-% With respect to implementation, see the code in \para and \subpara. Essentially, both macros are (\protect) invoked when inputing the precis data in the ToC. The first one works by texting whether this is the first precis item in the current section (simple <precis> counter), while the second one is triggered when the next ToC item is a proper sectionning unit, which always starts with \contentsline (this is tested using \@ifnextchar).
+% With respect to implementation, see the code in \para and \subpara. Essentially, both macros are (\protect)-invoked when inputing the precis data in the ToC. The first one works by testing whether this is the first precis item in the current section (using a simple <precis> counter), while the second one is triggered when the next ToC item is a proper sectionning unit, which always starts with \contentsline (this is tested using \@ifnextchar).
 \newcommand{\cftbeforeprecis}{%
 	\vskip.5\baselineskip\par%
 	\noindent\hspace{\dimexpr\toclabelwidth+\tocnumwidth}%
@@ -2527,7 +2537,7 @@ Les macros \cs{cftbeforeprecis}{Macro permettant de façonner horizontalement et
 \begin{noprint}
 \makeprecisstyle{default}{
 	\renewcommand{\cftprecisstyle}{\footnotesize\itshape}
-	\renewcommand{\cftprecisnumstyle}{}
+	\renewcommand{\cftprecisnumstyle}{\if@modern\if@colourall\maincolour\fi\fi}
 	\renewcommand{\cftprecisaftersnum}{.\space}
 	\renewcommand{\cftprecisnumsep}{,~}
 	\renewcommand{\cftprecisleader}{\normalfont p.~}
@@ -2548,7 +2558,7 @@ Les macros \cs{cftbeforeprecis}{Macro permettant de façonner horizontalement et
 \if@draft\precisstyle{draft}\fi
 \end{noprint}
 
-La classe opère, enfin, quelques choix par défaut, comme celui de ne pas composer les numéros de page des livres et des parties dans la table des matières, ce qui permet notamment de centrer les titres sur la page\todo{Renvi à la section suivante}.
+La classe opère, enfin, quelques choix par défaut, comme celui de ne pas composer les numéros de page des livres et des parties dans la table des matières, ce qui permet notamment de centrer les titres sur la page. Ce paramétrage est documenté dans la classe |memoir|.
 
 \begin{noprint}
 %	Configure ToC dotted lines
@@ -2558,11 +2568,158 @@ La classe opère, enfin, quelques choix par défaut, comme celui de ne pas compo
 \cftpagenumbersoff{part}
 \end{noprint}
 
+Les tables des matières sont, enfin, configurées pour se comporter comme des chapitres dans les monographies, et comme des sections dans les articles. Dans un ouvrage, la table commencera ainsi sur une nouvelle page.
+
 \begin{noprint}
 %	Ensure ToC starts on a new page (like a chapter) for books
 \if@article\else
-	\pretocmd{\tableofcontents}{\clearforchapter}{}{}
+	\pretocmd{\tableofcontents}
+		{\clearforchapter}
+		{}{\@latex@warning@no@line{Failed to patch \noexpand\tableofcontents.}}
 \fi
 \end{noprint}
+
+
+% ===== Table of Contents Horizontal Spacing =====
+
+L'apparence globale de la table des matières peut être modifiée en utilisant des styles. La commande \cs{makeptoctyle}{Commande permettant de créer un nouveau style pour les tables des matières et sommaires.} permet de définir un nouveau style de pour les tables et sommaires, alors que la commande \cs{tocstyle}{Commande permettant de sélectionner un style pour les tables des matières et sommaires.}
+
+\begin{noprint}
+%	Create the commands that define and apply ToC styles
+\newcommand{\maketocstyle}[2]{\expandafter\gdef\csname @tocstyle@#1\endcsname{#2}}
+\newcommand{\tocstyle}[1]{\csname @tocstyle@#1\endcsname}
+\end{noprint}
+
+Un nouveau style de tables et sommaires peut être défini à l'intérieur de |\maketocstyle|, puis sélectionné avec |\tocstyle|.
+
+\begin{macro}
+% Définition du style:
+\maketocstyle{<nom du style>}{ % Création du style
+ ...
+}
+\end{macro}
+% Application du style:
+\tocstyle{<nom du style>}
+
+\begin{developer}
+Pour la mise en œuvre des styles de table des matières, qui peuvent requérir des manimulations sur le contenu des variables |\cftXname|, la commande \cs{maketoclabel}{Commande-outil contenant seulement l'étiquette des noms de chapitres, sections, etc. pour le paramétrage de |babel|, susceptible d'être redéfinie par les styles de table des matières.}~-- qui ne fait rien~-- est ajoutée dans la définition de |\cftXname| et destinée à être remplacée par une commande contenant des instructions de formattage. \frenchlaw définit deux commandes à cet effet: \cs{toclabelnobox}{Commande utilisée par les styles de tables des matières pour formatter les noms des subdivisions principales de manière classique.}, utilisée pour composer simplement le nom de la subdivision, et \cs{toclabelbox}{Commande utilisée par les styles de tables des matières pour formatter les noms des subdivisions principales dans une boîte de largeur fixe.}, pour composer les noms des subdivisions dans des boîtes de largeur fixe. On pourra, par exemple, utiliser:
+\par\vspace{-\baselineskip}
+\begin{macro}
+% Dans les définitions de <babel>:
+\def\cftchaptername{\maketoclabel{Chapitre}}
+% Dans le style de table des matières:
+\let\maketoclabel=\toclabelbox
+\end{macro} 
+\end{developer}
+
+\begin{noprint}
+%	Create the \maketoclabel placeholder command
+\newcommand{\maketoclabel}[1]{#1}
+
+%	Create a command that formats ToC labels into a box
+\newcommand{\toclabelbox}[1]{\makebox[\toclabelwidth]{\hfill\llap{#1\normalsize\space}}}
+%	Create a command that formats ToC labels for general use
+\newcommand{\toclabelnobox}[1]{#1\normalsize\space}
+\end{noprint}
+
+\begin{developer}
+Pour paramétrer l'apparence de chaque ligne de la table des matières, et particulièrement l'espacement horizontal entre le numéro de section et le titre de celle-ci, \frenchlaw crée plusieurs nouvelles longueurs susceptibles d'être utilisées dans les styles:
+\begin{itemize}
+	\item\dim{toclabelwidth}{Dimension de l'étiquette des noms de chapitres, sections, etc. dans la table des matières.} détermine la longueur de l'étiquette précédant le numéro de subdivision, qui est précisément déterminée par la longueur du mot \enquote{Chapitre}, pour permettre ensuite l'alignement des numéros et des intitulés des différentes subdivisions;
+	\item\dim{tocnumwidth}{Dimension de la boîte contenant le numéro (ou autre) de la subdivision dans la table des matières.} détermine la longueur de la boîte contenant le numéro de subdivision, qui est fixée au chiffre romain XX pour l'option |article| et XXX pour les monographies;
+	\item\dim{toccenterwidth}{Dimension du retrait à ajouter aux éléments de la table des matières qui sont centrés.} détermine le retrait à ajouter aux éléments de la table des matière qui seront centrés: cette dimension correspond à la somme des deux précédentes.
+\end{itemize}
+\end{developer}
+
+\begin{noprint}
+%	Set ToC label to the width of 'chapter' label, which is the longest
+\newlength{\toclabelwidth}
+	\settowidth{\toclabelwidth}{\cftchapterfont\chaptername\space}
+
+%	Set ToC number to the width of roman numeral 20 or 30 (reasonable longest)
+% TODO > Redéfinir pour modern?
+\newlength{\tocnumwidth}
+\if@article
+	\settowidth{\tocnumwidth}{\cftsectionfont XX\space}
+\else
+	\settowidth{\tocnumwidth}{\cftchapterfont XXX\space}
+\fi
+
+%	Centered headings will take into account the label + number lengths
+\newlength{\toccenterwidth}
+	\setlength{\toccenterwidth}{\tocnumwidth}
+	\addtolength{\toccenterwidth}{\toclabelwidth}
+\end{noprint}
+
+Un style de tables et sommaires nommé |basic| est défini, mais n'est pas utilisé par défaut. Il compose les tables de manière très classiques, par retraits successifs, assez semblables à ce que proposent par défaut tous les logiciels de mise en pages.
+
+\begin{noprint}
+%	Create the <basic> ToC style
+\maketocstyle{basic}{
+	%	Redefine \maketoclabel to \toclabelnobox (format ToC labels)
+	\let\maketoclabel=\toclabelnobox
+	%	Set up ToC components indentation
+	\cftsetindents{book}{\toccenterwidth}{\tocnumwidth}
+	\cftsetindents{part}{\toccenterwidth}{\tocnumwidth}
+	\cftsetindents{heading}{\z@}{\tocnumwidth}
+	\cftsetindents{subheading}{\z@}{\tocnumwidth}
+	\cftsetindents{chapter}{\z@}{\tocnumwidth}
+	\cftsetindents{section}{\if@article\z@\else 1em \fi}{\tocnumwidth}
+	\cftsetindents{subsection}{\if@article 1em \else 2em \fi}{\tocnumwidth}
+	\cftsetindents{subsubsection}{\if@article 2em \else 3em \fi}{\tocnumwidth}
+	\cftsetindents{paragraph}{\if@article 3em \else 4em \fi}{\tocnumwidth}
+	\cftsetindents{subparagraph}{\if@article 4em \else 5em \fi}{\tocnumwidth}
+}
+\end{noprint}
+
+Le style |frenchlaw| est sélectionné par défaut. La table se présente visuellement en deux colonnes, celle de gauche comportant les noms des subdivisions s'il y a lieu (chapitre, section, etc.), et celle de droite les titres. Les numéros des chapitres, sections et § sont alignés; ceux des subdivisions inférieures sont placés en retrait. Tout en restant très classique, ce style aère et dynamise les tables des matières.
+
+\begin{noprint}
+%	Create the frenchlaw> ToC style
+\maketocstyle{frenchlaw}{
+	%	Redefine \maketoclabel to \toclabelbox (format ToC labels into a box)
+	\let\maketoclabel=\toclabelbox
+	%	Set up ToC components indentation using the previously defined lengths
+	\cftsetindents{book}{\toccenterwidth}{\tocnumwidth}
+	\cftsetindents{part}{\toccenterwidth}{\tocnumwidth}
+	\cftsetindents{heading}{\z@}{\tocnumwidth}
+	\cftsetindents{subheading}{\z@}{\tocnumwidth}
+	\cftsetindents{chapter}{\z@}{\tocnumwidth}
+	\cftsetindents{section}{\z@}{\tocnumwidth}
+	\cftsetindents{subsection}{\if@article\tocnumwidth\else\z@\fi}{\tocnumwidth}
+	\cftsetindents{subsubsection}{%
+		\if@article 2\tocnumwidth\else\toclabelwidth\fi}{\if@article.5\tocnumwidth\else\tocnumwidth\fi}
+	\cftsetindents{paragraph}{%
+		\if@article 3\tocnumwidth\else\dimexpr\toclabelwidth+\tocnumwidth\relax\fi}
+		{.5\tocnumwidth}
+	\cftsetindents{subparagraph}{%
+		\if@article 4\tocnumwidth\else\dimexpr\toclabelwidth+1.5\tocnumwidth\relax\fi}
+		{\if@article.75\tocnumwidth\else.5\tocnumwidth\fi}
+}
+\tocstyle{frenchlaw}
+\end{noprint}
+
+% TODO > Create new ToC styles?
+
+
+% ===== Table of Contents Vertical Spacing =====
+
+Quelques autres mécanismes mis en œuvre dans les tables des matières ne paraissent pas mériter de documentation approfondie, mais sont détaillés dans le code de la classe. Ils sont utilisés pour ajuster l'espace vertical au sein des tables des matières et tables des figures, en particulier pour la première et la dernière entrées de la table.
+
+\begin{noprint}
+%	Correct an old LaTeX 2.09 bug: add proper \addvspace before chapters (and heading) content lines, so the first ToC entry does not drop one or two lines below the start of normal chapters
+\setcftvspacecmd{\addvspace}
+\end{noprint}
+
+\begin{noprint}
+%	Ensure that the ToC ends the paragraph properly
+% Solves a bug that happens sometimes
+\AtEndDocument{%
+	\addtocontents{toc}{\par}%
+	\addtocontents{lot}{\par}%
+	\addtocontents{lof}{\par}}
+\end{noprint}
+
+% TODO > Récupérer outline / summary et les intégrer dans les méthodes ToC supra + dans les styles de précis, e.g. italiques ou autres
 
 
